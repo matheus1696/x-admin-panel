@@ -35,7 +35,7 @@
                 <!-- Password -->
                 <div>
                     <x-form.label for="password" :value="__('Password')" />
-                    <x-form.input name="password" type="password" required autocomplete="current-password" :placeholder="__('Password')" />
+                    <x-form.input name="password" type="password" required :placeholder="__('Password')" />
                     <x-form.error :messages="$errors->get('password')"/>
                 </div>
 
