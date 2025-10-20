@@ -6,7 +6,7 @@
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
                         <div class="flex items-center">
-                            <img src="{{ asset('asset\img\logo_white_full.png') }}" alt="X-AdminPanel Logo" class="h-6">
+                            <img src="{{ asset('asset\img\logo_white_full.png') }}" alt="X-AdminPanel Logo" class="h-8">
                         </div>
                     </div>
                     <div class="flex items-center space-x-4 text-sm">
