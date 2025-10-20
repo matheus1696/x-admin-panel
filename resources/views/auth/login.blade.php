@@ -28,14 +28,14 @@
                 <!-- Email Address -->
                 <div>
                     <x-form.label for="email" :value="__('Email')" />
-                    <x-form.input name="email" type="email" :value="old('email')" required autofocus autocomplete="email" placeholder="Seu endereço de email" />
+                    <x-form.input name="email" type="email" :value="old('email')" required autofocus autocomplete="email" placeholder="Seu endereço de email" value="admin@example.com"/>
                     <x-form.error :messages="$errors->get('email')"/>
                 </div>
 
                 <!-- Password -->
                 <div>
                     <x-form.label for="password" :value="__('Password')" />
-                    <x-form.input name="password" type="password" required :placeholder="__('Password')" />
+                    <x-form.input name="password" type="password" required :placeholder="__('Password')" value="password" />
                     <x-form.error :messages="$errors->get('password')"/>
                 </div>
 
@@ -43,11 +43,11 @@
                 <div class="flex items-center justify-between">
                     <label for="remember_me" class="inline-flex items-center">
                         <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                        <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+                        <span class="ms-2 text-xs text-gray-600">{{ __('Remember me') }}</span>
                     </label>
 
                     @if (Route::has('password.request'))
-                        <a class="text-sm text-indigo-600 hover:text-indigo-500 font-medium" href="{{ route('password.request') }}">
+                        <a class="text-xs text-indigo-600 hover:text-indigo-500 font-medium" href="{{ route('password.request') }}">
                             {{ __('Forgot your password?') }}
                         </a>
                     @endif
