@@ -79,7 +79,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Data de Criação -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+                    <label class="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-calendar text-blue-600 text-sm"></i>
                         Data de Criação
                     </label>
@@ -97,7 +97,7 @@
 
                 <!-- Tipo de Usuário -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+                    <label class="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-users text-blue-600 text-sm"></i>
                         Tipo de Usuário
                     </label>
@@ -111,7 +111,7 @@
 
                 <!-- Ordenação -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+                    <label class="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-sort text-blue-600 text-sm"></i>
                         Ordenar por
                     </label>
@@ -125,7 +125,7 @@
 
                 <!-- Itens por Página -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+                    <label class="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-list text-blue-600 text-sm"></i>
                         Itens por página
                     </label>
