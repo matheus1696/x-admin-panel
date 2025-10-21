@@ -1,3 +1,5 @@
-@props(['buttonText' => null])
+@props(['value' => null])
 
-<a {{ $attributes->merge([ 'class' => 'w-full px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transform transition-all duration-300 ease-in-out focus:outline-none focus:ring focus:ring-blue-500/30 border-0 text-sm']) }}>{{ $buttonText }}</a>
+<a {{ $attributes->merge([ 'class' => 'bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl transform']) }}>
+    {{ $slot ?? $value }}
+</a>

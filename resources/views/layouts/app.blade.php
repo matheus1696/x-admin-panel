@@ -178,7 +178,7 @@
                 </div>
             </aside>
 
-            <div x-show="profile || open" x-cloak x-transition.opacity class="fixed inset-0 bg-black/90 z-40" @click="profile = false; open = false;"></div>
+            <div x-show="profile || open" x-cloak x-transition.opacity class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40" @click="profile = false; open = false;"></div>
 
             <!-- Conteúdo -->
             <div class="flex-1 flex flex-col min-h-screen">
@@ -220,7 +220,7 @@
 
                 <!-- Conteúdo Principal -->
                 <div class="flex-1 bg-gray-50" style="min-height: calc(100vh - 5rem);">
-                    <main class="p-4 sm:p-6 lg:px-8 lg:py-6 mx-auto w-full max-w-7xl">
+                    <main class="p-4 sm:p-6 lg:px-8 lg:py-6 mx-auto max-w-7xl">
                         {{ $slot }}
                     </main>
                 </div>
