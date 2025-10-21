@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Manage\UserController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,12 +20,12 @@ Route::middleware('auth')->group(function () {
 
 // Users Management
     Route::prefix('users')->middleware('can:manage-users')->group(function () {
-        Route::get('/', [ProfileController::class, 'edit'])->name('users.index')->middleware('can:view-users');
-        Route::get('/create', [ProfileController::class, 'edit'])->name('users.create')->middleware('can:create-users');
-        Route::post('/', [ProfileController::class, 'edit'])->name('users.store')->middleware('can:create-users');
-        Route::get('/{user}/edit', [ProfileController::class, 'edit'])->name('users.edit')->middleware('can:edit-users');
-        Route::put('/{user}', [ProfileController::class, 'edit'])->name('users.update')->middleware('can:edit-users');
-        Route::delete('/{user}', [ProfileController::class, 'edit'])->name('users.destroy')->middleware('can:delete-users');
+        Route::get('/', [UserController::class, 'index'])->name('users.index')->middleware('can:view-users');
+        Route::get('/create', [UserController::class, 'edit'])->name('users.create')->middleware('can:create-users');
+        Route::post('/', [UserController::class, 'edit'])->name('users.store')->middleware('can:create-users');
+        Route::get('/{user}/edit', [UserController::class, 'edit'])->name('users.edit')->middleware('can:edit-users');
+        Route::put('/{user}', [UserController::class, 'edit'])->name('users.update')->middleware('can:edit-users');
+        Route::delete('/{user}', [UserController::class, 'edit'])->name('users.destroy')->middleware('can:delete-users');
     });
 
     // Reports

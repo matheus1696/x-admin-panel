@@ -30,7 +30,7 @@
         <div class="flex">
             <!-- Sidebar Desktop -->
             <aside class="hidden lg:flex flex-col bg-gradient-to-b from-blue-50 to-white border-r border-blue-200/50 shadow-lg z-30 transition-all duration-300 ease-in-out overflow-hidden"
-                   :class="sidebarExpanded ? 'w-64' : 'w-20'"
+                   :class="sidebarExpanded ? 'w-72' : 'w-20'"
                    @mouseenter="sidebarExpanded = true"
                    @mouseleave="sidebarExpanded = false">
                 
@@ -40,7 +40,7 @@
                 </div>
 
                 <!-- Navigation Desktop -->
-                <nav class="flex-1 py-4 space-y-1.5 overflow-hidden pb-2" :class="sidebarExpanded ? 'px-2' : 'px-1'" x-data="{ activeDropdown: null }">
+                <nav class="flex-1 py-1.5 space-y-1 overflow-hidden pb-2" :class="sidebarExpanded ? 'px-2' : 'px-1'" x-data="{ activeDropdown: null }">
                     <!-- Dashboard -->
                     @include('layouts.navigation')
                 </nav>
@@ -49,8 +49,9 @@
                 <div class="p-3 border-t border-blue-100/50 bg-white/80 text-center">
                     <p class="text-[10px] text-gray-500 whitespace-nowrap transition-all duration-300 ease-in-out"
                        :class="sidebarExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4 overflow-hidden'">
-                        v{{ config('app.version', '1.0.0') }}
+                        {{ config('app.name') }} v{{ config('app.version', '1.0.0') }}
                     </p>
+                    
                 </div>
             </aside>
 
@@ -76,7 +77,7 @@
                 </div>
 
                 <!-- Navigation Mobile -->
-                <nav class="py-4 px-2 space-y-1.5 overflow-hidden pb-2" x-data="{ activeDropdown: null }">
+                <nav class="py-1.5 px-2 space-y-1.5 overflow-hidden pb-2" x-data="{ activeDropdown: null }">
                     @include('layouts.navigation')
                 </nav>
 
@@ -117,7 +118,7 @@
                                     size-16 flex justify-center items-center rounded-full 
                                     bg-gradient-to-br from-blue-500 to-blue-700 text-white 
                                     shadow-xl border border-white text-2xl uppercase font-semibold">
-                            {{ Str::substr(Auth::user()->username, 0, 2) }}
+                            {{ Str::substr(Auth::user()->name, 0, 2) }}
                         </div>
                     </div>
 
@@ -127,7 +128,7 @@
                         <div class="flex flex-col justify-center items-center gap-2 text-xs text-gray-500">
                             <div class="flex items-center gap-1">
                                 <i class="fa-solid fa-user text-blue-500"></i>
-                                <span class="truncate">{{ Auth::user()->username }}</span>
+                                <span class="truncate">{{ Auth::user()->name }}</span>
                             </div>
                             <div class="flex items-center gap-1">
                                 <i class="fa-solid fa-building text-blue-500"></i>
@@ -208,7 +209,7 @@
                                         bg-gradient-to-br from-blue-600 to-blue-800 text-white shadow-lg
                                         hover:from-blue-700 hover:to-blue-900 hover:scale-105 active:scale-95
                                         border-2 border-white/20">
-                                {{ Str::substr(Auth::user()->username, 0, 2) }}
+                                {{ Str::substr(Auth::user()->name, 0, 2) }}
                             </button>
                             
                             <!-- Online Status Indicator -->
@@ -219,7 +220,7 @@
 
                 <!-- Conteúdo Principal -->
                 <div class="flex-1 bg-gray-50" style="min-height: calc(100vh - 5rem);">
-                    <main class="p-4 sm:p-6 lg:px-8 lg:py-6 mx-auto">
+                    <main class="p-4 sm:p-6 lg:px-8 lg:py-6 mx-auto w-full max-w-7xl">
                         {{ $slot }}
                     </main>
                 </div>

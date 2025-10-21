@@ -7,7 +7,7 @@
 
     <!-- Usuários -->
     @can('manage-users')
-    <x-sidebar.dropdown title="Usuários" :active="request()->routeIs('users.*')" icon="fa-solid fa-users">
+    <x-sidebar.dropdown title="Gerenciamento de Usuários" :active="request()->routeIs('users.*')" icon="fa-solid fa-users">
         @can('view-users')
             <x-sidebar.dropdown-link href="{{ route('users.index') }}" title="Listar Usuários" :active="request()->routeIs('users.index')" />
         @endcan

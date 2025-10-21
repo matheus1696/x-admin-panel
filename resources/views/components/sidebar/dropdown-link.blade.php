@@ -11,7 +11,7 @@
     )
 ]) }}>
     <div class="w-1.5 h-1.5 rounded-full bg-blue-300 {{ $active ? 'bg-blue-600' : '' }}"></div>
-    <span class="text-sm whitespace-nowrap">{{ $title }}</span>
+    <span class="text-xs whitespace-nowrap">{{ $title }}</span>
     
     @if($active)
         <div class="ml-auto w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse"></div>

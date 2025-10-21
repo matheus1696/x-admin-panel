@@ -11,7 +11,7 @@
                    {{ $active || $active ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg' : 'text-gray-700 hover:bg-blue-100 hover:text-blue-700' }} hover:translate-x-1 border border-transparent hover:border-blue-700">
         <div class="flex items-center gap-3">
             <i class="{{ $icon }} w-5 text-center text-sm {{ $active ? 'text-white' : 'text-blue-500' }}"></i>
-            <span :class="sidebarExpanded ? 'opacity-100 whitespace-nowrap transition-all duration-200' : 'hidden opacity-0'"> {{ $title }} </span>
+            <span class="text-xs" :class="sidebarExpanded ? 'opacity-100 whitespace-nowrap transition-all duration-200' : 'hidden opacity-0'"> {{ $title }} </span>
         </div>
         <div :class="sidebarExpanded ? 'opacity-100' : 'hidden opacity-0'">
             <svg :class="groupOpen ? 'rotate-90' : ''" 
