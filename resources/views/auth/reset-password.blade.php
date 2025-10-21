@@ -61,7 +61,7 @@
 
                 <!-- Submit Button -->
                 <div class="pt-4">
-                    <x-button.btn-primary value="{{ __('Reset Password') }}" />
+                    <x-button.btn-submit value="{{ __('Reset Password') }}" />
                 </div>
 
                 <!-- Back to Login -->

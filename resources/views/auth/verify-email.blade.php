@@ -49,7 +49,7 @@
                 <!-- Resend Verification Email -->
                 <form method="POST" action="{{ route('verification.send') }}" class="w-full sm:flex-1">
                     @csrf
-                    <x-button.btn-primary value="{{ __('Resend Verification Email') }}" class="w-full" />
+                    <x-button.btn-submit value="{{ __('Resend Verification Email') }}" class="w-full" />
                 </form>
 
                 <!-- Log Out -->

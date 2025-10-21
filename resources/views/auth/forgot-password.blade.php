@@ -36,7 +36,7 @@
                         {{ __('Back to login') }}
                     </a>
 
-                    <x-button.btn-primary value="{{ __('Send Reset Link') }}" />
+                    <x-button.btn-submit value="{{ __('Send Reset Link') }}" />
                 </div>
 
                 <!-- Success Message -->

@@ -55,7 +55,7 @@
 
                 <!-- Submit Button -->
                 <div class="pt-4">
-                    <x-button.btn-primary value="{{ __('Log in') }}" />
+                    <x-button.btn-submit value="{{ __('Log in') }}" />
                 </div>
             </form>
         </div>

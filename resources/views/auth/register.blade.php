@@ -92,7 +92,7 @@
 
                 <!-- Submit Button -->
                 <div class="pt-4">
-                    <x-button.btn-primary value="{{ __('Create Account') }}" />
+                    <x-button.btn-submit value="{{ __('Create Account') }}" />
                 </div>
             </form>
         </div>
