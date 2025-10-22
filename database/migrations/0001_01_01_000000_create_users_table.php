@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('phone_personal')->nullable();
             $table->string('phone_work')->nullable();
             $table->string('cpf', 14)->nullable()->unique();
+            $table->string('matriculation', 10)->nullable()->unique();
             $table->string('gender')->nullable();
             $table->date('birth_date')->nullable();
             $table->boolean('status')->default(true);

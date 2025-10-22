@@ -21,6 +21,9 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <!-- Scripts Próprios, Máscaras de Inputs -->
+        <script src="{{asset('asset/js/maskInput.js')}}"></script>
         
         <!-- Livewire Styles -->
         @livewireStyles
@@ -35,7 +38,7 @@
                    @mouseleave="sidebarExpanded = false">
                 
                 <!-- Logo Compacta -->
-                <div class="h-20 flex items-center justify-center border-b border-blue-200/50 bg-gradient-to-r from-blue-50 to-blue-100">
+                <div class="h-16 flex items-center justify-center border-b border-blue-200/50 bg-gradient-to-r from-blue-50 to-blue-100">
                     <x-application-logo class="w-8 h-8"/>
                 </div>
 
@@ -66,7 +69,7 @@
                 class="fixed inset-y-0 left-0 w-80 bg-gradient-to-b from-blue-50 to-white z-50 shadow-2xl overflow-y-auto border-r border-blue-200/50 lg:hidden">
 
                 <!-- Topo -->
-                <div class="h-20 flex items-center justify-between px-6 bg-gradient-to-r from-blue-50 to-blue-100 border-b border-blue-600/30">
+                <div class="h-16 flex items-center justify-between px-6 bg-gradient-to-r from-blue-50 to-blue-100 border-b border-blue-600/30">
                     <div class="flex-1">
                         <x-application-logo class="w-8 h-8"/>
                     </div>
@@ -183,7 +186,7 @@
             <!-- Conteúdo -->
             <div class="flex-1 flex flex-col min-h-screen">
                 <!-- Header -->
-                <header class="w-full flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16 sm:h-20 bg-gradient-to-r from-blue-50 to-blue-100 border-b border-blue-600/30">
+                <header class="w-full flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16 bg-gradient-to-r from-blue-50 to-blue-100 border-b border-blue-600/30">
                     <!-- Left Section: Menu Hamburger + Logo -->
                     <div class="w-full flex items-center gap-3 sm:gap-4">
                         <!-- Menu Hamburger (mobile) -->
@@ -219,7 +222,7 @@
                 </header>
 
                 <!-- Conteúdo Principal -->
-                <div class="flex-1 bg-gray-50" style="min-height: calc(100vh - 5rem);">
+                <div class="flex-1 bg-gray-50" style="min-height: calc(100vh - 4rem);">
                     <main class="p-4 sm:p-6 lg:px-8 lg:py-6 mx-auto max-w-7xl">
                         {{ $slot }}
                     </main>

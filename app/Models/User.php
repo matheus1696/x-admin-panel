@@ -27,6 +27,7 @@ class User extends Authenticatable
         'avatar',
         'phone_personal',
         'phone_work',
+        'matriculation',
         'cpf',
         'gender',
         'birth_date',

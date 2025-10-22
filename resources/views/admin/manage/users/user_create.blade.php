@@ -3,9 +3,9 @@
     <x-page.header icon="fa-solid fa-users" title="Criação de Usuários" subtitle="Realize a criação do novo usuários do sistema">
         <x-slot name="button">
             @can('create-users')
-                <x-button.link-primary href="{{ route('users.index') }}" color="gray">
+                <x-button.link-primary href="{{ route('users.index') }}">
                     <i class="fa-solid fa-rotate-left"></i>
-                    Voltar
+                    Voltar para Lista
                 </x-button.link-primary>
             @endcan
         </x-slot>
@@ -21,15 +21,8 @@
                 @include('admin.manage.users._partials.user_form')
 
                 <!-- Actions -->
-                <div class="flex items-center justify-between pt-6 mt-6 border-t border-gray-100">
-                    <div class="text-sm text-gray-500 flex items-center gap-2">
-                        <i class="fa-solid fa-info-circle"></i>
-                        <span>Preencha todos os campos obrigatórios</span>
-                    </div>
-                    
-                    <div>
-                        <x-button.btn-submit value="Criar Usuário"/>
-                    </div>
+                <div class="flex items-center justify-end pt-6 mt-6 border-t border-blue-100">
+                    <x-button.btn-submit value="Criar Usuário"/>
                 </div>
             </form>
         </div>
