@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Manage;
+namespace App\Http\Controllers\Admin\Manage;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -13,9 +14,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
-        $users = User::with('roles')->latest()->paginate(5);
-        return view('admin.manage.users.user_index', compact('users'));
+        return view('admin.manage.users.user_index');
     }
 
     /**
@@ -24,6 +23,7 @@ class UserController extends Controller
     public function create()
     {
         //
+        return view('admin.manage.users.user_create');
     }
 
     /**
@@ -32,37 +32,29 @@ class UserController extends Controller
     public function store(Request $request)
     {
         //
-    }
+        $request['password'] = Hash::make('senha123');
+        User::create($request->all())->assignRole('user');
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+        return redirect()->route('users.index');
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $user)
     {
         //
+        return view('admin.manage.users.user_edit', compact('user'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $user)
     {
         //
-    }
+        $user->update($request->only('name', 'phone_personal', 'phone_work', 'status'));
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->route('users.index');
     }
 }

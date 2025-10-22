@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -20,8 +21,16 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'name_filter',
         'email',
         'password',
+        'avatar',
+        'phone_personal',
+        'phone_work',
+        'cpf',
+        'gender',
+        'birth_date',
+        'status',
     ];
 
     /**
@@ -45,5 +54,27 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    //Criação do Filter Name
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = $value;
+        $this->attributes['name_filter'] = Str::ascii(strtolower($value));
+    }
+    
+    //UUID
+    protected static function booted()
+    {
+        static::creating(function ($user) {
+            if (!$user->uuid) {
+                $user->uuid = (string) Str::uuid();
+            }
+        });
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'uuid';
     }
 }

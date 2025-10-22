@@ -9,7 +9,7 @@
 <!-- 📊 Data Table Component -->
 <div class="overflow-hidden w-full">
     <!-- Table Wrapper -->
-    <div class="overflow-x-auto bg-white rounded-2xl shadow-sm border border-{{ $borderColor }} text-sm transition-all duration-200">
+    <div class="overflow-x-auto bg-white rounded-2xl shadow-sm border border-{{ $borderColor }} text-xs transition-all duration-200">
         <table class="w-full divide-y divide-gray-200 table-fixed">
             <!-- Cabeçalho -->
             <thead class="bg-{{ $headerColor }} text-blue-800 text-left font-semibold uppercase tracking-wider">

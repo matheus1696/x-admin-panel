@@ -8,12 +8,11 @@
     <!-- Usuários -->
     @can('manage-users')
     <x-sidebar.dropdown title="Gerenciamento de Usuários" :active="request()->routeIs('users.*')" icon="fa-solid fa-users">
-        @can('view-users')
-            <x-sidebar.dropdown-link href="{{ route('users.index') }}" title="Listar Usuários" :active="request()->routeIs('users.index')" />
-        @endcan
-        
         @can('create-users')
             <x-sidebar.dropdown-link href="{{ route('users.create') }}" title="Criar Usuário" :active="request()->routeIs('users.create')" />
+        @endcan
+        @can('view-users')
+            <x-sidebar.dropdown-link href="{{ route('users.index') }}" title="Listar Usuários" :active="request()->routeIs('users.index')" />
         @endcan
     </x-sidebar.dropdown>
     @endcan
