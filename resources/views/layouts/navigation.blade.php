@@ -42,7 +42,7 @@
     @endcan
 
     <!-- Administração (Somente Admin) -->
-    @role('admin')
+    @role('super-admin')
     <x-sidebar.dropdown 
         title="Administração" :active="request()->routeIs('admin.*')" icon="fa-solid fa-lock">
             <x-sidebar.dropdown-link href="{{ route('admin.system-logs') }}" title="Logs do Sistema" :active="request()->routeIs('admin.system-logs')" />

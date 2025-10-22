@@ -19,7 +19,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Users Management
-    Route::prefix('users')->middleware('can:manage-users')->group(function () {
+    Route::prefix('users')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('users.index')->middleware('can:view-users');
         Route::get('/create', [UserController::class, 'create'])->name('users.create')->middleware('can:create-users');
         Route::post('/', [UserController::class, 'store'])->name('users.store')->middleware('can:create-users');
