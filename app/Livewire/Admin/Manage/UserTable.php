@@ -5,6 +5,8 @@ namespace App\Livewire\Admin\Manage;
 use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserTable extends Component
 {
@@ -44,6 +46,9 @@ class UserTable extends Component
 
         $users = $query->paginate($this->perPage);
 
-        return view('livewire.admin.manage.user-table', compact('users'));
+        //Permissões
+        $permissions = Permission::all();
+
+        return view('livewire.admin.manage.user-table', compact('users', 'permissions'));
     }
 }

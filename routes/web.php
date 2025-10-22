@@ -25,6 +25,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [UserController::class, 'store'])->name('users.store')->middleware('can:create-users');
         Route::get('/{user}/edit', [UserController::class, 'edit'])->name('users.edit')->middleware('can:edit-users');
         Route::put('/{user}', [UserController::class, 'update'])->name('users.update')->middleware('can:edit-users');
+        Route::put('/{user}/permission', [UserController::class, 'permission'])->name('users.permission')->middleware('can:edit-users');
+        Route::patch('/{user}/password', [UserController::class, 'password'])->name('users.password')->middleware('can:edit-users');
     });
 
     // Reports

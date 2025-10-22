@@ -46,8 +46,8 @@
     <div class="md:col-span-3">
         <x-form.label value="Gênero" for="gender" />
         <x-form.select name="gender" id="gender">
-            <option value="Masculino" @selected(old('gender', $user->gender ?? 'Masculino') === 'Masculino')>Masculino</option>
-            <option value="Feminino" @selected(old('gender', $user->gender ?? 'Feminino') === 'Feminino')>Feminino</option>
+            <option value="Masculino" @selected(old('gender', $user->gender ?? '') === 'Masculino')>Masculino</option>
+            <option value="Feminino" @selected(old('gender', $user->gender ?? '') === 'Feminino')>Feminino</option>
         </x-form.select>
         <x-form.error :messages="$errors->get('gender')" />
     </div>

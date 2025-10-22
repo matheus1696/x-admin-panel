@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Manage;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Manage\UserPermissonRequest;
 use App\Http\Requests\Admin\Manage\UserStoreRequest;
 use App\Http\Requests\Admin\Manage\UserUpdateRequest;
 use App\Models\User;
@@ -37,7 +38,9 @@ class UserController extends Controller
         $request['password'] = Hash::make('senha123');
         User::create($request->all())->assignRole('user');
 
-        return redirect()->route('users.index');
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'Cadastro de usuário realizada com sucesso!');
     }
 
     /**
@@ -57,6 +60,32 @@ class UserController extends Controller
         //
         $user->update($request->only('matriculation', 'cpf', 'name', 'birth_date', 'gender', 'phone_personal', 'phone_work', 'status'));
 
-        return redirect()->back();
+        return redirect()
+            ->back()
+            ->with('success', 'Informações do usuário atualizadas com sucesso!');
+    }
+
+    public function permission(UserPermissonRequest $request, User $user)
+    {
+        $permissions = $request->input('permissions', []);
+
+        // Sincroniza as permissões do usuário
+        $user->syncPermissions($permissions);
+
+        // Retorna com mensagem de sucesso
+        return redirect()
+            ->back()
+            ->with('success', 'Permissões do usuário atualizadas com sucesso!');
+    }
+
+    public function password(User $user)
+    {
+        $user->password = Hash::make('Senha123');
+        $user->save();
+
+        // Retorna com mensagem de sucesso
+        return redirect()
+            ->back()
+            ->with('success', 'Redefinição de Senha do usuário realizada com sucesso!');
     }
 }

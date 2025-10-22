@@ -84,11 +84,81 @@
                     <x-page.table-td>
                         <div class="flex items-center justify-center gap-2">
                             @can('edit-users')
-                                <x-button.btn-table color="blue" title="Editar Usuário">
+                                <x-button.btn-table title="Editar Usuário">
                                     <a href="{{ route('users.edit', $user) }}">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
                                 </x-button.btn-table>
+                            @endcan
+                            @can('permission-users')
+                                <x-modal title="Permissões do Usuário">
+                                    <x-slot name="button">
+                                        <x-button.btn-table color="blue" title="Permissões do Usuário">
+                                            <i class="fa-solid fa-lock"></i>
+                                        </x-button.btn-table>
+                                    </x-slot>
+
+                                    <x-slot name="body">
+                                        <form action="{{ route('users.permission', $user) }}" method="POST">
+                                            @csrf @method('PUT')
+
+                                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                                {{-- Loop de Permissions --}}
+                                                @foreach ($permissions as $permission)
+                                                    <div class="flex items-center gap-2">
+                                                        <input type="checkbox" id="permission_{{ $permission->id }}_{{ $user->id }}" name="permissions[]" value="{{ $permission->name }}" class="hidden peer" {{ $user->hasPermissionTo($permission->name) ? 'checked' : '' }}
+                                                        >
+                                                        <label for="permission_{{ $permission->id }}_{{ $user->id }}" class="w-full text-xs text-gray-700 border rounded-lg cursor-pointer px-3 py-2 text-center hover:border-blue-500 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition">
+                                                            {{ ucfirst($permission->name) }}
+                                                        </label>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+
+                                            {{-- Botão de envio --}}
+                                            <div class="w-full border-t border-blue-200 mt-4 pt-4">
+                                                <x-button.btn-submit class="w-full" value="Salvar Permissões" />
+                                            </div>
+                                        </form>
+                                    </x-slot>
+                                </x-modal>
+                            @endcan                            
+                            @can('password-users')
+                                <x-modal title="Redefinir Senha">
+                                    <x-slot name="button">
+                                        <x-button.btn-table color="blue" title="Redefinir Senha do Usuário">
+                                            <i class="fa-solid fa-key"></i>
+                                        </x-button.btn-table>
+                                    </x-slot>
+
+                                    <x-slot name="body">
+                                        <!-- Mensagem de confirmação -->
+                                        <div class="space-y-4 py-5">
+                                            <h3 class="text-lg font-semibold text-gray-900"></h3>
+                                            <p class="text-gray-600 text-sm text-center">
+                                                Tem certeza que deseja redefinir a senha do usuário 
+                                                <strong class="text-blue-700">{{ $user->name }}</strong>?
+                                            </p>
+                                            <p class="text-xs text-center text-gray-500 bg-yellow-50 p-3 rounded border border-yellow-300">
+                                                <i class="fa-solid fa-info-circle mr-1 text-yellow-500"></i>
+                                                A nova senha será: <code class="font-mono bg-gray-100 px-1 rounded">Senha123</code>
+                                            </p>
+                                        </div>
+
+                                        <!-- Botões de ação -->
+                                        <div class="flex gap-3 justify-center">
+                                            <button type="button" 
+                                                    @click="isModalOpen = false"
+                                                    class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                                                Cancelar
+                                            </button>
+                                            <x-button.link-primary href=" {{route('users.password', $user) }}" >
+                                                <i class="fa-solid fa-key mr-2"></i>
+                                                Confirmar Alteração
+                                            </x-button.link-primary>
+                                        </div>
+                                    </x-slot>
+                                </x-modal>
                             @endcan
                         </div>
                     </x-page.table-td>

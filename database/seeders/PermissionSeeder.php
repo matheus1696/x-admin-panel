@@ -20,13 +20,11 @@ class PermissionSeeder extends Seeder
         // Criar permissões
         $permissions = [
             'view-dashboard',
-            'view-reports',
-            'manage-users',
-                'view-users', 
-                'create-users',
-                'edit-users',
-            'manage-roles',
-            'manage-settings'
+            'view-users',
+            'create-users',
+            'edit-users',
+            'password-users',
+            'permission-users',
         ];
 
         foreach ($permissions as $permission) {
@@ -34,18 +32,20 @@ class PermissionSeeder extends Seeder
         }
 
         // Criar roles
-        $admin = Role::firstOrCreate(['name' => 'admin']);
-        $manager = Role::firstOrCreate(['name' => 'manager']); 
+        $admin = Role::firstOrCreate(['name' => 'super-admin']);
+        $managerUser = Role::firstOrCreate(['name' => 'manager-user']); 
         $user = Role::firstOrCreate(['name' => 'user']);
 
         // Dar todas as permissões ao admin
         $admin->givePermissionTo($permissions);
 
         // Permissões do manager
-        $manager->givePermissionTo([
-            'view-dashboard',
-            'view-users', 
-            'view-reports'
+        $managerUser->givePermissionTo([
+            'view-users',
+            'create-users',
+            'edit-users',
+            'password-users',
+            'permission-users',
         ]);
 
         // Permissões do user básico

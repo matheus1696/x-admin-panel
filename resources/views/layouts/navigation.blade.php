@@ -6,7 +6,7 @@
     @endcan
 
     <!-- Usuários -->
-    @can('manage-users')
+    @canany(['create-users', 'view-users'])
     <x-sidebar.dropdown title="Gerenciamento de Usuários" :active="request()->routeIs('users.*')" icon="fa-solid fa-users">
         @can('create-users')
             <x-sidebar.dropdown-link href="{{ route('users.create') }}" title="Criar Usuário" :active="request()->routeIs('users.create')" />
@@ -15,27 +15,27 @@
             <x-sidebar.dropdown-link href="{{ route('users.index') }}" title="Listar Usuários" :active="request()->routeIs('users.index')" />
         @endcan
     </x-sidebar.dropdown>
-    @endcan
+    @endcanany
 
     <!-- Relatórios -->
-    @can('view-reports')
+    @can('view-dashboard')
         <x-sidebar.link href="{{ route('reports.index') }}" icon="fa-solid fa-chart-bar" title="Relatórios" />
     @endcan
 
     <!-- Configurações -->
-    @can('manage-settings')
+    @can('view-dashboard')
         <x-sidebar.dropdown title="Configurações" :active="request()->routeIs('settings.*') || request()->routeIs('profile.*') || request()->routeIs('roles.*')" icon="fa-solid fa-sliders" >
 
             <!-- Perfil do Usuário -->
             <x-sidebar.dropdown-link href="{{ route('profile.edit') }}" title="Meu Perfil" :active="request()->routeIs('profile.edit')" />
         
             <!-- Configurações do Sistema -->
-            @can('manage-settings')
+            @can('view-dashboard')
                 <x-sidebar.dropdown-link href="{{ route('settings.general') }}" title="Configurações Gerais" :active="request()->routeIs('settings.general')" />
             @endcan
 
             <!-- Gerenciar Roles e Permissões -->
-            @can('manage-roles')
+            @can('view-dashboard')
             <x-sidebar.dropdown-link href="{{ route('roles.index') }}" title="Gerenciar Permissões" :active="request()->routeIs('roles.*')" />
             @endcan
     </x-sidebar.dropdown>
