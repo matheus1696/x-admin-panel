@@ -6,10 +6,7 @@
     >
         <x-slot name="button">
             @can('create-users')
-                <x-button.link-primary href="{{ route('users.index') }}">
-                    <i class="fa-solid fa-rotate-left"></i>
-                    Voltar para Lista
-                </x-button.link-primary>
+                <x-button.btn-link href="{{ route('users.index') }}" value="Voltar para Lista" icon="fa-solid fa-rotate-left" />
             @endcan
         </x-slot>
     </x-page.header>

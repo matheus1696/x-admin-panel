@@ -152,10 +152,13 @@
                                                     class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                                                 Cancelar
                                             </button>
-                                            <x-button.link-primary href=" {{route('users.password', $user) }}" >
-                                                <i class="fa-solid fa-key mr-2"></i>
-                                                Confirmar Alteração
-                                            </x-button.link-primary>
+                                            <form action="{{route('users.password', $user) }}" method="post">
+                                                @csrf @method('PATCH')
+                                                <x-button.btn-submit value="Confirmar Alteração">
+                                                    <i class="fa-solid fa-key mr-2"></i>
+                                                    Confirmar Alteração
+                                                </x-button.btn-submit>
+                                            </form>                                            
                                         </div>
                                     </x-slot>
                                 </x-modal>

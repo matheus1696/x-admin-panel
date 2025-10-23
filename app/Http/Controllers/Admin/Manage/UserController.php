@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Manage\UserPermissonRequest;
 use App\Http\Requests\Admin\Manage\UserStoreRequest;
 use App\Http\Requests\Admin\Manage\UserUpdateRequest;
+use App\Mail\Admin\Manage\UserCreateMail;
+use App\Mail\Admin\Manage\UserResetPasswordMail;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -35,8 +37,12 @@ class UserController extends Controller
     public function store(UserStoreRequest $request)
     {
         //
-        $request['password'] = Hash::make('senha123');
-        User::create($request->all())->assignRole('user');
+        $password = 'Senha123';
+        $request['password'] = $password;
+        $user = User::create($request->all())->assignRole('user');
+
+        // Envia o e-mail de boas-vindas
+        Mail::to($user->email)->send(new UserCreateMail($user, $password));
 
         return redirect()
             ->route('users.index')
@@ -80,8 +86,12 @@ class UserController extends Controller
 
     public function password(User $user)
     {
-        $user->password = Hash::make('Senha123');
+        $password = 'Senha123';
+        $user->password = Hash::make($password);
         $user->save();
+
+        // Envia o e-mail de aviso
+        Mail::to($user->email)->send(new UserResetPasswordMail($user, $password));
 
         // Retorna com mensagem de sucesso
         return redirect()

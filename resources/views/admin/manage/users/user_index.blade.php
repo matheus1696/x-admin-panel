@@ -3,10 +3,7 @@
     <x-page.header icon="fa-solid fa-users" title="Gerenciar Usuários" subtitle="Gerencie os usuários do sistema">
         <x-slot name="button">
             @can('create-users')
-                <x-button.link-primary href="{{ route('users.create') }}">
-                    <i class="fa-solid fa-plus"></i>
-                    Novo Usuário
-                </x-button.link-primary>
+                <x-button.btn-link href="{{ route('users.create') }}" value="Novo Usuário" icon="fa-solid fa-plus" />
             @endcan
         </x-slot>
     </x-page.header>

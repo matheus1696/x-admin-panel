@@ -22,7 +22,7 @@ class UserStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'matriculation' => ['required','string','max:9','unique:users,matriculation','regex:/^\d{2}\.\d{3}-\d{2}$/'],
+            'matriculation' => ['required','string','max:9','unique:users,matriculation'],
             'cpf' => ['required','string','size:14','unique:users,cpf','formato_cpf','cpf'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required','string','email:rfc,dns','max:255','unique:users,email'],
@@ -38,7 +38,6 @@ class UserStoreRequest extends FormRequest
         return [
             'matriculation.required' => 'A matrícula é obrigatória.',
             'matriculation.unique' => 'Esta matrícula já está cadastrada.',
-            'matriculation.regex' => 'Formato inválido. Use o padrão 00.000-00.',
 
             'cpf.required' => 'O CPF é obrigatório.',
             'cpf.unique' => 'Este CPF já está em uso.',

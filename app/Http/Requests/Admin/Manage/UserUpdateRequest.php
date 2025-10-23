@@ -27,7 +27,6 @@ class UserUpdateRequest extends FormRequest
                 'required',
                 'string',
                 'max:9',
-                'regex:/^\d{2}\.\d{3}-\d{2}$/',
                 Rule::unique('users', 'matriculation')->ignore($this->user->id),
             ],
             'cpf' => [
@@ -59,7 +58,6 @@ class UserUpdateRequest extends FormRequest
         return [
             'matriculation.required' => 'A matrícula é obrigatória.',
             'matriculation.unique' => 'Esta matrícula está cadastrada.',
-            'matriculation.regex' => 'Formato inválido.',
 
             'cpf.required' => 'O CPF é obrigatório.',
             'cpf.unique' => 'Este CPF já está em uso.',
