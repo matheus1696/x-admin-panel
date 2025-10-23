@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Profile\ProfilePasswordUpdateRequest;
 use App\Http\Requests\Profile\ProfileUpdateRequest;
+use App\Mail\Profile\UserPasswordResetedMail;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -47,6 +49,9 @@ class ProfileController extends Controller
         
         $user = User::find(Auth::user()->id);
         $user->update($request->only('password', 'password_default'));
+
+        // Envia o e-mail de aviso
+        Mail::to($user->email)->send(new UserPasswordResetedMail($user));
 
         return redirect()->route('profile.edit')->with('success', 'Alteração de senha realizada com sucesso');
     }

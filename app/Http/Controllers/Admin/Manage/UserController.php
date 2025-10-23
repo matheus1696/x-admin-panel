@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\Manage\UserUpdateRequest;
 use App\Mail\Admin\Manage\UserCreateMail;
 use App\Mail\Admin\Manage\UserResetPasswordMail;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -78,6 +79,9 @@ class UserController extends Controller
         // Sincroniza as permissões do usuário
         $user->syncPermissions($permissions);
 
+        // Logout de todas as sessões do usuário
+        DB::table('sessions')->where('user_id', $user->id)->delete();
+
         // Retorna com mensagem de sucesso
         return redirect()
             ->back()
@@ -88,10 +92,14 @@ class UserController extends Controller
     {
         $password = 'Senha123';
         $user->password = Hash::make($password);
+        $user->password_default = true;
         $user->save();
 
         // Envia o e-mail de aviso
         Mail::to($user->email)->send(new UserResetPasswordMail($user, $password));
+
+        // Logout de todas as sessões do usuário
+        DB::table('sessions')->where('user_id', $user->id)->delete();   
 
         // Retorna com mensagem de sucesso
         return redirect()

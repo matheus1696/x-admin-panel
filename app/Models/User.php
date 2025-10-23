@@ -24,6 +24,7 @@ class User extends Authenticatable
         'name_filter',
         'email',
         'password',
+        'password_default',
         'avatar',
         'phone_personal',
         'phone_work',

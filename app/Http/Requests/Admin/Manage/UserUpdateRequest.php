@@ -23,8 +23,8 @@ class UserUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'matriculation' => [ 'required','string','max:9',Rule::unique('users', 'matriculation')->ignore($this->user->id),],
-            'cpf' => ['required','string','formato_cpf','cpf',Rule::unique('users', 'cpf')->ignore($this->user->id),],
+            'matriculation' => [ 'nullable','string','max:9',Rule::unique('users', 'matriculation')->ignore($this->user->id),],
+            'cpf' => ['nullable','string','formato_cpf','cpf',Rule::unique('users', 'cpf')->ignore($this->user->id),],
             'name' => ['required', 'string', 'max:255'],
             'birth_date' => ['nullable', 'date', 'before_or_equal:today', 'after:1950-01-01'],
             'gender' => ['nullable', 'in:Masculino,Feminino'],

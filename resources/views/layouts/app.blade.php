@@ -227,6 +227,8 @@
                         {{ $slot }}
                     </main>
                 </div>
+
+                <x-alert.flash />
             </div>
         </div>
 

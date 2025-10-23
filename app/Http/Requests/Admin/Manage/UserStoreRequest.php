@@ -22,8 +22,8 @@ class UserStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'matriculation' => ['required','string','max:9','unique:users,matriculation'],
-            'cpf' => ['required','string','size:14','unique:users,cpf','formato_cpf','cpf'],
+            'matriculation' => ['nullable','string','max:9','unique:users,matriculation'],
+            'cpf' => ['nullable','string','size:14','unique:users,cpf','formato_cpf','cpf'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required','string','email:rfc,dns','max:255','unique:users,email'],
             'birth_date' => ['nullable', 'date', 'before_or_equal:today', 'after:1950-01-01'],
