@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\Admin\Manage\UserController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,8 @@ Route::middleware('auth')->group(function () {
         Route::put('/{user}/permission', [UserController::class, 'permission'])->name('users.permission')->middleware('can:permission-users');
         Route::patch('/{user}/password', [UserController::class, 'password'])->name('users.password')->middleware('can:password-users');
     });
+
+    Route::get('/log', [ActivityLogController::class, 'index'])->name('users.index')->middleware('can:view-users');
 
     // Reports
     Route::prefix('reports')->middleware('can:view-reports')->group(function () {
