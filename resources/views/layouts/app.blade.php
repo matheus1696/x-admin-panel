@@ -156,8 +156,8 @@
                             </a>
                         @endif
                         
-                        @if (Route::has('password.edit'))
-                            <a href="{{ route('password.edit') }}" 
+                        @if (Route::has('profile.password.edit'))
+                            <a href="{{ route('profile.password.edit') }}" 
                             class="flex items-center gap-3 w-full py-3 px-4 rounded-xl transition-all duration-200 
                                     hover:bg-blue-50 hover:text-blue-700 text-gray-700 font-medium 
                                     hover:translate-x-1">

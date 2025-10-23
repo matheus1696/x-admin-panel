@@ -1,9 +1,5 @@
 <x-app-layout>
-    <x-page.header 
-        icon="fa-solid fa-users" 
-        title="Edição de Usuário" 
-        subtitle="Atualize os dados do usuário do sistema"
-    >
+    <x-page.header icon="fa-solid fa-users" title="Edição de Usuário" subtitle="Atualize os dados do usuário do sistema">
         <x-slot name="button">
             @can('create-users')
                 <x-button.btn-link href="{{ route('users.index') }}" value="Voltar para Lista" icon="fa-solid fa-rotate-left" />
@@ -16,8 +12,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-blue-200 overflow-hidden">
             <!-- Formulário -->
             <form action="{{ route('users.update', $user) }}" method="POST" class="p-6">
-                @csrf
-                @method('PUT')
+                @csrf @method('PUT')
 
                 @include('admin.manage.users._partials.user_form')
 

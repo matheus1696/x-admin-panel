@@ -1,5 +1,4 @@
 <x-app-layout>
-
     <x-page.header icon="fa-solid fa-users" title="Criação de Usuários" subtitle="Realize a criação do novo usuários do sistema">
         <x-slot name="button">
             @can('create-users')

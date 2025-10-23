@@ -1,0 +1,87 @@
+<x-app-layout>
+    <x-page.header 
+        icon="fa-solid fa-user" 
+        title="Meu Perfil" 
+        subtitle="Atualize seus dados pessoais"
+    >
+        <x-slot name="button">
+            <x-button.btn-link href="{{ route('dashboard') }}" value="Voltar" icon="fa-solid fa-rotate-left" />
+        </x-slot>
+    </x-page.header>
+
+    <div class="py-6">
+        <div class="bg-white rounded-xl shadow-sm border border-blue-200 overflow-hidden">
+            <form action="{{ route('profile.update') }}" method="POST" class="p-6">
+                @csrf
+                @method('PATCH')
+
+                <div class="grid grid-cols-2 md:grid-cols-12 gap-4">
+
+                    <!-- Matricula -->
+                    <div class="col-span-2 md:col-span-2">
+                        <x-form.label value="Matrícula" for="matriculation" />
+                        <x-form.input type="text" name="matriculation" id="matriculation" value="{{ old('matriculation', Auth::user()->matriculation) }}" placeholder="00.000-00" maxlength="9" required onkeyup="handleMatriculation(event)" />
+                        <x-form.error :messages="$errors->get('matriculation')" />
+                    </div>
+
+                    <!-- CPF -->
+                    <div class="col-span-2 md:col-span-2">
+                        <x-form.label value="CPF" for="cpf" />
+                        <x-form.input type="text" name="cpf" id="cpf" value="{{ old('cpf', Auth::user()->cpf) }}" placeholder="000.000.000-00" required onkeyup="handleCPF(event)" maxlength="14"/>
+                        <x-form.error :messages="$errors->get('cpf')" />
+                    </div>
+
+                    <!-- Nome -->
+                    <div class="col-span-2 md:col-span-4">
+                        <x-form.label value="Nome" for="name" />
+                        <x-form.input type="text" name="name" id="name" value="{{ old('name', Auth::user()->name) }}" placeholder="Nome completo do usuário" required />
+                        <x-form.error :messages="$errors->get('name')" />
+                    </div>
+
+                    <!-- Email (somente leitura) -->
+                    <div class="col-span-2 md:col-span-4">
+                        <x-form.label value="E-mail" for="email" />
+                        <x-form.input type="email" id="email" value="{{ Auth::user()->email }}" disabled />
+                    </div>
+
+                    <!-- Data de Nascimento -->
+                    <div class="md:col-span-3">
+                        <x-form.label value="Data de Nascimento" for="birth_date" />
+                        <x-form.input type="date" name="birth_date" id="birth_date" value="{{ old('birth_date', Auth::user()->birth_date ? \Carbon\Carbon::parse(Auth::user()->birth_date)->format('Y-m-d') : '') }}" min="1950-01-01" max="{{ now()->format('Y-m-d') }}" />
+                        <x-form.error :messages="$errors->get('birth_date')" />
+                    </div>
+
+                    <!-- Gênero -->
+                    <div class="md:col-span-3">
+                        <x-form.label value="Gênero" for="gender" />
+                        <x-form.select name="gender" id="gender">
+                            <option value="Masculino" @selected(old('gender', Auth::user()->gender) === 'Masculino')>Masculino</option>
+                            <option value="Feminino" @selected(old('gender', Auth::user()->gender) === 'Feminino')>Feminino</option>
+                            <option value="Outro" @selected(old('gender', Auth::user()->gender) === 'Outro')>Outro</option>
+                        </x-form.select>
+                        <x-form.error :messages="$errors->get('gender')" />
+                    </div>
+
+                    <!-- Telefone Pessoal -->
+                    <div class="md:col-span-3">
+                        <x-form.label value="Telefone Pessoal" for="phone_personal" />
+                        <x-form.input type="text" name="phone_personal" id="phone_personal" value="{{ old('phone_personal', Auth::user()->phone_personal) }}" placeholder="(00) 00000-0000" onkeyup="handlePhone(event)" maxlength="15"/>
+                        <x-form.error :messages="$errors->get('phone_personal')" />
+                    </div>
+
+                    <!-- Telefone Profissional -->
+                    <div class="md:col-span-3">
+                        <x-form.label value="Telefone Profissional" for="phone_work" />
+                        <x-form.input type="text" name="phone_work" id="phone_work" value="{{ old('phone_work', Auth::user()->phone_work) }}" placeholder="(00) 00000-0000" onkeyup="handlePhone(event)" maxlength="15" />
+                        <x-form.error :messages="$errors->get('phone_work')" />
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center justify-end pt-6 mt-6 border-t border-blue-100">
+                    <x-button.btn-submit value="Salvar Alterações"/>
+                </div>
+            </form>
+        </div>
+    </div>
+</x-app-layout>
