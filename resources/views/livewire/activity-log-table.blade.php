@@ -23,12 +23,13 @@
             <!-- Usuário -->
             <div class="md:col-span-2">
                 <x-form.label value="Usuário" />
-                <x-form.select wire:model.live="user">
-                    <option value="">Todos Usuários</option>
-                    @foreach ($users as $user)
-                        <option value="{{$user->uuid}}">{{ $user->name }}</option>
-                    @endforeach
-                </x-form.select>
+                <x-form.select 
+                    wire:model.live="user"
+                    name="user"
+                    :collection="$users"
+                    label-field="name"
+                    value-field="uuid"
+                />
             </div>
 
             <!-- URL -->
@@ -40,12 +41,11 @@
             <!-- Itens por página -->
             <div class="md:col-span-2">
                 <x-form.label value="Itens por página" />
-                <x-form.select wire:model.live="perPage">
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                </x-form.select>
+                <x-form.select 
+                    wire:model.live="perPage"
+                    name="perPage"
+                    :options="['10','25','50','100']"
+                />
             </div>
         </x-slot>
     </x-page.filter>

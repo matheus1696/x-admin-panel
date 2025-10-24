@@ -8,7 +8,7 @@
 ])
 
 <!-- 🎯 Filter Panel Component -->
-<div x-data="{ openAccordion: {{ $defaultOpen ? 'true' : 'false' }} }" class="mb-8 bg-white rounded-2xl shadow-md border border-{{ $color }}-200/60 overflow-hidden transition-all duration-300 hover:shadow-lg">
+<div x-data="{ openAccordion: {{ $defaultOpen ? 'true' : 'false' }} }" class="mb-8 bg-white rounded-2xl shadow-md border border-{{ $color }}-200/60 transition-all duration-300 hover:shadow-lg">
     <!-- Cabeçalho -->
     <div class="px-6 py-2 border-b border-{{ $color }}-100 bg-gradient-to-r from-{{ $color }}-50/70 to-white backdrop-blur-sm flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-2">
