@@ -18,13 +18,19 @@ class PermissionSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Criar permissões
-        $permissions = [
+        $permissions = 
+            [
             'view-dashboard',
+                
+            //Gerenciameto dos Usuários
             'view-users',
             'create-users',
             'edit-users',
             'password-users',
             'permission-users',
+
+            //Visualização de Logs
+            'view-logs'
         ];
 
         foreach ($permissions as $permission) {
@@ -33,6 +39,7 @@ class PermissionSeeder extends Seeder
 
         // Criar roles
         $admin = Role::firstOrCreate(['name' => 'super-admin']);
+        $managerLog = Role::firstOrCreate(['name' => 'manager-log']); 
         $managerUser = Role::firstOrCreate(['name' => 'manager-user']); 
         $user = Role::firstOrCreate(['name' => 'user']);
 
@@ -46,6 +53,11 @@ class PermissionSeeder extends Seeder
             'edit-users',
             'password-users',
             'permission-users',
+        ]);
+
+        // Permissões do manager
+        $managerLog->givePermissionTo([
+            'view-logs'
         ]);
 
         // Permissões do user básico

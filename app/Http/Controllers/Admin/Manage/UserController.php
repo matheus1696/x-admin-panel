@@ -20,6 +20,7 @@ class UserController extends Controller
      */
     public function index()
     {
+        //
         return view('admin.manage.users.user_index');
     }
 
@@ -99,7 +100,7 @@ class UserController extends Controller
         Mail::to($user->email)->send(new UserResetPasswordMail($user, $password));
 
         // Logout de todas as sessões do usuário
-        DB::table('sessions')->where('user_id', $user->id)->delete();   
+        DB::table('sessions')->where('user_id', $user->id)->delete();
 
         // Retorna com mensagem de sucesso
         return redirect()

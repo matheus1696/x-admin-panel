@@ -31,7 +31,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/{user}/password', [UserController::class, 'password'])->name('users.password')->middleware('can:password-users');
     });
 
-    Route::get('/log', [ActivityLogController::class, 'index'])->name('users.index')->middleware('can:view-users');
+    Route::get('/log', [ActivityLogController::class, 'index'])->name('admin.logs.index')->middleware('can:view-logs');
 
     // Reports
     Route::prefix('reports')->middleware('can:view-reports')->group(function () {

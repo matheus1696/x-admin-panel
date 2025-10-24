@@ -15,11 +15,9 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
-            $table->string('user_name')->nullable();
             $table->string('ip_address', 45)->nullable();
             $table->string('method', 10)->nullable();
             $table->string('url')->nullable();
-            $table->string('action')->nullable(); // ex: view, create, update, delete
             $table->timestamps();
         });
     }

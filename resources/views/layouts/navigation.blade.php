@@ -42,13 +42,11 @@
     @endcan
 
     <!-- Administração (Somente Admin) -->
-    @role('super-admin')
+    @can('view-logs')
     <x-sidebar.dropdown 
         title="Administração" :active="request()->routeIs('admin.*')" icon="fa-solid fa-lock">
-            <x-sidebar.dropdown-link href="{{ route('admin.system-logs') }}" title="Logs do Sistema" :active="request()->routeIs('admin.system-logs')" />
-        
-            <x-sidebar.dropdown-link href="{{ route('admin.backup') }}" title="Backup" :active="request()->routeIs('admin.backup')" />
+            <x-sidebar.dropdown-link href="{{ route('admin.logs.index') }}" title="Logs do Sistema" :active="request()->routeIs('admin.logs.index')" />
     </x-sidebar.dropdown>
-    @endrole
+    @endcan
 
 </nav>

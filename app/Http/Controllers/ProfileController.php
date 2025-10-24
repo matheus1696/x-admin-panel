@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\LogActivity;
 use App\Http\Requests\Profile\ProfilePasswordUpdateRequest;
 use App\Http\Requests\Profile\ProfileUpdateRequest;
 use App\Mail\Profile\UserPasswordResetedMail;
@@ -20,8 +19,6 @@ class ProfileController extends Controller
     public function edit(): View
     {
         return view('profile.profile_edit');
-
-        LogActivity::add('view');
     }
 
     /**

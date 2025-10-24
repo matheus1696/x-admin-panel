@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class ActivityLog extends Model
@@ -15,6 +16,10 @@ class ActivityLog extends Model
         'url',
         'action',
     ];
+
+    public function User() : BelongsTo {
+        return $this->belongsTo(User::class);
+    }
     
     //UUID
     protected static function booted()
