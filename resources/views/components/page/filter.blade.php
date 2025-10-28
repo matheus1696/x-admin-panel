@@ -8,9 +8,9 @@
 ])
 
 <!-- 🎯 Filter Panel Component -->
-<div x-data="{ openAccordion: {{ $defaultOpen ? 'true' : 'false' }} }" class="mb-8 bg-white rounded-2xl shadow-md border border-{{ $color }}-200/60 transition-all duration-300 hover:shadow-lg">
+<div x-data="{ openAccordion: {{ $defaultOpen ? 'true' : 'false' }} }" class="mb-6 bg-white rounded-2xl shadow-sm border border-{{ $color }} text-xs transition-all duration-200">
     <!-- Cabeçalho -->
-    <div class="px-6 py-2 border-b border-{{ $color }}-100 bg-gradient-to-r from-{{ $color }}-50/70 to-white backdrop-blur-sm flex flex-wrap items-center justify-between gap-3">
+    <div class="px-6 py-2.5 border-b border-{{ $color }}-100 flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-2">
             <div class="size-7 rounded-xl bg-{{ $color }}-100 flex items-center justify-center shadow-inner">
                 <i class="fa-solid fa-filter text-{{ $color }}-600 text-xs"></i>

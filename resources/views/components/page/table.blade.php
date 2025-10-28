@@ -3,7 +3,7 @@
     'striped' => true,
     'hover' => true,
     'borderColor' => 'blue-600/20',
-    'headerColor' => 'blue-50/80',
+    'headerColor' => 'blue-50',
 ])
 
 <!-- 📊 Data Table Component -->

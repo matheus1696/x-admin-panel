@@ -12,5 +12,7 @@
                 : 'border-gray-300 bg-gray-50 text-gray-700 placeholder-gray-400 focus:border-indigo-700')
     ]) }}
 >
+    <option disabled selected>Selecione uma Opção</option>
+
     {{$slot}}
 </select>
