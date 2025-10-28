@@ -14,34 +14,48 @@
 
             <div class="md:col-span-2">
                 <x-form.label value="Status" />
-                <x-form.select wire:model.live="status">
-                    <option value="">Todos</option>
-                    <option value="active">Ativo</option>
-                    <option value="inactive">Inativo</option>
-                </x-form.select>
+                <x-form.select-search 
+                    wire:model.live="status"
+                    name="status"
+                    :options="[
+                        ['value' => '', 'label' => 'Todos'],
+                        ['value' => 'active', 'label' => 'Ativo'],
+                        ['value' => 'inactive', 'label' => 'Inativo'],
+                    ]"
+                    default="Selecione a quantidade de itens"
+                />
             </div>
 
             <div class="md:col-span-2">
                 <x-form.label value="Itens por página" />
-                <x-form.select wire:model.live="perPage">
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                </x-form.select>
+                <x-form.select-search 
+                    wire:model.live="perPage"
+                    name="perPage"
+                    :options="[
+                        ['value' => 10, 'label' => '10'],
+                        ['value' => 25, 'label' => '25'],
+                        ['value' => 50, 'label' => '50'],
+                        ['value' => 100, 'label' => '100']
+                    ]"
+                    default="Selecione a quantidade de itens"
+                />
             </div>
         </x-slot>
 
         {{-- Filtros Avançados --}}
         <x-slot name="showAdvanced">
             <div class="md:col-span-2">
-                <x-form.label value="Ordenar por" />
-                <x-form.select wire:model.live="sort">
-                    <option value="name_asc">Nome (A–Z)</option>
-                    <option value="name_desc">Nome (Z–A)</option>
-                    <option value="email_asc">Email (A–Z)</option>
-                    <option value="email_desc">Email (Z–A)</option>
-                </x-form.select>
+                <x-form.label value="Ordenar por" />                
+                <x-form.select-search 
+                    wire:model.live="sort"
+                    name="sort"
+                    :options="[
+                        ['value' => 'name_asc', 'label' => 'Nome (A–Z)'],
+                        ['value' => 'name_desc', 'label' => 'Nome (Z–A)'],
+                        ['value' => 'email_asc', 'label' => 'Email (A–Z)'],
+                        ['value' => 'email_desc', 'label' => 'Email (Z–A)'],
+                    ]"
+                />
             </div>
         </x-slot>
     </x-page.filter>
