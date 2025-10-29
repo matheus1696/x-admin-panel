@@ -10,7 +10,7 @@
         : config('xadminpanel.class_sidebar_link')
     }}">
     <span class="flex items-center gap-3">
-        <i class="{{ $icon }} text-center text-xs {{ $active ? 'text-white' : 'text-blue-500' }}"></i>
+        <i class="{{ $icon }} text-center text-sm {{ $active ? 'text-white' : 'text-blue-500' }}"></i>
         <span class="text-xs" :class="sidebarExpanded ? 'opacity-100 whitespace-nowrap transition-all duration-200' : 'hidden opacity-0'"> 
             {{ $title }} 
         </span>

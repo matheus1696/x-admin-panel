@@ -11,8 +11,6 @@ return [
     'class_sidebar' => 'font-semibold text-xl text-gray-800 leading-tight',
     'class_sidebar_link' => 'text-gray-700 hover:bg-blue-100 hover:text-blue-700 hover:translate-x-1 border border-transparent hover:border-blue-700',
     'class_sidebar_link_active' => 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-100',
-    'class_page_header_title' => '',
-    'class_page_header_subtitle' => 'text-sm text-gray-600 mt-1',
 
     /*
     |--------------------------------------------------------------------------
