@@ -2,7 +2,7 @@
     'pagination' => null,
     'striped' => true,
     'hover' => true,
-    'borderColor' => 'blue-600/20',
+    'borderColor' => 'blue-100',
     'headerColor' => 'blue-50',
 ])
 
