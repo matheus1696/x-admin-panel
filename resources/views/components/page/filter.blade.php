@@ -1,30 +1,25 @@
 @props([
     'title' => 'Filtros',
-    'subtitle' => null,
-    'color' => 'blue',
     'showBasic' => null,
     'showAdvanced' => null,
-    'defaultOpen' => false,
+    'accordionOpen' => false,
 ])
 
 <!-- 🎯 Filter Panel Component -->
-<div x-data="{ openAccordion: {{ $defaultOpen ? 'true' : 'false' }} }" class="mb-8 bg-white rounded-2xl shadow-md border border-{{ $color }}-200/60 transition-all duration-300 hover:shadow-lg">
+<div x-data="{ openAccordion: {{ $accordionOpen ? 'true' : 'false' }} }" class="mb-8 bg-white {{ config('xadminpanel.class_filter') }}">
     <!-- Cabeçalho -->
-    <div class="px-6 py-2.5 border-b border-{{ $color }}-100 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex flex-wrap items-center justify-between gap-3 {{ config('xadminpanel.class_filter_header') }}">
         <div class="flex items-center gap-2">
-            <div class="size-7 rounded-xl bg-{{ $color }}-100 flex items-center justify-center shadow-inner">
-                <i class="fa-solid fa-filter text-{{ $color }}-600 text-xs"></i>
+            <div class="flex items-center justify-center shadow-inner {{ config('xadminpanel.class_filter_icon') }}">
+                <i class="fa-solid fa-filter"></i>
             </div>
             <div>
-                <h3 class="font-semibold text-gray-900 leading-none text-sm">{{ $title }}</h3>
-                @if($subtitle)
-                    <p class="text-xs text-gray-600 mt-1">{{ $subtitle }}</p>
-                @endif
+                <h3 class="font-semibold text-gray-800 leading-none text-sm">{{ $title }}</h3>
             </div>
         </div>
 
         @if($showAdvanced)
-            <button @click="openAccordion = !openAccordion" class="flex items-center gap-2 text-xs font-medium text-{{ $color }}-700 transition-all duration-200">
+            <button @click="openAccordion = !openAccordion" class="flex items-center gap-2 text-xs font-medium transition-all duration-200">
                 <i class="fa-solid fa-sliders text-xs transition-transform duration-300"
                    :class="{ 'rotate-90': openAccordion }"></i>
                 <span x-text="openAccordion ? 'Ocultar Filtros' : 'Filtros Avançados'"></span>
