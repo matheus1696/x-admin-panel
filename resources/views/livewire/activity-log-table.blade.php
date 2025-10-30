@@ -23,14 +23,7 @@
             <!-- Usuário -->
             <div class="md:col-span-2">
                 <x-form.label value="Usuário" />
-                <x-form.select-search
-                    wire:model.live="user" 
-                    name="user" 
-                    :collection="$users" 
-                    value-field="uuid" 
-                    label-field="name" 
-                    default="Todos os usuários" 
-                />
+                <x-form.select-search wire:model.live="user" name="user" :collection="$users" value-field="uuid" label-field="name" default="Todos os usuários" />
             </div>
 
             <!-- URL -->

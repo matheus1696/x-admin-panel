@@ -16,7 +16,7 @@
                     
                     <!-- Cabeçalho -->
                     <tr>
-                        <td align="center" style="background-color:#2563eb; padding:24px;">
+                        <td align="center" style="background-color:#167038; padding:24px;">
                             <h1 style="color:#ffffff; font-size:22px; margin:0; font-weight:600;">Senha redefinida com sucesso!</h1>
                         </td>
                     </tr>
@@ -35,7 +35,7 @@
                             <!-- Botão de acesso -->
                             <div style="text-align:center; margin:30px 0;">
                                 <a href="{{ config('app.url') }}" 
-                                   style="background-color:#2563eb; color:#ffffff; text-decoration:none; font-size:14px; font-weight:600; padding:14px 28px; border-radius:8px; display:inline-block;">
+                                   style="background-color:#167038; color:#ffffff; text-decoration:none; font-size:14px; font-weight:600; padding:14px 28px; border-radius:8px; display:inline-block;">
                                    Fazer Login
                                 </a>
                             </div>

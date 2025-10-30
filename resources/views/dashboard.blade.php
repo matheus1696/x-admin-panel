@@ -2,7 +2,7 @@
 
     <div class="py-6 space-y-6">
         <!-- Card de Boas-vindas -->
-        <div class="bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 text-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="bg-gradient-to-r from-green-600 via-green-500 to-green-400 text-white rounded-2xl shadow-xl overflow-hidden">
             <div class="p-8">
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div class="flex-1">
@@ -12,13 +12,13 @@
                             </div>
                             <div>
                                 <h3 class="text-2xl font-bold">Olá, {{ Auth::user()->name }}! 👋</h3>
-                                <p class="text-blue-100 text-sm mt-1">
+                                <p class="text-green-100 text-sm mt-1">
                                     Bem-vindo de volta ao <strong>{{ config('app.name') }}</strong>
                                 </p>
                             </div>
                         </div>
                         
-                        <div class="flex flex-wrap gap-4 mt-4 text-blue-100 text-sm">
+                        <div class="flex flex-wrap gap-4 mt-4 text-green-100 text-sm">
                             <div class="flex items-center gap-2">
                                 <i class="fa-solid fa-calendar-check"></i>
                                 <span>Hoje é {{ now()->format('d/m/Y') }}</span>
@@ -38,12 +38,12 @@
                 <!-- Ações Rápidas -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3 ml-2">
-                        <i class="fa-solid fa-bolt text-blue-600"></i>
+                        <i class="fa-solid fa-bolt text-green-600"></i>
                         Ações Rápidas
                     </h3>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <a href="#" class="p-4 bg-gray-50 hover:bg-blue-50 rounded-xl border border-gray-200 hover:border-blue-300 transition-all duration-200 group text-center">
-                            <i class="fa-solid fa-user-plus text-blue-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
+                        <a href="#" class="p-4 bg-gray-50 hover:bg-green-50 rounded-xl border border-gray-200 hover:border-green-300 transition-all duration-200 group text-center">
+                            <i class="fa-solid fa-user-plus text-green-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
                             <p class="text-sm font-medium text-gray-700">Novo Usuário</p>
                         </a>
                         <a href="#" class="p-4 bg-gray-50 hover:bg-green-50 rounded-xl border border-gray-200 hover:border-green-300 transition-all duration-200 group text-center">
@@ -65,7 +65,7 @@
             <!-- Notificações -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3 ml-2">
-                    <i class="fa-solid fa-bell text-blue-600"></i>
+                    <i class="fa-solid fa-bell text-green-600"></i>
                     Notificações
                 </h3>
                 @if(Auth::user()->password_default)
@@ -85,7 +85,7 @@
                                 Você ainda está usando a senha padrão do sistema. Por motivos de segurança, recomendamos que altere sua senha imediatamente.
                             </p>
                             <div class="w-full mt-4">
-                                <x-button.btn-link href="{{ route('profile.password.edit') }}" color="yellow" value="Alterar Senha" icon="fa-solid fa-key" />
+                                <x-button.btn-link color="yellow" href="{{ route('profile.password.edit') }}" value="Alterar Senha" icon="fa-solid fa-key" />
                             </div>
                         </div>
                     </div>

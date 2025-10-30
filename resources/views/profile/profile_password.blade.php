@@ -10,7 +10,7 @@
     </x-page.header>
 
     <div class="w-full md:w-1/2 mx-auto mt-5 py-6">
-        <div class="bg-white rounded-xl shadow-sm border border-blue-200 overflow-hidden">
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
             <form action="{{ route('profile.password.update') }}" method="POST" class="p-6">
                 @csrf
                 @method('PATCH')
@@ -41,7 +41,7 @@
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center justify-end pt-6 mt-6 border-t border-blue-100">
+                <div class="flex items-center justify-end pt-6 mt-6">
                     <x-button.btn-submit value="Alterar Senha"/>
                 </div>
             </form>

@@ -9,7 +9,7 @@
 
     <div class="py-6">
         <!-- Card do Formulário -->
-        <div class="bg-white rounded-xl shadow-sm border border-blue-200 overflow-hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <!-- Formulário -->
             <form action="{{ route('users.update', $user) }}" method="POST" class="p-6">
                 @csrf @method('PUT')
@@ -17,7 +17,7 @@
                 @include('admin.manage.users._partials.user_form')
 
                 <!-- Actions -->
-                <div class="flex items-center justify-end pt-6 mt-6 border-t border-blue-100">
+                <div class="flex items-center justify-end pt-6 mt-6 border-t border-gray-100">
                     <x-button.btn-submit value="Salvar Alteração"/>
                 </div>
             </form>

@@ -76,10 +76,10 @@
                     <x-page.table-td>
                         <div class="flex items-center gap-2">
                             <span
-                                class="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">{{ $user->name }}</span>
+                                class="font-semibold text-gray-900 group-hover:text-green-700 transition-colors">{{ $user->name }}</span>
                             @if ($user->id === auth()->id())
                                 <span
-                                    class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full font-medium">Você</span>
+                                    class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full font-medium">Você</span>
                             @endif
                         </div>
                     </x-page.table-td>
@@ -107,7 +107,7 @@
                             @can('permission-users')
                                 <x-modal title="Permissões do Usuário">
                                     <x-slot name="button">
-                                        <x-button.btn-table color="blue" title="Permissões do Usuário">
+                                        <x-button.btn-table title="Permissões do Usuário">
                                             <i class="fa-solid fa-lock"></i>
                                         </x-button.btn-table>
                                     </x-slot>
@@ -122,7 +122,7 @@
                                                     <div class="flex items-center gap-2">
                                                         <input type="checkbox" id="permission_{{ $permission->id }}_{{ $user->id }}" name="permissions[]" value="{{ $permission->name }}" class="hidden peer" {{ $user->hasPermissionTo($permission->name) ? 'checked' : '' }}
                                                         >
-                                                        <label for="permission_{{ $permission->id }}_{{ $user->id }}" class="w-full text-xs text-gray-700 border rounded-lg cursor-pointer px-3 py-2 text-center hover:border-blue-500 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition">
+                                                        <label for="permission_{{ $permission->id }}_{{ $user->id }}" class="w-full text-xs text-gray-700 border rounded-lg cursor-pointer px-3 py-2 text-center hover:border-green-500 peer-checked:bg-green-600 peer-checked:text-white peer-checked:border-green-600 transition">
                                                             {{ ucfirst($permission->name) }}
                                                         </label>
                                                     </div>
@@ -130,7 +130,7 @@
                                             </div>
 
                                             {{-- Botão de envio --}}
-                                            <div class="w-full border-t border-blue-200 mt-4 pt-4">
+                                            <div class="w-full border-t border-green-200 mt-4 pt-4">
                                                 <x-button.btn-submit class="w-full" value="Salvar Permissões" />
                                             </div>
                                         </form>
@@ -140,7 +140,7 @@
                             @can('password-users')
                                 <x-modal title="Redefinir Senha">
                                     <x-slot name="button">
-                                        <x-button.btn-table color="blue" title="Redefinir Senha do Usuário">
+                                        <x-button.btn-table title="Redefinir Senha do Usuário">
                                             <i class="fa-solid fa-key"></i>
                                         </x-button.btn-table>
                                     </x-slot>
@@ -151,7 +151,7 @@
                                             <h3 class="text-lg font-semibold text-gray-900"></h3>
                                             <p class="text-gray-600 text-sm text-center">
                                                 Tem certeza que deseja redefinir a senha do usuário 
-                                                <strong class="text-blue-700">{{ $user->name }}</strong>?
+                                                <strong class="text-green-700">{{ $user->name }}</strong>?
                                             </p>
                                             <p class="text-xs text-center text-gray-500 bg-yellow-50 p-3 rounded border border-yellow-300">
                                                 <i class="fa-solid fa-info-circle mr-1 text-yellow-500"></i>

@@ -32,24 +32,24 @@
 
         <div class="flex">
             <!-- Sidebar Desktop -->
-            <aside class="hidden lg:flex flex-col bg-gradient-to-b from-blue-50 to-white border-r border-blue-200/50 shadow-lg z-30 transition-all duration-300 ease-in-out overflow-hidden"
+            <aside class="hidden lg:flex flex-col bg-gradient-to-b from-green-50 to-white shadow-lg z-30 transition-all duration-300 ease-in-out overflow-hidden"
                    :class="sidebarExpanded ? 'w-72' : 'w-20'"
                    @mouseenter="sidebarExpanded = true"
                    @mouseleave="sidebarExpanded = false">
                 
                 <!-- Logo Compacta -->
-                <div class="h-16 flex items-center justify-center border-b border-blue-200/50 bg-gradient-to-r from-blue-50 to-blue-100">
+                <div class="h-16 flex items-center justify-center border-b border-green-200/50 bg-gradient-to-l from-green-600 to-green-800">
                     <x-application-logo class="w-8 h-8"/>
                 </div>
 
                 <!-- Navigation Desktop -->
-                <nav class="flex-1 py-1.5 space-y-1 overflow-hidden pb-2" :class="sidebarExpanded ? 'px-2' : 'px-1'" x-data="{ activeDropdown: null }">
+                <nav class="flex-1 py-2 space-y-1.5 overflow-hidden pb-2" :class="sidebarExpanded ? 'px-2' : 'px-1'" x-data="{ activeDropdown: null }">
                     <!-- Dashboard -->
                     @include('layouts.navigation')
                 </nav>
 
                 <!-- Footer Desktop -->
-                <div class="p-3 border-t border-blue-100/50 bg-white/80 text-center">
+                <div class="p-3 border-t border-green-100/50 bg-white/80 text-center">
                     <p class="text-[10px] text-gray-500 whitespace-nowrap transition-all duration-300 ease-in-out"
                        :class="sidebarExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4 overflow-hidden'">
                         {{ config('app.name') }} v{{ config('app.version', '1.0.0') }}
@@ -66,16 +66,17 @@
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="translate-x-0 opacity-100"
                 x-transition:leave-end="-translate-x-full opacity-0" 
-                class="fixed inset-y-0 left-0 w-80 bg-gradient-to-b from-blue-50 to-white z-50 shadow-2xl overflow-y-auto border-r border-blue-200/50 lg:hidden">
+                class="fixed inset-y-0 left-0 w-80 bg-gradient-to-b from-green-50 to-white z-50 shadow-2xl overflow-y-auto border-r border-green-200/50 lg:hidden">
 
                 <!-- Topo -->
-                <div class="h-16 flex items-center justify-between px-6 bg-gradient-to-r from-blue-50 to-blue-100 border-b border-blue-600/30">
-                    <div class="flex-1">
+                <div class="h-16 flex items-center justify-between px-6 bg-gradient-to-r from-green-600 to-green-800 border-b border-green-600/30">
+                    <div class="flex-1 flex items-center gap-2 uppercase font-semibold text-white">
                         <x-application-logo class="w-8 h-8"/>
+                        <span class="text-lg">{{ config('app.name') }}</span>
                     </div>
 
                     <button @click="open = false" class="rounded-lg p-2.5 transition-all duration-200 hover:scale-110 active:scale-95">
-                        <i class="fa-solid fa-xmark text-blue-800 text-lg"></i>
+                        <i class="fa-solid fa-xmark text-white text-lg"></i>
                     </button>
                 </div>
 
@@ -85,7 +86,7 @@
                 </nav>
 
                 <!-- Footer Mobile -->
-                <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-blue-100/50 bg-white/80">
+                <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-green-100/50 bg-white/80">
                     <div class="text-center">
                         <p class="text-xs text-gray-600">
                             {{ config('app.name') }} v{{ config('app.version', '1.0.0') }}
@@ -98,47 +99,39 @@
             </aside>
 
             <!-- Profile Aside -->
-            <aside x-show="profile" 
-                x-cloak 
-                x-transition:enter="transition ease-out duration-300" 
-                x-transition:enter-start="translate-x-full"
-                x-transition:enter-end="translate-x-0"
-                x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="translate-x-0"
-                x-transition:leave-end="translate-x-full" 
-                class="fixed inset-y-0 right-0 w-80 bg-white z-50 shadow-lg overflow-y-auto">
+            <aside x-show="profile" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" class="fixed inset-y-0 right-0 w-80 bg-white z-50 shadow-lg overflow-y-auto">
                 
                 <div class="max-w-xs mx-auto overflow-hidden">
                     <!-- Header com avatar -->
-                    <div class="relative bg-gradient-to-r from-blue-600 to-blue-800 h-20 flex items-center justify-end px-4">
+                    <div class="relative bg-gradient-to-r from-green-600 to-green-800 h-16 flex items-center justify-end px-4">
                         <button @click="profile = !profile" 
                                 class="p-2 rounded-full transition-all duration-200 hover:scale-110">
                             <i class="fa-solid fa-times text-white text-lg"></i>
                         </button>
                         
                         <!-- Avatar no centro -->
-                        <div class="absolute -bottom-4 left-1/2 transform -translate-x-1/2 
+                        <div class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 
                                     size-16 flex justify-center items-center rounded-full 
-                                    bg-gradient-to-br from-blue-500 to-blue-700 text-white 
-                                    shadow-xl border border-white text-2xl uppercase font-semibold">
+                                    bg-gradient-to-br from-green-500 to-green-700 text-white 
+                                    shadow-xl border-2 border-white text-2xl uppercase font-semibold">
                             {{ Str::substr(Auth::user()->name, 0, 2) }}
                         </div>
                     </div>
 
                     <!-- Informações do usuário -->
-                    <div class="mt-8 pb-6 text-center px-6 space-y-1.5 border-b border-blue-300">
+                    <div class="mt-10 pb-6 text-center px-6 space-y-1.5 border-b border-green-300">
                         <p class="mb-3 font-bold text-gray-900 text-lg truncate">{{ Auth::user()->name }}</p>
                         <div class="flex flex-col justify-center items-center gap-2 text-xs text-gray-500">
                             <div class="flex items-center gap-1">
-                                <i class="fa-solid fa-user text-blue-500"></i>
+                                <i class="fa-solid fa-user text-green-500"></i>
                                 <span class="truncate">{{ Auth::user()->name }}</span>
                             </div>
                             <div class="flex items-center gap-1">
-                                <i class="fa-solid fa-building text-blue-500"></i>
+                                <i class="fa-solid fa-building text-green-500"></i>
                                 <span class="truncate">{{ Auth::user()->Unit->name ?? 'N/A' }}</span>
                             </div>
                             <div class="flex items-center gap-1">
-                                <i class="fa-solid fa-users text-blue-500"></i>
+                                <i class="fa-solid fa-users text-green-500"></i>
                                 <span class="truncate">{{ Auth::user()->Queue->name ?? 'N/A' }}</span>
                             </div>
                         </div>
@@ -148,20 +141,16 @@
                     <div class="space-y-2 px-4 py-4">
                         @if (Route::has('profile.edit'))
                             <a href="{{ route('profile.edit') }}" 
-                            class="flex items-center gap-3 w-full py-3 px-4 rounded-xl transition-all duration-200
-                                    hover:bg-blue-50 hover:text-blue-700 text-gray-700 font-medium
-                                    hover:translate-x-1">
-                                <i class="fa-solid fa-user text-blue-500 w-5"></i>
+                            class="flex items-center gap-3 w-full py-3 px-4 rounded-xl transition-all duration-200 hover:bg-green-100 text-green-700 font-medium hover:translate-x-1">
+                                <i class="fa-solid fa-user w-5"></i>
                                 <span>Meus Dados</span>
                             </a>
                         @endif
                         
                         @if (Route::has('profile.password.edit'))
                             <a href="{{ route('profile.password.edit') }}" 
-                            class="flex items-center gap-3 w-full py-3 px-4 rounded-xl transition-all duration-200 
-                                    hover:bg-blue-50 hover:text-blue-700 text-gray-700 font-medium 
-                                    hover:translate-x-1">
-                                <i class="fa-solid fa-lock text-blue-500 w-5"></i>
+                            class="flex items-center gap-3 w-full py-3 px-4 rounded-xl transition-all duration-200 hover:bg-green-100 text-green-700 font-medium hover:translate-x-1">
+                                <i class="fa-solid fa-lock w-5"></i>
                                 <span>Alterar Senha</span>
                             </a>
                         @endif
@@ -186,13 +175,12 @@
             <!-- Conteúdo -->
             <div class="flex-1 flex flex-col min-h-screen">
                 <!-- Header -->
-                <header class="w-full flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16 bg-gradient-to-r from-blue-50 to-blue-100 border-b border-blue-600/30">
+                <header class="w-full flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16 bg-gradient-to-r from-green-600 to-green-800">
                     <!-- Left Section: Menu Hamburger + Logo -->
                     <div class="w-full flex items-center gap-3 sm:gap-4">
                         <!-- Menu Hamburger (mobile) -->
-                        <button @click="open = true; sidebarExpanded = true" 
-                                class="lg:hidden py-2 px-3 rounded-lg transition-all duration-200 hover:bg-blue-200/50">
-                            <i class="fa-solid fa-bars text-blue-700 text-xl"></i>
+                        <button @click="open = true; sidebarExpanded = true" class="lg:hidden py-2 px-3 rounded-lg transition-all duration-200 hover:bg-green-800">
+                            <i class="fa-solid fa-bars text-white text-xl"></i>
                         </button>
 
                         <!-- Logo Mobile -->
@@ -209,9 +197,9 @@
                         <div class="relative">
                             <button @click="profile = !profile" 
                                     class="size-10 rounded-full font-semibold uppercase transition-all duration-200
-                                        bg-gradient-to-br from-blue-600 to-blue-800 text-white shadow-lg
-                                        hover:from-blue-700 hover:to-blue-900 hover:scale-105 active:scale-95
-                                        border-2 border-white/20">
+                                        bg-gradient-to-br from-green-600 to-green-800 text-white shadow-lg
+                                        hover:from-green-700 hover:to-green-900 hover:scale-105 active:scale-95
+                                        border border-white">
                                 {{ Str::substr(Auth::user()->name, 0, 2) }}
                             </button>
                             

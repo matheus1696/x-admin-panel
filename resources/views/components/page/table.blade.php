@@ -1,17 +1,17 @@
-@props([ 'pagination' => null ])
+@props([ 'pagination' => null, 'color' => 'green' ])
 
 <!-- 📊 Data Table Component -->
 <div class="overflow-hidden w-full">
     <!-- Table Wrapper -->
-    <div class="overflow-x-auto bg-white {{ config('xadminpanel.class_table') }}">
+    <div class="overflow-x-auto bg-white border border-gray-100 text-xs rounded-2xl shadow-sm">
         <table class="w-full table-fixed">
             <!-- Cabeçalho -->
-            <thead class="font-semibold uppercase tracking-wider {{ config('xadminpanel.class_thead') }}">
+            <thead class="font-semibold uppercase tracking-wider bg-{{ $color }}-200 text-{{ $color }}-800 text-left">
                 {{ $thead ?? ''}}
             </thead>
 
             <!-- Corpo -->
-            <tbody class="divide-y {{ config('xadminpanel.class_tbody') }}">
+            <tbody class="divide-y divide-gray-100 [&>tr:hover]:bg-{{ $color }}-50">
                 {{ $tbody ?? ''}}
             </tbody>
         </table>

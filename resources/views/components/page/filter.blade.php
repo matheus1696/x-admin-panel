@@ -1,16 +1,17 @@
 @props([
     'title' => 'Filtros',
+    'color' => 'green',
     'showBasic' => null,
     'showAdvanced' => null,
     'accordionOpen' => false,
 ])
 
 <!-- 🎯 Filter Panel Component -->
-<div x-data="{ openAccordion: {{ $accordionOpen ? 'true' : 'false' }} }" class="mb-8 bg-white {{ config('xadminpanel.class_filter') }}">
+<div x-data="{ openAccordion: {{ $accordionOpen ? 'true' : 'false' }} }" class="mb-8 bg-white border border-gray-200 text-xs rounded-2xl shadow-sm">
     <!-- Cabeçalho -->
-    <div class="flex flex-wrap items-center justify-between gap-3 {{ config('xadminpanel.class_filter_header') }}">
+    <div class="flex flex-wrap items-center justify-between gap-3 px-3 py-2.5 border-b border-gray-200 text-{{ $color }}-600">
         <div class="flex items-center gap-2">
-            <div class="flex items-center justify-center shadow-inner {{ config('xadminpanel.class_filter_icon') }}">
+            <div class="flex items-center justify-center shadow-inner size-8 rounded-xl bg-{{ $color }}-100 text-xs">
                 <i class="fa-solid fa-filter"></i>
             </div>
             <div>

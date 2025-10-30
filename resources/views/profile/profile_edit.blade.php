@@ -10,7 +10,7 @@
     </x-page.header>
 
     <div class="py-6">
-        <div class="bg-white rounded-xl shadow-sm border border-blue-200 overflow-hidden">
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
             <form action="{{ route('profile.update') }}" method="POST" class="p-6">
                 @csrf
                 @method('PATCH')
@@ -78,7 +78,7 @@
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center justify-end pt-6 mt-6 border-t border-blue-100">
+                <div class="flex items-center justify-end pt-6 mt-6">
                     <x-button.btn-submit value="Salvar Alterações"/>
                 </div>
             </form>
