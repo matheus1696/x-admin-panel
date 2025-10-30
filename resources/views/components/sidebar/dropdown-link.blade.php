@@ -10,10 +10,10 @@
         : 'text-gray-600 hover:bg-green-100 hover:text-green-700 hover:translate-x-1'
     )
 ]) }}>
-    <div class="w-1.5 h-1.5 rounded-full bg-green-300 {{ $active ? 'bg-green-600' : '' }}"></div>
+    <div class="w-1.5 h-1.5 rounded-full {{ $active ? 'bg-green-700' : 'bg-green-300' }}"></div>
     <span class="text-xs whitespace-nowrap">{{ $title }}</span>
     
     @if($active)
-        <div class="ml-auto w-1.5 h-1.5 bg-green-600 rounded-full animate-pulse"></div>
+        <div class="ml-auto w-1.5 h-1.5 bg-green-700 rounded-full animate-pulse"></div>
     @endif
 </a>

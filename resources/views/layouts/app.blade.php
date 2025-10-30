@@ -38,12 +38,24 @@
                    @mouseleave="sidebarExpanded = false">
                 
                 <!-- Logo Compacta -->
-                <div class="h-16 flex items-center justify-center border-b border-green-200/50 bg-gradient-to-l from-green-600 to-green-800">
+                <div class="h-16 flex items-center justify-center gap-2 border-b border-green-200/50 bg-gradient-to-l from-green-600 to-green-800 uppercase font-semibold text-white">
                     <x-application-logo class="w-8 h-8"/>
+                    <span 
+                        x-show="sidebarExpanded" 
+                        x-transition:enter="transition ease-out duration-1000"
+                        x-transition:enter-start="opacity-0 -translate-y-2"
+                        x-transition:enter-end="opacity-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-100"
+                        x-transition:leave-start="opacity-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 -translate-y-2"
+                        class="text-lg"
+                    >
+                        {{ config('app.name') }}
+                    </span>
                 </div>
 
                 <!-- Navigation Desktop -->
-                <nav class="flex-1 py-2 space-y-1.5 overflow-hidden pb-2" :class="sidebarExpanded ? 'px-2' : 'px-1'" x-data="{ activeDropdown: null }">
+                <nav class="flex-1 py-3 space-y-1.5 overflow-hidden pb-2" :class="sidebarExpanded ? 'px-2' : 'px-1'" x-data="{ activeDropdown: null }">
                     <!-- Dashboard -->
                     @include('layouts.navigation')
                 </nav>

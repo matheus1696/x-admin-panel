@@ -22,7 +22,7 @@
         x-bind:disabled="loading"
         type="button"
         x-on:click="loading = true; $el.form.submit()"
-        class ='w-full bg-{{$color}}-600 hover:bg-{{$color}}-800 text-white px-2.5 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl transform  ease-in-out focus:outline-none focus:ring-4 focus:ring-{{$color}}-500/30 border-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none text-xs'
+        class ='w-full bg-{{$color}}-700 hover:bg-{{$color}}-600 text-white px-2.5 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-xl transform  ease-in-out focus:outline-none focus:ring-4 focus:ring-{{$color}}-500/30 border-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none text-xs'
     >
         <!-- Conteúdo normal -->
         <div x-show="!loading" class="flex items-center justify-center gap-2 w-full">

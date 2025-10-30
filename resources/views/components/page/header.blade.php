@@ -6,7 +6,7 @@
     'button' => null,
 ])
 
-<div class="flex items-center justify-between gap-0.5 px-1.5">
+<div class="flex items-center justify-between gap-0.5 px-3">
     <div>
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             <i class="{{ $icon }} mr-2 text-{{ $color }}-600"></i>     
