@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-600 via-blue-500 to-cyan-500 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-600 to-green-700 py-12 px-4 sm:px-6 lg:px-8">
         
         <div class="flex justify-center items-center mb-10">
             <img src="{{ asset('asset/img/logo_white_full.png') }}" alt="X-AdminPanel Logo" class="h-10">
@@ -29,7 +29,7 @@
 
                 <!-- Actions -->
                 <div class="grid grid-cols-2 items-center justify-between pt-4">
-                    <a href="{{ route('login') }}" class="text-sm text-indigo-600 hover:text-indigo-500 font-medium flex items-center">
+                    <a href="{{ route('login') }}" class="text-sm text-green-600 hover:text-green-500 font-medium flex items-center">
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>

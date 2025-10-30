@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-600 via-blue-500 to-cyan-500 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-600 to-green-700 py-12 px-4 sm:px-6 lg:px-8">
         
         <div class="flex justify-center items-center mb-10">
             <img src="{{ asset('asset/img/logo_white_full.png') }}" alt="X-AdminPanel Logo" class="h-10">
@@ -11,7 +11,7 @@
                 <h2 class="text-2xl font-bold text-gray-900">{{ __("Create your account") }}</h2>
                 <p class="mt-2 text-sm text-gray-600">
                     {{ __("Already registered?") }}
-                    <a href="{{ route('login') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                    <a href="{{ route('login') }}" class="font-medium text-green-600 hover:text-green-500">
                         {{ __("Sign in to your account") }}
                     </a>
                 </p>
@@ -78,14 +78,14 @@
                 <!-- Terms & Privacy (Opcional) -->
                 <div class="flex items-start">
                     <div class="flex items-center h-5">
-                        <input id="terms" name="terms" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" required>
+                        <input id="terms" name="terms" type="checkbox" class="focus:ring-green-500 h-4 w-4 text-green-600 border-gray-300 rounded" required>
                     </div>
                     <div class="ml-3 text-sm">
                         <label for="terms" class="font-medium text-gray-700">
                             {{ __("I agree to the") }}
-                            <a href="#" class="text-indigo-600 hover:text-indigo-500">{{ __("Terms of Service") }}</a>
+                            <a href="#" class="text-green-600 hover:text-green-500">{{ __("Terms of Service") }}</a>
                             {{ __("and") }}
-                            <a href="#" class="text-indigo-600 hover:text-indigo-500">{{ __("Privacy Policy") }}</a>
+                            <a href="#" class="text-green-600 hover:text-green-500">{{ __("Privacy Policy") }}</a>
                         </label>
                     </div>
                 </div>

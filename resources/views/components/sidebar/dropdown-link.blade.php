@@ -10,7 +10,7 @@
         : 'text-gray-600 hover:bg-green-100 hover:text-green-700 hover:translate-x-1'
     )
 ]) }}>
-    <div class="w-1.5 h-1.5 rounded-full {{ $active ? 'bg-green-700' : 'bg-green-300' }}"></div>
+    <div class="w-1.5 h-1.5 rounded-full {{ $active ? 'bg-green-700' : 'bg-green-400' }}"></div>
     <span class="text-xs whitespace-nowrap">{{ $title }}</span>
     
     @if($active)

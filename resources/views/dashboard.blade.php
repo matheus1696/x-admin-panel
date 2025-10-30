@@ -33,8 +33,8 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <div class="col-span-2">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-5">
+            <div class="col-span-3">
                 <!-- Ações Rápidas -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3 ml-2">

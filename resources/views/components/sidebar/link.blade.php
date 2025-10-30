@@ -9,7 +9,7 @@
     class="flex items-center gap-3 px-4 py-2 rounded-lg mx-2 font-medium text-xs transition-all duration-200  
         {{ $active 
             ? 'bg-green-700 text-white shadow-md' 
-            : 'text-green-700 hover:bg-green-50 hover:text-green-700 border border-transparent hover:border-green-700 hover:translate-x-1' }}"
+            : 'text-gray-700 hover:bg-green-50 hover:text-green-700 border border-transparent hover:border-green-700 hover:translate-x-1' }}"
 >
     <!-- Ícone e título -->
     <span class="flex items-center gap-3">

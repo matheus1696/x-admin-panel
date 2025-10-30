@@ -1,8 +1,9 @@
 <x-guest-layout>
-    <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-600 via-blue-500 to-cyan-500 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-600 to-green-700 py-12 px-4 sm:px-6 lg:px-8">
         
-        <div class="flex justify-center items-center mb-10">
-            <img src="{{ asset('asset/img/logo_white_full.png') }}" alt="X-AdminPanel Logo" class="h-10">
+        <div class="flex items-center gap-2 uppercase font-semibold text-white mb-6">
+            <img src="{{ asset('asset/img/logo.png') }}" alt="Logo X-AdminPanel" class="h-10">
+            <span class="text-2xl">{{ config('app.name') }}</span>
         </div>
         <div class="max-w-md w-full space-y-6 bg-white rounded-2xl shadow-2xl p-8">
             <!-- Header -->
@@ -12,7 +13,7 @@
                     
                     @if (Route::has('register'))
                         {{ __("or") }}  
-                        <a href="{{ route('register') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                        <a href="{{ route('register') }}" class="font-medium text-green-600 hover:text-green-500">
                             {{ __("create a new account") }}
                         </a>
                     @endif
@@ -42,12 +43,12 @@
                 <!-- Remember Me & Forgot Password -->
                 <div class="flex items-center justify-between">
                     <label for="remember_me" class="inline-flex items-center">
-                        <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
+                        <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-green-600 shadow-sm focus:ring-green-500" name="remember">
                         <span class="ms-2 text-xs text-gray-600">{{ __('Remember me') }}</span>
                     </label>
 
                     @if (Route::has('password.request'))
-                        <a class="text-xs text-indigo-600 hover:text-indigo-500 font-medium" href="{{ route('password.request') }}">
+                        <a class="text-xs text-green-600 hover:text-green-500 font-medium" href="{{ route('password.request') }}">
                             {{ __('Forgot your password?') }}
                         </a>
                     @endif
@@ -58,6 +59,9 @@
                     <x-button.btn-submit value="{{ __('Log in') }}" />
                 </div>
             </form>
+        </div>
+        <div class="mt-2 text-[9px] text-center text-white uppercase tracking-wider font-medium">
+            <p>Desenvolvido por <a href="https://webxperts.com.br">Webxperts</a> {{ config('app.name') }}</p>
         </div>
     </div>
 </x-guest-layout>

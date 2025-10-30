@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-600 via-blue-500 to-cyan-500 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-600 to-green-700 py-12 px-4 sm:px-6 lg:px-8">
         
         <div class="flex justify-center items-center mb-10">
             <img src="{{ asset('asset/img/logo_white_full.png') }}" alt="X-AdminPanel Logo" class="h-10">
@@ -66,7 +66,7 @@
 
                 <!-- Back to Login -->
                 <div class="text-center">
-                    <a href="{{ route('login') }}" class="text-sm text-indigo-600 hover:text-indigo-500 font-medium">
+                    <a href="{{ route('login') }}" class="text-sm text-green-600 hover:text-green-500 font-medium">
                         {{ __('Back to login') }}
                     </a>
                 </div>

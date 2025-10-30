@@ -30,7 +30,7 @@
             :class="sidebarExpanded ? 'opacity-100' : 'hidden opacity-0'"
             class="transition-all duration-200"
         >
-            <svg :class="open ? 'rotate-90' : 'rotate-0'" class="w-4 h-4 transform transition-transform duration-200 {{ $active ? 'text-white' : 'text-green-700' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg :class="open ? 'rotate-90' : 'rotate-0'" class="w-4 h-4 transform transition-transform duration-200 {{ $active ? 'text-white' : 'text-gray-700' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
         </div>
@@ -45,7 +45,7 @@
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 -translate-y-2"
-        class="ml-6 mt-2 space-y-1 border-l-2 border-green-300 pl-3"
+        class="ml-6 mt-2 space-y-1 border-l-2 border-green-400 pl-3"
     >
         {{ $slot }}
     </div>
