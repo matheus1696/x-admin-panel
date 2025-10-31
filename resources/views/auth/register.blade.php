@@ -1,9 +1,8 @@
 <x-guest-layout>
     <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-600 to-green-700 py-12 px-4 sm:px-6 lg:px-8">
         
-        <div class="flex justify-center items-center mb-10">
-            <img src="{{ asset('asset/img/logo_white_full.png') }}" alt="X-AdminPanel Logo" class="h-10">
-        </div>
+        <!-- Logo -->
+        @include('auth._partials.auth-logo')
         
         <div class="max-w-md w-full space-y-6 bg-white rounded-2xl shadow-2xl p-8">
             <!-- Header -->
@@ -23,55 +22,28 @@
                 <!-- Name -->
                 <div>
                     <x-form.label for="name" :value="__('Name')" />
-                    <x-form.input 
-                        name="name" 
-                        type="text" 
-                        :value="old('name')" 
-                        required 
-                        autofocus 
-                        autocomplete="name" 
-                        placeholder="Seu nome completo" 
-                    />
+                    <x-form.input name="name" type="text" :value="old('name')" required autofocus autocomplete="name" placeholder="{{ __('Your Name') }}" />
                     <x-form.error :messages="$errors->get('name')"/>
                 </div>
 
                 <!-- Email Address -->
                 <div>
                     <x-form.label for="email" :value="__('Email')" />
-                    <x-form.input 
-                        name="email" 
-                        type="email" 
-                        :value="old('email')" 
-                        required 
-                        autocomplete="email" 
-                        placeholder="Seu endereço de email" 
-                    />
+                    <x-form.input name="email" type="email" :value="old('email')" required autocomplete="email" placeholder="{{ __('Email Address') }}" />
                     <x-form.error :messages="$errors->get('email')"/>
                 </div>
 
                 <!-- Password -->
                 <div>
                     <x-form.label for="password" :value="__('Password')" />
-                    <x-form.input 
-                        name="password" 
-                        type="password" 
-                        required 
-                        autocomplete="new-password" 
-                        placeholder="Sua senha" 
-                    />
+                    <x-form.input name="password" type="password" required placeholder="{{ __('Password') }}" />
                     <x-form.error :messages="$errors->get('password')"/>
                 </div>
 
                 <!-- Confirm Password -->
                 <div>
                     <x-form.label for="password_confirmation" :value="__('Confirm Password')" />
-                    <x-form.input 
-                        name="password_confirmation" 
-                        type="password" 
-                        required 
-                        autocomplete="new-password" 
-                        placeholder="Confirme sua senha" 
-                    />
+                    <x-form.input name="password_confirmation" type="password" required placeholder="{{ __('Confirm Password') }}" />
                     <x-form.error :messages="$errors->get('password_confirmation')"/>
                 </div>
 
@@ -96,5 +68,8 @@
                 </div>
             </form>
         </div>
+
+        <!-- Footer -->
+        @include('auth._partials.footer-card')
     </div>
 </x-guest-layout>

@@ -1,16 +1,15 @@
 <x-guest-layout>
     <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-600 to-green-700 py-12 px-4 sm:px-6 lg:px-8">
         
-        <div class="flex justify-center items-center mb-10">
-            <img src="{{ asset('asset/img/logo_white_full.png') }}" alt="X-AdminPanel Logo" class="h-10">
-        </div>
+        <!-- Logo -->
+        @include('auth._partials.auth-logo')
         
         <div class="max-w-md w-full space-y-6 bg-white rounded-2xl shadow-2xl p-8">
             <!-- Header -->
             <div class="text-center">
                 <h2 class="text-2xl font-bold text-gray-900">{{ __("Reset your password") }}</h2>
-                <p class="mt-3 text-sm text-gray-600">
-                    {{ __("Forgot your password? No problem. Just let us know your email address and we will email you a password reset link.") }}
+                <p class="mt-3 text-sm text-gray-600 text-justify">
+                    {{ __("Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.") }}
                 </p>
             </div>
 
@@ -54,5 +53,8 @@
                 @endif
             </form>
         </div>
+
+        <!-- Footer -->
+        @include('auth._partials.footer-card')
     </div>
 </x-guest-layout>

@@ -1,10 +1,9 @@
 <x-guest-layout>
     <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-600 to-green-700 py-12 px-4 sm:px-6 lg:px-8">
         
-        <div class="flex items-center gap-2 uppercase font-semibold text-white mb-6">
-            <img src="{{ asset('asset/img/logo.png') }}" alt="Logo X-AdminPanel" class="h-10">
-            <span class="text-2xl">{{ config('app.name') }}</span>
-        </div>
+        <!-- Logo -->
+        @include('auth._partials.auth-logo')
+
         <div class="max-w-md w-full space-y-6 bg-white rounded-2xl shadow-2xl p-8">
             <!-- Header -->
             <div class="text-center">
@@ -29,14 +28,14 @@
                 <!-- Email Address -->
                 <div>
                     <x-form.label for="email" :value="__('Email')" />
-                    <x-form.input name="email" type="email" :value="old('email')" required autofocus autocomplete="email" placeholder="Seu endereço de email" value="admin@example.com"/>
+                    <x-form.input name="email" type="email" :value="old('email')" required autofocus autocomplete="email" placeholder="{{ __('Email Address') }}" value="admin@example.com"/>
                     <x-form.error :messages="$errors->get('email')"/>
                 </div>
 
                 <!-- Password -->
                 <div>
                     <x-form.label for="password" :value="__('Password')" />
-                    <x-form.input name="password" type="password" required :placeholder="__('Password')" value="password" />
+                    <x-form.input name="password" type="password" required :placeholder="__('Your Password')" value="password" />
                     <x-form.error :messages="$errors->get('password')"/>
                 </div>
 
@@ -60,8 +59,8 @@
                 </div>
             </form>
         </div>
-        <div class="mt-2 text-[9px] text-center text-white uppercase tracking-wider font-medium">
-            <p>Desenvolvido por <a href="https://webxperts.com.br">Webxperts</a> {{ config('app.name') }}</p>
-        </div>
+
+        <!-- Footer -->
+        @include('auth._partials.footer-card')
     </div>
 </x-guest-layout>
