@@ -5,6 +5,9 @@
         <x-sidebar.link href="{{ route('dashboard') }}" icon="fa-solid fa-chart-line" title="Dashboard" :active="request()->routeIs('dashboard')"/>
     @endcan
 
+    <!-- Dashboard -->
+    <x-sidebar.link href="{{ route('surveillance.notification.sinan') }}" icon="fa-solid fa-circle-exclamation" title="Notificação SINAN" :active="request()->routeIs('surveillance.notification.sinan')"/>
+
     <!-- Usuários -->
     @canany(['create-users', 'view-users'])
     <x-sidebar.dropdown title="Gerenciamento de Usuários" :active="request()->routeIs('users.*')" icon="fa-solid fa-users">

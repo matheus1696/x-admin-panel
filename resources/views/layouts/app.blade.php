@@ -110,77 +110,79 @@
                 </div>
             </aside>
 
-            <!-- Profile Aside -->
-            <aside x-show="profile" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" class="fixed inset-y-0 right-0 w-80 bg-white z-50 shadow-lg overflow-y-auto">
-                
-                <div class="max-w-xs mx-auto overflow-hidden">
-                    <!-- Header com avatar -->
-                    <div class="relative bg-gradient-to-r from-green-600 to-green-800 h-16 flex items-center justify-end px-4">
-                        <button @click="profile = !profile" 
-                                class="p-2 rounded-full transition-all duration-200 hover:scale-110">
-                            <i class="fa-solid fa-times text-white text-lg"></i>
-                        </button>
-                        
-                        <!-- Avatar no centro -->
-                        <div class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 
-                                    size-16 flex justify-center items-center rounded-full 
-                                    bg-gradient-to-br from-green-500 to-green-700 text-white 
-                                    shadow-xl border-2 border-white text-2xl uppercase font-semibold">
-                            {{ Str::substr(Auth::user()->name, 0, 2) }}
-                        </div>
-                    </div>
-
-                    <!-- Informações do usuário -->
-                    <div class="mt-10 pb-6 text-center px-6 space-y-1.5 border-b border-green-300">
-                        <p class="mb-3 font-bold text-gray-900 text-lg truncate">{{ Auth::user()->name }}</p>
-                        <div class="flex flex-col justify-center items-center gap-2 text-xs text-gray-500">
-                            <div class="flex items-center gap-1">
-                                <i class="fa-solid fa-user text-green-500"></i>
-                                <span class="truncate">{{ Auth::user()->name }}</span>
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <i class="fa-solid fa-building text-green-500"></i>
-                                <span class="truncate">{{ Auth::user()->Unit->name ?? 'N/A' }}</span>
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <i class="fa-solid fa-users text-green-500"></i>
-                                <span class="truncate">{{ Auth::user()->Queue->name ?? 'N/A' }}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Links de perfil -->
-                    <div class="space-y-2 px-4 py-4">
-                        @if (Route::has('profile.edit'))
-                            <a href="{{ route('profile.edit') }}" 
-                            class="flex items-center gap-3 w-full py-3 px-4 rounded-xl transition-all duration-200 hover:bg-green-100 text-green-700 font-medium hover:translate-x-1">
-                                <i class="fa-solid fa-user w-5"></i>
-                                <span>Meus Dados</span>
-                            </a>
-                        @endif
-                        
-                        @if (Route::has('profile.password.edit'))
-                            <a href="{{ route('profile.password.edit') }}" 
-                            class="flex items-center gap-3 w-full py-3 px-4 rounded-xl transition-all duration-200 hover:bg-green-100 text-green-700 font-medium hover:translate-x-1">
-                                <i class="fa-solid fa-lock w-5"></i>
-                                <span>Alterar Senha</span>
-                            </a>
-                        @endif
-                        
-                        <!-- Botão de sair -->
-                        <form method="POST" action="{{ route('logout') }}" class="pt-2 border-t border-gray-100">
-                            @csrf
-                            <button type="submit" 
-                                    class="flex items-center gap-3 w-full py-3 px-4 rounded-xl transition-all duration-200
-                                        hover:bg-red-50 hover:text-red-700 text-gray-700 font-semibold
-                                        hover:translate-x-1">
-                                <i class="fa-solid fa-right-from-bracket text-red-500 w-5"></i>
-                                <span>Sair</span>
+            @auth
+                <!-- Profile Aside -->
+                <aside x-show="profile" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" class="fixed inset-y-0 right-0 w-80 bg-white z-50 shadow-lg overflow-y-auto">
+                    
+                    <div class="max-w-xs mx-auto overflow-hidden">
+                        <!-- Header com avatar -->
+                        <div class="relative bg-gradient-to-r from-green-600 to-green-800 h-16 flex items-center justify-end px-4">
+                            <button @click="profile = !profile" 
+                                    class="p-2 rounded-full transition-all duration-200 hover:scale-110">
+                                <i class="fa-solid fa-times text-white text-lg"></i>
                             </button>
-                        </form>
+                            
+                            <!-- Avatar no centro -->
+                            <div class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 
+                                        size-16 flex justify-center items-center rounded-full 
+                                        bg-gradient-to-br from-green-500 to-green-700 text-white 
+                                        shadow-xl border-2 border-white text-2xl uppercase font-semibold">
+                                {{ Str::substr(Auth::user()->name, 0, 2) }}
+                            </div>
+                        </div>
+
+                        <!-- Informações do usuário -->
+                        <div class="mt-10 pb-6 text-center px-6 space-y-1.5 border-b border-green-300">
+                            <p class="mb-3 font-bold text-gray-900 text-lg truncate">{{ Auth::user()->name }}</p>
+                            <div class="flex flex-col justify-center items-center gap-2 text-xs text-gray-500">
+                                <div class="flex items-center gap-1">
+                                    <i class="fa-solid fa-user text-green-500"></i>
+                                    <span class="truncate">{{ Auth::user()->name }}</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <i class="fa-solid fa-building text-green-500"></i>
+                                    <span class="truncate">{{ Auth::user()->Unit->name ?? 'N/A' }}</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <i class="fa-solid fa-users text-green-500"></i>
+                                    <span class="truncate">{{ Auth::user()->Queue->name ?? 'N/A' }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Links de perfil -->
+                        <div class="space-y-2 px-4 py-4">
+                            @if (Route::has('profile.edit'))
+                                <a href="{{ route('profile.edit') }}" 
+                                class="flex items-center gap-3 w-full py-3 px-4 rounded-xl transition-all duration-200 hover:bg-green-100 text-green-700 font-medium hover:translate-x-1">
+                                    <i class="fa-solid fa-user w-5"></i>
+                                    <span>Meus Dados</span>
+                                </a>
+                            @endif
+                            
+                            @if (Route::has('profile.password.edit'))
+                                <a href="{{ route('profile.password.edit') }}" 
+                                class="flex items-center gap-3 w-full py-3 px-4 rounded-xl transition-all duration-200 hover:bg-green-100 text-green-700 font-medium hover:translate-x-1">
+                                    <i class="fa-solid fa-lock w-5"></i>
+                                    <span>Alterar Senha</span>
+                                </a>
+                            @endif
+                            
+                            <!-- Botão de sair -->
+                            <form method="POST" action="{{ route('logout') }}" class="pt-2 border-t border-gray-100">
+                                @csrf
+                                <button type="submit" 
+                                        class="flex items-center gap-3 w-full py-3 px-4 rounded-xl transition-all duration-200
+                                            hover:bg-red-50 hover:text-red-700 text-gray-700 font-semibold
+                                            hover:translate-x-1">
+                                    <i class="fa-solid fa-right-from-bracket text-red-500 w-5"></i>
+                                    <span>Sair</span>
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            </aside>
+                </aside>
+            @endauth
 
             <div x-show="profile || open" x-cloak x-transition.opacity class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40" @click="profile = false; open = false;"></div>
 
@@ -203,22 +205,24 @@
                         </div>
                     </div>
 
-                    <!-- Right Section: User Actions -->
-                    <div class="flex items-center gap-2 sm:gap-4">
-                        <!-- User Avatar -->
-                        <div class="relative">
-                            <button @click="profile = !profile" 
-                                    class="size-10 rounded-full font-semibold uppercase transition-all duration-200
-                                        bg-gradient-to-br from-green-600 to-green-800 text-white shadow-lg
-                                        hover:from-green-700 hover:to-green-900 hover:scale-105 active:scale-95
-                                        border border-white">
-                                {{ Str::substr(Auth::user()->name, 0, 2) }}
-                            </button>
-                            
-                            <!-- Online Status Indicator -->
-                            <div class="absolute -bottom-0.5 -right-0.5 size-3 bg-green-500 rounded-full border-2 border-white"></div>
+                    @auth
+                        <!-- Right Section: User Actions -->
+                        <div class="flex items-center gap-2 sm:gap-4">
+                            <!-- User Avatar -->
+                            <div class="relative">
+                                <button @click="profile = !profile" 
+                                        class="size-10 rounded-full font-semibold uppercase transition-all duration-200
+                                            bg-gradient-to-br from-green-600 to-green-800 text-white shadow-lg
+                                            hover:from-green-700 hover:to-green-900 hover:scale-105 active:scale-95
+                                            border border-white">
+                                    {{ Str::substr(Auth::user()->name, 0, 2) }}
+                                </button>
+                                
+                                <!-- Online Status Indicator -->
+                                <div class="absolute -bottom-0.5 -right-0.5 size-3 bg-green-500 rounded-full border-2 border-white"></div>
+                            </div>
                         </div>
-                    </div>
+                    @endauth
                 </header>
 
                 <!-- Conteúdo Principal -->
