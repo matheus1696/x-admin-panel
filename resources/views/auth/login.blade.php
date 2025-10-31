@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-600 to-green-700 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-800 via-green-700 to-green-600 py-12 px-4 sm:px-6 lg:px-8">
         
         <div class="flex items-center gap-2 uppercase font-semibold text-white mb-6">
             <img src="{{ asset('asset/img/logo.png') }}" alt="Logo X-AdminPanel" class="h-10">

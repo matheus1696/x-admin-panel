@@ -38,7 +38,7 @@
                    @mouseleave="sidebarExpanded = false">
                 
                 <!-- Logo Compacta -->
-                <div class="h-16 flex items-center justify-center gap-2 border-b border-green-200/50 bg-gradient-to-l from-green-600 to-green-800 uppercase font-semibold text-white">
+                <div class="h-16 flex items-center justify-center gap-2 border-b border-green-200/50 bg-gradient-to-l from-green-600 via-green-700 to-green-800 uppercase font-semibold text-white">
                     <x-application-logo class="w-8 h-8"/>
                     <span 
                         x-show="sidebarExpanded" 
@@ -81,7 +81,7 @@
                 class="fixed inset-y-0 left-0 w-80 bg-gradient-to-b from-green-50 to-white z-50 shadow-2xl overflow-y-auto border-r border-green-200/50 lg:hidden">
 
                 <!-- Topo -->
-                <div class="h-16 flex items-center justify-between px-6 bg-gradient-to-r from-green-600 to-green-800 border-b border-green-600/30">
+                <div class="h-16 flex items-center justify-between px-6 bg-gradient-to-r from-green-600 via-green-700 to-green-800 border-b border-green-600/30">
                     <div class="flex-1 flex items-center gap-2 uppercase font-semibold text-white">
                         <x-application-logo class="w-8 h-8"/>
                         <span class="text-lg">{{ config('app.name') }}</span>
@@ -115,7 +115,7 @@
                 
                 <div class="max-w-xs mx-auto overflow-hidden">
                     <!-- Header com avatar -->
-                    <div class="relative bg-gradient-to-r from-green-600 to-green-800 h-16 flex items-center justify-end px-4">
+                    <div class="relative bg-gradient-to-r from-green-600 via-green-700 to-green-800 h-16 flex items-center justify-end px-4">
                         <button @click="profile = !profile" 
                                 class="p-2 rounded-full transition-all duration-200 hover:scale-110">
                             <i class="fa-solid fa-times text-white text-lg"></i>
@@ -187,7 +187,7 @@
             <!-- Conteúdo -->
             <div class="flex-1 flex flex-col min-h-screen">
                 <!-- Header -->
-                <header class="w-full flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16 bg-gradient-to-r from-green-600 to-green-800">
+                <header class="w-full flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16 bg-gradient-to-r from-green-600 via-green-700 to-green-800">
                     <!-- Left Section: Menu Hamburger + Logo -->
                     <div class="w-full flex items-center gap-3 sm:gap-4">
                         <!-- Menu Hamburger (mobile) -->
@@ -209,7 +209,7 @@
                         <div class="relative">
                             <button @click="profile = !profile" 
                                     class="size-10 rounded-full font-semibold uppercase transition-all duration-200
-                                        bg-gradient-to-br from-green-600 to-green-800 text-white shadow-lg
+                                        bg-gradient-to-br from-green-600 via-green-700 to-green-800 text-white shadow-lg
                                         hover:from-green-700 hover:to-green-900 hover:scale-105 active:scale-95
                                         border border-white">
                                 {{ Str::substr(Auth::user()->name, 0, 2) }}

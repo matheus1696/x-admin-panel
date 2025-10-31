@@ -2,7 +2,7 @@
 
     <div class="py-6 space-y-6">
         <!-- Card de Boas-vindas -->
-        <div class="bg-gradient-to-r from-green-600 via-green-500 to-green-400 text-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="bg-gradient-to-r from-green-800 via-green-700 to-green-600 text-white rounded-2xl shadow-xl overflow-hidden">
             <div class="p-8">
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div class="flex-1">

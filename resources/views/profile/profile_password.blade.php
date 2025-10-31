@@ -1,21 +1,27 @@
 <x-app-layout>
-    <x-page.header 
-        icon="fa-solid fa-key" 
-        title="Alterar Senha" 
-        subtitle="Atualize sua senha para manter sua conta segura"
-    >
-        <x-slot name="button">
-            <x-button.btn-link href="{{ route('dashboard') }}" value="Voltar" icon="fa-solid fa-rotate-left" />
-        </x-slot>
-    </x-page.header>
 
-    <div class="w-full md:w-1/2 mx-auto mt-5 py-6">
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="w-full md:w-1/2 mx-auto space-y-6 mt-6">
+        
+        <x-page.header icon="fa-solid fa-key" title="Alterar Senha" subtitle="Atualize sua senha para manter sua conta segura" />
+
+        <x-page.card>
             <form action="{{ route('profile.password.update') }}" method="POST" class="p-6">
                 @csrf
                 @method('PATCH')
 
                 <div class="grid grid-cols-1 gap-6">
+
+                    <!-- Nome -->
+                    <div>
+                        <x-form.label value="Nome" />
+                        <x-form.input :value="Auth::user()->name" disabled />
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <x-form.label value="E-mail" />
+                        <x-form.input :value="Auth::user()->email" disabled />
+                    </div>
 
                     <!-- Senha Atual -->
                     <div>
@@ -41,10 +47,10 @@
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center justify-end pt-6 mt-6">
+                <div class="flex items-center justify-end mt-6">
                     <x-button.btn-submit value="Alterar Senha"/>
                 </div>
             </form>
-        </div>
+        </x-page.card>
     </div>
 </x-app-layout>
