@@ -1,6 +1,9 @@
-@props(['title' => null, 'color' => 'green', 'disabled' => false])
+@props(['title' => null, 'disabled' => false,])
 
-<div class="rounded-lg text-xs font-medium text-{{ $color }}-700 bg-{{ $color }}-50 hover:bg-{{ $color }}-100 border border-{{ $color }}-200 transition-all duration-200 {{ $disabled ? 'cursor-not-allowed' : 'cursor-pointer' }}" title="{{ $title ?? ''}}">
+<div 
+    {{ $attributes->merge(['class' => "rounded-lg text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100 border border-green-200 transition-all duration-200 {$disabled ? 'cursor-not-allowed' : 'cursor-pointer'} "]) }}
+    title="{{ $title ?? ''}}"
+>
     <div class="flex items-center justify-center size-6">
         {{ $slot }}
     </div>

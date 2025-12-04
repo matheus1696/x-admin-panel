@@ -42,21 +42,21 @@
                         Ações Rápidas
                     </h3>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <a href="#" class="p-4 bg-gray-50 hover:bg-green-50 rounded-xl border border-gray-200 hover:border-green-300 transition-all duration-200 group text-center">
-                            <i class="fa-solid fa-user-plus text-green-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
-                            <p class="text-sm font-medium text-gray-700">Novo Usuário</p>
-                        </a>
-                        <a href="#" class="p-4 bg-gray-50 hover:bg-green-50 rounded-xl border border-gray-200 hover:border-green-300 transition-all duration-200 group text-center">
-                            <i class="fa-solid fa-ticket text-green-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
+                        <a href="#" class="p-4 bg-gray-50 hover:bg-orange-50 rounded-xl border border-gray-200 hover:border-orange-300 transition-all duration-200 group text-center">
+                            <i class="fa-solid fa-ticket text-orange-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
                             <p class="text-sm font-medium text-gray-700">Abrir Chamado</p>
                         </a>
-                        <a href="#" class="p-4 bg-gray-50 hover:bg-purple-50 rounded-xl border border-gray-200 hover:border-purple-300 transition-all duration-200 group text-center">
-                            <i class="fa-solid fa-chart-bar text-purple-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
-                            <p class="text-sm font-medium text-gray-700">Relatórios</p>
+                        <a href="{{ route('profile.edit') }}" class="p-4 bg-gray-50 hover:bg-green-50 rounded-xl border border-gray-200 hover:border-green-300 transition-all duration-200 group text-center">
+                            <i class="fa-solid fa-user text-green-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
+                            <p class="text-sm font-medium text-gray-700">Perfil</p>
                         </a>
-                        <a href="#" class="p-4 bg-gray-50 hover:bg-orange-50 rounded-xl border border-gray-200 hover:border-orange-300 transition-all duration-200 group text-center">
-                            <i class="fa-solid fa-cog text-orange-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
-                            <p class="text-sm font-medium text-gray-700">Configurações</p>
+                        <a href="{{ route('profile.password.edit') }}" class="p-4 bg-gray-50 hover:bg-yellow-50 rounded-xl border border-gray-200 hover:border-yellow-300 transition-all duration-200 group text-center">
+                            <i class="fa-solid fa-key text-yellow-500 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
+                            <p class="text-sm font-medium text-gray-700">Alterar Senha</p>
+                        </a>
+                        <a href="#" class="p-4 bg-gray-50 hover:bg-green-50 rounded-xl border border-gray-200 hover:border-green-300 transition-all duration-200 group text-center">
+                            <i class="fa-solid fa-phone text-green-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
+                            <p class="text-sm font-medium text-gray-700">Lista Telefônica</p>
                         </a>
                     </div>
                 </div>
@@ -85,7 +85,7 @@
                                 Você ainda está usando a senha padrão do sistema. Por motivos de segurança, recomendamos que altere sua senha imediatamente.
                             </p>
                             <div class="w-full mt-4">
-                                <x-button.btn-link color="yellow" href="{{ route('profile.password.edit') }}" value="Alterar Senha" icon="fa-solid fa-key" />
+                                <x-button.btn-link class="bg-yellow-500 hover:bg-yellow-600" href="{{ route('profile.password.edit') }}" value="Alterar Senha" icon="fa-solid fa-key" />
                             </div>
                         </div>
                     </div>

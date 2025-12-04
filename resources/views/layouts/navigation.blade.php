@@ -17,30 +17,6 @@
     </x-sidebar.dropdown>
     @endcanany
 
-    <!-- Relatórios -->
-    @can('view-dashboard')
-        <x-sidebar.link href="{{ route('reports.index') }}" icon="fa-solid fa-chart-bar" title="Relatórios" />
-    @endcan
-
-    <!-- Configurações -->
-    @can('view-dashboard')
-        <x-sidebar.dropdown title="Configurações" :active="request()->routeIs('settings.*') || request()->routeIs('profile.*') || request()->routeIs('roles.*')" icon="fa-solid fa-sliders" >
-
-            <!-- Perfil do Usuário -->
-            <x-sidebar.dropdown-link href="{{ route('profile.edit') }}" title="Meu Perfil" :active="request()->routeIs('profile.edit')" />
-        
-            <!-- Configurações do Sistema -->
-            @can('view-dashboard')
-                <x-sidebar.dropdown-link href="{{ route('settings.general') }}" title="Configurações Gerais" :active="request()->routeIs('settings.general')" />
-            @endcan
-
-            <!-- Gerenciar Roles e Permissões -->
-            @can('view-dashboard')
-            <x-sidebar.dropdown-link href="{{ route('roles.index') }}" title="Gerenciar Permissões" :active="request()->routeIs('roles.*')" />
-            @endcan
-    </x-sidebar.dropdown>
-    @endcan
-
     <!-- Administração (Somente Admin) -->
     @can('view-logs')
     <x-sidebar.dropdown 

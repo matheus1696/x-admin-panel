@@ -18,7 +18,7 @@
             class="transition-all duration-200"
             :class="sidebarExpanded ? 'opacity-100 whitespace-nowrap' : 'hidden opacity-0'"
         > 
-            {{ $title }} 
+            {{ $title }}
         </span>
     </span>
     
