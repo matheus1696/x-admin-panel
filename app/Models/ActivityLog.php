@@ -15,6 +15,7 @@ class ActivityLog extends Model
         'method',
         'url',
         'action',
+        'description',
     ];
 
     public function User() : BelongsTo {

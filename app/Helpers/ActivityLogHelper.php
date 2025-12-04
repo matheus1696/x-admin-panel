@@ -8,15 +8,14 @@ use Illuminate\Support\Facades\Request;
 
 class ActivityLogHelper
 {
-    public static function add()
+    public static function action($description)
     {
-        $user = Auth::user();
-
         ActivityLog::create([
-            'user_id'       => $user?->id,
+            'user_id'       => Auth::user()->id ?? null,
             'ip_address'    => Request::ip(),
             'method'        => Request::method(),
             'url'           => Request::fullUrl(),
+            'description'   => $description,
         ]);
     }
 }

@@ -58,6 +58,7 @@
                 <x-page.table-th value="Metodo" />
                 <x-page.table-th value="Url" />
                 <x-page.table-th value="Usuário" />
+                <x-page.table-th value="Descrição" />
             </tr>
         </x-slot>
 
@@ -69,6 +70,7 @@
                     <x-page.table-td :value="$log->method" />
                     <x-page.table-td :value="$log->url" />
                     <x-page.table-td :value="$log->User->name ?? ''" />
+                    <x-page.table-td :value="$log->description ?? ''" />
                 </tr>
             @endforeach
         </x-slot>

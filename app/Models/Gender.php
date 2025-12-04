@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class UserGender extends Model
+class Gender extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -13,15 +13,15 @@ class UserGender extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'name_filter',
+        'title',
+        'title_filter',
         'status',
     ];
 
-    //Criação do Filter Name
+    //Criação do Filter Title
     public function setNameAttribute($value)
     {
-        $this->attributes['name'] = $value;
-        $this->attributes['name_filter'] = Str::ascii(strtolower($value));
+        $this->attributes['title'] = $value;
+        $this->attributes['title_filter'] = Str::ascii(strtolower($value));
     }
 }

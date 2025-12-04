@@ -27,8 +27,8 @@ return new class extends Migration
             $table->string('matriculation', 10)->nullable()->unique();
             $table->date('birth_date')->nullable();
             $table->boolean('status')->default(true);
-            $table->foreignId('gender_id')->nullable()->onDelete('set null');
-            $table->foreignId('occupation_id')->nullable()->onDelete('set null');
+            $table->foreignId('gender_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('occupation_id')->nullable()->constrained()->onDelete('set null');
             $table->rememberToken();
             $table->timestamps();
         });

@@ -1,5 +1,4 @@
 @props([
-    'color' => 'green',
     'name' => null,
     'options' => [],
     'collection' => null,
@@ -19,7 +18,7 @@
         ])->toArray();
     }
 
-    $baseBorder = "border-gray-300 bg-gray-50 text-gray-700 placeholder-gray-400 focus:border-{$color}-700 focus:ring-{$color}-700";
+    $baseBorder = "border-gray-300 bg-gray-50 text-gray-700 placeholder-gray-400 focus:border-green-700 focus:ring-green-700";
     $errorBorder = "border-red-500 bg-red-50 text-red-700 placeholder-red-400 focus:border-red-500 focus:ring-red-500";
 @endphp
 
@@ -63,13 +62,13 @@
         class="absolute left-0 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-20 max-h-60 overflow-auto"
     >
         <!-- Campo de busca -->
-        <div class="sticky top-0 bg-white border-b px-1.5 border-{{ $color }}-300">
+        <div class="sticky top-0 bg-white border-b px-1.5 border-green-700">
             <input
                 type="text"
                 x-model="search"
                 placeholder="Buscar..."
                 class="w-full px-3 py-2 my-2 text-xs text-gray-700 border border-gray-200 rounded-md bg-gray-50 placeholder-gray-400 
-                       focus:outline-none focus:ring-0 focus:border-{{ $color }}-700"
+                       focus:outline-none focus:ring-0 focus:border-green-700"
             >
         </div>
 
@@ -77,8 +76,8 @@
         <template x-for="option in filteredOptions" :key="option.value">
             <div
                 @click="selectOption(option)"
-                class="px-3 py-2 my-1 text-xs text-gray-700 cursor-pointer hover:bg-{{ $color }}-600 hover:text-white transition"
-                :class="{'bg-{{ $color }}-600 text-white': selectedValue === option.value}"
+                class="px-3 py-2 my-1 text-xs text-gray-700 cursor-pointer hover:bg-green-600 hover:text-white transition"
+                :class="{'bg-green-600 text-white': selectedValue === option.value}"
             >
                 <span x-text="option.label"></span>
             </div>

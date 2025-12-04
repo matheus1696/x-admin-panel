@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Manage;
 
+use App\Helpers\ActivityLogHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Manage\UserPermissonRequest;
 use App\Http\Requests\Admin\Manage\UserStoreRequest;
@@ -21,6 +22,8 @@ class UserController extends Controller
     public function index()
     {
         //
+        ActivityLogHelper::action('Página de gerenciamento de usuários');
+
         return view('admin.manage.users.user_index');
     }
 
@@ -30,6 +33,8 @@ class UserController extends Controller
     public function create()
     {
         //
+        ActivityLogHelper::action('Página do formulário de criação do usuários');
+
         return view('admin.manage.users.user_create');
     }
 
@@ -46,6 +51,8 @@ class UserController extends Controller
         // Envia o e-mail de boas-vindas
         Mail::to($user->email)->send(new UserCreateMail($user, $password));
 
+        ActivityLogHelper::action('Realizada criação do usuário: '. $user->name);
+
         return redirect()
             ->route('users.index')
             ->with('success', 'Cadastro de usuário realizada com sucesso!');
@@ -57,6 +64,8 @@ class UserController extends Controller
     public function edit(User $user)
     {
         //
+        ActivityLogHelper::action('Página de edição do usuário '. $user->name);
+
         return view('admin.manage.users.user_edit', compact('user'));
     }
 
@@ -67,6 +76,8 @@ class UserController extends Controller
     {
         //
         $user->update($request->only('matriculation', 'cpf', 'name', 'birth_date', 'gender', 'phone_personal', 'phone_work', 'status'));
+
+        ActivityLogHelper::action('Alteração dos dados do usuário '. $user->name);
 
         return redirect()
             ->back()
@@ -82,6 +93,9 @@ class UserController extends Controller
 
         // Logout de todas as sessões do usuário
         DB::table('sessions')->where('user_id', $user->id)->delete();
+
+        //
+        ActivityLogHelper::action('Alteração das permissões do usuário '. $user->name);
 
         // Retorna com mensagem de sucesso
         return redirect()
@@ -101,6 +115,9 @@ class UserController extends Controller
 
         // Logout de todas as sessões do usuário
         DB::table('sessions')->where('user_id', $user->id)->delete();
+
+        //
+        ActivityLogHelper::action('Alteração da senha do usuário '. $user->name);
 
         // Retorna com mensagem de sucesso
         return redirect()
