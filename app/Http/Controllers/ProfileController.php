@@ -6,6 +6,7 @@ use App\Http\Requests\Profile\ProfilePasswordUpdateRequest;
 use App\Http\Requests\Profile\ProfileUpdateRequest;
 use App\Mail\Profile\UserPasswordResetedMail;
 use App\Models\User;
+use App\Models\UserGender;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -18,7 +19,8 @@ class ProfileController extends Controller
      */
     public function edit(): View
     {
-        return view('profile.profile_edit');
+        $genders = UserGender::all();
+        return view('profile.profile_edit', compact('genders'));
     }
 
     /**

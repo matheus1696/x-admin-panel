@@ -30,10 +30,10 @@ class User extends Authenticatable
         'phone_work',
         'matriculation',
         'cpf',
-        'gender_id',
-        'occupation_id',
         'birth_date',
         'status',
+        'gender_id',
+        'occupation_id',
     ];
 
     /**

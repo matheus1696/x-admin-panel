@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\UserGender;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,5 +14,8 @@ class UserGenderSeeder extends Seeder
     public function run(): void
     {
         //
+        UserGender::create(['name' => 'Masculino']);
+        UserGender::create(['name' => 'Feminino']);
+        UserGender::create(['name' => 'Prefiro não informar']);
     }
 }

@@ -18,6 +18,11 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             PermissionSeeder::class,
+            OccupationSeeder::class,
+            UserGenderSeeder::class,
+            RegionCountrySeeder::class,
+            RegionStateSeeder::class,
+            RegionCitySeeder::class,
         ]);
 
         User::factory()->create([

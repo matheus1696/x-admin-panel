@@ -49,9 +49,9 @@
                     <div class="md:col-span-2">
                         <x-form.label value="Gênero" for="gender" />
                         <x-form.select name="gender" id="gender">
-                            <option value="Masculino" @selected(old('gender', Auth::user()->gender) === 'Masculino')>Masculino</option>
-                            <option value="Feminino" @selected(old('gender', Auth::user()->gender) === 'Feminino')>Feminino</option>
-                            <option value="Prefiro não informar" @selected(old('gender', Auth::user()->gender) === 'Prefiro não informar')>Prefiro não Informar</option>
+                            @foreach ($genders as $gender)
+                                <option value="{{$gender->id}}">{{$gender->title}}</option>
+                            @endforeach
                         </x-form.select>
                         <x-form.error :messages="$errors->get('gender')" />
                     </div>

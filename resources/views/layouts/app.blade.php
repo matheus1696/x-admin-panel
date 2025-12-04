@@ -115,7 +115,7 @@
                 
                 <div class="max-w-xs mx-auto overflow-hidden">
                     <!-- Header com avatar -->
-                    <div class="relative bg-gradient-to-r from-green-600 via-green-700 to-green-800 h-16 flex items-center justify-end px-4">
+                    <div class="relative bg-gradient-to-r from-green-600 to-green-800 h-16 flex items-center justify-end px-4">
                         <button @click="profile = !profile" 
                                 class="p-2 rounded-full transition-all duration-200 hover:scale-110">
                             <i class="fa-solid fa-times text-white text-lg"></i>
@@ -209,7 +209,7 @@
                         <div class="relative">
                             <button @click="profile = !profile" 
                                     class="size-10 rounded-full font-semibold uppercase transition-all duration-200
-                                        bg-gradient-to-br from-green-600 via-green-700 to-green-800 text-white shadow-lg
+                                        bg-gradient-to-br from-green-600 to-green-800 text-white shadow-lg
                                         hover:from-green-700 hover:to-green-900 hover:scale-105 active:scale-95
                                         border border-white">
                                 {{ Str::substr(Auth::user()->name, 0, 2) }}
