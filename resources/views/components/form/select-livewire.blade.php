@@ -7,7 +7,6 @@
     'default' => 'Selecione uma opção',
     'disabled' => false,
     'selected' => null,
-    'required' => false,
 ])
 
 @php
@@ -21,16 +20,13 @@
 
     $baseBorder = "border-gray-300 bg-gray-50 text-gray-700 placeholder-gray-400 focus:border-green-700 focus:ring-green-700";
     $errorBorder = "border-red-500 bg-red-50 text-red-700 placeholder-red-400 focus:border-red-500 focus:ring-red-500";
-    
-    // Determina o valor selecionado
-    $selectedValue = old($name, $selected);
 @endphp
 
 <div
     x-data="{
         open: false,
         search: '',
-        selectedValue: '{{ $selectedValue }}',
+        selectedValue: @entangle($attributes->wire('model')).live(),
         options: {{ json_encode($options) }},
         get filteredOptions() {
             return this.options.filter(opt => opt.label.toLowerCase().includes(this.search.toLowerCase()))
@@ -42,20 +38,11 @@
     }"
     class="relative w-full"
 >
-    <!-- Campo hidden para enviar o valor no formulário -->
-    <input 
-        type="hidden" 
-        name="{{ $name }}" 
-        x-model="selectedValue"
-        {{ $required ? 'required' : '' }}
-    >
-
     <!-- Campo principal -->
     <div
-        @click="!{{ $disabled ? 'true' : 'false' }} && (open = !open)"
-        class="w-full rounded-md border px-3 py-2 text-xs shadow-sm transition-all duration-200 flex justify-between items-center
-            {{ $errors->has($name) && !$disabled ? $errorBorder : $baseBorder }}
-            {{ $disabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer' }}"
+        @click="open = !open"
+        class="w-full rounded-md border px-3 py-2 text-xs shadow-sm transition-all duration-200 cursor-pointer flex justify-between items-center
+            {{ $errors->has($name) && !$disabled ? $errorBorder : $baseBorder }}"
     >
         <span
             class="truncate"
@@ -64,17 +51,15 @@
                 ? options.find(o => o.value == selectedValue)?.label 
                 : '{{ $default }}'">
         </span>
-        @if(!$disabled)
-            <i class="fa-solid fa-chevron-down text-gray-400 ml-2 text-[10px]"></i>
-        @endif
+        <i class="fa-solid fa-chevron-down text-gray-400 ml-2 text-[10px]"></i>
     </div>
 
     <!-- Dropdown -->
     <div
-        x-show="open && !{{ $disabled ? 'true' : 'false' }}"
+        x-show="open"
         x-transition
         @click.outside="open = false"
-        class="absolute left-0 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-50 max-h-60 overflow-auto"
+        class="absolute left-0 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-20 max-h-60 overflow-auto"
     >
         <!-- Campo de busca -->
         <div class="sticky top-0 bg-white border-b px-1.5 border-green-700">
@@ -84,7 +69,6 @@
                 placeholder="Buscar..."
                 class="w-full px-3 py-2 my-2 text-xs text-gray-700 border border-gray-200 rounded-md bg-gray-50 placeholder-gray-400 
                        focus:outline-none focus:ring-0 focus:border-green-700"
-                @click.stop
             >
         </div>
 

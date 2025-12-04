@@ -41,19 +41,19 @@
                     <!-- Data de Nascimento -->
                     <div class="md:col-span-2">
                         <x-form.label value="Data de Nascimento" for="birth_date" />
-                        <x-form.input type="date" name="birth_date" id="birth_date" value="{{ old('birth_date', Auth::user()->birth_date ? \Carbon\Carbon::parse(Auth::user()->birth_date)->format('Y-m-d') : '') }}" min="1950-01-01" max="{{ now()->format('Y-m-d') }}" />
+                        <x-form.input type="date" name="birth_date" id="birth_date" value="{{ old('birth_date', optional(Auth::user())->birth_date?->format('Y-m-d') ?? '') }}" min="1950-01-01" max="{{ now()->subYears(16)->format('Y-m-d') }}" />
                         <x-form.error :messages="$errors->get('birth_date')" />
                     </div>
 
                     <!-- Gênero -->
                     <div class="md:col-span-2">
-                        <x-form.label value="Gênero" for="gender" />
-                        <x-form.select name="gender" id="gender">
+                        <x-form.label value="Gênero" for="gender_id" />
+                        <x-form.select name="gender_id" id="gender_id">
                             @foreach ($genders as $gender)
-                                <option value="{{$gender->id}}">{{$gender->title}}</option>
+                                <option value="{{$gender->id}}" @selected($gender->id === Auth::user()->gender_id)>{{$gender->title}}</option>
                             @endforeach
                         </x-form.select>
-                        <x-form.error :messages="$errors->get('gender')" />
+                        <x-form.error :messages="$errors->get('gender_id')" />
                     </div>
 
                     <!-- Telefone Pessoal -->
@@ -68,6 +68,12 @@
                         <x-form.label value="Telefone Profissional" for="phone_work" />
                         <x-form.input type="text" name="phone_work" id="phone_work" value="{{ old('phone_work', Auth::user()->phone_work) }}" placeholder="(00) 00000-0000" onkeyup="handlePhone(event)" maxlength="15" />
                         <x-form.error :messages="$errors->get('phone_work')" />
+                    </div>
+
+                    <!-- Ocupação -->
+                    <div class="md:col-span-4">
+                        <x-form.label value="Profissões" for="ocuppation_id" />
+                        <x-form.select-search name="ocuppation_id" :collection="$occupations" value-field="id" label-field="ocuppation_id" selected="{{ old('ocuppation_id') }}" default="Selecione sua profissão" required />
                     </div>
                 </div>
 

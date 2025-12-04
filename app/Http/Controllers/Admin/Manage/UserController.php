@@ -22,7 +22,7 @@ class UserController extends Controller
     public function index()
     {
         //
-        ActivityLogHelper::action('Página de gerenciamento de usuários');
+        ActivityLogHelper::action('Acessou a página de gerenciamento de usuários');
 
         return view('admin.manage.users.user_index');
     }
@@ -33,7 +33,7 @@ class UserController extends Controller
     public function create()
     {
         //
-        ActivityLogHelper::action('Página do formulário de criação do usuários');
+        ActivityLogHelper::action('Acessou a página do formulário de criação do usuários');
 
         return view('admin.manage.users.user_create');
     }
@@ -64,7 +64,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         //
-        ActivityLogHelper::action('Página de edição do usuário '. $user->name);
+        ActivityLogHelper::action('Acessou a página de edição do usuário '. $user->name);
 
         return view('admin.manage.users.user_edit', compact('user'));
     }

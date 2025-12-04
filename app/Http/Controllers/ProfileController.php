@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ActivityLogHelper;
 use App\Http\Requests\Profile\ProfilePasswordUpdateRequest;
 use App\Http\Requests\Profile\ProfileUpdateRequest;
 use App\Mail\Profile\UserPasswordResetedMail;
 use App\Models\User;
 use App\Models\Gender;
+use App\Models\Occupation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -19,8 +21,11 @@ class ProfileController extends Controller
      */
     public function edit(): View
     {
+        ActivityLogHelper::action('Acessou a página de edição de perfil');
+
         $genders = Gender::all();
-        return view('profile.profile_edit', compact('genders'));
+        $occupations = Occupation::all();
+        return view('profile.profile_edit', compact('genders', 'occupations'));
     }
 
     /**

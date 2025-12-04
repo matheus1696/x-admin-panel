@@ -25,4 +25,9 @@
     </x-sidebar.dropdown>
     @endcan
 
+    <!-- Perfil -->
+    @auth
+        <x-sidebar.link href="{{ route('profile.edit') }}" icon="fa-solid fa-user" title="Perfil" :active="request()->routeIs('profile.edit')"/>
+    @endauth
+
 </nav>

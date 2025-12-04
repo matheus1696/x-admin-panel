@@ -20,7 +20,7 @@ class ProfileUpdateRequest extends FormRequest
             'cpf' => ['nullable','string','formato_cpf','cpf',Rule::unique('users', 'cpf')->ignore(Auth::user()->id),],
             'name' => ['required', 'string', 'max:255'],
             'birth_date' => ['nullable', 'date', 'before_or_equal:today', 'after:1950-01-01'],
-            'gender' => ['nullable', 'in:Masculino,Feminino'],
+            'gender_id' => ['nullable'],
             'phone_personal' => ['nullable', 'celular_com_ddd', 'min:14', 'max:15'],
             'phone_work' => ['nullable', 'celular_com_ddd', 'min:14', 'max:15'],
         ];
