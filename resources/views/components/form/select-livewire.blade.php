@@ -70,7 +70,7 @@
         x-show="open"
         x-transition
         @click.outside="open = false"
-        class="absolute left-0 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-20 max-h-60 overflow-auto"
+        class="absolute mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-20 max-h-60 overflow-auto"
     >
         <!-- Campo de busca -->
         <div class="sticky top-0 bg-white border-b p-2">
