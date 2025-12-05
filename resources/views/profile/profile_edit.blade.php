@@ -48,11 +48,7 @@
                     <!-- Gênero -->
                     <div class="md:col-span-2">
                         <x-form.label value="Gênero" for="gender_id" />
-                        <x-form.select name="gender_id" id="gender_id">
-                            @foreach ($genders as $gender)
-                                <option value="{{$gender->id}}" @selected($gender->id === Auth::user()->gender_id)>{{$gender->title}}</option>
-                            @endforeach
-                        </x-form.select>
+                        <x-form.select-search name="gender_id" :collection="$genders" labelField="title" valueField="id" default="Selecione o gênero" :selected="old('gender_id', Auth::user()->gender_id ?? '')"/>
                         <x-form.error :messages="$errors->get('gender_id')" />
                     </div>
 
@@ -73,7 +69,8 @@
                     <!-- Ocupação -->
                     <div class="md:col-span-4">
                         <x-form.label value="Profissões" for="ocuppation_id" />
-                        <x-form.select-search name="ocuppation_id" :collection="$occupations" value-field="id" label-field="ocuppation_id" selected="{{ old('ocuppation_id') }}" default="Selecione sua profissão" required />
+                        <x-form.select-search name="ocuppation_id" :collection="$occupations" labelField="title" valueField="id" default="Selecione a profissão" :selected="old('ocuppation_id', Auth::user()->ocuppation_id ?? '')"/>
+                        <x-form.error :messages="$errors->get('ocuppation_id')" />
                     </div>
                 </div>
 
