@@ -26,6 +26,11 @@ class ActivityLogTable extends Component
         $this->dateEnd = Carbon::today()->format('Y-m-d');
     }
 
+    public function updated()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
         $query = ActivityLog::query()
