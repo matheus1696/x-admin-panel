@@ -7,7 +7,6 @@
     'default' => 'Selecione uma opção',
     'disabled' => false,
     'selected' => null,
-    'color' => 'green',
 ])
 
 @php
@@ -18,7 +17,7 @@
         ])->toArray();
     }
 
-    $baseBorder = "border-gray-300 bg-gray-50 text-gray-700 placeholder-gray-400 focus:border-{$color}-700 focus:ring-{$color}-700";
+    $baseBorder = "border-gray-300 bg-gray-50 text-gray-700 placeholder-gray-400 focus:border-green-700 focus:ring-green-700";
     $errorBorder = "border-red-500 bg-red-50 text-red-700 placeholder-red-400 focus:border-red-500 focus:ring-red-500";
 @endphp
 
@@ -40,7 +39,7 @@
     class="relative w-full"
 >
     <!-- Select Visual -->
-    <div @click="open = !open" class="w-full rounded-md border px-3 py-2 text-xs shadow-sm transition-all duration-200 cursor-pointer flex justify-between items-center {{ $errors->has($name) && !$disabled ? $errorBorder : $baseBorder }}" :class="open ? 'ring-1 ring-{{ $color }}-500/40' : ''">
+    <div @click="open = !open" class="w-full rounded-md border px-3 py-2 text-xs shadow-sm transition-all duration-200 cursor-pointer flex justify-between items-center {{ $errors->has($name) && !$disabled ? $errorBorder : $baseBorder }}" :class="open ? 'ring-1 ring-green-500/40' : ''">
         <span class="truncate" :class="value ? 'text-gray-800' : 'text-gray-400'">
             <span x-text="value ? (options.find(o => o.value == value)?.label ?? '') : '{{ $default }}'"></span>
         </span>
@@ -48,18 +47,18 @@
     </div>
 
     <!-- Dropdown -->
-    <div x-show="open" x-transition @click.outside="open = false" class="absolute mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-30 min-h-40 max-h-60 overflow-auto" :class="{open: 'mb-10'}" style="display: none;">
+    <div x-show="open" x-transition @click.outside="open = false" class="absolute mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-40 z-30 overflow-auto flex flex-col" style="display: none;">
         <!-- Campo Busca -->
         <div class="sticky top-0 bg-white border-b px-3 py-2">
             <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-[10px]"></i>
-                <input type="text" x-model="search" placeholder="Buscar..." class="w-full pl-8 pr-3 py-2 text-xs text-gray-700  bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:border-{{ $color }}-700" />
+                <input type="text" x-model="search" placeholder="Buscar..." class="w-full pl-8 pr-3 py-2 text-xs text-gray-700  bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:border-green-700" />
             </div>
         </div>
 
         <!-- Opções -->
         <template x-for="opt in filteredOptions" :key="opt.value">
-            <div @click="selectOption(opt)" class="px-3 py-2 text-xs text-gray-700 cursor-pointer hover:bg-{{ $color }}-600 hover:text-white transition" :class="{ 'bg-{{ $color }}-600 text-white': value == opt.value }">
+            <div @click="selectOption(opt)" class="px-3 py-2 text-xs text-gray-700 cursor-pointer hover:bg-green-600 hover:text-white transition" :class="{ 'bg-green-700 text-white': value == opt.value }">
                 <span x-text="opt.label"></span>
             </div>
         </template>

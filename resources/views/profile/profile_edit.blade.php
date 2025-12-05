@@ -11,20 +11,6 @@
 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 
-                    <!-- Matricula -->
-                    <div class="md:col-span-2">
-                        <x-form.label value="Matrícula" for="matriculation" />
-                        <x-form.input type="text" name="matriculation" id="matriculation" value="{{ old('matriculation', Auth::user()->matriculation) }}" placeholder="00.000-00" maxlength="9" required onkeyup="handleMatriculation(event)" />
-                        <x-form.error :messages="$errors->get('matriculation')" />
-                    </div>
-
-                    <!-- CPF -->
-                    <div class="md:col-span-2">
-                        <x-form.label value="CPF" for="cpf" />
-                        <x-form.input type="text" name="cpf" id="cpf" value="{{ old('cpf', Auth::user()->cpf) }}" placeholder="000.000.000-00" required onkeyup="handleCPF(event)" maxlength="14"/>
-                        <x-form.error :messages="$errors->get('cpf')" />
-                    </div>
-
                     <!-- Nome -->
                     <div class="col-span-2 md:col-span-4">
                         <x-form.label value="Nome" for="name" />
@@ -36,6 +22,13 @@
                     <div class="col-span-2 md:col-span-4">
                         <x-form.label value="E-mail" for="email" />
                         <x-form.input type="email" id="email" value="{{ Auth::user()->email }}" disabled />
+                    </div>
+
+                    <!-- Ocupação -->
+                    <div class="col-span-2 md:col-span-4">
+                        <x-form.label value="Ocupação" for="occupation_id" />
+                        <x-form.select-search name="occupation_id" :collection="$occupations" labelField="title" valueField="id" default="Selecione a profissão" :selected="old('occupation_id', Auth::user()->occupation_id ?? '')"/>
+                        <x-form.error :messages="$errors->get('occupation_id')" />
                     </div>
 
                     <!-- Data de Nascimento -->
@@ -51,6 +44,20 @@
                         <x-form.select-search name="gender_id" :collection="$genders" labelField="title" valueField="id" default="Selecione o gênero" :selected="old('gender_id', Auth::user()->gender_id ?? '')"/>
                         <x-form.error :messages="$errors->get('gender_id')" />
                     </div>
+                    
+                    <!-- Matricula -->
+                    <div class="md:col-span-2">
+                        <x-form.label value="Matrícula" for="matriculation" />
+                        <x-form.input type="text" name="matriculation" id="matriculation" value="{{ old('matriculation', Auth::user()->matriculation) }}" placeholder="00.000-00" maxlength="9" required onkeyup="handleMatriculation(event)" />
+                        <x-form.error :messages="$errors->get('matriculation')" />
+                    </div>
+
+                    <!-- CPF -->
+                    <div class="md:col-span-2">
+                        <x-form.label value="CPF" for="cpf" />
+                        <x-form.input type="text" name="cpf" id="cpf" value="{{ old('cpf', Auth::user()->cpf) }}" placeholder="000.000.000-00" required onkeyup="handleCPF(event)" maxlength="14"/>
+                        <x-form.error :messages="$errors->get('cpf')" />
+                    </div>
 
                     <!-- Telefone Pessoal -->
                     <div class="md:col-span-2">
@@ -64,13 +71,6 @@
                         <x-form.label value="Telefone Profissional" for="phone_work" />
                         <x-form.input type="text" name="phone_work" id="phone_work" value="{{ old('phone_work', Auth::user()->phone_work) }}" placeholder="(00) 00000-0000" onkeyup="handlePhone(event)" maxlength="15" />
                         <x-form.error :messages="$errors->get('phone_work')" />
-                    </div>
-
-                    <!-- Ocupação -->
-                    <div class="md:col-span-4">
-                        <x-form.label value="Profissões" for="ocuppation_id" />
-                        <x-form.select-search name="ocuppation_id" :collection="$occupations" labelField="title" valueField="id" default="Selecione a profissão" :selected="old('ocuppation_id', Auth::user()->ocuppation_id ?? '')"/>
-                        <x-form.error :messages="$errors->get('ocuppation_id')" />
                     </div>
                 </div>
 
