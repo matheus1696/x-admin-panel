@@ -14,21 +14,18 @@
 
             <div class="md:col-span-2">
                 <x-form.label value="Status" />
-                <x-form.select-search 
-                    wire:model.live="status"
-                    name="status"
+                <x-form.select-livewire wire:model.live="status" name="status" default="Selecione o status"
                     :options="[
                         ['value' => '', 'label' => 'Todos'],
-                        ['value' => 'active', 'label' => 'Ativo'],
-                        ['value' => 'inactive', 'label' => 'Inativo'],
+                        ['value' => 'true', 'label' => 'Ativo'],
+                        ['value' => 'false', 'label' => 'Inativo'],
                     ]"
-                    default="Selecione a quantidade de itens"
                 />
             </div>
 
             <div class="md:col-span-2">
                 <x-form.label value="Itens por página" />
-                <x-form.select-search 
+                <x-form.select-livewire 
                     wire:model.live="perPage"
                     name="perPage"
                     :options="[
@@ -46,7 +43,7 @@
         <x-slot name="showAdvanced">
             <div class="md:col-span-2">
                 <x-form.label value="Ordenar por" />                
-                <x-form.select-search 
+                <x-form.select-livewire 
                     wire:model.live="sort"
                     name="sort"
                     :options="[

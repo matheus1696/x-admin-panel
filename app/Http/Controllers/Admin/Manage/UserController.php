@@ -9,6 +9,8 @@ use App\Http\Requests\Admin\Manage\UserStoreRequest;
 use App\Http\Requests\Admin\Manage\UserUpdateRequest;
 use App\Mail\Admin\Manage\UserCreateMail;
 use App\Mail\Admin\Manage\UserResetPasswordMail;
+use App\Models\Gender;
+use App\Models\Occupation;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -33,9 +35,12 @@ class UserController extends Controller
     public function create()
     {
         //
+        $genders = Gender::all();
+        $occupations = Occupation::all();
+
         ActivityLogHelper::action('Acessou a página do formulário de criação do usuários');
 
-        return view('admin.manage.users.user_create');
+        return view('admin.manage.users.user_create', compact('genders', 'occupations'));
     }
 
     /**
@@ -64,9 +69,12 @@ class UserController extends Controller
     public function edit(User $user)
     {
         //
+        $genders = Gender::all();
+        $occupations = Occupation::all();
+
         ActivityLogHelper::action('Acessou a página de edição do usuário '. $user->name);
 
-        return view('admin.manage.users.user_edit', compact('user'));
+        return view('admin.manage.users.user_edit', compact('user', 'genders', 'occupations'));
     }
 
     /**

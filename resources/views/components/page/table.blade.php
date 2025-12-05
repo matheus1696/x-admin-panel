@@ -1,4 +1,4 @@
-@props([ 'pagination' => null, 'color' => 'green' ])
+@props([ 'pagination' => null ])
 
 <!-- 📊 Data Table Component -->
 <div class="overflow-hidden w-full">
@@ -6,12 +6,12 @@
     <div class="overflow-x-auto bg-white border border-gray-100 text-xs rounded-2xl shadow-sm">
         <table class="w-full table-fixed">
             <!-- Cabeçalho -->
-            <thead class="font-semibold uppercase tracking-wider bg-{{ $color }}-200 text-{{ $color }}-800 text-left">
+            <thead class="font-semibold uppercase tracking-wider bg-green-200 text-green-800 text-left">
                 {{ $thead ?? ''}}
             </thead>
 
             <!-- Corpo -->
-            <tbody class="divide-y divide-gray-100 [&>tr:hover]:bg-{{ $color }}-50">
+            <tbody class="divide-y divide-gray-100 [&>tr:hover]:bg-green-50">
                 {{ $tbody ?? ''}}
             </tbody>
         </table>

@@ -17,6 +17,11 @@ class UserTable extends Component
     public $sort = 'name_asc';
     public $perPage = 10;
 
+    public function updated()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
         $query = User::query();

@@ -70,5 +70,5 @@
     </div>
 
     <!-- Hidden input para envio no form -->
-    <input type="hidden" name="{{ $name }}" x-ref="hidden" :value="value" wire.model.live="{{ $name }}" />
+    <input type="hidden" name="{{ $name }}" x-ref="hidden" :value="value" />
 </div>

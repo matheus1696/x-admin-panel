@@ -9,21 +9,20 @@
                     Anterior
                 </span>
             @else
-                <a href="{{ $paginator->previousPageUrl() }}" 
-                   class="flex items-center justify-center px-3 py-2 text-xs font-medium text-green-700 bg-white border border-gray-200 rounded-md hover:bg-green-600 hover:text-white hover:border-green-600 transition-all duration-150">
+                <button 
+                    wire:click="previousPage"
+                    class="flex items-center justify-center px-3 py-2 text-xs font-medium text-green-700 bg-white border border-gray-200 rounded-md hover:bg-green-600 hover:text-white hover:border-green-600 transition-all duration-150">
                     <i class="fa-solid fa-chevron-left mr-1 text-[10px]"></i>
                     Anterior
-                </a>
+                </button>
             @endif
 
             {{-- Números das Páginas --}}
             @foreach ($elements as $element)
-                {{-- Separador "..." --}}
                 @if (is_string($element))
                     <span class="px-3 py-2 text-xs font-medium text-gray-500 select-none">{{ $element }}</span>
                 @endif
 
-                {{-- Links --}}
                 @if (is_array($element))
                     @foreach ($element as $page => $url)
                         @if ($page == $paginator->currentPage())
@@ -32,10 +31,11 @@
                                 {{ $page }}
                             </span>
                         @else
-                            <a href="{{ $url }}" 
-                               class="px-3 py-2 text-xs font-medium text-gray-700 border border-gray-200 rounded-md hover:bg-green-50 hover:text-green-700 hover:border-green-600 transition-all duration-150">
+                            <button 
+                                wire:click="gotoPage({{ $page }})"
+                                class="px-3 py-2 text-xs font-medium text-gray-700 border border-gray-200 rounded-md hover:bg-green-50 hover:text-green-700 hover:border-green-600 transition-all duration-150">
                                 {{ $page }}
-                            </a>
+                            </button>
                         @endif
                     @endforeach
                 @endif
@@ -43,11 +43,12 @@
 
             {{-- Botão Próximo --}}
             @if ($paginator->hasMorePages())
-                <a href="{{ $paginator->nextPageUrl() }}" 
-                   class="flex items-center justify-center px-3 py-2 text-xs font-medium text-green-700 bg-white border border-gray-200 rounded-md hover:bg-green-600 hover:text-white hover:border-green-600 transition-all duration-150">
+                <button 
+                    wire:click="nextPage"
+                    class="flex items-center justify-center px-3 py-2 text-xs font-medium text-green-700 bg-white border border-gray-200 rounded-md hover:bg-green-600 hover:text-white hover:border-green-600 transition-all duration-150">
                     Próximo
                     <i class="fa-solid fa-chevron-right ml-1 text-[10px]"></i>
-                </a>
+                </button>
             @else
                 <span class="flex items-center justify-center px-3 py-2 text-xs font-medium text-gray-400 bg-gray-100 border border-gray-200 rounded-md cursor-not-allowed">
                     Próximo

@@ -7,10 +7,10 @@
     'default' => 'Selecione uma opção',
     'disabled' => false,
     'selected' => null,
+    'wireModel' => null,
 ])
 
 @php
-    // Se for uma coleção, converte para o formato [value, label]
     if ($collection) {
         $options = $collection->map(fn($item) => [
             'value' => $item[$valueField],
@@ -20,20 +20,27 @@
 
     $baseBorder = "border-gray-300 bg-gray-50 text-gray-700 placeholder-gray-400 focus:border-green-700 focus:ring-green-700";
     $errorBorder = "border-red-500 bg-red-50 text-red-700 placeholder-red-400 focus:border-red-500 focus:ring-red-500";
+    
+    $wireModelName = $wireModel ?? $name;
 @endphp
 
 <div
     x-data="{
         open: false,
         search: '',
-        selectedValue: @entangle($attributes->wire('model')).live(),
+        selectedValue: @entangle($wireModelName).live,
         options: {{ json_encode($options) }},
+        
         get filteredOptions() {
-            return this.options.filter(opt => opt.label.toLowerCase().includes(this.search.toLowerCase()))
+            if (!this.search) return this.options;
+            return this.options.filter(opt => 
+                opt.label.toLowerCase().includes(this.search.toLowerCase())
+            );
         },
+        
         selectOption(option) {
-            this.selectedValue = option.value
-            this.open = false
+            this.selectedValue = option.value;
+            this.open = false;
         }
     }"
     class="relative w-full"
@@ -43,15 +50,19 @@
         @click="open = !open"
         class="w-full rounded-md border px-3 py-2 text-xs shadow-sm transition-all duration-200 cursor-pointer flex justify-between items-center
             {{ $errors->has($name) && !$disabled ? $errorBorder : $baseBorder }}"
+        :class="open ? 'ring-1 ring-green-500/40' : ''"
     >
         <span
             class="truncate"
             :class="selectedValue ? 'text-gray-700' : 'text-gray-400'"
             x-text="selectedValue 
-                ? options.find(o => o.value == selectedValue)?.label 
+                ? (options.find(o => o.value == selectedValue)?.label || '{{ $default }}')
                 : '{{ $default }}'">
         </span>
-        <i class="fa-solid fa-chevron-down text-gray-400 ml-2 text-[10px]"></i>
+        <i 
+            class="fa-solid fa-chevron-down text-gray-400 ml-2 text-[10px] transition-transform duration-200"
+            :class="open ? 'rotate-180' : ''"
+        ></i>
     </div>
 
     <!-- Dropdown -->
@@ -62,22 +73,26 @@
         class="absolute left-0 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-20 max-h-60 overflow-auto"
     >
         <!-- Campo de busca -->
-        <div class="sticky top-0 bg-white border-b px-1.5 border-green-700">
-            <input
-                type="text"
-                x-model="search"
-                placeholder="Buscar..."
-                class="w-full px-3 py-2 my-2 text-xs text-gray-700 border border-gray-200 rounded-md bg-gray-50 placeholder-gray-400 
-                       focus:outline-none focus:ring-0 focus:border-green-700"
-            >
+        <div class="sticky top-0 bg-white border-b p-2">
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                <input
+                    type="text"
+                    x-model="search"
+                    placeholder="Buscar..."
+                    class="w-full pl-8 pr-3 py-2 text-xs text-gray-700 border border-gray-200 rounded-md bg-gray-50 
+                           focus:outline-none focus:border-green-700"
+                    @click.stop
+                >
+            </div>
         </div>
 
         <!-- Opções -->
         <template x-for="option in filteredOptions" :key="option.value">
             <div
                 @click="selectOption(option)"
-                class="px-3 py-2 my-1 text-xs text-gray-700 cursor-pointer hover:bg-green-600 hover:text-white transition"
-                :class="{'bg-green-600 text-white': selectedValue === option.value}"
+                class="px-3 py-2 text-xs text-gray-700 cursor-pointer hover:bg-green-600 hover:text-white transition"
+                :class="{'bg-green-600 text-white': selectedValue == option.value}"
             >
                 <span x-text="option.label"></span>
             </div>
@@ -86,7 +101,7 @@
         <!-- Nenhum resultado -->
         <div
             x-show="filteredOptions.length === 0"
-            class="px-3 py-2 text-xs text-gray-500 italic select-none"
+            class="px-3 py-2 text-xs text-gray-500 italic text-center"
         >
             Nenhum resultado encontrado
         </div>
