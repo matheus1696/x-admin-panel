@@ -23,10 +23,8 @@
             <!-- Usuário -->
             <div class="md:col-span-2">
                 <x-form.label value="Usuário" />
-                <x-form.select-search wire:model.live="user" :collection="$users" value-field="uuid" label-field="name" default="Todos os usuários" />
+                <x-form.select-livewire wire:model.live="user" name="user" :collection="$users" value-field="uuid" label-field="name" default="Todos os usuários" />
             </div>
-
-            {{ $user }}
 
             <!-- URL -->
             <div class="md:col-span-2">
@@ -37,7 +35,7 @@
             <!-- Itens por página -->
             <div class="md:col-span-2">
                 <x-form.label value="Itens por página" />
-                <x-form.select-search
+                <x-form.select-livewire
                     wire:model.live="perPage"
                     name="perPage"
                     :options="[

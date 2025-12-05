@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\Manage;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UserStoreRequest extends FormRequest
 {
@@ -26,8 +27,9 @@ class UserStoreRequest extends FormRequest
             'cpf' => ['nullable','string','size:14','unique:users,cpf','formato_cpf','cpf'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required','string','email:rfc,dns','max:255','unique:users,email'],
+            'occupation_id' => ['nullable', Rule::exists('occupations', 'id')],
             'birth_date' => ['nullable', 'date', 'before_or_equal:today', 'after:1950-01-01'],
-            'gender' => ['nullable', 'in:Masculino,Feminino'],
+            'gender_id' => ['nullable', Rule::exists('genders', 'id')],
             'phone_personal' => ['nullable', 'celular_com_ddd', 'min:14', 'max:15'],
             'phone_work' => ['nullable', 'celular_com_ddd', 'min:14', 'max:15'],
         ];
