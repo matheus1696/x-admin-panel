@@ -61,7 +61,7 @@
             </div>
 
             <!-- Help Text -->
-            <div class="text-center pt-4">
+            <div class="text-center pt-2">
                 <p class="text-xs text-gray-500">
                     {{ __("Check your spam folder if you can't find the verification email.") }}
                 </p>

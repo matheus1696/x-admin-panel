@@ -22,7 +22,7 @@
             <!-- Session Status -->
             <x-auth-session-status class="mb-4" :status="session('status')" />
 
-            <form method="POST" action="{{ route('login') }}" class="mt-6 space-y-6">
+            <form method="POST" action="{{ route('login') }}" class="mt-6 space-y-4">
                 @csrf
 
                 <!-- Email Address -->
@@ -54,7 +54,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <div class="pt-4">
+                <div class="pt-2">
                     <x-button.btn-submit value="{{ __('Log in') }}" />
                 </div>
             </form>

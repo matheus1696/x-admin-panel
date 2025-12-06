@@ -16,7 +16,7 @@
                 </p>
             </div>
 
-            <form method="POST" action="{{ route('register') }}" class="mt-6 space-y-6">
+            <form method="POST" action="{{ route('register') }}" class="mt-6 space-y-4">
                 @csrf
 
                 <!-- Name -->
@@ -63,7 +63,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <div class="pt-4">
+                <div class="pt-2">
                     <x-button.btn-submit value="{{ __('Create Account') }}" />
                 </div>
             </form>
