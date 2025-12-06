@@ -50,9 +50,6 @@ class UserTable extends Component
 
         $users = $query->paginate($this->perPage);
 
-        //Permissões
-        $permissions = Permission::all();
-
-        return view('livewire.admin.manage.user-table', compact('users', 'permissions'));
+        return view('livewire.admin.manage.user-table', compact('users'));
     }
 }

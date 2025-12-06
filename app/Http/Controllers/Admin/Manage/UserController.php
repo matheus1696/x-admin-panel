@@ -15,6 +15,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -38,7 +40,7 @@ class UserController extends Controller
         $genders = Gender::all();
         $occupations = Occupation::all();
 
-        ActivityLogHelper::action('Acessou a página do formulário de criação do usuários');
+        ActivityLogHelper::action('Acesso a página do formulário de criação do usuários');
 
         return view('admin.manage.users.user_create', compact('genders', 'occupations'));
     }
@@ -72,7 +74,7 @@ class UserController extends Controller
         $genders = Gender::all();
         $occupations = Occupation::all();
 
-        ActivityLogHelper::action('Acessou a página de edição do usuário '. $user->name);
+        ActivityLogHelper::action('Acesso a página de edição do usuário '. $user->name);
 
         return view('admin.manage.users.user_edit', compact('user', 'genders', 'occupations'));
     }
@@ -92,7 +94,17 @@ class UserController extends Controller
             ->with('success', 'Informações do usuário atualizadas com sucesso!');
     }
 
-    public function permission(UserPermissonRequest $request, User $user)
+    public function permissionEdit(User $user)
+    {
+        ActivityLogHelper::action('Acesso a página de alteração das permissões do usuário '. $user->name);
+
+        // Buscar todas as permissões
+        $roles = Role::where('name', '!=', 'super-admin')->orderBy('type')->with('permissions')->get();
+
+        return view('admin.manage.users.user_permission', compact('user', 'roles'));
+    }
+
+    public function permissionUpdate(UserPermissonRequest $request, User $user)
     {
         $permissions = $request->input('permissions', []);
 

@@ -2,7 +2,7 @@
     <div class="w-full md:w-1/2 mx-auto space-y-6 mt-6">
         <x-page.header icon="fa-solid fa-users" title="Edição de Usuário" subtitle="Atualize os dados do usuário do sistema">
             <x-slot name="button">
-                @can('create-users')
+                @can('view-users')
                     <x-button.btn-link href="{{ route('users.index') }}" value="Voltar para Lista" icon="fa-solid fa-rotate-left" />
                 @endcan
             </x-slot>

@@ -101,38 +101,12 @@
                                     </a>
                                 </x-button.btn-table>
                             @endcan
-                            @can('permission-users')
-                                <x-modal title="Permissões do Usuário">
-                                    <x-slot name="button">
-                                        <x-button.btn-table title="Permissões do Usuário">
-                                            <i class="fa-solid fa-lock"></i>
-                                        </x-button.btn-table>
-                                    </x-slot>
-
-                                    <x-slot name="body">
-                                        <form action="{{ route('users.permission', $user) }}" method="POST">
-                                            @csrf @method('PUT')
-
-                                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-                                                {{-- Loop de Permissions --}}
-                                                @foreach ($permissions as $permission)
-                                                    <div class="flex items-center gap-2">
-                                                        <input type="checkbox" id="permission_{{ $permission->id }}_{{ $user->id }}" name="permissions[]" value="{{ $permission->name }}" class="hidden peer" {{ $user->hasPermissionTo($permission->name) ? 'checked' : '' }}
-                                                        >
-                                                        <label for="permission_{{ $permission->id }}_{{ $user->id }}" class="w-full text-xs text-gray-700 border rounded-lg cursor-pointer px-3 py-2 text-center hover:border-green-500 peer-checked:bg-green-600 peer-checked:text-white peer-checked:border-green-600 transition">
-                                                            {{ ucfirst($permission->name) }}
-                                                        </label>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-
-                                            {{-- Botão de envio --}}
-                                            <div class="w-full border-t border-green-200 mt-4 pt-4">
-                                                <x-button.btn-submit class="w-full" value="Salvar Permissões" />
-                                            </div>
-                                        </form>
-                                    </x-slot>
-                                </x-modal>
+                            @can('permission-users')                            
+                                <x-button.btn-table title="Editar Usuário">
+                                    <a href="{{ route('users.permission.edit', $user) }}">
+                                        <i class="fa-solid fa-lock"></i>
+                                    </a>
+                                </x-button.btn-table>
                             @endcan                            
                             @can('password-users')
                                 <x-modal title="Redefinir Senha">
