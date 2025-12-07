@@ -15,7 +15,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -37,8 +36,8 @@ class UserController extends Controller
     public function create()
     {
         //
-        $genders = Gender::all();
-        $occupations = Occupation::all();
+        $genders = Gender::where('status', true)->get();
+        $occupations = Occupation::where('status', true)->get();
 
         ActivityLogHelper::action('Acesso a página do formulário de criação do usuários');
 
@@ -71,8 +70,8 @@ class UserController extends Controller
     public function edit(User $user)
     {
         //
-        $genders = Gender::all();
-        $occupations = Occupation::all();
+        $genders = Gender::where('status', true)->get();
+        $occupations = Occupation::where('status', true)->get();
 
         ActivityLogHelper::action('Acesso a página de edição do usuário '. $user->name);
 

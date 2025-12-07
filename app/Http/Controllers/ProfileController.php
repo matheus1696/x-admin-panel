@@ -23,8 +23,8 @@ class ProfileController extends Controller
     {
         ActivityLogHelper::action('Acessou a página de edição de perfil');
 
-        $genders = Gender::all();
-        $occupations = Occupation::all();
+        $genders = Gender::where('status', true)->get();
+        $occupations = Occupation::where('status', true)->get();
         return view('profile.profile_edit', compact('genders', 'occupations'));
     }
 

@@ -17,10 +17,9 @@
     </x-sidebar.dropdown>
     @endcanany
 
-    <!-- Administração (Somente Admin) -->
+    <!-- Auditoria (Somente Admin) -->
     @can('view-logs')
-    <x-sidebar.dropdown 
-        title="Administração" :active="request()->routeIs('admin.*')" icon="fa-solid fa-lock">
+    <x-sidebar.dropdown title="Auditoria" :active="request()->routeIs('admin.logs.*')" icon="fa-solid fa-lock">
             <x-sidebar.dropdown-link href="{{ route('admin.logs.index') }}" title="Logs do Sistema" :active="request()->routeIs('admin.logs.index')" />
     </x-sidebar.dropdown>
     @endcan
