@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('region_states', function (Blueprint $table) {
             $table->id();
             $table->string('acronym')->unique();
-            $table->string('state');
+            $table->string('title');
             $table->string('filter');
             $table->string('code_uf');
             $table->string('code_ddd')->unique()->nullable();

@@ -1,6 +1,7 @@
 @props([
     'title' => 'Title',
     'active' => false,
+    'icon' => 'fa-solid fa-circle-notch',
 ])
 
 <a {{ $attributes->merge([ 
@@ -10,7 +11,7 @@
         : 'text-gray-600 hover:bg-green-100 hover:text-green-700 hover:translate-x-1'
     )
 ]) }}>
-    <div class="w-1.5 h-1.5 rounded-full {{ $active ? 'bg-green-700' : 'bg-green-400' }}"></div>
+    <i class="{{ $icon }} w-5 text-center text-sm {{ $active ? 'text-green-800' : 'text-green-700' }}"></i>
     <span class="text-xs whitespace-nowrap">{{ $title }}</span>
     
     @if($active)

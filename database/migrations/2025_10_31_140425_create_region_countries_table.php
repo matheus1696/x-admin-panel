@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('acronym_2')->unique();
             $table->string('acronym_3')->unique();
-            $table->string('country');
+            $table->string('title');
             $table->string('filter');
             $table->string('country_ing');
             $table->string('filter_country_ing');

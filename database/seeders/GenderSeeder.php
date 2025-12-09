@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Gender;
+use App\Models\Configuration\Gender;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

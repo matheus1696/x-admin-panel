@@ -1,35 +1,174 @@
 <?php
 
-use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\Admin\Configuration\OccupationController;
+use App\Http\Controllers\Admin\Configuration\RegionController;
+use App\Http\Controllers\Admin\Manage\Establishment\EstablishmentController;
+use App\Http\Controllers\Admin\Manage\Establishment\EstablishmentTypeController;
+use App\Http\Controllers\Admin\Manage\Establishment\FinancialBlockController;
 use App\Http\Controllers\Admin\Manage\UserController;
+use App\Http\Controllers\Audit\LogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () { return redirect()->route('login'); });
+Route::get('/', fn () => redirect()->route('login'));
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth')->group(function () {
-    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
-    Route::get('/profile/password', [ProfileController::class, 'password'])->name('profile.password.edit');
-    Route::patch('/profile/password', [ProfileController::class, 'passwordUpdate'])->name('profile.password.update');
 
-    // Users Management
-    Route::prefix('users')->group(function () {
-        Route::get('/', [UserController::class, 'index'])->name('users.index')->middleware('can:view-users');
-        Route::get('/create', [UserController::class, 'create'])->name('users.create')->middleware('can:create-users');
-        Route::post('/', [UserController::class, 'store'])->name('users.store')->middleware('can:create-users');
-        Route::get('/{user}/edit', [UserController::class, 'edit'])->name('users.edit')->middleware('can:edit-users');
-        Route::put('/{user}', [UserController::class, 'update'])->name('users.update')->middleware('can:edit-users');
-        Route::get('/{user}/permission', [UserController::class, 'permissionEdit'])->name('users.permission.edit')->middleware('can:permission-users');
-        Route::put('/{user}/permission', [UserController::class, 'permissionUpdate'])->name('users.permission.update')->middleware('can:permission-users');
-        Route::patch('/{user}/password', [UserController::class, 'password'])->name('users.password')->middleware('can:password-users');
+    /*
+    |--------------------------------------------------------------------------
+    | Dashboard
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('can:dashboard-view')->name('dashboard');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Profile
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
+        Route::patch('/update', [ProfileController::class, 'update'])->name('update');
+
+        Route::get('/password', [ProfileController::class, 'password'])->name('password.edit');
+        Route::patch('/password', [ProfileController::class, 'passwordUpdate'])->name('password.update');
     });
 
-    // Activity Logs
-    Route::get('/log', [ActivityLogController::class, 'index'])->name('admin.logs.index')->middleware('can:view-logs');
+    /*
+    |--------------------------------------------------------------------------
+    | Establishments
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('establishments')->name('establishments.')->group(function () {
+        Route::get('/', [EstablishmentController::class, 'index'])->middleware('can:establishment-view')->name('index');
+        Route::get('/create', [EstablishmentController::class, 'create'])->middleware('can:establishment-create')->name('create');
+        Route::post('/', [EstablishmentController::class, 'store'])->middleware('can:establishment-create')->name('store');
+        Route::get('/{establishment}/edit', [EstablishmentController::class, 'edit'])->middleware('can:establishment-edit')->name('edit');
+        Route::put('/{establishment}', [EstablishmentController::class, 'update'])->middleware('can:establishment-edit')->name('update');
+    });
+
+    Route::prefix('establishment/type')->name('establishments.types.')->group(function () {
+        Route::get('/', [EstablishmentTypeController::class, 'index'])->middleware('can:establishment-type-view')->name('index');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Financial Blocks
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('financial\blocks')->name('financial.blocks.')->group(function () {
+        Route::get('/', [FinancialBlockController::class, 'index'])->middleware('can:financial-block-view')->name('index');
+        Route::get('/create', [FinancialBlockController::class, 'create'])->middleware('can:financial-block-create')->name('create');
+        Route::post('/', [FinancialBlockController::class, 'store'])->middleware('can:financial-block-create')->name('store');
+        Route::get('/{financialBlock}/edit', [FinancialBlockController::class, 'edit'])->middleware('can:financial-block-edit')->name('edit');
+        Route::put('/{financialBlock}', [FinancialBlockController::class, 'update'])->middleware('can:financial-block-edit')->name('update');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Users
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])
+            ->middleware('can:user-view')
+            ->name('index');
+
+        Route::get('/create', [UserController::class, 'create'])
+            ->middleware('can:user-create')
+            ->name('create');
+
+        Route::post('/', [UserController::class, 'store'])
+            ->middleware('can:user-create')
+            ->name('store');
+
+        Route::get('/{user}/edit', [UserController::class, 'edit'])
+            ->middleware('can:user-edit')
+            ->name('edit');
+
+        Route::put('/{user}', [UserController::class, 'update'])
+            ->middleware('can:user-edit')
+            ->name('update');
+
+        Route::get('/{user}/permissions', [UserController::class, 'permissionEdit'])
+            ->middleware('can:user-permission')
+            ->name('permissions.edit');
+
+        Route::put('/{user}/permissions', [UserController::class, 'permissionUpdate'])
+            ->middleware('can:user-permission')
+            ->name('permissions.update');
+
+        Route::patch('/{user}/password', [UserController::class, 'password'])
+            ->middleware('can:user-password')
+            ->name('password.update');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Configurations
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('config')->name('config.')->group(function () {
+
+        // Occupations
+        Route::prefix('occupations')->name('occupations.')->group(function () {
+            Route::get('/', [OccupationController::class, 'index'])
+                ->middleware('can:occupation-view')
+                ->name('index');
+
+            Route::get('/{occupation}/edit', [OccupationController::class, 'edit'])
+                ->middleware('can:occupation-view')
+                ->name('edit');
+
+            Route::put('/{occupation}', [OccupationController::class, 'update'])
+                ->middleware('can:occupation-view')
+                ->name('update');
+
+            Route::patch('/{occupation}/status', [OccupationController::class, 'status'])
+                ->middleware('can:occupation-view')
+                ->name('status');
+        });
+
+        // Regions
+        Route::prefix('regions')->name('regions.')->middleware('can:region-view')->group(function () {
+
+            Route::get('/cities', [RegionController::class, 'cityIndex'])
+                ->name('cities.index');
+
+            Route::patch('/cities/{city}/status', [RegionController::class, 'cityStatus'])
+                ->name('cities.status');
+
+            Route::get('/states', [RegionController::class, 'stateIndex'])
+                ->name('states.index');
+
+            Route::patch('/states/{state}/status', [RegionController::class, 'stateStatus'])
+                ->name('states.status');
+
+            Route::get('/countries', [RegionController::class, 'countryIndex'])
+                ->name('countries.index');
+
+            Route::patch('/countries/{country}/status', [RegionController::class, 'countryStatus'])
+                ->name('countries.status');
+        });
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Audit Logs
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('audit')->name('audit.')->group(function () {
+        Route::get('/logs', [LogController::class, 'index'])
+            ->middleware('can:log-view')
+            ->name('logs.index');
+    });
 });
 
 require __DIR__.'/auth.php';

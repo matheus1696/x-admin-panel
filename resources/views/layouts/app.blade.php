@@ -33,7 +33,7 @@
         <div class="flex">
             <!-- Sidebar Desktop -->
             <aside class="hidden lg:flex flex-col bg-gradient-to-b from-green-50 to-white shadow-lg z-30 transition-all duration-300 ease-in-out overflow-hidden"
-                   :class="sidebarExpanded ? 'w-72' : 'w-20'"
+                   :class="sidebarExpanded ? 'w-80' : 'w-20'"
                    @mouseenter="sidebarExpanded = true"
                    @mouseleave="sidebarExpanded = false">
                 

@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Audit;
 
 use App\Helpers\ActivityLogHelper;
+use App\Http\Controllers\Controller;
 
-class ActivityLogController extends Controller
+class LogController extends Controller
 {
     //
     public function index()

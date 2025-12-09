@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('region_cities', function (Blueprint $table) {
             $table->id();
             $table->string('code_ibge');
-            $table->string('city');
+            $table->string('title');
             $table->string('filter');
             $table->string('code_cep')->nullable();
             $table->boolean('status')->default(false);

@@ -4,7 +4,7 @@
 <div class="overflow-hidden w-full">
     <!-- Table Wrapper -->
     <div class="overflow-x-auto bg-white border border-gray-100 text-xs rounded-2xl shadow-sm">
-        <table class="w-full table-fixed">
+        <table class="w-full table-auto">
             <!-- Cabeçalho -->
             <thead class="font-semibold uppercase tracking-wider bg-green-200 text-green-800 text-left">
                 {{ $thead ?? ''}}

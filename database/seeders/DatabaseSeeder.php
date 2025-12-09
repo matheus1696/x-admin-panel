@@ -23,6 +23,10 @@ class DatabaseSeeder extends Seeder
             RegionCountrySeeder::class,
             RegionStateSeeder::class,
             RegionCitySeeder::class,
+            FinancialBlockSeeder::class,
+            EstablishmentTypesSeeder::class,
+            EstablishmentSeeder::class,
+            DepartmentSeeder::class,
         ]);
 
         User::factory()->create([

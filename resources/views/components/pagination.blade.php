@@ -17,7 +17,8 @@
                 </button>
             @endif
 
-            {{-- Números das Páginas --}}
+            <div class="hidden md:inline-block">
+                {{-- Números das Páginas --}}
             @foreach ($elements as $element)
                 @if (is_string($element))
                     <span class="px-3 py-2 text-xs font-medium text-gray-500 select-none">{{ $element }}</span>
@@ -40,6 +41,7 @@
                     @endforeach
                 @endif
             @endforeach
+            </div>
 
             {{-- Botão Próximo --}}
             @if ($paginator->hasMorePages())

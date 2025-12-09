@@ -2,64 +2,185 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\PermissionRegistrar;
 
 class PermissionSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Limpar cache
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        // Limpa cache de permissões
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        //Criação de Permissões
+        /*
+        |--------------------------------------------------------------------------
+        | PERMISSÕES
+        |--------------------------------------------------------------------------
+        */
 
-            //Dashboard
-            Permission::create(['name' => 'view-dashboard', 'description' => 'Acesso ao Dashboard', 'translation' => 'Visualizar Painel de Controle']);
+        $permissions = [
+            // Dashboard
+            [
+                'name' => 'dashboard-view',
+                'description' => 'Acesso ao Dashboard',
+                'translation' => 'Visualizar Painel de Controle',
+            ],
 
-            //Gerenciameto dos Usuários
-            Permission::create(['name' => 'view-users', 'description' => 'Acesso ao Gerenciamento de Usuários', 'translation' => 'Visualizar Usuários']);
-            Permission::create(['name' => 'create-users', 'description' => 'Acesso a Criação de Usuários', 'translation' => 'Criar Usuários']);
-            Permission::create(['name' => 'edit-users', 'description' => 'Acesso ao Alteração de Usuários', 'translation' => 'Editar Usuários']);
-            Permission::create(['name' => 'password-users', 'description' => 'Acesso ao Redefinição de Senha do Usuários', 'translation' => 'Redefinir Senha de Usuários']);
-            Permission::create(['name' => 'permission-users', 'description' => 'Acesso ao Gerenciamento de Permissões do Usuários', 'translation' => 'Gerenciar Permissões de Usuários']);
+            // Estabelecimentos
+            [
+                'name' => 'establishment-type-view',
+                'description' => 'Gerenciar Tipos de Estabelecimento',
+                'translation' => 'Tipos de Estabelecimento',
+            ],
+            [
+                'name' => 'establishment-view',
+                'description' => 'Gerenciar Estabelecimentos',
+                'translation' => 'Estabelecimentos',
+            ],
 
-            //Visualização de Logs do Sistema
-            Permission::create(['name' => 'view-logs', 'description' => 'Acesso ao Gerenciamento de Logs do Sistema', 'translation' => 'Visualizar Logs']);
+            // Bloco financeiro
+            [
+                'name' => 'financial-block-view',
+                'description' => 'Gerenciar Blocos Financeiros',
+                'translation' => 'Blocos Financeiros',
+            ],
 
-        // Criação de Roles
-        $admin = Role::firstOrCreate(['name' => 'super-admin', 'type' => 'Administrador do Sistema', 'description' => 'Super Administrador do Sistema', 'translation' => 'Super Administrador']);
-        $managerLog = Role::firstOrCreate(['name' => 'manager-log', 'type' => 'Gerenciamento do Sistema', 'description' => 'Gerenciador de Logs do Sistema', 'translation' => 'Gerenciador de Logs']); 
-        $managerUser = Role::firstOrCreate(['name' => 'manager-user', 'type' => 'Gerenciamento do Sistema', 'description' => 'Gerenciador de Usuários do Sistema', 'translation' => 'Gerenciador de Usuários']); 
-        $user = Role::firstOrCreate(['name' => 'user', 'type' => 'Usuário', 'description' => 'Usuário', 'translation' => 'Usuário']);
+            // Usuários
+            [
+                'name' => 'user-view',
+                'description' => 'Visualizar Usuários',
+                'translation' => 'Visualizar Usuários',
+            ],
+            [
+                'name' => 'user-create',
+                'description' => 'Criar Usuários',
+                'translation' => 'Criar Usuários',
+            ],
+            [
+                'name' => 'user-edit',
+                'description' => 'Editar Usuários',
+                'translation' => 'Editar Usuários',
+            ],
+            [
+                'name' => 'user-password',
+                'description' => 'Redefinir Senha',
+                'translation' => 'Redefinir Senha',
+            ],
+            [
+                'name' => 'user-permission',
+                'description' => 'Gerenciar Permissões',
+                'translation' => 'Permissões de Usuários',
+            ],
 
-        //Atribuindo permissões as Roles
-            //Pegar todas as permissões
-            $permissions = Permission::all();
-            
-            // Dar todas as permissões ao admin
-            $admin->givePermissionTo($permissions);
+            // Regiões
+            [
+                'name' => 'region-view',
+                'description' => 'Configurar Regiões',
+                'translation' => 'Regiões',
+            ],
 
-            // Permissões do manager user
-            $managerUser->givePermissionTo([
-                'view-users',
-                'create-users',
-                'edit-users',
-                'password-users',
-                'permission-users',
-            ]);
+            // Ocupações
+            [
+                'name' => 'occupation-view',
+                'description' => 'Configurar Ocupações',
+                'translation' => 'Ocupações',
+            ],
 
-            // Permissões do manager
-            $managerLog->givePermissionTo([
-                'view-logs'
-            ]);
+            // Logs
+            [
+                'name' => 'log-view',
+                'description' => 'Visualizar Logs',
+                'translation' => 'Logs do Sistema',
+            ],
+        ];
 
-            // Permissões do user básico
-            $user->givePermissionTo(['view-dashboard']);
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission['name']], $permission);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | ROLES
+        |--------------------------------------------------------------------------
+        */
+
+        $admin = Role::firstOrCreate([
+            'name' => 'super-admin',
+        ], [
+            'type' => 'Administrador do Sistema',
+            'description' => 'Super Administrador',
+            'translation' => 'Super Admin',
+        ]);
+
+        $configuration = Role::firstOrCreate([
+            'name' => 'configuration',
+        ], [
+            'type' => 'Configuração',
+            'description' => 'Configuração do Sistema',
+            'translation' => 'Configuração',
+        ]);
+
+        $manager = Role::firstOrCreate([
+            'name' => 'manager',
+        ], [
+            'type' => 'Gerenciamento',
+            'description' => 'Gerenciador do Sistema',
+            'translation' => 'Gerente',
+        ]);
+
+        $audit = Role::firstOrCreate([
+            'name' => 'audit',
+        ], [
+            'type' => 'Auditoria',
+            'description' => 'Auditoria do Sistema',
+            'translation' => 'Auditoria',
+        ]);
+
+        $user = Role::firstOrCreate([
+            'name' => 'user',
+        ], [
+            'type' => 'Usuário',
+            'description' => 'Usuário do Sistema',
+            'translation' => 'Usuário',
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | ATRIBUIÇÃO DE PERMISSÕES
+        |--------------------------------------------------------------------------
+        */
+
+        // Super Admin → TODAS
+        $admin->givePermissionTo(Permission::all());
+
+        // Configuração
+        $configuration->givePermissionTo([
+            'establishment-type-view',
+            'establishment-view',
+            'region-view',
+            'occupation-view',
+            'financial-block-view',
+        ]);
+
+        // Gerente
+        $manager->givePermissionTo([
+            'user-view',
+            'user-create',
+            'user-edit',
+            'user-password',
+            'user-permission',
+        ]);
+
+        // Auditor
+        $audit->givePermissionTo([
+            'log-view',
+        ]);
+
+        // Usuário comum
+        $user->givePermissionTo([
+            'dashboard-view',
+        ]);
     }
 }
