@@ -48,7 +48,7 @@
     <!-- Campo principal -->
     <div
         @click="open = !open"
-        class="w-full rounded-md border px-3 py-2 text-xs shadow-sm transition-all duration-200 cursor-pointer flex justify-between items-center
+        class="w-full rounded-md border px-3 py-2 text-sm shadow-sm transition-all duration-200 cursor-pointer flex justify-between items-center
             {{ $errors->has($name) && !$disabled ? $errorBorder : $baseBorder }}"
         :class="open ? 'ring-1 ring-green-500/40' : ''"
     >
@@ -75,12 +75,12 @@
         <!-- Campo de busca -->
         <div class="sticky top-0 bg-white border-b p-2">
             <div class="relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
                 <input
                     type="text"
                     x-model="search"
                     placeholder="Buscar..."
-                    class="w-full pl-8 pr-3 py-2 text-xs text-gray-700 border border-gray-200 rounded-md bg-gray-50 
+                    class="w-full pl-8 pr-3 py-2 text-sm text-gray-700 border border-gray-200 rounded-md bg-gray-50 
                            focus:outline-none focus:border-green-700"
                     @click.stop
                 >
@@ -91,7 +91,7 @@
         <template x-for="option in filteredOptions" :key="option.value">
             <div
                 @click="selectOption(option)"
-                class="px-3 py-2 text-xs text-gray-700 cursor-pointer hover:bg-green-600 hover:text-white transition"
+                class="px-3 py-2 text-sm text-gray-700 cursor-pointer hover:bg-green-600 hover:text-white transition"
                 :class="{'bg-green-600 text-white': selectedValue == option.value}"
             >
                 <span x-text="option.label"></span>
@@ -101,7 +101,7 @@
         <!-- Nenhum resultado -->
         <div
             x-show="filteredOptions.length === 0"
-            class="px-3 py-2 text-xs text-gray-500 italic text-center"
+            class="px-3 py-2 text-sm text-gray-500 italic text-center"
         >
             Nenhum resultado encontrado
         </div>

@@ -10,7 +10,6 @@ class EstablishmentTypeTable extends Component
 {
     use WithPagination;
 
-    public $code = '';
     public $name = '';
     public $status = '';
     public $sort = 'name_asc';
@@ -26,8 +25,6 @@ class EstablishmentTypeTable extends Component
         $query = EstablishmentType::query();
 
         $query->orderBy('status', 'desc');
-
-        if ($this->code) { $query->where('code', 'like', '%' . strtolower($this->code) . '%'); }
 
         if ($this->name) { $query->where('filter', 'like', '%' . strtolower($this->name) . '%'); }
 

@@ -1,5 +1,5 @@
 <div>
-    <x-page.filter title="Filtros de Tipos de Estabelecimento">
+    <x-page.filter title="Filtros dos Tipos de Estabelecimento">
         {{-- Filtros Básicos --}}
         <x-slot name="showBasic">
             <div class="md:col-span-6">
@@ -41,8 +41,6 @@
                     :options="[
                         ['value' => 'name_asc', 'label' => 'Nome (A–Z)'],
                         ['value' => 'name_desc', 'label' => 'Nome (Z–A)'],
-                        ['value' => 'email_asc', 'label' => 'Email (A–Z)'],
-                        ['value' => 'email_desc', 'label' => 'Email (Z–A)'],
                     ]"
                 />
             </div>
