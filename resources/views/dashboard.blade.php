@@ -78,7 +78,6 @@
                             <div>
                                 <h3 class="font-semibold text-yellow-800">Atenção à Segurança</h3>
                             </div>
-                            <div class="px-2 py-1 bg-yellow-500 text-white text-xs rounded-full font-medium">Importante</div>
                         </div>
                         <div>
                             <p class="text-yellow-700 text-xs leading-relaxed">
