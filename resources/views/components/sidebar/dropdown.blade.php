@@ -11,7 +11,7 @@
         transition-all duration-200 ease-out
         {{ $active
             ? 'text-green-800 bg-green-50 border border-green-600'
-            : 'text-gray-500 hover:text-green-700 hover:bg-green-50'
+            : 'text-gray-600 hover:bg-green-100 hover:text-green-700 hover:translate-x-1'
         }}"
     >
         <div class="flex items-center gap-2">
@@ -28,7 +28,7 @@
         </svg>
     </button>
 
-    <div x-show="open" x-transition class="ml-4 mt-1 space-y-1 border-l border-green-200 pl-3">
+    <div x-show="open" x-transition class="ml-4 mt-1 space-y-1">
         {{ $slot }}
     </div>
 </div>
