@@ -32,7 +32,7 @@
 
         <div class="flex">
             <!-- Sidebar Desktop -->
-            <aside class="hidden lg:flex flex-col bg-white shadow-xl z-30 transition-all duration-300 ease-in-out overflow-hidden"
+            <aside class="hidden lg:flex flex-col bg-white shadow-xl z-30 transition-all duration-500 ease-in-out overflow-hidden"
                    :class="sidebarExpanded ? 'w-80' : 'w-20'"
                    @mouseenter="sidebarExpanded = true"
                    @mouseleave="sidebarExpanded = false">
@@ -45,7 +45,7 @@
                         x-transition:enter="transition ease-out duration-1000"
                         x-transition:enter-start="opacity-0 -translate-y-2"
                         x-transition:enter-end="opacity-100 translate-y-0"
-                        x-transition:leave="transition ease-in duration-100"
+                        x-transition:leave="transition ease-in duration-50"
                         x-transition:leave-start="opacity-100 translate-y-0"
                         x-transition:leave-end="opacity-0 -translate-y-2"
                         class="text-lg"
@@ -191,7 +191,7 @@
                     <!-- Left Section: Menu Hamburger + Logo -->
                     <div class="w-full flex items-center gap-3 sm:gap-4">
                         <!-- Menu Hamburger (mobile) -->
-                        <button @click="open = true; sidebarExpanded = true" class="lg:hidden py-2 px-3 rounded-lg transition-all duration-200 hover:bg-green-800">
+                        <button @click="open = true" class="lg:hidden py-2 px-3 rounded-lg transition-all duration-200 hover:bg-green-800">
                             <i class="fa-solid fa-bars text-white text-xl"></i>
                         </button>
 
