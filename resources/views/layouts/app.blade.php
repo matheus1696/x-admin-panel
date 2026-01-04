@@ -131,19 +131,19 @@
                     </div>
 
                     <!-- Informações do usuário -->
-                    <div class="mt-10 pb-6 text-center px-6 space-y-1.5 border-b border-green-300">
+                    <div class="mt-10 pb-6 text-center px-6 space-y-1.5 border-b-2 border-gray-100">
                         <p class="mb-3 font-bold text-gray-900 text-lg truncate">{{ Auth::user()->name }}</p>
                         <div class="flex flex-col justify-center items-center gap-2 text-xs text-gray-500">
                             <div class="flex items-center gap-1">
-                                <i class="fa-solid fa-user text-green-500"></i>
+                                <i class="fa-solid fa-user text-green-700"></i>
                                 <span class="truncate">{{ Auth::user()->name }}</span>
                             </div>
                             <div class="flex items-center gap-1">
-                                <i class="fa-solid fa-building text-green-500"></i>
+                                <i class="fa-solid fa-building text-green-700"></i>
                                 <span class="truncate">{{ Auth::user()->Unit->name ?? 'N/A' }}</span>
                             </div>
                             <div class="flex items-center gap-1">
-                                <i class="fa-solid fa-users text-green-500"></i>
+                                <i class="fa-solid fa-users text-green-700"></i>
                                 <span class="truncate">{{ Auth::user()->Queue->name ?? 'N/A' }}</span>
                             </div>
                         </div>

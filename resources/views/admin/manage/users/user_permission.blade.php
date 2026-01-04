@@ -1,8 +1,8 @@
 <x-app-layout>
     <div class="w-full md:w-2/3 mx-auto space-y-6 mt-6">
-        <x-page.header icon="fa-solid fa-users" title="Alterar Permissão do Usuário" subtitle="Atualize as permissões do usuário do sistema">
+        <x-page.header icon="fa-solid fa-users" title="Alterar Permissão do Usuário" subtitle="Atualize as permissões do usuário: {{ $user->name }}">
             <x-slot name="button">
-                @can('view-users')
+                @can('user-view')
                     <x-button.btn-link href="{{ route('users.index') }}" value="Voltar para Lista" icon="fa-solid fa-rotate-left" />
                 @endcan
             </x-slot>
@@ -10,7 +10,7 @@
 
         <div>
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <form action="{{ route('users.permission.update', $user) }}" method="POST" class="p-6">
+                <form action="{{ route('users.permissions.update', $user) }}" method="POST" class="p-6">
                     @csrf @method('PUT')
 
                     @foreach($roles as $role)

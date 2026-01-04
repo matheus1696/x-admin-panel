@@ -11,7 +11,7 @@ class DashboardController extends Controller
     public function index()
     {
         //
-        ActivityLogHelper::action('Acessou a página inicial do painel');
+        ActivityLogHelper::action('Página do painel após autenticação');
 
         return view('dashboard');
     }

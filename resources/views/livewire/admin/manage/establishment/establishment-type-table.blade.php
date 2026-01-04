@@ -11,9 +11,9 @@
                 <x-form.label value="Status" />
                 <x-form.select-livewire wire:model.live="status" name="status" default="Selecione o status"
                     :options="[
-                        ['value' => '', 'label' => 'Todos'],
-                        ['value' => 'true', 'label' => 'Ativo'],
-                        ['value' => 'false', 'label' => 'Inativo'],
+                        ['value' => 'all', 'label' => 'Todos'],
+                        ['value' => true, 'label' => 'Ativo'],
+                        ['value' => false, 'label' => 'Inativo'],
                     ]"
                 />
             </div>
@@ -51,22 +51,22 @@
         <x-slot name="thead">
             <tr>
                 <x-page.table-th value="Tipos de Estabelecimentos" />
-                <x-page.table-th class="w-36 text-center" value="Status" />
+                <x-page.table-th class="w-28 text-center" value="Status" />
             </tr>
         </x-slot>
 
         <x-slot name="tbody">
             @foreach ($establishmentTypes as $establishmentType)
                 <tr>
-                    <x-page.table-td :value="$establishmentType->title" />
+                    <x-page.table-td class="truncate" :value="$establishmentType->title" />
                     <x-page.table-td>
                         <div class="flex items-center justify-center gap-2">
                             @if ($establishmentType->status)
                                 <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                <span class="text-sm font-medium text-green-700">Ativo</span>
+                                <span class="text-xs font-medium text-green-700">Ativo</span>
                             @else
                                 <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                                <span class="text-sm font-medium text-red-700">Inativo</span>
+                                <span class="text-xs font-medium text-red-700">Inativo</span>
                             @endif
                         </div>
                     </x-page.table-td>

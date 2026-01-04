@@ -77,37 +77,14 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::prefix('users')->name('users.')->group(function () {
-        Route::get('/', [UserController::class, 'index'])
-            ->middleware('can:user-view')
-            ->name('index');
-
-        Route::get('/create', [UserController::class, 'create'])
-            ->middleware('can:user-create')
-            ->name('create');
-
-        Route::post('/', [UserController::class, 'store'])
-            ->middleware('can:user-create')
-            ->name('store');
-
-        Route::get('/{user}/edit', [UserController::class, 'edit'])
-            ->middleware('can:user-edit')
-            ->name('edit');
-
-        Route::put('/{user}', [UserController::class, 'update'])
-            ->middleware('can:user-edit')
-            ->name('update');
-
-        Route::get('/{user}/permissions', [UserController::class, 'permissionEdit'])
-            ->middleware('can:user-permission')
-            ->name('permissions.edit');
-
-        Route::put('/{user}/permissions', [UserController::class, 'permissionUpdate'])
-            ->middleware('can:user-permission')
-            ->name('permissions.update');
-
-        Route::patch('/{user}/password', [UserController::class, 'password'])
-            ->middleware('can:user-password')
-            ->name('password.update');
+        Route::get('/', [UserController::class, 'index'])->middleware('can:user-view')->name('index');
+        Route::get('/create', [UserController::class, 'create'])->middleware('can:user-create')->name('create');
+        Route::post('/', [UserController::class, 'store'])->middleware('can:user-create')->name('store');
+        Route::get('/{user}/edit', [UserController::class, 'edit'])->middleware('can:user-edit')->name('edit');
+        Route::put('/{user}', [UserController::class, 'update'])->middleware('can:user-edit')->name('update');
+        Route::get('/{user}/permissions', [UserController::class, 'permissionEdit'])->middleware('can:user-permission')->name('permissions.edit');
+        Route::put('/{user}/permissions', [UserController::class, 'permissionUpdate'])->middleware('can:user-permission')->name('permissions.update');
+        Route::patch('/{user}/password', [UserController::class, 'password'])->middleware('can:user-password')->name('password.update');
     });
 
     /*

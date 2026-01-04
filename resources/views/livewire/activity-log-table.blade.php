@@ -53,11 +53,10 @@
     <x-page.table :pagination="$logs">
         <x-slot name="thead">
             <tr>
-                <x-page.table-th value="Data e Hora" />
-                <x-page.table-th value="Endereço IP" />
-                <x-page.table-th value="Metodo" />
-                <x-page.table-th value="Url" />
-                <x-page.table-th value="Usuário" />
+                <x-page.table-th class="w-32 truncate" value="Data e Hora" />
+                <x-page.table-th class="w-32 truncate hidden lg:table-cell" value="Endereço IP" />
+                <x-page.table-th class="w-32 hidden lg:table-cell" value="Metodo" />
+                <x-page.table-th class="w-32" value="Usuário" />
                 <x-page.table-th value="Descrição" />
             </tr>
         </x-slot>
@@ -65,12 +64,11 @@
         <x-slot name="tbody">
             @foreach ($logs as $log)
                 <tr>
-                    <x-page.table-td :value="$log->created_at->format('d/m/Y H:i:s')" />
-                    <x-page.table-td :value="$log->ip_address" />
-                    <x-page.table-td :value="$log->method" />
-                    <x-page.table-td :value="$log->url" />
-                    <x-page.table-td :value="$log->User->name ?? ''" />
-                    <x-page.table-td :value="$log->description ?? ''" />
+                    <x-page.table-td class="truncate" :value="$log->created_at->format('d/m/Y H:i:s')" title="{{ $log->created_at->format('d/m/Y H:i:s') }}"/>
+                    <x-page.table-td class="truncate hidden lg:table-cell" :value="$log->ip_address" />
+                    <x-page.table-td class="truncate hidden lg:table-cell" :value="$log->method" />
+                    <x-page.table-td class="truncate" :value="$log->User->name ?? ''" title="{{ $log->User->name ?? '' }}"/>
+                    <x-page.table-td class="truncate" :value="$log->description ?? ''" title="{{ $log->description ?? '' }}"/>
                 </tr>
             @endforeach
         </x-slot>

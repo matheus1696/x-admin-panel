@@ -21,10 +21,11 @@ class ProfileController extends Controller
      */
     public function edit(): View
     {
-        ActivityLogHelper::action('Acessou a página de edição de perfil');
-
         $genders = Gender::where('status', true)->get();
         $occupations = Occupation::where('status', true)->get();
+
+        ActivityLogHelper::action('Visualizou a página de edição do seu perfil');
+
         return view('profile.profile_edit', compact('genders', 'occupations'));
     }
 
@@ -36,6 +37,8 @@ class ProfileController extends Controller
         $user = User::find(Auth::user()->id);
         $user->update($request->validated());
 
+        ActivityLogHelper::action('Atualizou seus dados do perfil');
+
         return redirect()->route('profile.edit')->with('success', 'Alteração de dados realizada com sucesso');
     }
 
@@ -44,6 +47,8 @@ class ProfileController extends Controller
      */
     public function password(): View
     {
+        ActivityLogHelper::action('Visualizou a página de alteração de senha');
+
         return view('profile.profile_password');
     }
 
@@ -59,6 +64,8 @@ class ProfileController extends Controller
 
         // Envia o e-mail de aviso
         Mail::to($user->email)->send(new UserPasswordResetedMail($user));
+
+        ActivityLogHelper::action('Alterou a senha de acesso');
 
         return redirect()->route('profile.edit')->with('success', 'Alteração de senha realizada com sucesso');
     }

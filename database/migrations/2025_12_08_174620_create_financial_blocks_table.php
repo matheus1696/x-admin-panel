@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('financial_blocks', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('filter');
             $table->string('acronym');
             $table->string('color')->nullable();
             $table->boolean('status')->default(true);

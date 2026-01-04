@@ -10,7 +10,7 @@ class LogController extends Controller
     //
     public function index()
     {       
-        ActivityLogHelper::action('Acessou a página de atividades do sistema');
+        ActivityLogHelper::action('Visualizou o histórico de atividades do sistema');
 
         return view('activity_log');
     }

@@ -1,24 +1,24 @@
 <div>
-    <x-page.filter title="Filtros de Usuários">
+    <x-page.filter title="Filtros de Estabelecimentos">
         {{-- Filtros Básicos --}}
         <x-slot name="showBasic">
-            <div class="md:col-span-4">
-                <x-form.label value="Nome" />
-                <x-form.input type="text" placeholder="Buscar por nome..." wire:model.live.debounce.500ms="name"/>
+            <div class="md:col-span-2">
+                <x-form.label value="Código" />
+                <x-form.input type="text" placeholder="Buscar por código..." wire:model.live.debounce.500ms="code"/>
             </div>
 
-            <div class="md:col-span-4">
-                <x-form.label value="Email" />
-                <x-form.input type="email" placeholder="Buscar por e-mail..." wire:model.live.debounce.500ms="email"/>
+            <div class="md:col-span-6">
+                <x-form.label value="Estabelecimento" />
+                <x-form.input type="text" placeholder="Buscar por título do estabelecimento..." wire:model.live.debounce.500ms="name"/>
             </div>
 
             <div class="md:col-span-2">
                 <x-form.label value="Status" />
                 <x-form.select-livewire wire:model.live="status" name="status" default="Selecione o status"
                     :options="[
-                        ['value' => '', 'label' => 'Todos'],
-                        ['value' => 'true', 'label' => 'Ativo'],
-                        ['value' => 'false', 'label' => 'Inativo'],
+                        ['value' => 'all', 'label' => 'Todos'],
+                        ['value' => true, 'label' => 'Ativo'],
+                        ['value' => false, 'label' => 'Inativo'],
                     ]"
                 />
             </div>
@@ -58,26 +58,30 @@
     <x-page.table :pagination="$establishments">
         <x-slot name="thead">
             <tr>
+                <x-page.table-th class="w-20" value="Código" />
                 <x-page.table-th value="Estabelecimentos" />
-                <x-page.table-th class="w-36 text-center" value="Status" />
-                <x-page.table-th class="w-36 text-center" value="Ações" />
+                <x-page.table-th class="w-28" value="Status" />
+                <x-page.table-th class="w-24" value="Ações" />
             </tr>
         </x-slot>
 
         <x-slot name="tbody">
             @foreach ($establishments as $establishment)
                 <tr>
-                    <x-page.table-td :value="$establishment->title" />
+                    <x-page.table-td :value="$establishment->code" />
+                    <x-page.table-td class="truncate" :value="$establishment->title" title="{{ $establishment->title }}"/>
                     <x-page.table-td>
                         <div class="flex items-center justify-center gap-2">
                             @if ($establishment->status)
                                 <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                <span class="text-sm font-medium text-green-700">Ativo</span>
+                                <span class="text-xs font-medium text-green-700">Ativo</span>
                             @else
                                 <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                                <span class="text-sm font-medium text-red-700">Inativo</span>
+                                <span class="text-xs font-medium text-red-700">Inativo</span>
                             @endif
                         </div>
+                    </x-page.table-td>
+                    <x-page.table-td>
                     </x-page.table-td>
                 </tr>
             @endforeach

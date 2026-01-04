@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Configuration;
 
+use App\Helpers\ActivityLogHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -13,6 +14,8 @@ class OccupationController extends Controller
     public function index()
     {
         //
+        ActivityLogHelper::action('Visualizou a página de ocupações');
+        
         return view('admin.configuration.occupation-index');
     }
 

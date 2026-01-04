@@ -4,29 +4,27 @@
         <!-- Card de Boas-vindas -->
         <div class="bg-gradient-to-r from-green-800 via-green-700 to-green-600 text-white rounded-2xl shadow-xl overflow-hidden">
             <div class="p-8">
-                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-3 mb-3">
-                            <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                                <i class="fa-solid fa-user text-xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-2xl font-bold">Olá, {{ Auth::user()->name }}! 👋</h3>
-                                <p class="text-green-100 text-sm mt-1">
-                                    Bem-vindo de volta ao <strong>{{ config('app.name') }}</strong>
-                                </p>
-                            </div>
+                <div class="flex flex-col lg:flex-row items-start">
+                    <div class="flex-1 flex items-center gap-3 mb-3">
+                        <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                            <i class="fa-solid fa-user text-xl"></i>
                         </div>
-                        
-                        <div class="flex flex-wrap gap-4 mt-4 text-green-100 text-sm">
-                            <div class="flex items-center gap-2">
-                                <i class="fa-solid fa-calendar-check"></i>
-                                <span>Hoje é {{ now()->format('d/m/Y') }}</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <i class="fa-solid fa-clock"></i>
-                                <span>{{ now()->format('H:i') }} • {{ now()->format('T') }}</span>
-                            </div>
+                        <div>
+                            <h3 class="text-2xl font-bold">Olá, {{ Auth::user()->name }}!</h3>
+                            <p class="text-green-100 text-sm mt-1">
+                                Bem-vindo de volta ao <strong>{{ config('app.name') }}</strong>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex lg:flex-col lg:items-end gap-4 lg:gap-2 text-green-100 text-sm">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-check"></i>
+                            <span>Hoje é {{ now()->format('d/m/Y') }}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-clock"></i>
+                            <span>{{ now()->format('H:i') }} • {{ now()->format('T') }}</span>
                         </div>
                     </div>
                 </div>
@@ -64,7 +62,7 @@
             
             <!-- Notificações -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3 ml-2">
                     <i class="fa-solid fa-bell text-green-600"></i>
                     Notificações
                 </h3>

@@ -119,15 +119,15 @@ class PermissionSeeder extends Seeder
         ], [
             'type' => 'Configuração',
             'description' => 'Configuração do Sistema',
-            'translation' => 'Configuração',
+            'translation' => 'Configuração do Sistema',
         ]);
 
         $manager = Role::firstOrCreate([
             'name' => 'manager',
         ], [
             'type' => 'Gerenciamento',
-            'description' => 'Gerenciador do Sistema',
-            'translation' => 'Gerente',
+            'description' => 'Gerenciamento do Sistema',
+            'translation' => 'Gerenciamento',
         ]);
 
         $audit = Role::firstOrCreate([

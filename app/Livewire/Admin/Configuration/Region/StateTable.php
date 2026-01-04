@@ -11,7 +11,7 @@ class StateTable extends Component
     use WithPagination;
 
     public $name = '';
-    public $status = '';
+    public $status = 'all';
     public $sort = 'name_asc';
     public $perPage = 10;
 
@@ -28,7 +28,7 @@ class StateTable extends Component
 
         if ($this->name) { $query->where('filter', 'like', '%' . strtolower($this->name) . '%'); }
 
-        if ($this->status) { $query->where('status', $this->status); }
+        if ($this->status !== 'all') { $query->where('status', $this->status); }
 
         // Ordenação
         switch ($this->sort) {

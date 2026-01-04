@@ -4,8 +4,8 @@
 <div class="w-full space-y-3">
     <!-- Table Wrapper -->
     <div class="overflow-hidden bg-white border border-gray-200 rounded-2xl shadow-sm">
-        <div class="overflow-x-auto">
-            <table class="w-full text-[13px]">
+        <div class="overflow-x-hidden">
+            <table class="w-full table-fixed md:table-auto text-[13px]">
                 <!-- Cabeçalho -->
                 <thead class="font-semibold uppercase tracking-wider bg-green-100 text-green-800 text-left border-b border-green-200">
                     {{ $thead ?? ''}}

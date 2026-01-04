@@ -10,12 +10,14 @@ class OccupationTable extends Component
 {
     use WithPagination;
 
+    // Filtros
     public $code = '';
     public $name = '';
-    public $status = '';
+    public $status = 'all';
     public $sort = 'name_asc';
     public $perPage = 10;
 
+    // Resetar paginação ao atualizar filtros
     public function updated()
     {
         $this->resetPage();
@@ -23,15 +25,20 @@ class OccupationTable extends Component
 
     public function render()
     {
+        // Consulta base
         $query = Occupation::query();
 
+        // Filtros padrão
         $query->orderBy('status', 'desc');
 
+        // Filtros por código
         if ($this->code) { $query->where('code', 'like', '%' . strtolower($this->code) . '%'); }
 
+        // Filtros por nome
         if ($this->name) { $query->where('filter', 'like', '%' . strtolower($this->name) . '%'); }
 
-        if ($this->status) { $query->where('status', $this->status); }
+        // Filtros por status
+        if ($this->status !== 'all') { $query->where('status', $this->status); }
 
         // Ordenação
         switch ($this->sort) {
@@ -43,8 +50,10 @@ class OccupationTable extends Component
                 break;
         }
 
+        // Paginação
         $occupations = $query->paginate($this->perPage);
 
+        // Retornar view com dados
         return view('livewire.admin.configuration.occupation-table', compact('occupations'));
     }
 }

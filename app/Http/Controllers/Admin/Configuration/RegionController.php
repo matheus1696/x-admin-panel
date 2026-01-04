@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Configuration;
 
+use App\Helpers\ActivityLogHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Configuration\Region\RegionCountry;
 use App\Models\Configuration\Region\RegionState;
@@ -16,6 +17,8 @@ class RegionController extends Controller
     public function cityIndex()
     {
         //
+        ActivityLogHelper::action('Visualizou a página de cidades');
+
         return view('admin.configuration.region.city-index');
     }
 
@@ -28,6 +31,7 @@ class RegionController extends Controller
         $regionCity->status = !$regionCity->status;
         $regionCity->save();
 
+        ActivityLogHelper::action('Atualizou o status da cidade');
         return redirect()->back()->with('success', 'Status da cidade atualizada com sucesso.');
     }
     
@@ -37,6 +41,7 @@ class RegionController extends Controller
     public function stateIndex()
     {
         //
+        ActivityLogHelper::action('Visualizou a página de estados');
         return view('admin.configuration.region.state-index');
     }
 
@@ -49,6 +54,7 @@ class RegionController extends Controller
         $regionState->status = !$regionState->status;
         $regionState->save();
 
+        ActivityLogHelper::action('Atualizou o status do estado');
         return redirect()->back()->with('success', 'Status do estado atualizado com sucesso.');
     }
     
@@ -58,6 +64,7 @@ class RegionController extends Controller
     public function countryIndex()
     {
         //
+        ActivityLogHelper::action('Visualizou a página de países');
         return view('admin.configuration.region.country-index');
     }
 
@@ -70,6 +77,7 @@ class RegionController extends Controller
         $regionCountry->status = !$regionCountry->status;
         $regionCountry->save();
 
+        ActivityLogHelper::action('Atualizou o status do país');
         return redirect()->back()->with('success', 'Status do pais atualizado com sucesso.');
     }
 }

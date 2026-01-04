@@ -10,9 +10,9 @@ class FinancialBlockTable extends Component
 {
     use WithPagination;
 
-    public $code = '';
+    public $acronym = '';
     public $name = '';
-    public $status = '';
+    public $status = 'all';
     public $sort = 'name_asc';
     public $perPage = 10;
 
@@ -27,11 +27,11 @@ class FinancialBlockTable extends Component
 
         $query->orderBy('status', 'desc');
 
-        if ($this->code) { $query->where('code', 'like', '%' . strtolower($this->code) . '%'); }
+        if ($this->acronym) { $query->where('acronym', 'like', '%' . strtolower($this->acronym) . '%'); }
 
         if ($this->name) { $query->where('filter', 'like', '%' . strtolower($this->name) . '%'); }
 
-        if ($this->status) { $query->where('status', $this->status); }
+        if ($this->status !== 'all') { $query->where('status', $this->status); }
 
         // Ordenação
         switch ($this->sort) {

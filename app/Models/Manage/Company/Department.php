@@ -3,6 +3,7 @@
 namespace App\Models\Manage\Company;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Department extends Model
 {
@@ -18,5 +19,12 @@ class Department extends Model
 
     public function CompanyEstablishment(){
         return $this->belongsTo(Establishment::class,'establishment_id','id');
+    }    
+
+    //Criação do Filter Title
+    public function setNameAttribute($value)
+    {
+        $this->attributes['title'] = $value;
+        $this->attributes['title_filter'] = Str::ascii(strtolower($value));
     }
 }

@@ -25,7 +25,7 @@ class UserController extends Controller
     public function index()
     {
         //
-        ActivityLogHelper::action('Acessou a página de gerenciamento de usuários');
+        ActivityLogHelper::action('Visualizou a página de gerenciamento de usuários');
 
         return view('admin.manage.users.user_index');
     }
@@ -39,7 +39,7 @@ class UserController extends Controller
         $genders = Gender::where('status', true)->get();
         $occupations = Occupation::where('status', true)->get();
 
-        ActivityLogHelper::action('Acesso a página do formulário de criação do usuários');
+        ActivityLogHelper::action('Visualizou a página do formulário de criação do usuários');
 
         return view('admin.manage.users.user_create', compact('genders', 'occupations'));
     }
@@ -73,7 +73,7 @@ class UserController extends Controller
         $genders = Gender::where('status', true)->get();
         $occupations = Occupation::where('status', true)->get();
 
-        ActivityLogHelper::action('Acesso a página de edição do usuário '. $user->name);
+        ActivityLogHelper::action('Visualizou a página de edição do usuário '. $user->name);
 
         return view('admin.manage.users.user_edit', compact('user', 'genders', 'occupations'));
     }

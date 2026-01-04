@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Manage\Establishment;
 
+use App\Helpers\ActivityLogHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -13,6 +14,8 @@ class EstablishmentController extends Controller
     public function index()
     {
         //
+        ActivityLogHelper::action('Visualizou a página de estabelecimentos');
+
         return view('admin.manage.establishment.establishment-index');
     }
 

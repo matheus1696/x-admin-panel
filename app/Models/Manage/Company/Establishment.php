@@ -4,6 +4,7 @@ namespace App\Models\Manage\Company;
 
 use App\Models\Configuration\Region\RegionCity;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Establishment extends Model
 {
@@ -35,5 +36,12 @@ class Establishment extends Model
 
     public function FinancialBlock(){
         return $this->belongsTo(FinancialBlock::class,'financial_block_id','id');
+    }   
+
+    //Criação do Filter Title
+    public function setNameAttribute($value)
+    {
+        $this->attributes['title'] = $value;
+        $this->attributes['title_filter'] = Str::ascii(strtolower($value));
     }
 }

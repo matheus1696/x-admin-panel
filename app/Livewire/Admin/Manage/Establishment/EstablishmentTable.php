@@ -10,9 +10,9 @@ class EstablishmentTable extends Component
 {
     use WithPagination;
 
+    public $code = '';
     public $name = '';
-    public $email = '';
-    public $status = '';
+    public $status = 'all';
     public $sort = 'name_asc';
     public $perPage = 10;
 
@@ -23,11 +23,16 @@ class EstablishmentTable extends Component
 
     public function render()
     {
+        // Consulta base
         $query = Establishment::query();
+        
+        // Filtros 
+        if ($this->code) { $query->where('code', 'like', '%' . strtolower($this->code) . '%'); }
 
+        //  
         if ($this->name) { $query->where('filter', 'like', '%' . strtolower($this->name) . '%'); }
 
-        if ($this->status) { $query->where('status', $this->status); }
+        if ($this->status !== 'all') { $query->where('status', $this->status); }
 
         // Ordenação
         switch ($this->sort) {
@@ -39,8 +44,10 @@ class EstablishmentTable extends Component
                 break;
         }
 
+        // Paginação
         $establishments = $query->paginate($this->perPage);
 
+        // Retorno da view
         return view('livewire.admin.manage.establishment.establishment-table', compact('establishments'));
     }
 }

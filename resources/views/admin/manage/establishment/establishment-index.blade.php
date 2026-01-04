@@ -1,7 +1,7 @@
 <x-app-layout>
-    <x-page.header icon="fa-solid fa-layer-group" title="Tipos de Estabelecimento" subtitle="Gerencie os tipos de estabelecimento" />
+    <x-page.header icon="fa-solid fa-layer-group" title="Estabelecimento" subtitle="Gerencie os estabelecimento" />
 
-    <div class="py-6 w-full overflow-x-auto">
+    <div class="py-6 w-full">
         <livewire:admin.manage.establishment.establishment-table />
     </div>
 </x-app-layout>
