@@ -14,7 +14,18 @@ return new class extends Migration
         Schema::create('departments', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('acronym')->nullable();
             $table->string('filter');
+            $table->text('description')->nullable();
+
+            $table->foreignId('parent_id')->nullable()->constrained('departments')->nullOnDelete();
+
+            $table->integer('order')->nullable();
+            $table->integer('level')->nullable();
+            $table->string('path')->nullable();
+
+            $table->boolean('status')->default(true);
+            
             $table->string('contact')->nullable();
             $table->string('extension')->nullable();
             $table->string('type_contact')->nullable()->default('Without');

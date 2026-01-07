@@ -1,5 +1,5 @@
 <div>
-    <x-page.filter title="Filtros de Estabelecimentos">
+    <x-page.filter title="Filtros de Departamentos">
         {{-- Filtros Básicos --}}
         <x-slot name="showBasic">
             <div class="md:col-span-2">
@@ -55,18 +55,18 @@
         </x-slot>
     </x-page.filter>
 
-    <x-page.table :pagination="$establishments">
+    <x-page.table :pagination="$departments">
         <x-slot name="thead">
             <tr>
                 <x-page.table-th class="w-20" value="Código" />
-                <x-page.table-th value="Estabelecimentos" />
+                <x-page.table-th value="Setores" />
                 <x-page.table-th class="w-28" value="Status" />
                 <x-page.table-th class="w-24" value="Ações" />
             </tr>
         </x-slot>
 
         <x-slot name="tbody">
-            @foreach ($establishments as $establishment)
+            @foreach ($departments as $establishment)
                 <tr>
                     <x-page.table-td :value="$establishment->code" />
                     <x-page.table-td class="truncate" :value="$establishment->title" title="{{ $establishment->title }}"/>

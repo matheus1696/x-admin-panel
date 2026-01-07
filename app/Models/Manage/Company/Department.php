@@ -10,7 +10,14 @@ class Department extends Model
     //
     protected $fillable = [
         'title',
+        'acronym',
         'filter',
+        'description',
+        'parent_id',
+        'order',
+        'level',
+        'path',
+        'status',
         'contact',
         'extension',
         'type_contact',
@@ -19,7 +26,7 @@ class Department extends Model
 
     public function CompanyEstablishment(){
         return $this->belongsTo(Establishment::class,'establishment_id','id');
-    }    
+    }
 
     //Criação do Filter Title
     public function setNameAttribute($value)

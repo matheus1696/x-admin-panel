@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\Configuration\OccupationController;
 use App\Http\Controllers\Admin\Configuration\RegionController;
+use App\Http\Controllers\Admin\Manage\Establishment\DepartmentController;
 use App\Http\Controllers\Admin\Manage\Establishment\EstablishmentController;
 use App\Http\Controllers\Admin\Manage\Establishment\EstablishmentTypeController;
 use App\Http\Controllers\Admin\Manage\Establishment\FinancialBlockController;
@@ -46,12 +47,13 @@ Route::middleware('auth')->group(function () {
     | Establishments
     |--------------------------------------------------------------------------
     */
-    Route::prefix('establishments')->name('establishments.')->group(function () {
-        Route::get('/', [EstablishmentController::class, 'index'])->middleware('can:establishment-view')->name('index');
-        Route::get('/create', [EstablishmentController::class, 'create'])->middleware('can:establishment-create')->name('create');
-        Route::post('/', [EstablishmentController::class, 'store'])->middleware('can:establishment-create')->name('store');
-        Route::get('/{establishment}/edit', [EstablishmentController::class, 'edit'])->middleware('can:establishment-edit')->name('edit');
-        Route::put('/{establishment}', [EstablishmentController::class, 'update'])->middleware('can:establishment-edit')->name('update');
+    Route::prefix('establishments')->middleware('can:establishment-view')->name('establishments.')->group(function () {
+        Route::get('/', [EstablishmentController::class, 'index'])->name('index');
+        Route::get('/{establishment}/show', [EstablishmentController::class, 'show'])->name('show');
+        Route::get('/create', [EstablishmentController::class, 'create'])->name('create');
+        Route::post('/', [EstablishmentController::class, 'store'])->name('store');
+        Route::get('/{establishment}/edit', [EstablishmentController::class, 'edit'])->name('edit');
+        Route::put('/{establishment}', [EstablishmentController::class, 'update'])->name('update');
     });
 
     Route::prefix('establishment/type')->name('establishments.types.')->group(function () {
@@ -133,6 +135,15 @@ Route::middleware('auth')->group(function () {
 
             Route::patch('/countries/{country}/status', [RegionController::class, 'countryStatus'])
                 ->name('countries.status');
+        });
+
+        Route::prefix('departments')->middleware('auth')->group(function () {
+            Route::get('/', [DepartmentController::class, 'index'])->name('departments.index');
+            Route::get('/create', [DepartmentController::class, 'create'])->name('departments.create');
+            Route::post('/create', [DepartmentController::class, 'store'])->name('departments.store');
+            Route::get('/{department}/edit', [DepartmentController::class, 'edit'])->name('departments.edit');
+            Route::put('/{department}/edit', [DepartmentController::class, 'update'])->name('departments.update');
+            Route::put('/{department}/status', [DepartmentController::class, 'status'])->name('departments.status');
         });
     });
 

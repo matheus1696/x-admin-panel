@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Manage\Establishment;
 
 use App\Helpers\ActivityLogHelper;
 use App\Http\Controllers\Controller;
+use App\Models\Manage\Company\Establishment;
 use Illuminate\Http\Request;
 
 class EstablishmentController extends Controller
@@ -38,9 +39,12 @@ class EstablishmentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Establishment $establishment)
     {
         //
+        ActivityLogHelper::action('Visualizou o estabelecimento: ' . $establishment->name);
+
+        return view('admin.manage.establishment.establishment-show', compact('establishment'));
     }
 
     /**
