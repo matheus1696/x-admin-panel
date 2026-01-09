@@ -1,7 +1,7 @@
 @props([ 'pagination' => null])
 
 <!-- 📊 Data Table Component -->
-<div class="w-full space-y-3">
+<div class="w-full">
     <!-- Table Wrapper -->
     <div class="overflow-hidden bg-white border border-gray-200 rounded-2xl shadow-sm">
         <div class="overflow-x-hidden">
@@ -21,7 +21,7 @@
 
     <!-- Paginação -->
     @if ($pagination)
-        <div class="flex flex-col items-center justify-between">
+        <div class="flex flex-col items-center justify-between bg-gray-50 pt-4">
             <!-- Informação de paginação -->
             @if(method_exists($pagination, 'total'))
                 <div class="text-xs text-gray-600/60">

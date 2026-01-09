@@ -6,7 +6,6 @@
         subtitle="{{ $department->title }}"
     />
 
-    <x-page.card>
         <form method="POST" action="{{ route('config.departments.update', $department) }}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             @csrf
             @method('PUT')
@@ -30,6 +29,5 @@
                 <x-button.btn-submit value="Criar Usuário"/>
             </div>
         </form>
-    </x-page.card>
 
 </x-app-layout>

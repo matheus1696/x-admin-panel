@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-page.header icon="fa-solid fa-layer-group" title="Estabelecimento" subtitle="Unidade {{ $establishment->title }}">
         <x-slot name="button">
-            <x-button.btn-link href="{{ route('establishments.index') }}" value="Lista de Estabelecimento" icon="fa-solid fa-reply" class="bg-gray-500"/>
+            <x-button.btn-link href="{{ route('establishments.index') }}" value="Voltar" icon="fa-solid fa-reply" class="bg-gray-600 hover:bg-gray-700"/>
         </x-slot>
     </x-page.header>
 

@@ -29,9 +29,9 @@ class Department extends Model
     }
 
     //Criação do Filter Title
-    public function setNameAttribute($value)
+    public function setTitleAttribute($value)
     {
         $this->attributes['title'] = $value;
-        $this->attributes['title_filter'] = Str::ascii(strtolower($value));
+        $this->attributes['filter'] = Str::ascii(strtolower($value));
     }
 }

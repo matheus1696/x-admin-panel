@@ -46,20 +46,9 @@
 
                         <x-page.table-td class="text-center">
                             <div class="flex items-center justify-center gap-2">
-                                    <a href="{{ route('config.departments.edit', $department) }}"
-                                    class="text-green-700 hover:text-green-900">
-                                        <i class="fa-solid fa-pen"></i>
-                                    </a>
-
-                                @can('status-departments')
-                                    <form method="POST" action="{{ route('config.departments.status', $department) }}">
-                                        @csrf
-                                        @method('PUT')
-                                        <button class="text-gray-500 hover:text-gray-800">
-                                            <i class="fa-solid fa-power-off"></i>
-                                        </button>
-                                    </form>
-                                @endcan
+                                <a href="{{ route('config.departments.edit', $department) }}" class="text-green-700 hover:text-green-900">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
                             </div>
                         </x-page.table-td>
                     </tr>
