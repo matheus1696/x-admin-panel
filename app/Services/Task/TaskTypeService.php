@@ -26,6 +26,12 @@ class TaskTypeService
         return $taskType;
     }
 
+    public function status(int $id): TaskType
+    {
+        $taskType = TaskType::findOrFail($id);
+        return $taskType->toggleStatus();
+    }
+
     public function delete(TaskType $taskType): void
     {
         $taskType->delete();

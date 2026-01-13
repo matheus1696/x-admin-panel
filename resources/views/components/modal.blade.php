@@ -1,7 +1,7 @@
 @props([
     'show' => false,
-    'maxWidth' => 'max-w-xl',
     'close' => null,
+    'maxWidth' => 'max-w-xl',
 ])
 
 @if($show)
@@ -15,8 +15,6 @@
         x-transition:leave-end="opacity-0"
         class="fixed -top-10 inset-0 z-50 flex items-center justify-center bg-black/75 p-5"
     >
-
-        {{-- Modal --}}
         <div
             x-transition:enter="ease-out duration-500"
             x-transition:enter-start="opacity-0 scale-90"
@@ -28,7 +26,6 @@
             @click.outside="{{ $close }}"
             @keydown.escape.window="{{ $close }}"
         >
-
             {{-- Header --}}
             @isset($header)
                 <div class="flex items-center justify-between px-6 py-4 border-b">
@@ -47,7 +44,6 @@
                     {{ $footer }}
                 </div>
             @endisset
-
         </div>
     </div>
 @endif

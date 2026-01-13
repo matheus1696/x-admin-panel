@@ -22,6 +22,12 @@ class TaskType extends Model
         return $this->hasMany(TaskTypeActivity::class)->orderBy('order');
     }
 
+    public function toggleStatus(): self
+    {
+        $this->update(['status' => !$this->status]);
+        return $this;
+    }
+
     //Criação do Filter
     public function setTitleAttribute($value)
     {

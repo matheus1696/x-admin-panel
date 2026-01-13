@@ -5,35 +5,26 @@ namespace App\Livewire\Traits;
 trait Modal
 {
     public bool $showModal = false;
-    public string $mode = 'create';
+    public ?string $modalKey = null;  // identifica o tipo de modal
 
     /**
-     * Abre o modal em modo 'create'
+     * Abre o modal
+     *
+     * @param string $key Identifica o modal, ex: 'ativar_atividade', 'formulario', 'desativar_atividade'
+     * @param mixed|null $data Dados específicos da ação
      */
-    public function createModal()
+    public function openModal(string $key, $data = null)
     {
-        $this->resetForm();
-        $this->mode = 'create';
+        $this->modalKey = $key;
         $this->showModal = true;
     }
 
     /**
-     * Abre o modal em modo 'edit', passando o ID
-     */
-    public function editModal(int $id)
-    {
-        $this->resetForm();
-        $this->loadModel($id);
-        $this->mode = 'edit';
-        $this->showModal = true;
-    }
-
-    /**
-     * Fecha o modal e reseta formulário
+     * Fecha o modal
      */
     public function closeModal()
     {
-        $this->resetForm();
+        $this->modalKey = null;
         $this->showModal = false;
     }
 }

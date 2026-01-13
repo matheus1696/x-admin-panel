@@ -27,9 +27,6 @@ class TaskTypePage extends Component
     public $title = '';
     public $description = '';
 
-    public bool $showModal = false;
-    public string $mode = 'create';
-
     public function updatedFilters()
     {
         $this->resetPage();
@@ -43,9 +40,7 @@ class TaskTypePage extends Component
 
     public function create()
     {
-        $this->resetForm();
-        $this->mode = 'create';
-        $this->showModal = true;
+        $this->openModal('modal-form-create-task-type');
     }
 
     public function store(TaskTypeService $taskTypeService)
@@ -66,8 +61,7 @@ class TaskTypePage extends Component
         $this->title = $taskType->title;
         $this->description = $taskType->description;
 
-        $this->mode = 'edit';
-        $this->showModal = true;
+        $this->openModal('modal-form-edit-task-type');
     }
 
     public function update(TaskTypeService $taskTypeService)
@@ -78,6 +72,19 @@ class TaskTypePage extends Component
 
         $this->flashSuccess('Tipo de tarefa foi atualizada com sucesso.');
         $this->closeModal();
+    }
+
+    public function status(TaskTypeService $taskTypeService, TaskType $taskType)
+    {
+        $taskTypeService->status($taskType->id);
+        $this->flashSuccess('Tipo de tarefa foi atualizada com sucesso.');
+        $this->closeModal();
+    }
+
+    public function taskTypeActivity(TaskType $taskType)
+    {
+        $this->taskTypeId = $taskType->id;
+        $this->openModal('modal-task-type-activity');
     }
 
     public function render()

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title'); // Processo Licitatório
             $table->string('filter');
             $table->text('description')->nullable();
+            $table->integer('days')->default(0);
             $table->boolean('status')->default(true);
             $table->timestamps();
         });
