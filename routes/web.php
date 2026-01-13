@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\Manage\UserController;
 use App\Http\Controllers\Audit\LogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\Task\TaskTypePage;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => redirect()->route('login'));
@@ -157,6 +158,8 @@ Route::middleware('auth')->group(function () {
             ->middleware('can:log-view')
             ->name('logs.index');
     });
+
+    Route::get('/admin/task-types', TaskTypePage::class)->name('admin.task-types.index');
 });
 
 require __DIR__.'/auth.php';

@@ -1,7 +1,7 @@
 <div 
     x-data="{ show: true }" 
     x-show="show" 
-    x-init="setTimeout(() => show = false, 5000)" 
+    x-init="setTimeout(() => show = false, 8000)" 
     x-transition
     class="fixed bottom-5 right-5 z-50 space-y-3"
 >

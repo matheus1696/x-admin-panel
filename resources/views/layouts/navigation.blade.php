@@ -5,6 +5,11 @@
         <x-sidebar.main-link href="{{ route('dashboard') }}" icon="fa-solid fa-chart-line" title="Dashboard" :active="request()->routeIs('dashboard')" />
     @endcan
 
+    <!-- Dashboard -->
+    @can('dashboard-view')
+        <x-sidebar.main-link href="{{ route('admin.task-types.index') }}" icon="fa-solid fa-chart-line" title="Tarefas" :active="request()->routeIs('admin.task-types.index')" />
+    @endcan
+
     <!-- Usuários -->
     @canany([ 'user-view', 'user-create', 'user-edit', 'user-permission' ])
         <x-sidebar.main-dropdown title="Usuários" icon="fa-solid fa-users" :active="request()->routeIs('users.*')" >

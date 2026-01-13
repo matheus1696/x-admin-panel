@@ -1,5 +1,5 @@
 <!-- Modal Component -->
-<div x-data="{ isModalOpen: false }" x-on:keydown.escape.window="isModalOpen = false" x-id="['modal-title']">
+<div x-data="{ isModalOpen: @entangle('showModal') }" x-on:keydown.escape.window="isModalOpen = false" x-id="['modal-title']">
 
     <!-- Trigger Button -->
     <button type="button" @click="isModalOpen = true" class="focus:outline-none">
