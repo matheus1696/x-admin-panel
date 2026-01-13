@@ -2,83 +2,98 @@
 
 namespace App\Livewire\Task;
 
+use App\Http\Requests\Task\TaskTypeStoreRequest;
+use App\Http\Requests\Task\TaskTypeUpdateRequest;
+use App\Livewire\Traits\Modal;
+use App\Livewire\Traits\WithFlashMessage;
 use App\Models\Task\TaskType;
+use App\Services\Task\TaskTypeService;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class TaskTypePage extends Component
 {
-    public $taskTypeId = null;
+    use WithPagination;
+    use WithFlashMessage;
+    use Modal;
 
-    public $title;
-    public $description;
-    public $status = true;
-
-    public $showModal = false;
-
-    protected $rules = [
-        'title' => 'required|string|max:255',
-        'description' => 'nullable|string|max:500',
-        'status' => 'boolean',
+    public array $filters = [
+        'type' => '',
+        'status' => 'all',
+        'perPage' => 10,
     ];
 
-    public function create()
+    public $taskTypeId = null;
+    public $title = '';
+    public $description = '';
+
+    public bool $showModal = false;
+    public string $mode = 'create';
+
+    public function updatedFilters()
     {
-        $this->resetForm();
-        $this->showModal = true;
-    }
-
-    public function edit(TaskType $taskType)
-    {
-        $this->title = $taskType->title;
-        $this->description = $taskType->description;
-
-        $this->showModal = true;
-    }
-
-    public function store()
-    {
-        $this->validate();
-
-        TaskType::create([
-            'title' => $this->title,
-            'description' => $this->description,
-            'status' => $this->status,
-        ]);
-
-        session()->flash('success', 'Task type created successfully.');
-
-        $this->closeModal();
-    }
-
-    public function update()
-    {
-        $this->validate();
-
-        TaskType::find($this->taskTypeId)->update([
-            'title' => $this->title,
-            'description' => $this->description,
-        ]);
-
-        session()->flash('success', 'Task type updated successfully.');
-
-        $this->closeModal();
-    }
-
-    public function closeModal()
-    {
-        $this->resetForm();
-        $this->showModal = false;
+        $this->resetPage();
     }
 
     private function resetForm()
     {
-        $this->reset(['taskTypeId', 'title', 'description', 'status']);
+        $this->reset(['taskTypeId', 'title', 'description']);
         $this->resetValidation();
+    }
+
+    public function create()
+    {
+        $this->resetForm();
+        $this->mode = 'create';
+        $this->showModal = true;
+    }
+
+    public function store(TaskTypeService $taskTypeService)
+    {
+        $data = $this->validate((new TaskTypeStoreRequest())->rules());
+
+        $taskTypeService->create($data);
+
+        $this->flashSuccess('Tipo de tarefa criado com sucesso.');
+        $this->closeModal();
+    }
+
+    public function edit(TaskType $taskType)
+    {
+        $this->resetForm();
+
+        $this->taskTypeId = $taskType->id;
+        $this->title = $taskType->title;
+        $this->description = $taskType->description;
+
+        $this->mode = 'edit';
+        $this->showModal = true;
+    }
+
+    public function update(TaskTypeService $taskTypeService)
+    {
+        $data = $this->validate((new TaskTypeUpdateRequest())->rules());
+
+        $taskTypeService->update($this->taskTypeId, $data);
+
+        $this->flashSuccess('Tipo de tarefa foi atualizada com sucesso.');
+        $this->closeModal();
     }
 
     public function render()
     {
-        $taskTypes = TaskType::orderBy('title')->get();
+        $query = TaskType::query();
+
+        if ($this->filters['type']) {
+            $query->where('filter', 'like', '%' . strtolower($this->filters['type']) . '%');
+        }
+
+        if ($this->filters['status'] !== 'all') {
+            $query->where('status', $this->filters['status']);
+        }
+
+        $taskTypes = $query->orderBy('title')->paginate($this->filters['perPage']);
+
         return view('livewire.task.task-type-page', compact('taskTypes'))->layout('layouts.app');
     }
 }

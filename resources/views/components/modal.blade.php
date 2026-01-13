@@ -1,53 +1,53 @@
-<!-- Modal Component -->
-<div x-data="{ isModalOpen: @entangle('showModal') }" x-on:keydown.escape.window="isModalOpen = false" x-id="['modal-title']">
+@props([
+    'show' => false,
+    'maxWidth' => 'max-w-xl',
+    'close' => null,
+])
 
-    <!-- Trigger Button -->
-    <button type="button" @click="isModalOpen = true" class="focus:outline-none">
-        {{ $button ?? '' }}
-    </button>
+@if($show)
+    <div
+        x-data
+        x-transition:enter="ease-out duration-500"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="ease-in duration-300"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed -top-10 inset-0 z-50 flex items-center justify-center bg-black/75 p-5"
+    >
 
-    <!-- Overlay -->
-    <div x-show="isModalOpen"
-         x-transition.opacity
-         class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
-         aria-labelledby="modal-title"
-         role="dialog"
-         aria-modal="true">
+        {{-- Modal --}}
+        <div
+            x-transition:enter="ease-out duration-500"
+            x-transition:enter-start="opacity-0 scale-90"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="ease-in duration-300"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-90"
+            class="bg-white w-full {{ $maxWidth }} rounded-lg shadow-lg"
+            @click.outside="{{ $close }}"
+            @keydown.escape.window="{{ $close }}"
+        >
 
-        <!-- Modal Content -->
-        <div x-show="isModalOpen"
-             x-transition.scale
-             @click.outside="isModalOpen = false"
-             class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-auto overflow-hidden"
-             @keydown.escape.window="isModalOpen = false"
-             @keyup.escape.window="isModalOpen = false">
-
-            <!-- Header -->
-            @if(isset($title))
-                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-                    <h2 id="modal-title" class="text-lg font-semibold text-gray-800">
-                        {{ $title }}
-                    </h2>
-                    <button @click="isModalOpen = false"
-                            class="text-gray-500 hover:text-gray-700 transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
+            {{-- Header --}}
+            @isset($header)
+                <div class="flex items-center justify-between px-6 py-4 border-b">
+                    {{ $header }}
                 </div>
-            @endif
+            @endisset
 
-            <!-- Body -->
-            <div class="p-6 max-h-[80vh] overflow-y-auto">
-                {{ $body }}
+            {{-- Body --}}
+            <div class="p-6">
+                {{ $slot }}
             </div>
 
-            <!-- Optional Footer -->
-            @if(isset($footer))
-                <div class="px-6 py-4 border-t bg-gray-50 flex justify-end gap-2">
+            {{-- Footer --}}
+            @isset($footer)
+                <div class="px-6 py-4 border-t">
                     {{ $footer }}
                 </div>
-            @endif
+            @endisset
+
         </div>
     </div>
-</div>
+@endif
