@@ -52,7 +52,7 @@
     <x-page.table :pagination="$taskTypes">
         <x-slot name="thead">
             <tr>
-                <x-page.table-th class="text-center w-40" value="Título" />
+                <x-page.table-th class="w-40" value="Título" />
                 <x-page.table-th class="hidden lg:table-cell" value="Descrição" />
                 <x-page.table-th class="text-center w-16" value="Dias" />
                 <x-page.table-th class="text-center w-28" value="Status" />
