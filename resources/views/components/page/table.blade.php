@@ -1,23 +1,19 @@
 @props([ 'pagination' => null])
 
 <!-- 📊 Data Table Component -->
-<div class="w-full">
+<div class="mt-4 overflow-x-auto">
     <!-- Table Wrapper -->
-    <div class="overflow-hidden bg-white border border-gray-200 rounded-2xl shadow-sm">
-        <div class="overflow-x-hidden">
-            <table class="w-full table-fixed md:table-auto text-[13px]">
-                <!-- Cabeçalho -->
-                <thead class="font-semibold uppercase tracking-wider bg-green-100 text-green-800 text-left border-b border-green-200">
-                    {{ $thead ?? ''}}
-                </thead>
+    <table class="w-full text-xs border-t border-gray-100 divide-y divide-gray-100">
+        <!-- Cabeçalho -->
+        <thead class="font-semibold uppercase tracking-wider bg-green-100 text-green-800 text-left border-b border-green-200">
+            {{ $thead ?? ''}}
+        </thead>
 
-                <!-- Corpo -->
-                <tbody class="divide-y divide-gray-100 [&>tr:hover]:bg-green-50 [&>tr:nth-child(even)]:bg-green-50/30">
-                    {{ $tbody ?? ''}}
-                </tbody>
-            </table>
-        </div>
-    </div>
+        <!-- Corpo -->
+        <tbody class="divide-y divide-gray-100 [&>tr:hover]:bg-green-50 [&>tr:nth-child(even)]:bg-green-50/30">
+            {{ $tbody ?? ''}}
+        </tbody>
+    </table>
 
     <!-- Paginação -->
     @if ($pagination)

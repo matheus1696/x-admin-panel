@@ -40,6 +40,7 @@ class TaskTypePage extends Component
 
     public function create()
     {
+        $this->resetForm();
         $this->openModal('modal-form-create-task-type');
     }
 

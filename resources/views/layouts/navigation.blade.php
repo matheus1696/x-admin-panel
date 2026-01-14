@@ -7,7 +7,7 @@
 
     <!-- Dashboard -->
     @can('dashboard-view')
-        <x-sidebar.main-link href="{{ route('admin.task-types.index') }}" icon="fa-solid fa-chart-line" title="Tarefas" :active="request()->routeIs('admin.task-types.index')" />
+        <x-sidebar.main-link href="{{ route('admin.task-types.index') }}" icon="fa-solid fa-diagram-project" title="Tarefas" :active="request()->routeIs('admin.task-types.index')" />
     @endcan
 
     <!-- Usuários -->

@@ -5,6 +5,7 @@ namespace App\Livewire\Task;
 use App\Livewire\Traits\WithFlashMessage;
 use App\Models\Task\TaskType;
 use App\Models\Task\TaskTypeActivity;
+use App\Services\Task\TaskTypeActivityService;
 use Livewire\Component;
 
 class TaskTypeActivityPage extends Component
@@ -15,9 +16,7 @@ class TaskTypeActivityPage extends Component
     public $activities;
     public $title;
     public $deadline_days;
-    public $order;
     public $activityId;
-    public $success = false;
 
     protected $rules = [
         'title' => 'required|string|max:255',
@@ -41,37 +40,32 @@ class TaskTypeActivityPage extends Component
         $this->activities = TaskTypeActivity::where('task_type_id', $this->taskTypeId)->orderBy('order')->get();
     }
 
-    public function store()
+    public function store(TaskTypeActivityService $taskTypeActivityService)
     {
-        $this->validate();
+        $data = $this->validate();
+        $data['task_type_id'] = $this->taskTypeId;
+        $data['order'] = $this->activities->count() + 1;
 
-        TaskTypeActivity::create([
-            'task_type_id' => $this->taskTypeId,
-            'title' => $this->title,
-            'deadline_days' => $this->deadline_days,
-            'order' => $this->activities->count() + 1,
-        ]);
+        $taskTypeActivityService->create($data);
 
         TaskType::find($this->taskTypeId)->increment('days', $this->deadline_days);
 
         $this->resetForm();
-        $this->flashSuccess('Tipo de tarefa criado com sucesso.');
-
+        $this->flashSuccess('Ativiade criado com sucesso.');
         $this->loadActivities();
     }
 
-    public function edit($id)
+    public function edit(TaskTypeActivity $activity)
     {
-        $activity = TaskTypeActivity::findOrFail($id);
-        $this->activityId = $id;
+        $this->activityId = $activity->id;
         $this->title = $activity->title;
         $this->deadline_days = $activity->deadline_days;
         $this->order = $activity->order;
     }
 
-    public function update()
+    public function update(TaskTypeActivityService $taskTypeActivityService)
     {
-        $this->validate();
+        $data = $this->validate();
 
         $activity = TaskTypeActivity::findOrFail($this->activityId);
 
@@ -81,15 +75,38 @@ class TaskTypeActivityPage extends Component
             TaskType::find($this->taskTypeId)->increment('days', $this->deadline_days - $activity->deadline_days);
         }      
 
-        $activity->update([
-            'title' => $this->title,
-            'deadline_days' => $this->deadline_days,
-        ]);
+        $taskTypeActivityService->update($this->activityId, $data);
 
         $this->resetForm();
-        $this->flashSuccess('Tipo de tarefa criado com sucesso.');
+        $this->flashSuccess('Atividade alterada com sucesso.');
+        $this->activityId = null;
 
         $this->loadActivities();
+    }
+
+    public function orderUp(TaskTypeActivity $taskTypeActivity)
+    {
+        $taskTypeActivities = TaskTypeActivity::where('task_type_id', $taskTypeActivity->task_type_id)->get();
+
+        if ($taskTypeActivity->order > 1) {
+            $taskTypeActivity->order -= 1;
+            $taskTypeActivity->save();
+        }
+
+        foreach ($taskTypeActivities as $item) {
+            if ($item->id != $taskTypeActivity->id && $item->order >= $taskTypeActivity->order && $item->order < $taskTypeActivity->order + 1) {
+                $item->order += 1;
+                $item->save();
+            }
+        }
+
+        $this->loadActivities();
+    }
+
+    public function closedUpdate()
+    {
+        $this->resetForm();
+        $this->activityId = null;
     }
 
     public function render()
