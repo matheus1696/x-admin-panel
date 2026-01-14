@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Task;
+namespace App\Http\Requests\Workflow;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TaskTypeStoreRequest extends FormRequest
+class WorkflowStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

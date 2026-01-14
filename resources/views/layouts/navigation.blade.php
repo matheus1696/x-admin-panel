@@ -3,12 +3,7 @@
     <!-- Dashboard -->
     @can('dashboard-view')
         <x-sidebar.main-link href="{{ route('dashboard') }}" icon="fa-solid fa-chart-line" title="Dashboard" :active="request()->routeIs('dashboard')" />
-    @endcan
-
-    <!-- Dashboard -->
-    @can('dashboard-view')
-        <x-sidebar.main-link href="{{ route('admin.task-types.index') }}" icon="fa-solid fa-diagram-project" title="Tarefas" :active="request()->routeIs('admin.task-types.index')" />
-    @endcan
+    @endcan    
 
     <!-- Usuários -->
     @canany([ 'user-view', 'user-create', 'user-edit', 'user-permission' ])
@@ -55,6 +50,10 @@
 
                     <x-sidebar.dropdown-link href="{{ route('config.regions.countries.index') }}" title="Países" :active="request()->routeIs('config.regions.countries.*')" />
                 </x-sidebar.dropdown>
+            @endcan
+
+            @can('dashboard-view')
+                <x-sidebar.dropdown-link href="{{ route('admin.workflow.index') }}" icon="fa-solid fa-diagram-project" title="Tarefas" :active="request()->routeIs('admin.workflow.index')" />
             @endcan
         </x-sidebar.main-dropdown>
     @endcanany

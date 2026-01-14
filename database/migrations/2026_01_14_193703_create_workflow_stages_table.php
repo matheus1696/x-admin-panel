@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('task_type_activities', function (Blueprint $table) {
+        Schema::create('workflow_stages', function (Blueprint $table) {
             $table->id();
             $table->foreignId('task_type_id')->constrained()->cascadeOnDelete();
 
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('task_type_activities');
+        Schema::dropIfExists('workflow_stages');
     }
 };

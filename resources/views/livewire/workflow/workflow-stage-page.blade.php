@@ -4,7 +4,7 @@
     <x-alert.flash />
 
     {{-- Formulário --}}
-    <form wire:submit.prevent="{{ $activityId ? 'update' : 'store' }}" class="pb-5 border-b mb-5">
+    <form wire:submit.prevent="{{ $workflowStateID ? 'update' : 'store' }}" class="pb-5 border-b mb-5">
         <div class="grid grid-cols-6 items-end gap-3">
             <div class="col-span-3">
                 <x-form.label value="Atividade" />
@@ -17,17 +17,16 @@
                 <x-form.error :messages="$errors->get('deadline_days')" />
             </div>
             <div class="col-span-2 py-0.5 text-xs text-white">
-                @if($activityId)
+                @if($workflowStateID)
                     <div class="flex gap-1">
-                        <x-button.btn type="submit" value="Alterar Atividade" class="bg-blue-600 truncate"/>
-                        <x-button.btn type="button" wire:click="closedUpdate" value="X" class="bg-red-600 truncate"/>
+                        <x-button type="submit" text="Atualizar" variant="sky"/>
+                        <x-button wire:click="closedUpdate" icon="fa-solid fa-times" variant="red"/>
                     </div>
                 @else
                     <div class="flex gap-1">
-                        <x-button.btn type="submit" value="Nova Atividade" class="w-full bg-green-600 truncate"/>
+                        <x-button type="submit" text="Nova Atividade"/>
                     </div>
-                @endif
-                
+                @endif                
             </div>
         </div>
     </form>
@@ -43,18 +42,18 @@
             </tr>
         </x-slot>
         <x-slot name="tbody">
-            @forelse ($activities as $activity)
+            @forelse ($workflowStates as $workflowState)
                 <tr class="hover:bg-gray-50">
-                    <x-page.table-td class="text-center">{{ $activity->order }}</x-page.table-td>
-                    <x-page.table-td>{{ $activity->title }}</x-page.table-td>
-                    <x-page.table-td class="text-center">{{ $activity->deadline_days }}</x-page.table-td>
+                    <x-page.table-td class="text-center">{{ $workflowState->order }}</x-page.table-td>
+                    <x-page.table-td>{{ $workflowState->title }}</x-page.table-td>
+                    <x-page.table-td class="text-center">{{ $workflowState->deadline_days }}</x-page.table-td>
                     <x-page.table-td class="text-center">
                         <div class="flex items-center justify-center gap-2">
-                            <x-button.btn-table wire:click="edit({{ $activity->id }})" title="Editar Atividade">
+                            <x-button.btn-table wire:click="edit({{ $workflowState->id }})" title="Editar Atividade">
                                 <i class="fa-solid fa-pen"></i>
                             </x-button.btn-table>
-                            @if ( $activity->order != 1)
-                                <x-button.btn-table wire:click="orderUp({{ $activity->id }})" title="Subir Atividade">
+                            @if ( $workflowState->order != 1)
+                                <x-button.btn-table wire:click="orderUp({{ $workflowState->id }})" title="Subir Atividade">
                                     <i class="fa-solid fa-arrow-up"></i>
                                 </x-button.btn-table>
                             @endif
@@ -65,7 +64,7 @@
             @empty
                 <tr>
                     <td colspan="4" class="px-4 py-4 text-center text-gray-500">
-                        No activities added yet.
+                        Sem atividades adicionadas.
                     </td>
                 </tr>
             @endforelse

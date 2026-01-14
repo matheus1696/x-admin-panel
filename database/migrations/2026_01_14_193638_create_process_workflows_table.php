@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('task_types', function (Blueprint $table) {
+        Schema::create('process_workflows', function (Blueprint $table) {
             $table->id();
             $table->string('title'); // Processo Licitatório
             $table->string('filter');
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('task_types');
+        Schema::dropIfExists('process_workflows');
     }
 };

@@ -4,9 +4,9 @@
     <x-alert.flash />
 
     <!-- Header -->
-    <x-page.header title="Tipos de Tarefa" subtitle="Gerencie os tipos de tarefas do sistema" icon="fa-solid fa-diagram-project">
+    <x-page.header title="Fluxo de Trabalho" subtitle="Gerencie os fluxos de trabalho do sistema" icon="fa-solid fa-diagram-project">
         <x-slot name="button">
-            <x-button.btn type="button" wire:click="create" value="Novo Tipo" icon="fa-solid fa-plus"/>
+            <x-button text="Novo Fluxo" icon="fa-solid fa-plus" wire:click="create" />
         </x-slot>
     </x-page.header>
        
@@ -17,7 +17,7 @@
             {{-- Tipo --}}
             <div class="col-span-12 md:col-span-8">
                 <x-form.label value="Tipo" />
-                <x-form.input wire:model.live.debounce.500ms="filters.type" placeholder="Buscar por tipo..." />
+                <x-form.input wire:model.live.debounce.500ms="filters.workflow" placeholder="Buscar por fluxo de trabalho..." />
             </div>
 
             {{-- Status --}}
@@ -49,7 +49,7 @@
     </x-page.filter>
 
     <!-- Table -->
-    <x-page.table :pagination="$taskTypes">
+    <x-page.table :pagination="$workflows">
         <x-slot name="thead">
             <tr>
                 <x-page.table-th class="w-40" value="Título" />
@@ -61,27 +61,27 @@
         </x-slot>
 
         <x-slot name="tbody">
-            @foreach ($taskTypes as $taskType)
+            @foreach ($workflows as $workflow)
                 <tr>
-                    <x-page.table-td class="truncate" :value="$taskType->title" />
-                    <x-page.table-td class="hidden lg:table-cell truncate" :value="$taskType->description ?? '-'" />
-                    <x-page.table-td class="text-center" :value="$taskType->days ?? '-'" />
+                    <x-page.table-td class="truncate" :value="$workflow->title" />
+                    <x-page.table-td class="hidden lg:table-cell truncate" :value="$workflow->description ?? '-'" />
+                    <x-page.table-td class="text-center" :value="$workflow->days ?? '-'" />
 
                     <x-page.table-td class="text-center">
-                        <div class="text-xs font-medium rounded-full py-0.5 {{ $taskType->status ? 'bg-green-300 text-green-700' : 'bg-red-300 text-red-700' }}">
-                            {{ $taskType->status ? 'Ativo' : 'Desativado' }}
+                        <div class="text-xs font-medium rounded-full py-0.5 px-1 {{ $workflow->status ? 'bg-green-300 text-green-700' : 'bg-red-300 text-red-700' }}">
+                            {{ $workflow->status ? 'Ativo' : 'Desativado' }}
                         </div>
                     </x-page.table-td>
 
                     <x-page.table-td>
                         <div class="flex items-center justify-center gap-2">
-                            <x-button.btn-table wire:click="status({{ $taskType->id }})" title="Alterar Status">
+                            <x-button.btn-table wire:click="status({{ $workflow->id }})" title="Alterar Status">
                                 <i class="fa-solid fa-toggle-on"></i>
                             </x-button.btn-table>
-                            <x-button.btn-table wire:click="edit({{ $taskType->id }})" title="Editar Tipo de Tarefa">
+                            <x-button.btn-table wire:click="edit({{ $workflow->id }})" title="Editar Tipo de Tarefa">
                                 <i class="fa-solid fa-pen"></i>
                             </x-button.btn-table>
-                            <x-button.btn-table wire:click="taskTypeActivity({{ $taskType->id }})" title="Editar Tipo de Tarefa">
+                            <x-button.btn-table wire:click="workflowActivity({{ $workflow->id }})" title="Editar Tipo de Tarefa">
                                 <i class="fa-solid fa-eye"></i>
                             </x-button.btn-table>
                         </div>
@@ -92,84 +92,56 @@
     </x-page.table>
 
     <!-- Modal -->
-    <x-modal :show="$showModal" close="$wire.closeModal()" wire:key="task-type-modal">
-        @if ($modalKey === 'modal-form-create-task-type')
+    <x-modal :show="$showModal" wire:key="workflow-modal">
+        @if ($modalKey === 'modal-form-create-workflow')
             <x-slot name="header">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase">
-                    Cadastrar Tipo de Tarefa
-                </h2>
-
-                <button wire:click="closeModal"
-                    class="text-gray-400 hover:text-gray-600">
-                    ✕
-                </button>
+                <h2 class="text-sm font-semibold text-gray-700 uppercase">Cadastrar Tipo de Tarefa</h2>
             </x-slot>
 
             <form wire:submit.prevent="store" class="space-y-4">
-
                 <div>
                     <x-form.label value="Tipo" />
                     <x-form.input wire:model.defer="title" placeholder="Processo Licitatório" required/>
                     <x-form.error :messages="$errors->get('title')" />
                 </div>
-
                 <div>
                     <x-form.label value="Descrição" />
                     <x-form.input wire:model.defer="description" placeholder="Descrição opcional do tipo de tarefa" rows="4"/>
                     <x-form.error :messages="$errors->get('description')" />
                 </div>
-
                 <div class="flex justify-end gap-2 pt-4">
                     <x-button.btn type="submit" value="Salvar" />
                 </div>
             </form>
         @endif
-        @if ($modalKey === 'modal-form-edit-task-type')
+        @if ($modalKey === 'modal-form-edit-workflow')
             <x-slot name="header">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase">
-                    Editar Tipo de Tarefa
-                </h2>
-
-                <button wire:click="closeModal"
-                    class="text-gray-400 hover:text-gray-600">
-                    ✕
-                </button>
+                <h2 class="text-sm font-semibold text-gray-700 uppercase">Editar Tipo de Tarefa</h2>
             </x-slot>
 
-            <form wire:submit.prevent="update"
-                class="space-y-4">
-
+            <form wire:submit.prevent="update" class="space-y-4">
                 <div>
                     <x-form.label value="Tipo" />
                     <x-form.input wire:model.defer="title" placeholder="Processo Licitatório" required/>
                     <x-form.error :messages="$errors->get('title')" />
                 </div>
-
                 <div>
                     <x-form.label value="Descrição" />
                     <x-form.input wire:model.defer="description" placeholder="Descrição opcional do tipo de tarefa" rows="4"/>
                     <x-form.error :messages="$errors->get('description')" />
                 </div>
-
                 <div class="flex justify-end gap-2 pt-4">
-                    <x-button.btn type="submit" value="Atualizar" />
+                    <x-button type="submit" text="Atualizar" variant="sky"/>
                 </div>
             </form>
         @endif
-        @if ($modalKey === 'modal-task-type-activity')
+        @if ($modalKey === 'modal-workflow-state')
             <x-slot name="header">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase">
-                    Atividades da Tarefas
-                </h2>
-
-                <button wire:click="closeModal"
-                    class="text-gray-400 hover:text-gray-600">
-                    ✕
-                </button>
+                <h2 class="text-sm font-semibold text-gray-700 uppercase">Atividades da Tarefas</h2>
             </x-slot>
 
             <div>
-                <livewire:task.task-type-activity-page :taskTypeId="$taskTypeId" />
+                <livewire:task.workflow-state-page :workflowId="$workflowId" />
             </div>
         @endif
     </x-modal>
