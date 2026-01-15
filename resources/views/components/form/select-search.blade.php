@@ -2,8 +2,8 @@
     'name' => null,
     'options' => [],
     'collection' => null,
-    'labelField' => 'name',
-    'valueField' => 'id',
+    'labelField' => null,
+    'valueField' => null,
     'default' => 'Selecione uma opção',
     'disabled' => false,
     'selected' => null,
@@ -65,6 +65,8 @@
                 <span x-text="opt.label"></span>
             </div>
         </template>
+
+        {{ $slot }}
 
         <!-- Sem resultados -->
         <div x-show="filteredOptions.length === 0" class="px-3 py-2 text-[13px] text-gray-500 italic select-none">

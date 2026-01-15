@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\Manage\UserController;
 use App\Http\Controllers\Audit\LogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\Company\OrganizationChartConfigPage;
+use App\Livewire\Company\OrganizationChartDashboardPage;
 use App\Livewire\Company\OrganizationChartPage;
 use App\Livewire\Workflow\WorkflowPage;
 use Illuminate\Support\Facades\Route;
@@ -161,7 +163,8 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::get('/admin/workflow', WorkflowPage::class)->name('admin.workflow.index');
-    Route::get('/admin/organization', OrganizationChartPage::class)->name('admin.organization.index');
+    Route::get('/admin/organization', OrganizationChartDashboardPage::class)->name('admin.organization.index');
+    Route::get('/admin/config/organization', OrganizationChartConfigPage::class)->name('admin.organization.config.index');
 });
 
 require __DIR__.'/auth.php';

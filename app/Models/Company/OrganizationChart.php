@@ -8,9 +8,13 @@ class OrganizationChart extends Model
 {
     //
     protected $fillable = [
+        'acronym',
         'name',
         'parent_id',
-        'order'
+        'order',
+        'hierarchy',
+        'number_hierarchy',
+        'status'
     ];
 
     public function children()

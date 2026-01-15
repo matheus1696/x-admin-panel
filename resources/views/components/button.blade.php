@@ -28,7 +28,7 @@
     </a>
 @else
     <button type="{{ $type }}" {{ $attributes->merge(['class' => $classes]) }} >
-        @if ($icon) <i class="{{ $icon }}"></i> @endif
+        @if ($icon)<i class="{{ $icon }}"></i>@endif
         <span>{{ $text ?? $slot }}</span>
     </button>
 @endif

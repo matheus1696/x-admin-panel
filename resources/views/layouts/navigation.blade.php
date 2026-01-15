@@ -7,7 +7,12 @@
     
     <!-- Dashboard -->
     @can('dashboard-view')
-        <x-sidebar.main-link href="{{ route('admin.organization.index') }}" icon="fa-solid fa-chart-line" title="Organograma" :active="request()->routeIs('admin.organization.index')" />
+        <x-sidebar.main-link href="{{ route('admin.organization.index') }}" icon="fa-solid fa-sitemap" title="Organograma" :active="request()->routeIs('admin.organization.index')" />
+    @endcan   
+    
+    <!-- Dashboard -->
+    @can('dashboard-view')
+        <x-sidebar.main-link href="{{ route('admin.organization.config.index') }}" icon="fa-solid fa-sitemap" title="Gerenciamento de Organograma" :active="request()->routeIs('admin.organization.config.index')" />
     @endcan  
 
     <!-- Usuários -->
@@ -58,7 +63,7 @@
             @endcan
 
             @can('dashboard-view')
-                <x-sidebar.dropdown-link href="{{ route('admin.workflow.index') }}" icon="fa-solid fa-diagram-project" title="Tarefas" :active="request()->routeIs('admin.workflow.index')" />
+                <x-sidebar.dropdown-link href="{{ route('admin.workflow.index') }}" icon="fa-solid fa-diagram-project" title="Fluxo de Trabalho" :active="request()->routeIs('admin.workflow.index')" />
             @endcan
         </x-sidebar.main-dropdown>
     @endcanany
