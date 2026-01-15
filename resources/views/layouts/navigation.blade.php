@@ -1,9 +1,14 @@
-<nav class="lg:flex-1 space-y-1.5 overflow-hidden pb-2" x-data="{ activeDropdown: null }">
+<nav class="lg:flex-1 space-y-1.5 overflow-hidden pb-2" x-data="{ activeDropdown: null }"> 
 
     <!-- Dashboard -->
     @can('dashboard-view')
         <x-sidebar.main-link href="{{ route('dashboard') }}" icon="fa-solid fa-chart-line" title="Dashboard" :active="request()->routeIs('dashboard')" />
-    @endcan    
+    @endcan  
+    
+    <!-- Dashboard -->
+    @can('dashboard-view')
+        <x-sidebar.main-link href="{{ route('admin.organization.index') }}" icon="fa-solid fa-chart-line" title="Organograma" :active="request()->routeIs('admin.organization.index')" />
+    @endcan  
 
     <!-- Usuários -->
     @canany([ 'user-view', 'user-create', 'user-edit', 'user-permission' ])
