@@ -10,7 +10,7 @@ use App\Http\Controllers\Admin\Manage\UserController;
 use App\Http\Controllers\Audit\LogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
-use App\Livewire\Workflow\ProcessWorkflowPage;
+use App\Livewire\Workflow\WorkflowPage;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => redirect()->route('login'));
@@ -159,7 +159,7 @@ Route::middleware('auth')->group(function () {
             ->name('logs.index');
     });
 
-    Route::get('/admin/workflow', ProcessWorkflowPage::class)->name('admin.workflow.index');
+    Route::get('/admin/workflow', WorkflowPage::class)->name('admin.workflow.index');
 });
 
 require __DIR__.'/auth.php';

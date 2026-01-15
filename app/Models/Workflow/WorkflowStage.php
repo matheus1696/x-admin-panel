@@ -28,7 +28,7 @@ class WorkflowStage extends Model
      */
     public function workflow()
     {
-        return $this->belongsTo(ProcessWorkflow::class);
+        return $this->belongsTo(Workflow::class);
     }
 
     //Criação do Filter

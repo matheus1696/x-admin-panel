@@ -5,7 +5,7 @@ namespace App\Models\Workflow;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class ProcessWorkflow extends Model
+class Workflow extends Model
 {
     //
     protected $fillable = [
@@ -15,7 +15,7 @@ class ProcessWorkflow extends Model
         'status',
     ];
 
-    public function workflowState(){
+    public function workflowStage(){
         return $this->hasMany(WorkflowStage::class)->orderBy('order');
     }
 

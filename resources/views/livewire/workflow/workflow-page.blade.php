@@ -14,9 +14,9 @@
     <x-page.filter title="Filtros">
         <x-slot name="showBasic">
 
-            {{-- Tipo --}}
+            {{-- Fluxo de Trabalho --}}
             <div class="col-span-12 md:col-span-8">
-                <x-form.label value="Tipo" />
+                <x-form.label value="Fluxo de Trabalho" />
                 <x-form.input wire:model.live.debounce.500ms="filters.workflow" placeholder="Buscar por fluxo de trabalho..." />
             </div>
 
@@ -81,7 +81,7 @@
                             <x-button.btn-table wire:click="edit({{ $workflow->id }})" title="Editar Tipo de Tarefa">
                                 <i class="fa-solid fa-pen"></i>
                             </x-button.btn-table>
-                            <x-button.btn-table wire:click="workflowActivity({{ $workflow->id }})" title="Editar Tipo de Tarefa">
+                            <x-button.btn-table wire:click="workflowStage({{ $workflow->id }})" title="Editar Tipo de Tarefa">
                                 <i class="fa-solid fa-eye"></i>
                             </x-button.btn-table>
                         </div>
@@ -99,16 +99,7 @@
             </x-slot>
 
             <form wire:submit.prevent="store" class="space-y-4">
-                <div>
-                    <x-form.label value="Tipo" />
-                    <x-form.input wire:model.defer="title" placeholder="Processo Licitatório" required/>
-                    <x-form.error :messages="$errors->get('title')" />
-                </div>
-                <div>
-                    <x-form.label value="Descrição" />
-                    <x-form.input wire:model.defer="description" placeholder="Descrição opcional do tipo de tarefa" rows="4"/>
-                    <x-form.error :messages="$errors->get('description')" />
-                </div>
+                @component('livewire.workflow._partials.process-workflow-form') @endcomponent
                 <div class="flex justify-end gap-2 pt-4">
                     <x-button.btn type="submit" value="Salvar" />
                 </div>
@@ -120,28 +111,19 @@
             </x-slot>
 
             <form wire:submit.prevent="update" class="space-y-4">
-                <div>
-                    <x-form.label value="Tipo" />
-                    <x-form.input wire:model.defer="title" placeholder="Processo Licitatório" required/>
-                    <x-form.error :messages="$errors->get('title')" />
-                </div>
-                <div>
-                    <x-form.label value="Descrição" />
-                    <x-form.input wire:model.defer="description" placeholder="Descrição opcional do tipo de tarefa" rows="4"/>
-                    <x-form.error :messages="$errors->get('description')" />
-                </div>
+                @component('livewire.workflow._partials.process-workflow-form') @endcomponent
                 <div class="flex justify-end gap-2 pt-4">
                     <x-button type="submit" text="Atualizar" variant="sky"/>
                 </div>
             </form>
         @endif
-        @if ($modalKey === 'modal-workflow-state')
+        @if ($modalKey === 'modal-form-workflow-stage')
             <x-slot name="header">
                 <h2 class="text-sm font-semibold text-gray-700 uppercase">Atividades da Tarefas</h2>
             </x-slot>
 
             <div>
-                <livewire:task.workflow-state-page :workflowId="$workflowId" />
+                <livewire:workflow.workflow-stage-page :workflowId="$workflowId" />
             </div>
         @endif
     </x-modal>

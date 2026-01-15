@@ -4,7 +4,7 @@
     <x-alert.flash />
 
     {{-- Formulário --}}
-    <form wire:submit.prevent="{{ $workflowStateID ? 'update' : 'store' }}" class="pb-5 border-b mb-5">
+    <form wire:submit.prevent="{{ $workflowStageId ? 'update' : 'store' }}" class="pb-5 border-b mb-5">
         <div class="grid grid-cols-6 items-end gap-3">
             <div class="col-span-3">
                 <x-form.label value="Atividade" />
@@ -17,7 +17,7 @@
                 <x-form.error :messages="$errors->get('deadline_days')" />
             </div>
             <div class="col-span-2 py-0.5 text-xs text-white">
-                @if($workflowStateID)
+                @if($workflowStageId)
                     <div class="flex gap-1">
                         <x-button type="submit" text="Atualizar" variant="sky"/>
                         <x-button wire:click="closedUpdate" icon="fa-solid fa-times" variant="red"/>
@@ -42,18 +42,18 @@
             </tr>
         </x-slot>
         <x-slot name="tbody">
-            @forelse ($workflowStates as $workflowState)
+            @forelse ($workflowStages as $workflowStage)
                 <tr class="hover:bg-gray-50">
-                    <x-page.table-td class="text-center">{{ $workflowState->order }}</x-page.table-td>
-                    <x-page.table-td>{{ $workflowState->title }}</x-page.table-td>
-                    <x-page.table-td class="text-center">{{ $workflowState->deadline_days }}</x-page.table-td>
+                    <x-page.table-td class="text-center">{{ $workflowStage->order }}</x-page.table-td>
+                    <x-page.table-td>{{ $workflowStage->title }}</x-page.table-td>
+                    <x-page.table-td class="text-center">{{ $workflowStage->deadline_days }}</x-page.table-td>
                     <x-page.table-td class="text-center">
                         <div class="flex items-center justify-center gap-2">
-                            <x-button.btn-table wire:click="edit({{ $workflowState->id }})" title="Editar Atividade">
+                            <x-button.btn-table wire:click="edit({{ $workflowStage->id }})" title="Editar Atividade">
                                 <i class="fa-solid fa-pen"></i>
                             </x-button.btn-table>
-                            @if ( $workflowState->order != 1)
-                                <x-button.btn-table wire:click="orderUp({{ $workflowState->id }})" title="Subir Atividade">
+                            @if ( $workflowStage->order != 1)
+                                <x-button.btn-table wire:click="orderUp({{ $workflowStage->id }})" title="Subir Atividade">
                                     <i class="fa-solid fa-arrow-up"></i>
                                 </x-button.btn-table>
                             @endif

@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Workflow;
 
+use App\Http\Requests\Workflow\WorkflowStageStoreRequest;
+use App\Http\Requests\Workflow\WorkflowStageUpdateRequest;
 use App\Livewire\Traits\WithFlashMessage;
 use App\Models\Workflow\WorkflowStage;
 use App\Services\Workflow\WorkflowStageService;
@@ -17,11 +19,6 @@ class WorkflowStagePage extends Component
     public $deadline_days;
     public $workflowStageId;
 
-    protected $rules = [
-        'title' => 'required|string|max:255',
-        'deadline_days'  => 'required|integer|min:1',
-    ];
-
     private function resetForm()
     {
         $this->reset(['title', 'deadline_days']);
@@ -31,27 +28,25 @@ class WorkflowStagePage extends Component
     public function mount($workflowId)
     {
         $this->workflowId = $workflowId;
-        $this->loadActivities();
+        $this->loadWorkflowStage();
     }
 
-    public function loadActivities()
+    public function loadWorkflowStage()
     {
         $this->workflowStages = WorkflowStage::where('workflow_id', $this->workflowId)->orderBy('order')->get();
     }
 
     public function store(WorkflowStageService $workflowStageService)
     {
-        $data = $this->validate();
+        $data = $this->validate((new WorkflowStageStoreRequest())->rules());
         $data['workflow_id'] = $this->workflowId;
         $data['order'] = $this->workflowStages->count() + 1;
 
         $workflowStageService->create($data);
 
-        TaskType::find($this->workflowId)->increment('days', $this->deadline_days);
-
         $this->resetForm();
         $this->flashSuccess('Ativiade criado com sucesso.');
-        $this->loadActivities();
+        $this->loadWorkflowStage();
     }
 
     public function edit(WorkflowStage $workflowStage)
@@ -59,47 +54,25 @@ class WorkflowStagePage extends Component
         $this->workflowStageId = $workflowStage->id;
         $this->title = $workflowStage->title;
         $this->deadline_days = $workflowStage->deadline_days;
-        $this->order = $workflowStage->order;
     }
 
     public function update(WorkflowStageService $workflowStageService)
     {
-        $data = $this->validate();
-
-        $workflowStage = WorkflowStage::findOrFail($this->workflowStageId);
-
-        if ($workflowStage->deadline_days > $this->deadline_days) {
-            TaskType::find($this->workflowId)->decrement('days', $workflowStage->deadline_days - $this->deadline_days);
-        } else {
-            TaskType::find($this->workflowId)->increment('days', $this->deadline_days - $workflowStage->deadline_days);
-        }      
+        $data = $this->validate((new WorkflowStageUpdateRequest())->rules());
 
         $workflowStageService->update($this->workflowStageId, $data);
 
+        $this->workflowStageId = null;
         $this->resetForm();
         $this->flashSuccess('Atividade alterada com sucesso.');
-        $this->workflowStageId = null;
 
-        $this->loadActivities();
+        $this->loadWorkflowStage();
     }
 
-    public function orderUp(WorkflowStage $workflowStage)
+    public function orderUp(WorkflowStageService $workflowStageService, WorkflowStage $workflowStage)
     {
-        $workflowStages = WorkflowStage::where('workflow_id', $workflowStage->workflow_id)->get();
-
-        if ($workflowStage->order > 1) {
-            $workflowStage->order -= 1;
-            $workflowStage->save();
-        }
-
-        foreach ($workflowStages as $item) {
-            if ($item->id != $workflowStage->id && $item->order >= $workflowStage->order && $item->order < $workflowStage->order + 1) {
-                $item->order += 1;
-                $item->save();
-            }
-        }
-
-        $this->loadActivities();
+        $workflowStageService->order($workflowStage);
+        $this->loadWorkflowStage();
     }
 
     public function closedUpdate()

@@ -2,16 +2,16 @@
 
 namespace App\Livewire\Workflow;
 
-use App\Http\Requests\Task\WorkflowUpdateRequest;
 use App\Http\Requests\Workflow\WorkflowStoreRequest;
+use App\Http\Requests\Workflow\WorkflowUpdateRequest;
 use App\Livewire\Traits\Modal;
 use App\Livewire\Traits\WithFlashMessage;
-use App\Models\Workflow\ProcessWorkflow;
-use App\Services\Task\ProcessWorkflowService;
+use App\Models\Workflow\Workflow;
+use App\Services\Workflow\WorkflowService;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class ProcessWorkflowPage extends Component
+class WorkflowPage extends Component
 {
     use WithPagination;
     use WithFlashMessage;
@@ -41,56 +41,56 @@ class ProcessWorkflowPage extends Component
     public function create()
     {
         $this->resetForm();
-        $this->openModal('modal-form-create-task-type');
+        $this->openModal('modal-form-create-workflow');
     }
 
-    public function store(ProcessWorkflowService $processWorkflowService)
+    public function store(WorkflowService $WorkflowService)
     {
         $data = $this->validate((new WorkflowStoreRequest())->rules());
 
-        $processWorkflowService->create($data);
+        $WorkflowService->create($data);
 
         $this->flashSuccess('Tipo de tarefa criado com sucesso.');
         $this->closeModal();
     }
 
-    public function edit(ProcessWorkflow $processWorkflow)
+    public function edit(Workflow $Workflow)
     {
         $this->resetForm();
 
-        $this->workflowId = $processWorkflow->id;
-        $this->title = $processWorkflow->title;
-        $this->description = $processWorkflow->description;
+        $this->workflowId = $Workflow->id;
+        $this->title = $Workflow->title;
+        $this->description = $Workflow->description;
 
-        $this->openModal('modal-form-edit-task-type');
+        $this->openModal('modal-form-edit-workflow');
     }
 
-    public function update(ProcessWorkflowService $processWorkflowService)
+    public function update(WorkflowService $WorkflowService)
     {
         $data = $this->validate((new WorkflowUpdateRequest())->rules());
 
-        $processWorkflowService->update($this->workflowId, $data);
+        $WorkflowService->update($this->workflowId, $data);
 
         $this->flashSuccess('Tipo de tarefa foi atualizada com sucesso.');
         $this->closeModal();
     }
 
-    public function status(ProcessWorkflowService $processWorkflowService, ProcessWorkflow $processWorkflow)
+    public function status(WorkflowService $WorkflowService, Workflow $Workflow)
     {
-        $processWorkflowService->status($processWorkflow->id);
+        $WorkflowService->status($Workflow->id);
         $this->flashSuccess('Tipo de tarefa foi atualizada com sucesso.');
         $this->closeModal();
     }
 
-    public function taskTypeActivity(ProcessWorkflow $processWorkflow)
+    public function workflowStage(Workflow $Workflow)
     {
-        $this->workflowId = $processWorkflow->id;
-        $this->openModal('modal-task-type-activity');
+        $this->workflowId = $Workflow->id;
+        $this->openModal('modal-form-workflow-stage');
     }
 
     public function render()
     {
-        $query = ProcessWorkflow::query();
+        $query = Workflow::query();
 
         if ($this->filters['workflow']) {
             $query->where('filter', 'like', '%' . strtolower($this->filters['workflow']) . '%');
@@ -100,8 +100,10 @@ class ProcessWorkflowPage extends Component
             $query->where('status', $this->filters['status']);
         }
 
-        $taskTypes = $query->orderBy('title')->paginate($this->filters['perPage']);
+        $workflows = $query->orderBy('title')->paginate($this->filters['perPage']);
 
-        return view('livewire.workflow.process-workflow-page', compact('taskTypes'))->layout('layouts.app');
+        return view('livewire.workflow.workflow-page', [
+            'workflows' => $workflows,
+        ])->layout('layouts.app');
     }
 }
