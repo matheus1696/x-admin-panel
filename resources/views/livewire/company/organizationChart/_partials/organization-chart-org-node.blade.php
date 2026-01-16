@@ -18,10 +18,10 @@ $levelData = $levels[$level] ?? ['color' => 'bg-slate-500'];
 
 <div class="flex flex-col items-center">
 
-    <div class="relative w-64 rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition" title="{{ $node->acronym }} - {{ $node->name }}">
+    <div class="w-full relative rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition" title="{{ $node->acronym }} - {{ $node->name }}">
         <span class="absolute left-0 top-0 h-full w-1 {{ $levelData['color'] }} rounded-l-xl"></span>
 
-        <div class="p-4 pl-5 text-left">
+        <div class=" p-4 pl-5 text-left">
             <div class="text-sm font-semibold text-slate-800 truncate">
                 {{ $node->acronym }} - {{ $node->name }}
             </div>
