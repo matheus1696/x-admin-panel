@@ -58,9 +58,7 @@
     <x-page.table>
         <x-slot name="thead">
             <tr>
-                <x-page.table-th class="w-40" value="Título" />
-                <x-page.table-th class="hidden lg:table-cell" value="Descrição" />
-                <x-page.table-th class="text-center w-16" value="Dias" />
+                <x-page.table-th value="Título" />
                 <x-page.table-th class="text-center w-28" value="Status" />
                 <x-page.table-th class="text-center w-28" value="Ações" />
             </tr>
@@ -69,9 +67,12 @@
         <x-slot name="tbody">
             @foreach ($organizationCharts as $organizationChart)
                 <tr>
-                    <x-page.table-td class="truncate" :value="$organizationChart->acronym" />
-                    <x-page.table-td class="hidden lg:table-cell truncate" :value="$organizationChart->name" />
-                    <x-page.table-td class="text-center" :value="$organizationChart->order" />
+                    <x-page.table-td>
+                        @for ($i = 1; $i < $organizationChart->number_hierarchy; $i++)
+                           -
+                        @endfor                 
+                        {{ $organizationChart->acronym }} - {{ $organizationChart->name }}
+                    </x-page.table-td>
 
                     <x-page.table-td class="text-center">
                         <div class="text-xs font-medium rounded-full py-0.5 px-1 {{ $organizationChart->status ? 'bg-green-300 text-green-700' : 'bg-red-300 text-red-700' }}">
@@ -140,7 +141,7 @@
                 </div>
                 <div>
                     <x-form.label value="Setor Pai" />
-                    <x-form.select-search wire:model.defer="hierarchy" name="hierarchy" :collection="$organizationChart" labelField="name" valueField="id" default="Selecione o setor" :selected="old('hierarchy', $organizationChart->hierarchy ?? '')"/>
+                    <x-form.select-livewire wire:model.defer="hierarchy" name="hierarchy" :collection="$organizationCharts" labelField="name" valueField="id" default="Selecione o setor" :selected="old('hierarchy', $organizationChart->hierarchy ?? '')"/>
                     <x-form.error :messages="$errors->get('hierarchy')" />
                 </div>
                 <div class="flex justify-end gap-2 pt-4">

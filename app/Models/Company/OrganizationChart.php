@@ -19,7 +19,7 @@ class OrganizationChart extends Model
 
     public function children()
     {
-        return $this->hasMany(OrganizationChart::class, 'parent_id')
+        return $this->hasMany(OrganizationChart::class, 'hierarchy')
             ->orderBy('order');
     }
 }

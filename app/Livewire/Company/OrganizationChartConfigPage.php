@@ -5,103 +5,98 @@ namespace App\Livewire\Company;
 use App\Livewire\Traits\Modal;
 use App\Livewire\Traits\WithFlashMessage;
 use App\Models\Company\OrganizationChart;
+use App\Services\Company\OrganizationChartService;
 use Livewire\Component;
 
 class OrganizationChartConfigPage extends Component
 {
-    use WithFlashMessage;
-    use Modal;
+    use WithFlashMessage, Modal;
 
-    // form
-    public $chartId = null;
-    public $name;
-    public $acronym;
-    public $hierarchy;
-    public $order;
+    /** LISTAGEM */
+    public $organizationCharts = [];
 
-    public function resetForm()
+    /** FORM */
+    public ?int $chartId = null;
+    public string $name = '';
+    public ?string $acronym = null;
+    public $hierarchy = null;
+
+    /* LIFECYCLE */
+    public function mount()
     {
-        $this->reset(['chartId', 'name', 'acronym', 'hierarchy', 'order']);
+        $this->loadOrganizationCharts();
     }
 
-    public function create()
+    /* DATA */
+    public function loadOrganizationCharts(): void
+    {
+        $this->organizationCharts = OrganizationChart::orderBy('order')->get();
+    }
+
+    public function resetForm(): void
+    {
+        $this->reset(['chartId', 'name', 'acronym', 'hierarchy']);
+    }
+
+    /* CREATE */
+    public function create(): void
     {
         $this->resetForm();
         $this->openModal('modal-form-create-organitation-chart');
     }
 
-    public function edit($id)
+    public function store(OrganizationChartService $organizationChartService): void
     {
-        $this->resetForm();
-        
-        $organizationChart = OrganizationChart::find($id);
+        $data = $this->validate($this->rules());
 
-        $this->name = $organizationChart->name;
-        $this->acronym = $organizationChart->acronym;        
-        
+        $organizationChartService->create($data);
+
+        $this->afterSave('Setor adicionado no organograma com sucesso.');
+    }
+    
+    /* EDIT */
+    public function edit(int $id): void
+    {
+        $organizationChart = OrganizationChart::findOrFail($id);
+
+        $this->chartId   = $organizationChart->id;
+        $this->name      = $organizationChart->name;
+        $this->acronym   = $organizationChart->acronym;
+        $this->hierarchy = $organizationChart->hierarchy;
+
         $this->openModal('modal-form-edit-organitation-chart');
     }
 
-    public function store()
+    public function update(OrganizationChartService $organizationChartService): void
     {
-        $data = $this->validate([
+        $data = $this->validate($this->rules());
+
+        $organizationChartService->update($this->chartId, $data);
+
+        $this->afterSave('Setor alterado no organograma com sucesso.');
+    }
+
+    /* HELPERS */
+    protected function afterSave(string $message): void
+    {
+        $this->loadOrganizationCharts();
+        $this->resetForm();
+        $this->flashSuccess($message);
+        $this->closeModal();
+    }
+
+    protected function rules(): array
+    {
+        return [
             'name' => 'required|string',
             'acronym' => 'nullable|string|max:20',
-            'hierarchy' => 'nullable|exists:organization_charts,id'
-        ]);
-
-        OrganizationChart::create($data);
-
-        //Reordenando Setores
-            //Buscando dados Setores
-            $organizations = OrganizationChart::orderBy('hierarchy')->get();
-
-            foreach ($organizations as $organization) {
-
-                //Atribuindo Hierariquia do Setor Principal
-                if ($organization['hierarchy'] == 0) {
-                    $orderList = OrganizationChart::find($organization['id']);
-                    $orderList->order = "0" . $organization['acronym'];
-                    $orderList->number_hierarchy = 1;
-                    $orderList->save();
-                }
-
-                //Listando Setores para Ordenação Hierarquica
-                    //Buscando Dados do Predecessor (Acima do setor)
-                    $predecessor = OrganizationChart::where('id', $organization['hierarchy'])->get();
-
-                foreach ($predecessor as $valuepredecessor) {
-                    //Buscando dados
-                    $orderList = OrganizationChart::find($organization['id']);
-
-                    //Atribuindo Novo Valor
-                    $number_hierarchy = $valuepredecessor['order'] . $organization['id'] . $organization['acronym'];
-
-                    //Salvando
-                    $orderList->order = $number_hierarchy;
-                    $orderList->number_hierarchy = preg_match_all('!\d+!',$number_hierarchy);
-                    $orderList->save();
-                }
-            }
-
-        $this->resetForm();
-        $this->flashSuccess('Setor adicinado no organograma com sucesso.');
-        $this->closeModal();
-        
+            'hierarchy' => 'required',
+        ];
     }
 
-    public function delete($id)
-    {
-        OrganizationChart::where('hierarchy', $id)->delete();
-        OrganizationChart::findOrFail($id)->delete();
-    }
-
+    /* RENDER */
     public function render()
     {
-        $organizationCharts = OrganizationChart::orderBy('order')->get();
-
-        return view('livewire.company.organization-chart-config-page',[
-            'organizationCharts' => $organizationCharts,
-        ])->layout('layouts.app');
+        return view('livewire.company.organization-chart-config-page')->layout('layouts.app');
     }
 }
