@@ -22,7 +22,7 @@ $levelData = $levels[$level] ?? ['color' => 'bg-slate-500'];
         <span class="absolute left-0 top-0 h-full w-1 {{ $levelData['color'] }} rounded-l-xl"></span>
 
         <div class=" p-4 pl-5 text-left">
-            <div class="text-sm font-semibold text-slate-800 truncate">
+            <div class="text-center text-sm font-semibold text-slate-800 truncate">
                 {{ $node->acronym }} - {{ $node->name }}
             </div>
         </div>
@@ -33,7 +33,7 @@ $levelData = $levels[$level] ?? ['color' => 'bg-slate-500'];
     @endif
 
     @if($node->children->isNotEmpty())
-        <div class="flex gap-6 justify-center">
+        <div class="w-full flex gap-6 justify-center">
             @foreach($node->children as $child)
                 @include('livewire.company.organizationChart._partials.organization-chart-org-node', [
                     'node' => $child,
