@@ -11,9 +11,9 @@
     flex items-center justify-center gap-1 shadow transform';
 
     $variants = [
-        'green' => 'bg-green-600 hover:bg-green-700 text-white',
+        'green' => 'bg-green-700 hover:bg-green-800 text-white',
         'gray' => 'bg-gray-600 hover:bg-gray-700 text-white',
-        'yellow' => 'bg-yellow-600 hover:bg-yellow-700 text-white',
+        'yellow' => 'bg-yellow-500 hover:bg-yellow-600 text-white',
         'red' => 'bg-red-600 hover:bg-red-700 text-white',
         'sky' => 'bg-sky-600 hover:bg-sky-700 text-white',
     ];

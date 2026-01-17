@@ -11,7 +11,6 @@ class PermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        // Limpa cache de permissões
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         /*
@@ -21,83 +20,93 @@ class PermissionSeeder extends Seeder
         */
 
         $permissions = [
+
             // Dashboard
             [
-                'name' => 'dashboard-view',
-                'description' => 'Acesso ao Dashboard',
-                'translation' => 'Visualizar Painel de Controle',
+                'name' => 'dashboard.view',
+                'description' => 'Visualizar Dashboard',
+                'translation' => 'Dashboard',
             ],
 
-            // Estabelecimentos
+            // Organização (Governança)
             [
-                'name' => 'establishment-type-view',
-                'description' => 'Gerenciar Tipos de Estabelecimento',
-                'translation' => 'Tipos de Estabelecimento',
+                'name' => 'organization.view',
+                'description' => 'Visualizar Organograma',
+                'translation' => 'Organograma',
             ],
             [
-                'name' => 'establishment-view',
+                'name' => 'organization.manage',
+                'description' => 'Gerenciar Organograma',
+                'translation' => 'Gerenciar Organograma',
+            ],
+            [
+                'name' => 'workflow.manage',
+                'description' => 'Gerenciar Fluxo de Trabalho',
+                'translation' => 'Fluxo de Trabalho',
+            ],
+
+            // Administração (Cadastros Mestres)
+            [
+                'name' => 'admin.establishments.manage',
                 'description' => 'Gerenciar Estabelecimentos',
                 'translation' => 'Estabelecimentos',
             ],
-
-            // Bloco financeiro
             [
-                'name' => 'financial-block-view',
+                'name' => 'admin.occupations.manage',
+                'description' => 'Gerenciar Ocupações',
+                'translation' => 'Ocupações',
+            ],
+            [
+                'name' => 'admin.regions.manage',
+                'description' => 'Gerenciar Regiões',
+                'translation' => 'Regiões',
+            ],
+            [
+                'name' => 'admin.financial-blocks.manage',
                 'description' => 'Gerenciar Blocos Financeiros',
                 'translation' => 'Blocos Financeiros',
             ],
 
-            // Usuários
+            // Usuários & Acessos
             [
-                'name' => 'user-view',
+                'name' => 'users.view',
                 'description' => 'Visualizar Usuários',
-                'translation' => 'Visualizar Usuários',
+                'translation' => 'Listar Usuários',
             ],
             [
-                'name' => 'user-create',
+                'name' => 'users.create',
                 'description' => 'Criar Usuários',
                 'translation' => 'Criar Usuários',
             ],
             [
-                'name' => 'user-edit',
+                'name' => 'users.update',
                 'description' => 'Editar Usuários',
                 'translation' => 'Editar Usuários',
             ],
             [
-                'name' => 'user-password',
-                'description' => 'Redefinir Senha',
+                'name' => 'users.password',
+                'description' => 'Redefinir Senha de Usuários',
                 'translation' => 'Redefinir Senha',
             ],
             [
-                'name' => 'user-permission',
-                'description' => 'Gerenciar Permissões',
+                'name' => 'users.permissions',
+                'description' => 'Gerenciar Permissões de Usuários',
                 'translation' => 'Permissões de Usuários',
             ],
 
-            // Regiões
+            // Auditoria
             [
-                'name' => 'region-view',
-                'description' => 'Configurar Regiões',
-                'translation' => 'Regiões',
-            ],
-
-            // Ocupações
-            [
-                'name' => 'occupation-view',
-                'description' => 'Configurar Ocupações',
-                'translation' => 'Ocupações',
-            ],
-
-            // Logs
-            [
-                'name' => 'log-view',
-                'description' => 'Visualizar Logs',
+                'name' => 'audit.logs.view',
+                'description' => 'Visualizar Logs do Sistema',
                 'translation' => 'Logs do Sistema',
             ],
         ];
 
         foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission['name']], $permission);
+            Permission::firstOrCreate(
+                ['name' => $permission['name']],
+                $permission
+            );
         }
 
         /*
@@ -106,43 +115,33 @@ class PermissionSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
 
-        $admin = Role::firstOrCreate([
-            'name' => 'super-admin',
-        ], [
+        $superAdmin = Role::firstOrCreate(['name' => 'super-admin'], [
             'type' => 'Administrador do Sistema',
-            'description' => 'Super Administrador',
+            'description' => 'Acesso total ao sistema',
             'translation' => 'Super Admin',
         ]);
 
-        $configuration = Role::firstOrCreate([
-            'name' => 'configuration',
-        ], [
-            'type' => 'Configuração',
-            'description' => 'Configuração do Sistema',
-            'translation' => 'Configuração do Sistema',
+        $admin = Role::firstOrCreate(['name' => 'admin'], [
+            'type' => 'Administração',
+            'description' => 'Administração do sistema',
+            'translation' => 'Administrador',
         ]);
 
-        $manager = Role::firstOrCreate([
-            'name' => 'manager',
-        ], [
-            'type' => 'Gerenciamento',
-            'description' => 'Gerenciamento do Sistema',
-            'translation' => 'Gerenciamento',
+        $manager = Role::firstOrCreate(['name' => 'manager'], [
+            'type' => 'Gerência',
+            'description' => 'Gerenciamento operacional',
+            'translation' => 'Gerente',
         ]);
 
-        $audit = Role::firstOrCreate([
-            'name' => 'audit',
-        ], [
+        $auditor = Role::firstOrCreate(['name' => 'auditor'], [
             'type' => 'Auditoria',
-            'description' => 'Auditoria do Sistema',
-            'translation' => 'Auditoria',
+            'description' => 'Auditoria do sistema',
+            'translation' => 'Auditor',
         ]);
 
-        $user = Role::firstOrCreate([
-            'name' => 'user',
-        ], [
+        $user = Role::firstOrCreate(['name' => 'user'], [
             'type' => 'Usuário',
-            'description' => 'Usuário do Sistema',
+            'description' => 'Usuário padrão',
             'translation' => 'Usuário',
         ]);
 
@@ -152,35 +151,39 @@ class PermissionSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
 
-        // Super Admin → TODAS
-        $admin->givePermissionTo(Permission::all());
+        // Super Admin → tudo
+        $superAdmin->givePermissionTo(Permission::all());
 
-        // Configuração
-        $configuration->givePermissionTo([
-            'establishment-type-view',
-            'establishment-view',
-            'region-view',
-            'occupation-view',
-            'financial-block-view',
+        // Admin (cadastros + organização)
+        $admin->givePermissionTo([
+            'dashboard.view',
+            'organization.view',
+            'organization.manage',
+            'workflow.manage',
+            'admin.establishments.manage',
+            'admin.occupations.manage',
+            'admin.regions.manage',
+            'admin.financial-blocks.manage',
         ]);
 
-        // Gerente
+        // Gerente (pessoas)
         $manager->givePermissionTo([
-            'user-view',
-            'user-create',
-            'user-edit',
-            'user-password',
-            'user-permission',
+            'dashboard.view',
+            'users.view',
+            'users.create',
+            'users.update',
+            'users.password',
+            'users.permissions',
         ]);
 
         // Auditor
-        $audit->givePermissionTo([
-            'log-view',
+        $auditor->givePermissionTo([
+            'audit.logs.view',
         ]);
 
         // Usuário comum
         $user->givePermissionTo([
-            'dashboard-view',
+            'dashboard.view',
         ]);
     }
 }

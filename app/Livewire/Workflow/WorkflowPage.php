@@ -79,7 +79,6 @@ class WorkflowPage extends Component
     {
         $WorkflowService->status($Workflow->id);
         $this->flashSuccess('Tipo de tarefa foi atualizada com sucesso.');
-        $this->closeModal();
     }
 
     public function workflowStage(Workflow $Workflow)

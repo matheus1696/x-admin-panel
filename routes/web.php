@@ -12,26 +12,30 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Livewire\Company\OrganizationChartConfigPage;
 use App\Livewire\Company\OrganizationChartDashboardPage;
-use App\Livewire\Company\OrganizationChartPage;
 use App\Livewire\Workflow\WorkflowPage;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Public
+|--------------------------------------------------------------------------
+*/
 Route::get('/', fn () => redirect()->route('login'));
-
 
 /*
 |--------------------------------------------------------------------------
-| Authenticated Routes
+| Authenticated
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Dashboard
+    | Dashboard (SEM permissão)
     |--------------------------------------------------------------------------
     */
-    Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('can:dashboard-view')->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
 
     /*
     |--------------------------------------------------------------------------
@@ -48,123 +52,158 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Establishments
+    | Administração
     |--------------------------------------------------------------------------
     */
-    Route::prefix('establishments')->middleware('can:establishment-view')->name('establishments.')->group(function () {
-        Route::get('/', [EstablishmentController::class, 'index'])->name('index');
-        Route::get('/{establishment}/show', [EstablishmentController::class, 'show'])->name('show');
-        Route::get('/create', [EstablishmentController::class, 'create'])->name('create');
-        Route::post('/', [EstablishmentController::class, 'store'])->name('store');
-        Route::get('/{establishment}/edit', [EstablishmentController::class, 'edit'])->name('edit');
-        Route::put('/{establishment}', [EstablishmentController::class, 'update'])->name('update');
-    });
+    Route::prefix('admin')->name('admin.')->group(function () {
 
-    Route::prefix('establishment/type')->name('establishments.types.')->group(function () {
-        Route::get('/', [EstablishmentTypeController::class, 'index'])->middleware('can:establishment-type-view')->name('index');
-    });
+        /*
+        | Estabelecimentos
+        */
+        Route::prefix('establishments')
+            ->middleware('can:admin.establishments.manage')
+            ->name('establishments.')
+            ->group(function () {
 
-    /*
-    |--------------------------------------------------------------------------
-    | Financial Blocks
-    |--------------------------------------------------------------------------
-    */
-    Route::prefix('financial\blocks')->name('financial.blocks.')->group(function () {
-        Route::get('/', [FinancialBlockController::class, 'index'])->middleware('can:financial-block-view')->name('index');
-        Route::get('/create', [FinancialBlockController::class, 'create'])->middleware('can:financial-block-create')->name('create');
-        Route::post('/', [FinancialBlockController::class, 'store'])->middleware('can:financial-block-create')->name('store');
-        Route::get('/{financialBlock}/edit', [FinancialBlockController::class, 'edit'])->middleware('can:financial-block-edit')->name('edit');
-        Route::put('/{financialBlock}', [FinancialBlockController::class, 'update'])->middleware('can:financial-block-edit')->name('update');
-    });
+                Route::get('/', [EstablishmentController::class, 'index'])->name('index');
+                Route::get('/create', [EstablishmentController::class, 'create'])->name('create');
+                Route::post('/', [EstablishmentController::class, 'store'])->name('store');
+                Route::get('/{establishment}/show', [EstablishmentController::class, 'show'])->name('show');
+                Route::get('/{establishment}/edit', [EstablishmentController::class, 'edit'])->name('edit');
+                Route::put('/{establishment}', [EstablishmentController::class, 'update'])->name('update');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Users
-    |--------------------------------------------------------------------------
-    */
-    Route::prefix('users')->name('users.')->group(function () {
-        Route::get('/', [UserController::class, 'index'])->middleware('can:user-view')->name('index');
-        Route::get('/create', [UserController::class, 'create'])->middleware('can:user-create')->name('create');
-        Route::post('/', [UserController::class, 'store'])->middleware('can:user-create')->name('store');
-        Route::get('/{user}/edit', [UserController::class, 'edit'])->middleware('can:user-edit')->name('edit');
-        Route::put('/{user}', [UserController::class, 'update'])->middleware('can:user-edit')->name('update');
-        Route::get('/{user}/permissions', [UserController::class, 'permissionEdit'])->middleware('can:user-permission')->name('permissions.edit');
-        Route::put('/{user}/permissions', [UserController::class, 'permissionUpdate'])->middleware('can:user-permission')->name('permissions.update');
-        Route::patch('/{user}/password', [UserController::class, 'password'])->middleware('can:user-password')->name('password.update');
-    });
+                // Tipos
+                Route::get('/types', [EstablishmentTypeController::class, 'index'])
+                    ->name('types.index');
+            });
 
-    /*
-    |--------------------------------------------------------------------------
-    | Configurations
-    |--------------------------------------------------------------------------
-    */
-    Route::prefix('config')->name('config.')->group(function () {
+        /*
+        | Blocos Financeiros
+        */
+        Route::prefix('financial-blocks')
+            ->middleware('can:admin.financial-blocks.manage')
+            ->name('financial.blocks.')
+            ->group(function () {
 
-        // Occupations
-        Route::prefix('occupations')->name('occupations.')->group(function () {
-            Route::get('/', [OccupationController::class, 'index'])
-                ->middleware('can:occupation-view')
+                Route::get('/', [FinancialBlockController::class, 'index'])->name('index');
+                Route::get('/create', [FinancialBlockController::class, 'create'])->name('create');
+                Route::post('/', [FinancialBlockController::class, 'store'])->name('store');
+                Route::get('/{financialBlock}/edit', [FinancialBlockController::class, 'edit'])->name('edit');
+                Route::put('/{financialBlock}', [FinancialBlockController::class, 'update'])->name('update');
+            });
+
+        /*
+        | Ocupações
+        */
+        Route::prefix('occupations')
+            ->middleware('can:admin.occupations.manage')
+            ->name('occupations.')
+            ->group(function () {
+
+                Route::get('/', [OccupationController::class, 'index'])->name('index');
+                Route::get('/{occupation}/edit', [OccupationController::class, 'edit'])->name('edit');
+                Route::put('/{occupation}', [OccupationController::class, 'update'])->name('update');
+                Route::patch('/{occupation}/status', [OccupationController::class, 'status'])->name('status');
+            });
+
+        /*
+        | Regiões
+        */
+        Route::prefix('regions')
+            ->middleware('can:admin.regions.manage')
+            ->name('regions.')
+            ->group(function () {
+
+                Route::get('/countries', [RegionController::class, 'countryIndex'])->name('countries.index');
+                Route::patch('/countries/{country}/status', [RegionController::class, 'countryStatus'])->name('countries.status');
+
+                Route::get('/states', [RegionController::class, 'stateIndex'])->name('states.index');
+                Route::patch('/states/{state}/status', [RegionController::class, 'stateStatus'])->name('states.status');
+
+                Route::get('/cities', [RegionController::class, 'cityIndex'])->name('cities.index');
+                Route::patch('/cities/{city}/status', [RegionController::class, 'cityStatus'])->name('cities.status');
+            });
+
+        /*
+        | Departamentos (Organograma)
+        */
+        Route::prefix('departments')
+            ->middleware('can:organization.manage')
+            ->name('departments.')
+            ->group(function () {
+
+                Route::get('/', [DepartmentController::class, 'index'])->name('index');
+                Route::get('/create', [DepartmentController::class, 'create'])->name('create');
+                Route::post('/', [DepartmentController::class, 'store'])->name('store');
+                Route::get('/{department}/edit', [DepartmentController::class, 'edit'])->name('edit');
+                Route::put('/{department}', [DepartmentController::class, 'update'])->name('update');
+                Route::put('/{department}/status', [DepartmentController::class, 'status'])->name('status');
+            });
+
+        /*
+        | Usuários & Acessos
+        */
+        Route::prefix('users')->name('users.')->group(function () {
+
+            Route::get('/', [UserController::class, 'index'])
+                ->middleware('can:users.view')
                 ->name('index');
 
-            Route::get('/{occupation}/edit', [OccupationController::class, 'edit'])
-                ->middleware('can:occupation-view')
+            Route::get('/create', [UserController::class, 'create'])
+                ->middleware('can:users.create')
+                ->name('create');
+
+            Route::post('/', [UserController::class, 'store'])
+                ->middleware('can:users.create')
+                ->name('store');
+
+            Route::get('/{user}/edit', [UserController::class, 'edit'])
+                ->middleware('can:users.update')
                 ->name('edit');
 
-            Route::put('/{occupation}', [OccupationController::class, 'update'])
-                ->middleware('can:occupation-view')
+            Route::put('/{user}', [UserController::class, 'update'])
+                ->middleware('can:users.update')
                 ->name('update');
 
-            Route::patch('/{occupation}/status', [OccupationController::class, 'status'])
-                ->middleware('can:occupation-view')
-                ->name('status');
+            Route::get('/{user}/permissions', [UserController::class, 'permissionEdit'])
+                ->middleware('can:users.permissions')
+                ->name('permissions.edit');
+
+            Route::put('/{user}/permissions', [UserController::class, 'permissionUpdate'])
+                ->middleware('can:users.permissions')
+                ->name('permissions.update');
+
+            Route::patch('/{user}/password', [UserController::class, 'password'])
+                ->middleware('can:users.password')
+                ->name('password.update');
         });
 
-        // Regions
-        Route::prefix('regions')->name('regions.')->middleware('can:region-view')->group(function () {
+        /*
+        | Auditoria
+        */
+        Route::prefix('audit')
+            ->middleware('can:audit.logs.view')
+            ->name('audit.')
+            ->group(function () {
 
-            Route::get('/cities', [RegionController::class, 'cityIndex'])
-                ->name('cities.index');
+                Route::get('/logs', [LogController::class, 'index'])->name('logs.index');
+            });
 
-            Route::patch('/cities/{city}/status', [RegionController::class, 'cityStatus'])
-                ->name('cities.status');
+        /*
+        | Workflow & Organograma (Livewire)
+        */
+        Route::get('/workflow', WorkflowPage::class)
+            ->middleware('can:workflow.manage')
+            ->name('workflow.index');
 
-            Route::get('/states', [RegionController::class, 'stateIndex'])
-                ->name('states.index');
+        Route::get('/organization', OrganizationChartDashboardPage::class)
+            ->middleware('can:organization.view')
+            ->name('organization.index');
 
-            Route::patch('/states/{state}/status', [RegionController::class, 'stateStatus'])
-                ->name('states.status');
-
-            Route::get('/countries', [RegionController::class, 'countryIndex'])
-                ->name('countries.index');
-
-            Route::patch('/countries/{country}/status', [RegionController::class, 'countryStatus'])
-                ->name('countries.status');
-        });
-
-        Route::prefix('departments')->middleware('auth')->group(function () {
-            Route::get('/', [DepartmentController::class, 'index'])->name('departments.index');
-            Route::get('/create', [DepartmentController::class, 'create'])->name('departments.create');
-            Route::post('/create', [DepartmentController::class, 'store'])->name('departments.store');
-            Route::get('/{department}/edit', [DepartmentController::class, 'edit'])->name('departments.edit');
-            Route::put('/{department}/edit', [DepartmentController::class, 'update'])->name('departments.update');
-            Route::put('/{department}/status', [DepartmentController::class, 'status'])->name('departments.status');
-        });
+        Route::get('/organization/config', OrganizationChartConfigPage::class)
+            ->middleware('can:organization.manage')
+            ->name('organization.config.index');
     });
-
-    /*
-    |--------------------------------------------------------------------------
-    | Audit Logs
-    |--------------------------------------------------------------------------
-    */
-    Route::prefix('audit')->name('audit.')->group(function () {
-        Route::get('/logs', [LogController::class, 'index'])
-            ->middleware('can:log-view')
-            ->name('logs.index');
-    });
-
-    Route::get('/admin/workflow', WorkflowPage::class)->name('admin.workflow.index');
-    Route::get('/admin/organization', OrganizationChartDashboardPage::class)->name('admin.organization.index');
-    Route::get('/admin/config/organization', OrganizationChartConfigPage::class)->name('admin.organization.config.index');
 });
 
 require __DIR__.'/auth.php';

@@ -7,7 +7,7 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('organograma', () => ({
-                scale: 0.5,
+                scale: 1,
                 ctrlPressed: false,
                 isDragging: false,
                 startX: 0,
@@ -23,13 +23,13 @@
                 
                 zoomIn() {
                     if (this.scale < 2) {
-                        this.scale += 0.1;
+                        this.scale += 0.05;
                     }
                 },
                 
                 zoomOut() {
                     if (this.scale > 0.3) {
-                        this.scale -= 0.1;
+                        this.scale -= 0.05;
                     }
                 },
                 
@@ -42,7 +42,7 @@
                 },
                 
                 fitToScreen() {
-                    this.scale = 0.5;
+                    this.scale = 0.7;
                     this.translateX = 0;
                     this.translateY = 0;
                     this.lastTranslateX = 0;
@@ -148,24 +148,18 @@
     <div class="mb-8">
         <x-page.header title="Organograma" subtitle="Organograma da Secretária de Saúde de Caruaru" icon="fa-solid fa-sitemap">
             <x-slot name="button">
-                <div class="flex flex-wrap justify-center items-center gap-4 mb-6">
-                    <div class="flex items-center">                      
-                        <x-button @click="zoomOut" icon="fa-solid fa-minus"/>
-                        <span class="text-sm text-gray-700 font-medium min-w-[60px] text-center" x-text="zoomLevel + '%'"></span>
-                        <x-button @click="zoomIn" icon="fa-solid fa-plus"/>
-                    </div>
-                    
-                    <div class="flex gap-2">
-                        <x-button @click="resetZoom" text="100%" variant="sky"/>
-                        <x-button @click="resetPosition" text="Centralizar" variant="gray" />
-                    </div>
+                <div class="flex items-center gap-2">
+                    <x-button @click="zoomOut" icon="fa-solid fa-minus"/>
+                    <span x-text="zoomLevel + '%'" class="text-sm font-semibold"></span>
+                    <x-button @click="zoomIn" icon="fa-solid fa-plus"/>
+                    <x-button @click="resetPosition" text="Centralizar"/>
                 </div>
             </x-slot>
         </x-page.header>
     </div>
 
     @if($organizationCharts->isNotEmpty())
-        <div class="mx-auto">
+        <div class="mx-auto bg-green-700/10 rounded-xl shadow border border-green-700">
             <!-- Container do Organograma com área de arraste -->
             <div class="overflow-hidden relative"
                  x-ref="organogramaContainer"
@@ -173,19 +167,19 @@
                  @mousemove="doDrag($event)"
                  @mouseup="stopDrag()"
                  @mouseleave="stopDrag()"
-                 style="cursor: grab; height: 600px; position: relative;">
+                 style="cursor: grab; height: 700px; position: relative;">
                  
                 <!-- Instrução de uso -->
-                <div class="absolute bottom-4 left-4 z-10 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 text-sm text-gray-600 shadow-sm">
+                <div class="absolute bottom-4 left-4 z-10 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-gray-600 shadow-sm">
                     <div class="flex items-center gap-2">
-                        <i class="fas fa-arrows-alt text-blue-500"></i>
-                        <span>Arraste para mover • CTRL + Scroll para zoom</span>
+                        <i class="fas fa-arrows-alt text-green-700"></i>
+                        <span>Arraste para mover | CTRL + Scroll para zoom</span>
                     </div>
                 </div>
                 
                 <!-- Área do organograma -->
                 <div class="absolute inset-0 overflow-auto">
-                    <div class="min-w-full min-h-full flex items-start justify-center p-8"
+                    <div class="relative min-w-full min-h-full flex justify-center p-12 transition-transform"
                          :style="`
                              transform: 
                                  translate(${translateX}px, ${translateY}px) 
@@ -203,9 +197,9 @@
             </div>
         </div>
     @else
-        <div class="max-w-md mx-auto mt-20 text-center">
-            <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center">
-                <svg class="w-10 h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="max-w-md mx-auto mt-40 text-center">
+            <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
+                <svg class="w-10 h-10 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                 </svg>
             </div>

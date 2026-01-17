@@ -23,7 +23,7 @@
             {{-- Nome do Setor --}}
             <div class="col-span-12 md:col-span-6">
                 <x-form.label value="Nome do Setor" />
-                <x-form.input wire:model.live.debounce.500ms="filters.name" placeholder="Buscar por setor..." />
+                <x-form.input wire:model.live.debounce.500ms="filters.title" placeholder="Buscar por setor..." />
             </div>
 
             {{-- Status --}}
@@ -68,10 +68,33 @@
             @foreach ($organizationCharts as $organizationChart)
                 <tr>
                     <x-page.table-td>
-                        @for ($i = 1; $i < $organizationChart->number_hierarchy; $i++)
-                           -
-                        @endfor                 
-                        {{ $organizationChart->acronym }} - {{ $organizationChart->name }}
+                        <div class="flex items-center gap-2">
+                            @switch($organizationChart->number_hierarchy)
+                                @case(1)
+                                    <div class="w-[5px] h-0.5 bg-green-900/70"></div>
+                                    @break
+                                @case(2)
+                                    <div class="w-[20px] h-0.5 bg-green-900/70"></div>
+                                    @break
+                                @case(3)
+                                    <div class="w-[40px] h-0.5 bg-green-900/70"></div>
+                                    @break
+                                @case(4)
+                                    <div class="w-[60px] h-0.5 bg-green-900/70"></div>
+                                    @break
+                                @case(5)
+                                    <div class="w-[80px] h-0.5 bg-green-900/70"></div>
+                                    @break
+                                @case(6)
+                                    <div class="w-[100px] h-0.5 bg-green-900/70"></div>
+                                    @break
+                                @default                                    
+                                    <div class="w-[120px] h-0.5 bg-green-900/70"></div>
+                                    @break
+                            @endswitch
+                                       
+                            <div>{{ $organizationChart->acronym }} - {{ $organizationChart->title }}</div>
+                        </div>
                     </x-page.table-td>
 
                     <x-page.table-td class="text-center">
@@ -110,12 +133,12 @@
                 </div>
                 <div>
                     <x-form.label value="Setor" />
-                    <x-form.input wire:model.defer="name" placeholder="Nome do Setor" required/>
-                    <x-form.error :messages="$errors->get('name')" />
+                    <x-form.input wire:model.defer="title" placeholder="Nome do Setor" required/>
+                    <x-form.error :messages="$errors->get('title')" />
                 </div>
                 <div>
                     <x-form.label value="Setor Pai" />
-                    <x-form.select-livewire wire:model.defer="hierarchy" name="hierarchy" :collection="$organizationCharts" value-field="id" label-field="name" />
+                    <x-form.select-livewire wire:model.defer="hierarchy" name="hierarchy" :collection="$organizationCharts" value-field="id" label-acronym="acronym" label-field="title" />
                     <x-form.error :messages="$errors->get('hierarchy')" />
                 </div>
                 <div class="flex justify-end gap-2 pt-4">
@@ -136,12 +159,12 @@
                 </div>
                 <div>
                     <x-form.label value="Setor" />
-                    <x-form.input wire:model.defer="name" placeholder="Nome do Setor" required/>
-                    <x-form.error :messages="$errors->get('name')" />
+                    <x-form.input wire:model.defer="title" placeholder="Nome do Setor" required/>
+                    <x-form.error :messages="$errors->get('title')" />
                 </div>
                 <div>
                     <x-form.label value="Setor Pai" />
-                    <x-form.select-livewire wire:model.defer="hierarchy" name="hierarchy" :collection="$organizationCharts" labelField="name" valueField="id" default="Selecione o setor" :selected="old('hierarchy', $organizationChart->hierarchy ?? '')"/>
+                    <x-form.select-livewire wire:model.defer="hierarchy" name="hierarchy" :collection="$organizationCharts" label-acronym="acronym" label-field="title" valueField="id" default="Selecione o setor" :selected="old('hierarchy', $hierarchy ?? '')"/>
                     <x-form.error :messages="$errors->get('hierarchy')" />
                 </div>
                 <div class="flex justify-end gap-2 pt-4">

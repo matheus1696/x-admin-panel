@@ -1,84 +1,188 @@
-<nav class="lg:flex-1 space-y-1.5 overflow-hidden pb-2" x-data="{ activeDropdown: null }"> 
+<nav class="lg:flex-1 space-y-1.5 overflow-hidden pb-2" x-data="{ activeDropdown: null }">
 
     <!-- Dashboard -->
-    @can('dashboard-view')
-        <x-sidebar.main-link href="{{ route('dashboard') }}" icon="fa-solid fa-chart-line" title="Dashboard" :active="request()->routeIs('dashboard')" />
-    @endcan  
-    
-    <!-- Dashboard -->
-    @can('dashboard-view')
-        <x-sidebar.main-link href="{{ route('admin.organization.index') }}" icon="fa-solid fa-sitemap" title="Organograma" :active="request()->routeIs('admin.organization.index')" />
-    @endcan   
-    
-    <!-- Dashboard -->
-    @can('dashboard-view')
-        <x-sidebar.main-link href="{{ route('admin.organization.config.index') }}" icon="fa-solid fa-sitemap" title="Gerenciamento de Organograma" :active="request()->routeIs('admin.organization.config.index')" />
-    @endcan  
+    <x-sidebar.main-link
+        href="{{ route('dashboard') }}"
+        icon="fa-solid fa-chart-line"
+        title="Dashboard"
+        :active="request()->routeIs('dashboard')"
+    />
 
-    <!-- Usuários -->
-    @canany([ 'user-view', 'user-create', 'user-edit', 'user-permission' ])
-        <x-sidebar.main-dropdown title="Usuários" icon="fa-solid fa-users" :active="request()->routeIs('users.*')" >
-            @can('user-create')
-                <x-sidebar.dropdown-link href="{{ route('users.create') }}" title="Criar Usuário" icon="fa-solid fa-user-plus" :active="request()->routeIs('users.create')" />
+    <!-- Organização -->
+    @canany(['organization.view', 'organization.manage', 'workflow.manage'])
+        <x-sidebar.main-dropdown
+            title="Organização"
+            icon="fa-solid fa-sitemap"
+            :active="request()->routeIs('admin.organization.*') || request()->routeIs('admin.workflow.*')"
+        >
+
+            @can('organization.view')
+                <x-sidebar.dropdown-link
+                    href="{{ route('admin.organization.index') }}"
+                    title="Organograma"
+                    icon="fa-solid fa-diagram-project"
+                    :active="request()->routeIs('admin.organization.index')"
+                />
             @endcan
 
-            @can('user-view')
-                <x-sidebar.dropdown-link href="{{ route('users.index') }}" title="Listar Usuários" icon="fa-solid fa-list" :active="request()->routeIs('users.index')" />
-            @endcan
-        </x-sidebar.main-dropdown>
-    @endcanany
-
-    <!-- Configurações do Sistema -->
-    @canany(['occupation-view', 'region-view'])
-        <x-sidebar.main-dropdown title="Configurações" icon="fa-solid fa-gear" :active="request()->routeIs('config.*')">
-            @can('occupation-view')
-                <x-sidebar.dropdown-link href="{{ route('config.occupations.index') }}" title="Ocupações" icon="fa-solid fa-briefcase" :active="request()->routeIs('config.occupations.*')" />
+            @can('organization.manage')
+                <x-sidebar.dropdown-link
+                    href="{{ route('admin.organization.config.index') }}"
+                    title="Gerenciar Organograma"
+                    icon="fa-solid fa-gear"
+                    :active="request()->routeIs('admin.organization.config.index')"
+                />
             @endcan
 
-            <!-- Estabelecimentos -->
-            @canany(['establishment-view', 'establishment-type-view'])
-                <x-sidebar.dropdown title="Estabelecimentos" icon="fa-solid fa-hospital" :active="request()->routeIs('establishments.*')" >
-                    @can('establishment-type-view')
-                        <x-sidebar.dropdown-link href="{{ route('establishments.types.index') }}" title="Tipos de Estabelecimento" :active="request()->routeIs('establishments.types.*')" />
-                    @endcan
-
-                    @can('establishment-view')
-                        <x-sidebar.dropdown-link href="{{ route('establishments.index') }}" title="Estabelecimentos" :active="request()->routeIs('establishments.index')" />
-                    @endcan
-                </x-sidebar.dropdown>
-            @endcanany
-            
-            @can('financial-block-view')
-                <x-sidebar.dropdown-link href="{{ route('financial.blocks.index') }}"  title="Blocos Financeiros" icon="fa-solid fa-coins" :active="request()->routeIs('financial-blocks.*')" />
-            @endcan
-
-            @can('region-view')
-                <x-sidebar.dropdown title="Regiões" icon="fa-solid fa-map" :active="request()->routeIs('config.regions.*')" >
-                    <x-sidebar.dropdown-link href="{{ route('config.regions.cities.index') }}" title="Cidades" :active="request()->routeIs('config.regions.cities.*')" />
-
-                    <x-sidebar.dropdown-link href="{{ route('config.regions.states.index') }}" title="Estados" :active="request()->routeIs('config.regions.states.*')" />
-
-                    <x-sidebar.dropdown-link href="{{ route('config.regions.countries.index') }}" title="Países" :active="request()->routeIs('config.regions.countries.*')" />
+            @can('workflow.manage')
+                <x-sidebar.dropdown
+                    title="Fluxo de Trabalho"
+                    icon="fa-solid fa-diagram-project"
+                    :active="request()->routeIs('admin.workflow.*')"
+                >
+                    <x-sidebar.dropdown-link
+                        href="{{ route('admin.workflow.index') }}"
+                        title="Processos"
+                        :active="request()->routeIs('admin.workflow.index')"
+                    />
                 </x-sidebar.dropdown>
             @endcan
 
-            @can('dashboard-view')
-                <x-sidebar.dropdown-link href="{{ route('admin.workflow.index') }}" icon="fa-solid fa-diagram-project" title="Fluxo de Trabalho" :active="request()->routeIs('admin.workflow.index')" />
-            @endcan
         </x-sidebar.main-dropdown>
     @endcanany
+
+
+    <!-- Administração -->
+    @canany([
+        'admin.establishments.manage',
+        'admin.occupations.manage',
+        'admin.regions.manage',
+        'admin.financial-blocks.manage'
+    ])
+        <x-sidebar.main-dropdown
+            title="Administração"
+            icon="fa-solid fa-gear"
+            :active="request()->routeIs('admin.establishments.*')
+                || request()->routeIs('admin.occupations.*')
+                || request()->routeIs('admin.regions.*')
+                || request()->routeIs('admin.financial.blocks.*')"
+        >
+
+            @can('admin.occupations.manage')
+                <x-sidebar.dropdown-link
+                    href="{{ route('admin.occupations.index') }}"
+                    title="Ocupações"
+                    icon="fa-solid fa-briefcase"
+                    :active="request()->routeIs('admin.occupations.*')"
+                />
+            @endcan
+
+            @can('admin.establishments.manage')
+                <x-sidebar.dropdown
+                    title="Estabelecimentos"
+                    icon="fa-solid fa-hospital"
+                    :active="request()->routeIs('admin.establishments.*')"
+                >
+                    <x-sidebar.dropdown-link
+                        href="{{ route('admin.establishments.types.index') }}"
+                        title="Tipos"
+                        :active="request()->routeIs('admin.establishments.types.*')"
+                    />
+
+                    <x-sidebar.dropdown-link
+                        href="{{ route('admin.establishments.index') }}"
+                        title="Lista"
+                        :active="request()->routeIs('admin.establishments.index')"
+                    />
+                </x-sidebar.dropdown>
+            @endcan
+
+            @can('admin.regions.manage')
+                <x-sidebar.dropdown
+                    title="Regiões"
+                    icon="fa-solid fa-map"
+                    :active="request()->routeIs('admin.regions.*')"
+                >
+                    <x-sidebar.dropdown-link
+                        href="{{ route('admin.regions.countries.index') }}"
+                        title="Países"
+                    />
+
+                    <x-sidebar.dropdown-link
+                        href="{{ route('admin.regions.states.index') }}"
+                        title="Estados"
+                    />
+
+                    <x-sidebar.dropdown-link
+                        href="{{ route('admin.regions.cities.index') }}"
+                        title="Cidades"
+                    />
+                </x-sidebar.dropdown>
+            @endcan
+
+            @can('admin.financial-blocks.manage')
+                <x-sidebar.dropdown-link
+                    href="{{ route('admin.financial.blocks.index') }}"
+                    title="Blocos Financeiros"
+                    icon="fa-solid fa-coins"
+                    :active="request()->routeIs('admin.financial.blocks.*')"
+                />
+            @endcan
+
+        </x-sidebar.main-dropdown>
+    @endcanany
+
+
+    <!-- Usuários & Acessos -->
+    @canany(['users.view', 'users.create', 'users.update', 'users.permissions'])
+        <x-sidebar.main-dropdown
+            title="Usuários & Acessos"
+            icon="fa-solid fa-users"
+            :active="request()->routeIs('admin.users.*')"
+        >
+
+            @can('users.create')
+                <x-sidebar.dropdown-link
+                    href="{{ route('admin.users.create') }}"
+                    title="Criar Usuário"
+                    icon="fa-solid fa-user-plus"
+                />
+            @endcan
+
+            @can('users.view')
+                <x-sidebar.dropdown-link
+                    href="{{ route('admin.users.index') }}"
+                    title="Listar Usuários"
+                    icon="fa-solid fa-list"
+                />
+            @endcan
+
+        </x-sidebar.main-dropdown>
+    @endcanany
+
 
     <!-- Auditoria -->
-    @can('log-view')
-        <x-sidebar.main-dropdown title="Auditoria" icon="fa-solid fa-shield-halved" :active="request()->routeIs('audit.*')" >
-            <x-sidebar.dropdown-link href="{{ route('audit.logs.index') }}" title="Logs do Sistema" icon="fa-solid fa-list-check" :active="request()->routeIs('audit.logs.index')" />
+    @can('audit.logs.view')
+        <x-sidebar.main-dropdown
+            title="Auditoria"
+            icon="fa-solid fa-shield-halved"
+            :active="request()->routeIs('admin.audit.*')"
+        >
+            <x-sidebar.dropdown-link
+                href="{{ route('admin.audit.logs.index') }}"
+                title="Logs do Sistema"
+                icon="fa-solid fa-list-check"
+            />
         </x-sidebar.main-dropdown>
     @endcan
 
+
     <!-- Perfil -->
-    @auth
-        <x-sidebar.main-link href="{{ route('profile.edit') }}" title="Perfil" icon="fa-solid fa-user" :active="request()->routeIs('profile.edit')" />
-    @endauth
+    <x-sidebar.main-link
+        href="{{ route('profile.edit') }}"
+        title="Perfil"
+        icon="fa-solid fa-user"
+        :active="request()->routeIs('profile.*')"
+    />
 
 </nav>
- 

@@ -10,7 +10,7 @@ class OrganizationChartSeed extends Seeder
     public function run(): void
     {
         OrganizationChart::create([
-            'name' => 'Secretaria Municipal de Saúde',
+            'title' => 'Secretaria Municipal de Saúde',
             'acronym' => 'SMS',
             'hierarchy'=>'0'
         ]);

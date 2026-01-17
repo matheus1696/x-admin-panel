@@ -10,6 +10,7 @@ class OrganizationChartService
     {
         return OrganizationChart::with('children.children')
             ->where('hierarchy', 0)
+            ->where('status', true)
             ->orderBy('order')
             ->get();
     }
@@ -17,7 +18,7 @@ class OrganizationChartService
     public function create(array $data): void
     {
         OrganizationChart::create([
-            'name' => $data['name'],
+            'title' => $data['title'],
             'acronym' => $data['acronym'],
             'hierarchy' => $data['hierarchy'],
         ]);
@@ -36,8 +37,8 @@ class OrganizationChartService
 
     public function status(int $id): OrganizationChart
     {
-        $OrganizationChart = OrganizationChart::findOrFail($id);
-        return $OrganizationChart->toggleStatus();
+        $organizationChart = OrganizationChart::findOrFail($id);
+        return $organizationChart->toggleStatus();
     }
 
     public function reorder()

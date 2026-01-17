@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('organization_charts', function (Blueprint $table) {
             $table->id();
             $table->string('acronym')->nullable();
-            $table->string('name');
+            $table->string('title');
+            $table->string('filter');
             $table->integer('parent_id')->nullable();
             $table->string('order')->nullable();
-            $table->integer('hierarchy');            
+            $table->integer('hierarchy');
             $table->string('number_hierarchy')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();

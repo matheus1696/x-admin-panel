@@ -12,30 +12,22 @@ class OrganizationChartConfigPage extends Component
 {
     use WithFlashMessage, Modal;
 
-    /** LISTAGEM */
-    public $organizationCharts = [];
+    public array $filters = [
+        'acronym' => '',
+        'title' => '',
+        'status' => 'all',
+        'perPage' => 25,
+    ];
 
     /** FORM */
     public ?int $chartId = null;
-    public string $name = '';
+    public string $title = '';
     public ?string $acronym = null;
     public $hierarchy = null;
 
-    /* LIFECYCLE */
-    public function mount()
-    {
-        $this->loadOrganizationCharts();
-    }
-
-    /* DATA */
-    public function loadOrganizationCharts(): void
-    {
-        $this->organizationCharts = OrganizationChart::orderBy('order')->get();
-    }
-
     public function resetForm(): void
     {
-        $this->reset(['chartId', 'name', 'acronym', 'hierarchy']);
+        $this->reset(['chartId', 'title', 'acronym', 'hierarchy']);
     }
 
     /* CREATE */
@@ -48,10 +40,10 @@ class OrganizationChartConfigPage extends Component
     public function store(OrganizationChartService $organizationChartService): void
     {
         $data = $this->validate($this->rules());
-
         $organizationChartService->create($data);
-
-        $this->afterSave('Setor adicionado no organograma com sucesso.');
+        $this->resetForm();
+        $this->flashSuccess('Setor adicionado no organograma com sucesso.');
+        $this->closeModal();
     }
     
     /* EDIT */
@@ -60,7 +52,7 @@ class OrganizationChartConfigPage extends Component
         $organizationChart = OrganizationChart::findOrFail($id);
 
         $this->chartId   = $organizationChart->id;
-        $this->name      = $organizationChart->name;
+        $this->title      = $organizationChart->title;
         $this->acronym   = $organizationChart->acronym;
         $this->hierarchy = $organizationChart->hierarchy;
 
@@ -70,25 +62,22 @@ class OrganizationChartConfigPage extends Component
     public function update(OrganizationChartService $organizationChartService): void
     {
         $data = $this->validate($this->rules());
-
         $organizationChartService->update($this->chartId, $data);
-
-        $this->afterSave('Setor alterado no organograma com sucesso.');
+        $this->resetForm();
+        $this->flashSuccess('Setor alterado no organograma com sucesso.');
+        $this->closeModal();
     }
 
-    /* HELPERS */
-    protected function afterSave(string $message): void
+    public function status(OrganizationChartService $organizationChartService, OrganizationChart $organizationChart): void
     {
-        $this->loadOrganizationCharts();
-        $this->resetForm();
-        $this->flashSuccess($message);
-        $this->closeModal();
+        $organizationChartService->status($organizationChart->id);
+        $this->flashSuccess('Setor foi atualizada com sucesso.');
     }
 
     protected function rules(): array
     {
         return [
-            'name' => 'required|string',
+            'title' => 'required|string',
             'acronym' => 'nullable|string|max:20',
             'hierarchy' => 'required',
         ];
@@ -97,6 +86,25 @@ class OrganizationChartConfigPage extends Component
     /* RENDER */
     public function render()
     {
-        return view('livewire.company.organization-chart-config-page')->layout('layouts.app');
+        
+        $query = OrganizationChart::query();
+
+        if ($this->filters['acronym']) {
+            $query->where('acronym', 'like', '%' . strtoupper($this->filters['acronym']) . '%');
+        }
+
+        if ($this->filters['title']) {
+            $query->where('filter', 'like', '%' . strtolower($this->filters['title']) . '%');
+        }
+
+        if ($this->filters['status'] !== 'all') {
+            $query->where('status', $this->filters['status']);
+        }
+
+        $organizationCharts = $query->orderBy('order')->paginate($this->filters['perPage']);
+
+        return view('livewire.company.organization-chart-config-page', [
+            'organizationCharts' => $organizationCharts
+        ])->layout('layouts.app');
     }
 }

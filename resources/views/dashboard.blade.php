@@ -48,13 +48,17 @@
                             <i class="fa-solid fa-user text-green-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
                             <p class="text-sm font-medium text-gray-700">Perfil</p>
                         </a>
-                        <a href="{{ route('profile.password.edit') }}" class="p-4 bg-gray-50 hover:bg-yellow-50 rounded-xl border border-gray-200 hover:border-yellow-300 transition-all duration-200 group text-center">
-                            <i class="fa-solid fa-key text-yellow-500 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
-                            <p class="text-sm font-medium text-gray-700">Alterar Senha</p>
-                        </a>
                         <a href="#" class="p-4 bg-gray-50 hover:bg-green-50 rounded-xl border border-gray-200 hover:border-green-300 transition-all duration-200 group text-center">
                             <i class="fa-solid fa-phone text-green-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
                             <p class="text-sm font-medium text-gray-700">Lista Telefônica</p>
+                        </a>
+                        <a href="#" class="p-4 bg-gray-50 hover:bg-green-50 rounded-xl border border-gray-200 hover:border-green-300 transition-all duration-200 group text-center">
+                            <i class="fa-solid fa-sitemap text-green-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
+                            <p class="text-sm font-medium text-gray-700">Organograma</p>
+                        </a>
+                        <a href="{{ route('profile.password.edit') }}" class="p-4 bg-gray-50 hover:bg-yellow-50 rounded-xl border border-gray-200 hover:border-yellow-300 transition-all duration-200 group text-center">
+                            <i class="fa-solid fa-key text-yellow-500 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
+                            <p class="text-sm font-medium text-gray-700">Alterar Senha</p>
                         </a>
                     </div>
                 </div>
@@ -69,7 +73,7 @@
                 @if(Auth::user()->password_default)
                     <!-- Aviso de Senha Padrão -->
                     <div class="bg-gradient-to-r from-yellow-50 to-yellow-100 border border-yellow-200 rounded-2xl shadow-sm p-4">
-                        <div class="flex items-center justify-between gap-2 mb-2">
+                        <div class="flex items-center gap-2 mb-2">
                             <div class="size-8 rounded-xl bg-yellow-500 flex items-center justify-center flex-shrink-0">
                                 <i class="fa-solid fa-triangle-exclamation text-white text-xs"></i>
                             </div>
@@ -82,7 +86,7 @@
                                 Você ainda está usando a senha padrão do sistema. Por motivos de segurança, recomendamos que altere sua senha imediatamente.
                             </p>
                             <div class="w-full mt-4">
-                                <x-button.btn-link class="bg-yellow-500 hover:bg-yellow-600" href="{{ route('profile.password.edit') }}" value="Alterar Senha" icon="fa-solid fa-key" />
+                                <x-button href="{{ route('profile.password.edit') }}" text="Alterar Senha" icon="fa-solid fa-key" variant="yellow"/>
                             </div>
                         </div>
                     </div>
