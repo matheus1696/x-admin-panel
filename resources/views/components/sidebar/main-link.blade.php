@@ -16,10 +16,7 @@
 >
     <i class="{{ $icon }} w-5 text-center text-sm {{ $active ? 'text-white' : 'text-green-600' }}"></i>
 
-    <span
-        :class="sidebarExpanded ? 'opacity-100' : 'opacity-0'"
-        class="transition-all duration-200 whitespace-nowrap opacity-100 lg:opacity-0"
-    >
+    <span class="transition-all duration-200 whitespace-nowrap" :class="sidebarExpanded ? 'md:opacity-100' : 'md:opacity-0'">
         {{ $title }}
     </span>
 
