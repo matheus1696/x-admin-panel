@@ -19,7 +19,7 @@
         <div class="flex items-center gap-2">
             <i class="{{ $icon }} w-5 text-center text-sm {{ $active ? 'text-white' : 'text-green-600' }}"></i>
 
-            <span class="transition-all duration-200 whitespace-nowrap" :class="sidebarExpanded ? 'md:opacity-100' : 'md:opacity-0'">
+            <span class="transition-all duration-200 whitespace-nowrap" :class="sidebarExpanded ? 'md:opacity-100' : 'md:hidden md:opacity-0'">
                 {{ $title }}
             </span>
         </div>
@@ -37,7 +37,6 @@
     <div
         x-show="open"
         x-transition
-        :class="sidebarExpanded ? 'md:opacity-100' : 'md:opacity-0'"
         class="ml-4 mt-2 space-y-1 border-l border-green-400 pl-3"
     >
         {{ $slot }}
