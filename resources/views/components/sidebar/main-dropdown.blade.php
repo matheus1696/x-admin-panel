@@ -4,9 +4,9 @@
     'active' => false,
 ])
 
-<div x-data="{ open: {{ $active ? 'true' : 'false' }} }" class="relative mx-2">
+<div x-data="{ openDropdown: {{ $active ? 'true' : 'false' }} }" class="relative mx-2">
     <button
-        @click="open = !open"
+        @click="openDropdown = !openDropdown"
         class="w-full flex items-center justify-between px-4 py-2 rounded-xl text-xs font-semibold
         transition-all duration-200 ease-out
         {{ $active
@@ -26,7 +26,7 @@
         </div>
 
         <svg
-            :class="open ? 'rotate-90' : ''"
+            :class="openDropdown ? 'rotate-90' : ''"
             class="w-4 h-4 transition-transform duration-200 {{ $active ? 'text-white' : 'text-gray-500' }}"
             fill="none" stroke="currentColor" viewBox="0 0 24 24"
         >
@@ -35,7 +35,7 @@
     </button>
 
     <div
-        x-show="open && sidebarExpanded"
+        x-show="openDropdown && sidebarExpanded"
         x-transition
         class="ml-4 mt-2 space-y-1 border-l border-green-400 pl-3"
     >
