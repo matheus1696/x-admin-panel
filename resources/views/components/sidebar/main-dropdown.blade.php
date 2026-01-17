@@ -37,6 +37,7 @@
     <div
         x-show="open"
         x-transition
+        :class="sidebarExpanded ? 'md:opacity-100' : 'md:opacity-0'"
         class="ml-4 mt-2 space-y-1 border-l border-green-400 pl-3"
     >
         {{ $slot }}
