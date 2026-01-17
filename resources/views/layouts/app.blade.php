@@ -28,7 +28,7 @@
         <!-- Livewire Styles -->
         @livewireStyles
     </head>
-    <body class="font-sans antialiased" x-data="{ sidebarExpandedMobile: false, profile: false, sidebarExpanded: false }">
+    <body class="font-sans antialiased" x-data="{ open: false, profile: false, sidebarExpanded: false }">
 
         <div class="flex">
             <!-- Sidebar Desktop -->
@@ -71,7 +71,7 @@
             </aside>
 
             <!-- Sidebar Mobile -->
-            <aside x-show="sidebarExpandedMobile" x-cloak 
+            <aside x-show="open" x-cloak 
                 x-transition:enter="transition ease-out duration-300" 
                 x-transition:enter-start="-translate-x-full opacity-0"
                 x-transition:enter-end="translate-x-0 opacity-100"
@@ -87,7 +87,7 @@
                         <span class="text-lg">{{ config('app.name') }}</span>
                     </div>
 
-                    <button @click="sidebarExpandedMobile = false" class="rounded-lg p-2.5 transition-all duration-200 hover:scale-110 active:scale-95">
+                    <button @click="open = false" class="rounded-lg p-2.5 transition-all duration-200 hover:scale-110 active:scale-95">
                         <i class="fa-solid fa-xmark text-white text-lg"></i>
                     </button>
                 </div>
@@ -182,7 +182,7 @@
                 </div>
             </aside>
 
-            <div x-show="profile || sidebarExpandedMobile" x-cloak x-transition.opacity class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40" @click="profile = false; sidebarExpandedMobile = false;"></div>
+            <div x-show="profile || open" x-cloak x-transition.opacity class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40" @click="profile = false; open = false;"></div>
 
             <!-- Conteúdo -->
             <div class="flex-1 flex flex-col min-h-screen">
@@ -191,7 +191,7 @@
                     <!-- Left Section: Menu Hamburger + Logo -->
                     <div class="w-full flex items-center gap-3 sm:gap-4">
                         <!-- Menu Hamburger (mobile) -->
-                        <button @click="sidebarExpandedMobile = true" class="lg:hidden py-2 px-3 rounded-lg transition-all duration-200 hover:bg-green-800">
+                        <button @click="open = true" class="lg:hidden py-2 px-3 rounded-lg transition-all duration-200 hover:bg-green-800">
                             <i class="fa-solid fa-bars text-white text-xl"></i>
                         </button>
 
