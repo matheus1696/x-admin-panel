@@ -5,8 +5,6 @@
 ])
 
 <div x-data="{ open: {{ $active ? 'true' : 'false' }} }" class="relative mx-2">
-
-    <!-- Botão principal -->
     <button
         @click="open = !open"
         class="w-full flex items-center justify-between px-4 py-2 rounded-xl text-xs font-semibold
@@ -19,7 +17,10 @@
         <div class="flex items-center gap-2">
             <i class="{{ $icon }} w-5 text-center text-sm {{ $active ? 'text-white' : 'text-green-600' }}"></i>
 
-            <span class="transition-all duration-200 whitespace-nowrap" :class="sidebarExpanded ? 'md:opacity-100' : 'md:hidden md:opacity-0'">
+            <span
+                :class="sidebarExpanded ? 'opacity-100' : 'hidden opacity-0'"
+                class="transition-all duration-200 whitespace-nowrap"
+            >
                 {{ $title }}
             </span>
         </div>
@@ -33,9 +34,8 @@
         </svg>
     </button>
 
-    <!-- Conteúdo do dropdown -->
     <div
-        x-show="open"
+        x-show="open && sidebarExpanded"
         x-transition
         class="ml-4 mt-2 space-y-1 border-l border-green-400 pl-3"
     >
