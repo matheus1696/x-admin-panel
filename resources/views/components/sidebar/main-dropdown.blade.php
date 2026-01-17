@@ -35,7 +35,7 @@
     </button>
 
     <div
-        x-show="open || sidebarExpanded"
+        x-show="sidebarExpanded"
         x-transition
         class="ml-4 mt-2 space-y-1 border-l border-green-400 pl-3"
     >
