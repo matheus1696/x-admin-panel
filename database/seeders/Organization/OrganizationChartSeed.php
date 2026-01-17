@@ -1,8 +1,8 @@
 <?php
 
-namespace Database\Seeders\Company;
+namespace Database\Seeders\Organization;
 
-use App\Models\Company\OrganizationChart;
+use App\Models\Organization\OrganizationChart\OrganizationChart;
 use Illuminate\Database\Seeder;
 
 class OrganizationChartSeed extends Seeder

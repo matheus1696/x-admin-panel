@@ -1,22 +1,28 @@
 <?php
 
-namespace App\Models\Workflow;
+namespace App\Models\Organization\OrganizationChart;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class Workflow extends Model
+class OrganizationChart extends Model
 {
     //
     protected $fillable = [
+        'acronym',
         'title',
-        'filter',
-        'description',
-        'status',
+        'parent_id',
+        'order',
+        'hierarchy',
+        'number_hierarchy',
+        'status'
     ];
 
-    public function workflowStage(){
-        return $this->hasMany(WorkflowStage::class)->orderBy('order');
+    public function children()
+    {
+        return $this->hasMany(OrganizationChart::class, 'hierarchy')
+            ->where('status', true)
+            ->orderBy('order');
     }
 
     public function toggleStatus(): self

@@ -17,7 +17,7 @@
             {{-- Fluxo de Trabalho --}}
             <div class="col-span-12 md:col-span-8">
                 <x-form.label value="Fluxo de Trabalho" />
-                <x-form.input wire:model.live.debounce.500ms="filters.workflow" placeholder="Buscar por fluxo de trabalho..." />
+                <x-form.input wire:model.live.debounce.500ms="filters.title" placeholder="Buscar por fluxo de trabalho..." />
             </div>
 
             {{-- Status --}}
@@ -95,35 +95,35 @@
     <x-modal :show="$showModal" wire:key="workflow-modal">
         @if ($modalKey === 'modal-form-create-workflow')
             <x-slot name="header">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase">Cadastrar Tipo de Tarefa</h2>
+                <h2 class="text-sm font-semibold text-gray-700 uppercase">Cadastrar Fluxo de Trabalho</h2>
             </x-slot>
 
             <form wire:submit.prevent="store" class="space-y-4">
-                @component('livewire.workflow._partials.process-workflow-form') @endcomponent
+                @component('livewire.organization.workflow._partials.workflow-processes-form') @endcomponent
                 <div class="flex justify-end gap-2 pt-4">
-                    <x-button.btn type="submit" value="Salvar" />
+                    <x-button type="submit" text="Salvar" />
                 </div>
             </form>
         @endif
         @if ($modalKey === 'modal-form-edit-workflow')
             <x-slot name="header">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase">Editar Tipo de Tarefa</h2>
+                <h2 class="text-sm font-semibold text-gray-700 uppercase">Editar Fluxo de Trabalho</h2>
             </x-slot>
 
             <form wire:submit.prevent="update" class="space-y-4">
-                @component('livewire.workflow._partials.process-workflow-form') @endcomponent
+                @component('livewire.organization.workflow._partials.workflow-processes-form') @endcomponent
                 <div class="flex justify-end gap-2 pt-4">
                     <x-button type="submit" text="Atualizar" variant="sky"/>
                 </div>
             </form>
         @endif
-        @if ($modalKey === 'modal-form-workflow-stage')
+        @if ($modalKey === 'modal-form-workflow-steps')
             <x-slot name="header">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase">Atividades da Tarefas</h2>
+                <h2 class="text-sm font-semibold text-gray-700 uppercase">Etapas do Processo</h2>
             </x-slot>
 
             <div>
-                <livewire:workflow.workflow-stage-page :workflowId="$workflowId" />
+                <livewire:organization.workflow.workflow-steps :workflowId="$workflowId" />
             </div>
         @endif
     </x-modal>

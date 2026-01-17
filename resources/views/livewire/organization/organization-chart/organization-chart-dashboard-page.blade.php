@@ -189,7 +189,7 @@
                          `">
                         
                         @foreach($organizationCharts as $node)
-                            @include('livewire.company.organizationChart._partials.organization-chart-org-node', ['node' => $node])
+                            @include('livewire.organization.organization-chart._partials.organization-chart-org-node', ['node' => $node])
                         @endforeach
                         
                     </div>

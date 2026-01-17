@@ -10,9 +10,9 @@ use App\Http\Controllers\Admin\Manage\UserController;
 use App\Http\Controllers\Audit\LogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
-use App\Livewire\Company\OrganizationChartConfigPage;
-use App\Livewire\Company\OrganizationChartDashboardPage;
-use App\Livewire\Workflow\WorkflowPage;
+use App\Livewire\Organization\OrganizationChart\OrganizationChartConfigPage;
+use App\Livewire\Organization\OrganizationChart\OrganizationChartDashboardPage;
+use App\Livewire\Organization\Workflow\WorkflowProcessesPage;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -192,7 +192,7 @@ Route::middleware('auth')->group(function () {
         /*
         | Workflow & Organograma (Livewire)
         */
-        Route::get('/workflow', WorkflowPage::class)
+        Route::get('/workflow', WorkflowProcessesPage::class)
             ->middleware('can:workflow.manage')
             ->name('workflow.index');
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Workflow;
+namespace App\Http\Requests\Organization\Workflow;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class WorkflowStageStoreRequest extends FormRequest
+class WorkflowStepUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

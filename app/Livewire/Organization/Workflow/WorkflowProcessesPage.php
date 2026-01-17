@@ -1,21 +1,19 @@
 <?php
 
-namespace App\Livewire\Workflow;
+namespace App\Livewire\Organization\Workflow;
 
-use App\Http\Requests\Workflow\WorkflowStoreRequest;
-use App\Http\Requests\Workflow\WorkflowUpdateRequest;
+use App\Http\Requests\Organization\Workflow\WorkflowStoreRequest;
+use App\Http\Requests\Organization\Workflow\WorkflowUpdateRequest;
 use App\Livewire\Traits\Modal;
 use App\Livewire\Traits\WithFlashMessage;
-use App\Models\Workflow\Workflow;
-use App\Services\Workflow\WorkflowService;
+use App\Models\Organization\Workflow\Workflow;
+use App\Services\Organization\Workflow\WorkflowService;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class WorkflowPage extends Component
+class WorkflowProcessesPage extends Component
 {
-    use WithPagination;
-    use WithFlashMessage;
-    use Modal;
+    use WithPagination, WithFlashMessage, Modal;
 
     public array $filters = [
         'workflow' => '',
@@ -84,7 +82,7 @@ class WorkflowPage extends Component
     public function workflowStage(Workflow $Workflow)
     {
         $this->workflowId = $Workflow->id;
-        $this->openModal('modal-form-workflow-stage');
+        $this->openModal('modal-form-workflow-steps');
     }
 
     public function render()
@@ -101,7 +99,7 @@ class WorkflowPage extends Component
 
         $workflows = $query->orderBy('title')->paginate($this->filters['perPage']);
 
-        return view('livewire.workflow.workflow-page', [
+        return view('livewire.organization.workflow.workflow-processes-page', [
             'workflows' => $workflows,
         ])->layout('layouts.app');
     }

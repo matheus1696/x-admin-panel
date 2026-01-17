@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models\Workflow;
+namespace App\Models\Organization\Workflow;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class WorkflowStage extends Model
+class WorkflowStep extends Model
 {
     //
     protected $fillable = [

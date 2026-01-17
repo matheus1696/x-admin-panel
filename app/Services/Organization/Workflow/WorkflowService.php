@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Workflow;
+namespace App\Services\Organization\Workflow;
 
-use App\Models\Workflow\Workflow;
+use App\Models\Organization\Workflow\Workflow;
 
 class WorkflowService
 {

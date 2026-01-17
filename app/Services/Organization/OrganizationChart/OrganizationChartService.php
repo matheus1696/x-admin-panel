@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Company;
+namespace App\Services\Organization\OrganizationChart;
 
-use App\Models\Company\OrganizationChart;
+use App\Models\Organization\OrganizationChart\OrganizationChart;
 
 class OrganizationChartService
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Workflow;
+namespace App\Http\Requests\Organization\Workflow;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class WorkflowStoreRequest extends FormRequest
+class WorkflowUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class WorkflowStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|min:5|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:500',
         ];
     }
