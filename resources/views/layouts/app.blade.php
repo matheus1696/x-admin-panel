@@ -71,7 +71,7 @@
             </aside>
 
             <!-- Sidebar Mobile -->
-            <aside x-show="sidebarExpanded" x-cloak 
+            <aside x-show="open" x-cloak 
                 x-transition:enter="transition ease-out duration-300" 
                 x-transition:enter-start="-translate-x-full opacity-0"
                 x-transition:enter-end="translate-x-0 opacity-100"
