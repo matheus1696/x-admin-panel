@@ -1,152 +1,153 @@
-<div class="" 
-     x-data="organograma()" 
-     @wheel.prevent="handleZoom($event)" 
-     x-on:keydown.window="ctrlPressed = $event.ctrlKey"
-     x-on:keyup.window="ctrlPressed = $event.ctrlKey">
+<div
+    x-data="organograma()"
+    @wheel.prevent="handleWheelZoom($event)"
+    class="relative w-full"
+>
 
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('organograma', () => ({
                 scale: 1,
-                ctrlPressed: false,
+                minScale: 0.3,
+                maxScale: 2,
+
+                translateX: 0,
+                translateY: 0,
+
                 isDragging: false,
                 startX: 0,
                 startY: 0,
-                translateX: 0,
-                translateY: 0,
-                lastTranslateX: 0,
-                lastTranslateY: 0,
-                
+
+                pointers: new Map(),
+                initialPinchDistance: null,
+                initialScale: 1,
+
                 get zoomLevel() {
                     return Math.round(this.scale * 100);
                 },
-                
+
                 zoomIn() {
-                    if (this.scale < 2) {
-                        this.scale += 0.05;
-                    }
+                    if (this.scale < this.maxScale) this.scale += 0.1;
                 },
-                
+
                 zoomOut() {
-                    if (this.scale > 0.3) {
-                        this.scale -= 0.05;
-                    }
+                    if (this.scale > this.minScale) this.scale -= 0.1;
                 },
-                
-                resetZoom() {
+
+                resetPosition() {
                     this.scale = 1;
                     this.translateX = 0;
                     this.translateY = 0;
-                    this.lastTranslateX = 0;
-                    this.lastTranslateY = 0;
                 },
-                
+
                 fitToScreen() {
                     this.scale = 0.7;
                     this.translateX = 0;
                     this.translateY = 0;
-                    this.lastTranslateX = 0;
-                    this.lastTranslateY = 0;
                 },
-                
-                handleZoom(event) {
-                    if (this.ctrlPressed) {
-                        event.preventDefault();
-                        
-                        // Obtém a posição do mouse antes do zoom
-                        const rect = this.$refs.organogramaContainer.getBoundingClientRect();
-                        const mouseX = event.clientX - rect.left;
-                        const mouseY = event.clientY - rect.top;
-                        
-                        // Calcula o ponto relativo antes do zoom
-                        const oldScale = this.scale;
-                        
-                        if (event.deltaY < 0) {
-                            // Scroll up - zoom in
-                            if (this.scale < 2) {
-                                this.scale += 0.1;
-                            }
-                        } else {
-                            // Scroll down - zoom out
-                            if (this.scale > 0.3) {
-                                this.scale -= 0.1;
-                            }
-                        }
-                        
-                        // Ajusta a posição para manter o ponto sob o mouse
-                        this.translateX += (mouseX - this.translateX) * (1 - this.scale / oldScale);
-                        this.translateY += (mouseY - this.translateY) * (1 - this.scale / oldScale);
+
+                handleWheelZoom(event) {
+                    const delta = event.deltaY < 0 ? 0.1 : -0.1;
+                    const newScale = this.scale + delta;
+
+                    if (newScale < this.minScale || newScale > this.maxScale) return;
+
+                    const rect = this.$refs.container.getBoundingClientRect();
+                    const mouseX = event.clientX - rect.left;
+                    const mouseY = event.clientY - rect.top;
+
+                    const scaleRatio = newScale / this.scale;
+
+                    this.translateX -= (mouseX - this.translateX) * (scaleRatio - 1);
+                    this.translateY -= (mouseY - this.translateY) * (scaleRatio - 1);
+
+                    this.scale = newScale;
+                },
+
+                /* =========================
+                   POINTER EVENTS
+                ==========================*/
+
+                onPointerDown(event) {
+                    this.pointers.set(event.pointerId, event);
+
+                    if (this.pointers.size === 1) {
+                        this.isDragging = true;
+                        this.startX = event.clientX - this.translateX;
+                        this.startY = event.clientY - this.translateY;
+                    }
+
+                    if (this.pointers.size === 2) {
+                        const [p1, p2] = [...this.pointers.values()];
+                        this.initialPinchDistance = this.getDistance(p1, p2);
+                        this.initialScale = this.scale;
+                    }
+
+                    event.target.setPointerCapture(event.pointerId);
+                },
+
+                onPointerMove(event) {
+                    if (!this.pointers.has(event.pointerId)) return;
+
+                    this.pointers.set(event.pointerId, event);
+
+                    // PINCH ZOOM (2 dedos)
+                    if (this.pointers.size === 2) {
+                        const [p1, p2] = [...this.pointers.values()];
+                        const currentDistance = this.getDistance(p1, p2);
+                        const scaleFactor = currentDistance / this.initialPinchDistance;
+
+                        let newScale = this.initialScale * scaleFactor;
+                        newScale = Math.min(this.maxScale, Math.max(this.minScale, newScale));
+
+                        this.scale = newScale;
+                        return;
+                    }
+
+                    // DRAG (1 dedo ou mouse)
+                    if (this.isDragging && this.pointers.size === 1) {
+                        this.translateX = event.clientX - this.startX;
+                        this.translateY = event.clientY - this.startY;
                     }
                 },
-                
-                startDrag(event) {
-                    // Verifica se é clique esquerdo
-                    if (event.button !== 0) return;
-                    
-                    this.isDragging = true;
-                    this.startX = event.clientX - this.translateX;
-                    this.startY = event.clientY - this.translateY;
-                    
-                    // Altera o cursor para "mover"
-                    this.$refs.organogramaContainer.style.cursor = 'grabbing';
-                    document.body.style.userSelect = 'none';
-                },
-                
-                doDrag(event) {
-                    if (!this.isDragging) return;
-                    
-                    this.translateX = event.clientX - this.startX;
-                    this.translateY = event.clientY - this.startY;
-                },
-                
-                stopDrag() {
-                    if (this.isDragging) {
+
+                onPointerUp(event) {
+                    this.pointers.delete(event.pointerId);
+
+                    if (this.pointers.size < 2) {
+                        this.initialPinchDistance = null;
+                    }
+
+                    if (this.pointers.size === 0) {
                         this.isDragging = false;
-                        this.lastTranslateX = this.translateX;
-                        this.lastTranslateY = this.translateY;
-                        
-                        // Restaura o cursor
-                        this.$refs.organogramaContainer.style.cursor = 'grab';
-                        document.body.style.userSelect = '';
+                    }
+
+                    if (event.target.releasePointerCapture) {
+                        event.target.releasePointerCapture(event.pointerId);
                     }
                 },
-                
-                resetPosition() {
-                    this.translateX = 0;
-                    this.translateY = 0;
-                    this.lastTranslateX = 0;
-                    this.lastTranslateY = 0;
+
+                getDistance(p1, p2) {
+                    return Math.hypot(
+                        p2.clientX - p1.clientX,
+                        p2.clientY - p1.clientY
+                    );
                 },
-                
+
                 init() {
-                    this.$nextTick(() => {
-                        this.fitToScreen();
-                    });
-                    
-                    // Detecta se CTRL está pressionado
-                    window.addEventListener('keydown', (e) => {
-                        if (e.ctrlKey) {
-                            this.ctrlPressed = true;
-                        }
-                    });
-                    
-                    window.addEventListener('keyup', (e) => {
-                        if (!e.ctrlKey) {
-                            this.ctrlPressed = false;
-                        }
-                    });
-                    
-                    // Para o arrastar quando o mouse sair da área
-                    this.$el.addEventListener('mouseleave', () => {
-                        this.stopDrag();
-                    });
+                    this.$nextTick(() => this.fitToScreen());
                 }
             }));
         });
     </script>
 
+    <!-- Header -->
     <div class="mb-8">
-        <x-page.header title="Organograma" subtitle="Organograma da Secretária de Saúde de Caruaru" icon="fa-solid fa-sitemap">
+        <x-page.header
+            title="Organograma"
+            subtitle="Organograma da Secretaria de Saúde de Caruaru"
+            icon="fa-solid fa-sitemap"
+        >
             <x-slot name="button">
                 <div class="flex items-center gap-2">
                     <x-button @click="zoomOut" icon="fa-solid fa-minus"/>
@@ -158,53 +159,46 @@
         </x-page.header>
     </div>
 
-    @if($organizationCharts->isNotEmpty())
-        <div class="mx-auto bg-green-700/10 rounded-xl shadow border border-green-700">
-            <!-- Container do Organograma com área de arraste -->
-            <div class="overflow-hidden relative"
-                 x-ref="organogramaContainer"
-                 @mousedown="startDrag($event)"
-                 @mousemove="doDrag($event)"
-                 @mouseup="stopDrag()"
-                 @mouseleave="stopDrag()"
-                 style="cursor: grab; height: 700px; position: relative;">
-                 
-                <!-- Instrução de uso -->
-                <div class="absolute bottom-4 left-4 z-10 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-gray-600 shadow-sm">
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-arrows-alt text-green-700"></i>
-                        <span>Arraste para mover | CTRL + Scroll para zoom</span>
-                    </div>
-                </div>
-                
-                <!-- Área do organograma -->
-                <div class="absolute inset-0 overflow-auto">
-                    <div class="relative min-w-full min-h-full flex justify-center p-12 transition-transform"
-                         :style="`
-                             transform: 
-                                 translate(${translateX}px, ${translateY}px) 
-                                 scale(${scale});
-                             transform-origin: top center;
-                             transition: ${isDragging ? 'none' : 'transform 0.2s ease'};
-                         `">
-                        
-                        @foreach($organizationCharts as $node)
-                            @include('livewire.organization.organization-chart._partials.organization-chart-org-node', ['node' => $node])
-                        @endforeach
-                        
-                    </div>
+    <!-- Organograma -->
+    <div class="mx-auto bg-green-700/10 rounded-xl shadow border border-green-700">
+        <div
+            x-ref="container"
+            class="relative overflow-hidden"
+            style="height: 700px; cursor: grab; touch-action: none;"
+            @pointerdown="onPointerDown($event)"
+            @pointermove="onPointerMove($event)"
+            @pointerup="onPointerUp($event)"
+            @pointercancel="onPointerUp($event)"
+            @pointerleave="onPointerUp($event)"
+        >
+
+            <!-- Hint Mobile -->
+            <div class="absolute bottom-4 left-4 z-10 bg-white/90 rounded-lg px-3 py-2 text-xs shadow sm:hidden">
+                Arraste com 1 dedo • Zoom com 2 dedos
+            </div>
+
+            <!-- Hint Desktop -->
+            <div class="absolute bottom-4 left-4 z-10 bg-white/90 rounded-lg px-3 py-2 text-xs shadow hidden sm:block">
+                Arraste com o mouse • Scroll para zoom
+            </div>
+            
+            <!-- Conteúdo -->
+            <div class="absolute inset-0 flex justify-center items-start">
+                <div
+                    class="relative p-12 transition-transform"
+                    :style="`
+                        transform:
+                            translate(${translateX}px, ${translateY}px)
+                            scale(${scale});
+                        transform-origin: top center;
+                        transition: ${isDragging ? 'none' : 'transform 0.15s ease'};
+                    `"
+                >
+                    @foreach($organizationCharts as $node)
+                        @include('livewire.organization.organization-chart._partials.organization-chart-org-node', ['node' => $node])
+                    @endforeach
                 </div>
             </div>
         </div>
-    @else
-        <div class="max-w-md mx-auto mt-40 text-center">
-            <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
-                <svg class="w-10 h-10 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                </svg>
-            </div>
-            <h3 class="text-lg font-medium text-gray-800 mb-2">Nenhum cargo cadastrado</h3>
-            <p class="text-gray-600">Adicione cargos para visualizar o organograma.</p>
-        </div>
-    @endif
+    </div>
 </div>
