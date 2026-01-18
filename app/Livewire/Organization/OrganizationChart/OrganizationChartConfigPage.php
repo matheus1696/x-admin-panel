@@ -4,26 +4,36 @@ namespace App\Livewire\Organization\OrganizationChart;
 
 use App\Livewire\Traits\Modal;
 use App\Livewire\Traits\WithFlashMessage;
-use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Services\Organization\OrganizationChart\OrganizationChartService;
+use App\Validation\Organization\OrganizationChart\OrganizationChartRules;
+use Illuminate\View\View;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class OrganizationChartConfigPage extends Component
 {
-    use WithFlashMessage, Modal;
+    use WithPagination, WithFlashMessage, Modal;
 
+    protected OrganizationChartService $organizationChartService;
+
+    /** Filters */
     public array $filters = [
         'acronym' => '',
-        'title' => '',
+        'filter' => '',
         'status' => 'all',
         'perPage' => 25,
     ];
 
-    /** FORM */
+    /** Form */
     public ?int $chartId = null;
     public string $title = '';
-    public ?string $acronym = null;
-    public $hierarchy = null;
+    public string $acronym = '';
+    public ?int $hierarchy = null;    
+
+    public function boot(OrganizationChartService $organizationChartService)
+    {
+        $this->organizationChartService = $organizationChartService;
+    }
 
     public function resetForm(): void
     {
@@ -37,10 +47,10 @@ class OrganizationChartConfigPage extends Component
         $this->openModal('modal-form-create-organitation-chart');
     }
 
-    public function store(OrganizationChartService $organizationChartService): void
+    public function store(): void
     {
-        $data = $this->validate($this->rules());
-        $organizationChartService->create($data);
+        $data = $this->validate(OrganizationChartRules::store());
+        $this->organizationChartService->store($data);
         $this->resetForm();
         $this->flashSuccess('Setor adicionado no organograma com sucesso.');
         $this->closeModal();
@@ -49,7 +59,7 @@ class OrganizationChartConfigPage extends Component
     /* EDIT */
     public function edit(int $id): void
     {
-        $organizationChart = OrganizationChart::findOrFail($id);
+        $organizationChart = $this->organizationChartService->find($id);
 
         $this->chartId   = $organizationChart->id;
         $this->title      = $organizationChart->title;
@@ -59,49 +69,27 @@ class OrganizationChartConfigPage extends Component
         $this->openModal('modal-form-edit-organitation-chart');
     }
 
-    public function update(OrganizationChartService $organizationChartService): void
+    public function update(): void
     {
-        $data = $this->validate($this->rules());
-        $organizationChartService->update($this->chartId, $data);
+        if (!$this->chartId) { return; }
+        $data = $this->validate(OrganizationChartRules::update($this->chartId));
+        $this->organizationChartService->update($this->chartId, $data);
         $this->resetForm();
         $this->flashSuccess('Setor alterado no organograma com sucesso.');
         $this->closeModal();
     }
 
-    public function status(OrganizationChartService $organizationChartService, OrganizationChart $organizationChart): void
+    public function status(int $id): void
     {
-        $organizationChartService->status($organizationChart->id);
+        $this->organizationChartService->status($id);
         $this->flashSuccess('Setor foi atualizada com sucesso.');
     }
 
-    protected function rules(): array
-    {
-        return [
-            'title' => 'required|string',
-            'acronym' => 'nullable|string|max:20',
-            'hierarchy' => 'required',
-        ];
-    }
-
     /* RENDER */
-    public function render()
+    public function render(): View
     {
         
-        $query = OrganizationChart::query();
-
-        if ($this->filters['acronym']) {
-            $query->where('acronym', 'like', '%' . strtoupper($this->filters['acronym']) . '%');
-        }
-
-        if ($this->filters['title']) {
-            $query->where('filter', 'like', '%' . strtolower($this->filters['title']) . '%');
-        }
-
-        if ($this->filters['status'] !== 'all') {
-            $query->where('status', $this->filters['status']);
-        }
-
-        $organizationCharts = $query->orderBy('order')->paginate($this->filters['perPage']);
+        $organizationCharts = $this->organizationChartService->index($this->filters);
 
         return view('livewire.organization.organization-chart.organization-chart-config-page', [
             'organizationCharts' => $organizationCharts

@@ -3,10 +3,13 @@
 namespace App\Services\Organization\OrganizationChart;
 
 use App\Models\Organization\OrganizationChart\OrganizationChart;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class OrganizationChartService
 {
-    public function tree()
+    public function tree(): Collection
     {
         return OrganizationChart::with('children.children')
             ->where('hierarchy', 0)
@@ -15,23 +18,36 @@ class OrganizationChartService
             ->get();
     }
 
-    public function create(array $data): void
+    public function find(int $id): OrganizationChart
     {
-        OrganizationChart::create([
-            'title' => $data['title'],
-            'acronym' => $data['acronym'],
-            'hierarchy' => $data['hierarchy'],
-        ]);
+        return OrganizationChart::findOrFail($id);
+    }
 
+    public function index(array $filters): LengthAwarePaginator
+    {
+        $query = OrganizationChart::query();
+        if ($filters['acronym']) {
+            $query->where('acronym', 'like', '%' . strtoupper($filters['acronym']) . '%');
+        }
+        if ($filters['filter']) {
+            $query->where('filter', 'like', '%' . strtolower($filters['filter']) . '%');
+        }
+        if ($filters['status'] !== 'all') {
+            $query->where('status', $filters['status']);
+        }
+        return $query->orderBy('order')->paginate($filters['perPage']);
+    }
+
+    public function store(array $data): void
+    {
+        OrganizationChart::create($data);
         $this->reorder();
     }
 
     public function update(int $id, array $data): void
     {
         $organizationChart = OrganizationChart::findOrFail($id);
-
         $organizationChart->update($data);
-
         $this->reorder();
     }
 
@@ -41,27 +57,36 @@ class OrganizationChartService
         return $organizationChart->toggleStatus();
     }
 
-    public function reorder()
+    public function reorder(): void
     {
-        $organizations = OrganizationChart::orderBy('hierarchy')->get();
+        DB::transaction(function () {
 
-        foreach ($organizations as $organization) {
+            $organizations = OrganizationChart::orderBy('hierarchy')
+                ->get()
+                ->keyBy('id');
 
-            if ($organization->hierarchy == 0) {
-                $organization->order = '0' . $organization->acronym;
-                $organization->number_hierarchy = 1;
+            foreach ($organizations as $organization) {
+
+                if ($organization->hierarchy === 0) {
+                    $organization->order = '0' . $organization->acronym;
+                    $organization->number_hierarchy = 1;
+                    $organization->save();
+                    continue;
+                }
+
+                $predecessor = $organizations[$organization->hierarchy] ?? null;
+
+                if (!$predecessor) {
+                    continue;
+                }
+
+                $order = $predecessor->order . $organization->id . $organization->acronym;
+
+                $organization->order = $order;
+                $organization->number_hierarchy = preg_match_all('/\d+/', $order);
                 $organization->save();
             }
-
-            $predecessor = OrganizationChart::find($organization->hierarchy);
-
-            if ($predecessor) {
-                $numberHierarchy = $predecessor->order . $organization->id . $organization->acronym;
-
-                $organization->order = $numberHierarchy;
-                $organization->number_hierarchy = preg_match_all('!\d+!', $numberHierarchy);
-                $organization->save();
-            }
-        }
+        });
     }
+
 }

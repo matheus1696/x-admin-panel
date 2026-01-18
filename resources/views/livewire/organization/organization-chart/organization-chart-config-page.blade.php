@@ -23,7 +23,7 @@
             {{-- Nome do Setor --}}
             <div class="col-span-12 md:col-span-6">
                 <x-form.label value="Nome do Setor" />
-                <x-form.input wire:model.live.debounce.500ms="filters.title" placeholder="Buscar por setor..." />
+                <x-form.input wire:model.live.debounce.500ms="filters.filter" placeholder="Buscar por setor..." />
             </div>
 
             {{-- Status --}}
@@ -55,12 +55,12 @@
     </x-page.filter>
 
     <!-- Table -->
-    <x-page.table>
+    <x-page.table :pagination="$organizationCharts">
         <x-slot name="thead">
             <tr>
                 <x-page.table-th value="Título" />
-                <x-page.table-th class="text-center w-28" value="Status" />
-                <x-page.table-th class="text-center w-28" value="Ações" />
+                <x-page.table-th class="text-center w-20" value="Status" />
+                <x-page.table-th class="text-center w-20" value="Ações" />
             </tr>
         </x-slot>
 
@@ -68,32 +68,11 @@
             @foreach ($organizationCharts as $organizationChart)
                 <tr>
                     <x-page.table-td>
-                        <div class="flex items-center gap-2">
-                            @switch($organizationChart->number_hierarchy)
-                                @case(1)
-                                    <div class="w-[5px] h-0.5 bg-green-900/70"></div>
-                                    @break
-                                @case(2)
-                                    <div class="w-[20px] h-0.5 bg-green-900/70"></div>
-                                    @break
-                                @case(3)
-                                    <div class="w-[40px] h-0.5 bg-green-900/70"></div>
-                                    @break
-                                @case(4)
-                                    <div class="w-[60px] h-0.5 bg-green-900/70"></div>
-                                    @break
-                                @case(5)
-                                    <div class="w-[80px] h-0.5 bg-green-900/70"></div>
-                                    @break
-                                @case(6)
-                                    <div class="w-[100px] h-0.5 bg-green-900/70"></div>
-                                    @break
-                                @default                                    
-                                    <div class="w-[120px] h-0.5 bg-green-900/70"></div>
-                                    @break
-                            @endswitch
-                                       
-                            <div>{{ $organizationChart->acronym }} - {{ $organizationChart->title }}</div>
+                        <div class="w-48 md:w-full truncate" title="{{ $organizationChart->acronym }} - {{ $organizationChart->title }}">
+                            @for ($i = 0; $i < $organizationChart->number_hierarchy; $i++)
+                                <span><i class="fa-solid fa-angle-right"></i></span>
+                            @endfor                                       
+                            <span class="pl-1">{{ $organizationChart->acronym }} - {{ $organizationChart->title }}</span>
                         </div>
                     </x-page.table-td>
 
