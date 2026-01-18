@@ -35,9 +35,17 @@
     </button>
 
     <div
+        x-show="openDropdown"
+        x-transition
+        class="ml-4 mt-2 space-y-1 border-l border-green-400 pl-3 block md:hidden"
+    >
+        {{ $slot }}
+    </div>
+
+    <div
         x-show="openDropdown && sidebarExpanded"
         x-transition
-        class="ml-4 mt-2 space-y-1 border-l border-green-400 pl-3"
+        class="ml-4 mt-2 space-y-1 border-l border-green-400 pl-3 hidden md:block"
     >
         {{ $slot }}
     </div>
