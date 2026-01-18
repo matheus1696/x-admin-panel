@@ -101,7 +101,7 @@
                 <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-green-100/50 bg-white/80">
                     <div class="text-center">
                         <p class="text-xs text-gray-600">
-                            {{ config('app.name') }} v{{ config('app.version', '1.0.0') }}
+                            {{ config('app.name') }} {{ config('app.version', '1.0.0') }}
                         </p>
                         <p class="text-[10px] text-gray-500 mt-1">
                             © {{ date('Y') }} Todos os direitos reservados
