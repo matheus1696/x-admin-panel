@@ -23,7 +23,7 @@ class OrganizationChartService
         return OrganizationChart::findOrFail($id);
     }
 
-    public function index(array $filters): LengthAwarePaginator
+    public function index(array $filters): Collection
     {
         $query = OrganizationChart::query();
         if ($filters['acronym']) {
@@ -35,7 +35,7 @@ class OrganizationChartService
         if ($filters['status'] !== 'all') {
             $query->where('status', $filters['status']);
         }
-        return $query->orderBy('order')->paginate($filters['perPage']);
+        return $query->orderBy('order')->get();
     }
 
     public function store(array $data): void

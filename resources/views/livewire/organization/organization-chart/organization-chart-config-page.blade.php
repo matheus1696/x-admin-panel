@@ -21,7 +21,7 @@
             </div>
 
             {{-- Nome do Setor --}}
-            <div class="col-span-12 md:col-span-6">
+            <div class="col-span-12 md:col-span-8">
                 <x-form.label value="Nome do Setor" />
                 <x-form.input wire:model.live.debounce.500ms="filters.filter" placeholder="Buscar por setor..." />
             </div>
@@ -38,24 +38,11 @@
                 />
             </div>
 
-            {{-- Itens por página --}}
-            <div class="col-span-6 md:col-span-2">
-                <x-form.label value="Itens por página" />
-                <x-form.select-livewire wire:model.live="filters.perPage" name="filters.perPage"
-                    :options="[
-                        ['value' => 10, 'label' => '10'],
-                        ['value' => 25, 'label' => '25'],
-                        ['value' => 50, 'label' => '50'],
-                        ['value' => 100, 'label' => '100']
-                    ]"
-                />
-            </div>
-
         </x-slot>
     </x-page.filter>
 
     <!-- Table -->
-    <x-page.table :pagination="$organizationCharts">
+    <x-page.table>
         <x-slot name="thead">
             <tr>
                 <x-page.table-th value="Título" />

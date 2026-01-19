@@ -24,7 +24,6 @@ class OrganizationChartConfigPage extends Component
         'acronym' => '',
         'filter' => '',
         'status' => 'all',
-        'perPage' => 50,
     ];
 
     /** Form */
@@ -48,15 +47,10 @@ class OrganizationChartConfigPage extends Component
         $this->resetPage();
     }
 
-    public function resetForm(): void
-    {
-        $this->reset(['chartId', 'title', 'acronym', 'hierarchy']);
-    }
-
     /* CREATE */
     public function create(): void
     {
-        $this->resetForm();
+        $this->reset();
         $this->openModal('modal-form-create-organitation-chart');
     }
 
@@ -68,7 +62,7 @@ class OrganizationChartConfigPage extends Component
             $data['responsible_photo'] = $this->responsible_photo->store('organizationChart', 'public');
         }        
         $this->organizationChartService->store($data);
-        $this->resetForm();
+        $this->reset();
         $this->flashSuccess('Setor adicionado no organograma com sucesso.');
         $this->closeModal();
     }
@@ -117,7 +111,7 @@ class OrganizationChartConfigPage extends Component
 
         $this->organizationChartService->update($this->chartId, $data);
 
-        $this->resetForm();
+        $this->reset();
         $this->flashSuccess('Setor alterado no organograma com sucesso.');
         $this->closeModal();
     }
@@ -130,8 +124,7 @@ class OrganizationChartConfigPage extends Component
 
     /* RENDER */
     public function render(): View
-    {
-        
+    {       
         $organizationCharts = $this->organizationChartService->index($this->filters);
 
         return view('livewire.organization.organization-chart.organization-chart-config-page', [
