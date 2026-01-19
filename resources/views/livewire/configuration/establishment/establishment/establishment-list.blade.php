@@ -1,4 +1,14 @@
-<div>
+<div class="space-y-6">
+    
+    <!-- Flash Message -->
+    <x-alert.flash />
+
+    <x-page.header icon="fa-solid fa-layer-group" title="Estabelecimento" subtitle="Gerencie os estabelecimento">
+        <x-slot name="button">
+            <x-button href="" text="Novo Estabelecimento" icon="fa-solid fa-plus" />
+        </x-slot>
+    </x-page.header>
+    
     <x-page.filter title="Filtros de Estabelecimentos">
         {{-- Filtros Básicos --}}
         <x-slot name="showBasic">
@@ -74,7 +84,7 @@
                     <x-page.table-td>
                         <div class="flex items-center justify-center gap-2">
                                 <x-button.btn-table title="Detalhe do Estabelecimento">
-                                    <a href="{{ route('establishments.show', $establishment) }}">
+                                    <a href="{{ route('admin.establishments.show', $establishment->code) }}">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>
                                 </x-button.btn-table>

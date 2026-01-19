@@ -1,16 +1,12 @@
 <?php
 
-use App\Http\Controllers\Admin\Configuration\OccupationController;
-use App\Http\Controllers\Admin\Configuration\RegionController;
 use App\Http\Controllers\Admin\Manage\Establishment\DepartmentController;
-use App\Http\Controllers\Admin\Manage\Establishment\EstablishmentController;
-use App\Http\Controllers\Admin\Manage\Establishment\EstablishmentTypeController;
-use App\Http\Controllers\Admin\Manage\Establishment\FinancialBlockController;
-use App\Http\Controllers\Admin\Manage\UserController;
 use App\Http\Controllers\Audit\LogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Livewire\Administration\User\UserPage;
+use App\Livewire\Configuration\Establishment\Establishment\EstablishmentList;
+use App\Livewire\Configuration\Establishment\Establishment\EstablishmentShow;
 use App\Livewire\Configuration\Establishment\EstablishmentType\EstablishmentTypePage;
 use App\Livewire\Configuration\Financial\FinancialBlock\FinancialBlockPage;
 use App\Livewire\Configuration\Occupation\OccupationPage;
@@ -65,38 +61,6 @@ Route::middleware('auth')->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
 
         /*
-        | Estabelecimentos
-        */
-        Route::prefix('establishments')
-            ->middleware('can:admin.establishments.manage')
-            ->name('establishments.')
-            ->group(function () {
-
-                Route::get('/', [EstablishmentController::class, 'index'])->name('index');
-                Route::get('/create', [EstablishmentController::class, 'create'])->name('create');
-                Route::post('/', [EstablishmentController::class, 'store'])->name('store');
-                Route::get('/{establishment}/show', [EstablishmentController::class, 'show'])->name('show');
-                Route::get('/{establishment}/edit', [EstablishmentController::class, 'edit'])->name('edit');
-                Route::put('/{establishment}', [EstablishmentController::class, 'update'])->name('update');
-            });
-
-        /*
-        | Departamentos (Organograma)
-        */
-        Route::prefix('departments')
-            ->middleware('can:organization.manage')
-            ->name('departments.')
-            ->group(function () {
-
-                Route::get('/', [DepartmentController::class, 'index'])->name('index');
-                Route::get('/create', [DepartmentController::class, 'create'])->name('create');
-                Route::post('/', [DepartmentController::class, 'store'])->name('store');
-                Route::get('/{department}/edit', [DepartmentController::class, 'edit'])->name('edit');
-                Route::put('/{department}', [DepartmentController::class, 'update'])->name('update');
-                Route::put('/{department}/status', [DepartmentController::class, 'status'])->name('status');
-            });
-
-        /*
         | Auditoria
         */
         Route::prefix('audit')
@@ -108,12 +72,17 @@ Route::middleware('auth')->group(function () {
             });
 
         /* Configurações */
+        Route::get('/configuration/establishment/list', EstablishmentList::class)->middleware('can:admin.establishments.manage')->name('establishments.index');
+
+        Route::get('/configuration/establishment/show/{code}', EstablishmentShow::class)->middleware('can:admin.establishments.manage')->name('establishments.show');
+
         Route::get('/configuration/establishment/type', EstablishmentTypePage::class)->middleware('can:admin.establishments.manage')->name('establishments.types.index');
         
         Route::get('/configuration/financial/block', FinancialBlockPage::class)->middleware('can:admin.financial-blocks.manage')->name('financial.blocks.index');
 
         Route::get('/configuration/occupation', OccupationPage::class)->middleware('can:admin.occupations.manage')->name('occupations.index');
 
+        /* Gerenciamento de Região */
         Route::get('/configuration/region/countries', RegionCountryPage::class)->middleware('can:admin.regions.manage')->name('regions.countries.index');
 
         Route::get('/configuration/region/states', RegionStatePage::class)->middleware('can:admin.regions.manage')->name('regions.states.index');
@@ -125,10 +94,11 @@ Route::middleware('auth')->group(function () {
 
         /* Organograma */   
         Route::get('/organization', OrganizationChartDashboardPage::class)->middleware('can:organization.view')->name('organization.index');
+        
         Route::get('/organization/config', OrganizationChartConfigPage::class)->middleware('can:organization.manage')->name('organization.config.index');
 
         /* Fluxo de Trabalho */
-        Route::get('/workflow', WorkflowProcessesPage::class)->middleware('can:workflow.manage')->name('workflow.index');
+        Route::get('/organization/workflow', WorkflowProcessesPage::class)->middleware('can:workflow.manage')->name('workflow.index');
     });
 });
 
