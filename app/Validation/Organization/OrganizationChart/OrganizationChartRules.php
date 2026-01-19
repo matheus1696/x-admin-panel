@@ -31,6 +31,10 @@ class OrganizationChartRules
                 Rule::unique('organization_charts', 'acronym'),
             ],
             'hierarchy' => 'required|integer',
+            'responsible_photo' => 'nullable|image|max:1024', // 1MB
+            'responsible_name' => 'nullable|string|max:255',
+            'responsible_contact' => 'nullable|string|max:50',
+            'responsible_email' => 'nullable|email|max:255',
         ];
     }
 
@@ -46,6 +50,10 @@ class OrganizationChartRules
                     ->ignore($chartId),
             ],
             'hierarchy' => 'required|integer',
+            'responsible_photo' => 'nullable|image|max:1024', // 1MB
+            'responsible_name' => 'nullable|string|max:255',
+            'responsible_contact' => 'nullable|string|max:50',
+            'responsible_email' => 'nullable|email|max:255',
         ];
     }
 }

@@ -105,21 +105,7 @@
             </x-slot>
 
             <form wire:submit.prevent="store" class="space-y-4">
-                <div>
-                    <x-form.label value="Sigla" />
-                    <x-form.input wire:model.defer="acronym" placeholder="Sigla" required/>
-                    <x-form.error :messages="$errors->get('acronym')" />
-                </div>
-                <div>
-                    <x-form.label value="Setor" />
-                    <x-form.input wire:model.defer="title" placeholder="Nome do Setor" required/>
-                    <x-form.error :messages="$errors->get('title')" />
-                </div>
-                <div>
-                    <x-form.label value="Setor Pai" />
-                    <x-form.select-livewire wire:model.defer="hierarchy" name="hierarchy" :collection="$organizationCharts" value-field="id" label-acronym="acronym" label-field="title" />
-                    <x-form.error :messages="$errors->get('hierarchy')" />
-                </div>
+                @include('livewire.organization.organization-chart._partials.organization-chart-form')
                 <div class="flex justify-end gap-2 pt-4">
                     <x-button type="submit" text="Salvar" />
                 </div>
@@ -131,21 +117,7 @@
             </x-slot>
 
             <form wire:submit.prevent="update" class="space-y-4">
-                <div>
-                    <x-form.label value="Sigla" />
-                    <x-form.input wire:model.defer="acronym" placeholder="Sigla" required/>
-                    <x-form.error :messages="$errors->get('acronym')" />
-                </div>
-                <div>
-                    <x-form.label value="Setor" />
-                    <x-form.input wire:model.defer="title" placeholder="Nome do Setor" required/>
-                    <x-form.error :messages="$errors->get('title')" />
-                </div>
-                <div>
-                    <x-form.label value="Setor Pai" />
-                    <x-form.select-livewire wire:model.defer="hierarchy" name="hierarchy" :collection="$organizationCharts" label-acronym="acronym" label-field="title" valueField="id" default="Selecione o setor" :selected="old('hierarchy', $hierarchy ?? '')"/>
-                    <x-form.error :messages="$errors->get('hierarchy')" />
-                </div>
+                @include('livewire.organization.organization-chart._partials.organization-chart-form')
                 <div class="flex justify-end gap-2 pt-4">
                     <x-button type="submit" text="Atualizar" variant="sky"/>
                 </div>

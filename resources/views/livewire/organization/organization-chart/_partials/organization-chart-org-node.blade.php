@@ -28,18 +28,24 @@ $levelData = $levels[$level] ?? ['color' => 'bg-slate-500'];
         </button>
         <span class="absolute left-0 top-0 h-full w-1 {{ $levelData['color'] }} rounded-l-xl"></span>
 
-        <div class="p-4 pl-5 text-left">
+        <div class="py-3 pl-4 pr-2 text-left">
             {{-- Card do responsável (foto, nome, contato, email) --}}
-            <div class="flex gap-2 items-center mb-2">
+            <div class="flex gap-4 items-center mb-2">
                 {{-- Foto --}}
-                <img src="{{ $node->photo ? asset('storage/'.$node->photo) : asset('https://tse4.mm.bing.net/th/id/OIP.dDKYQqVBsG1tIt2uJzEJHwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3') }}" alt="{{ $node->responsible_name ?? '-' }}" class="w-12 h-12 rounded-full mb-1 border border-slate-300">
+                <img 
+                    src="{{ $node->responsible_photo ? asset('storage/' . $node->responsible_photo) : 'https://tse4.mm.bing.net/th/id/OIP.dDKYQqVBsG1tIt2uJzEJHwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3' }}" 
+                    alt="{{ $node->responsible_name ?? '-' }}" 
+                    class="w-12 h-12 rounded-full mb-1 border border-slate-300"
+                />
 
                 <div class="text-center text-xs font-semibold text-slate-800 space-y-1">
                     {{-- Nome --}}
                     <div class="text-center text-xs font-semibold text-slate-800 truncate">
                         {{ $node->responsible_name ?? 'Sem Responsável pelo setor' }}
                     </div>
-                    <div>{{ $node->contact ?? '(81)0000-0000'}}</div>
+                    @if ( $node->contact )
+                        <div>{{ $node->contact }}</div>
+                    @endif
                 </div>
             </div>
 

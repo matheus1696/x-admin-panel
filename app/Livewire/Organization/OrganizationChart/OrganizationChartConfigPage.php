@@ -8,11 +8,13 @@ use App\Services\Organization\OrganizationChart\OrganizationChartService;
 use App\Validation\Organization\OrganizationChart\OrganizationChartRules;
 use Illuminate\View\View;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 class OrganizationChartConfigPage extends Component
 {
-    use WithPagination, WithFlashMessage, Modal;
+    use WithFileUploads, WithPagination, WithFlashMessage, Modal;
 
     protected OrganizationChartService $organizationChartService;
 
@@ -29,6 +31,11 @@ class OrganizationChartConfigPage extends Component
     public string $title = '';
     public string $acronym = '';
     public ?int $hierarchy = null;    
+    public $responsible_photo = null;
+    public ?string $responsible_name = '';
+    public ?string $responsible_contact = '';
+    public ?string $responsible_email = '';
+    public $temporaryPhoto = false;
 
     public function boot(OrganizationChartService $organizationChartService)
     {
@@ -55,6 +62,10 @@ class OrganizationChartConfigPage extends Component
     public function store(): void
     {
         $data = $this->validate(OrganizationChartRules::store());
+        // Upload da foto
+        if ($this->responsible_photo) {
+            $data['responsible_photo'] = $this->responsible_photo->store('organizationChart', 'public');
+        }        
         $this->organizationChartService->store($data);
         $this->resetForm();
         $this->flashSuccess('Setor adicionado no organograma com sucesso.');
@@ -66,19 +77,31 @@ class OrganizationChartConfigPage extends Component
     {
         $organizationChart = $this->organizationChartService->find($id);
 
-        $this->chartId   = $organizationChart->id;
-        $this->title      = $organizationChart->title;
-        $this->acronym   = $organizationChart->acronym;
-        $this->hierarchy = $organizationChart->hierarchy;
+        $this->chartId             = $organizationChart->id;
+        $this->title               = $organizationChart->title;
+        $this->acronym             = $organizationChart->acronym;
+        $this->hierarchy           = $organizationChart->hierarchy;
+        $this->responsible_name    = $organizationChart->responsible_name;
+        $this->responsible_contact = $organizationChart->responsible_contact;
+        $this->responsible_email   = $organizationChart->responsible_email;
+        $this->responsible_photo   = $organizationChart->responsible_photo;
 
         $this->openModal('modal-form-edit-organitation-chart');
     }
 
     public function update(): void
     {
-        if (!$this->chartId) { return; }
+        if (!$this->chartId) return;
+
         $data = $this->validate(OrganizationChartRules::update($this->chartId));
+
+        // Upload da foto se o usuário enviar uma nova
+        if ($this->responsible_photo instanceof TemporaryUploadedFile) {
+            $data['responsible_photo'] = $this->responsible_photo->store('organizationChart', 'public');
+        }
+
         $this->organizationChartService->update($this->chartId, $data);
+
         $this->resetForm();
         $this->flashSuccess('Setor alterado no organograma com sucesso.');
         $this->closeModal();
