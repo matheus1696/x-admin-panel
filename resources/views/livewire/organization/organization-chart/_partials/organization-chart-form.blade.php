@@ -45,7 +45,7 @@
 
         <div>
             <x-form.label value="Foto do responsável" />
-            <x-form.input type="file" wire:model="responsible_photo" />
+            <x-form.input type="file" wire:model="responsible_photo" accept=".jpg,.jpeg,.png" />
             <x-form.error :messages="$errors->get('responsible_photo')" />
         </div>
     </div>

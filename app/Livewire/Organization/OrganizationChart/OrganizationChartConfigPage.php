@@ -6,6 +6,7 @@ use App\Livewire\Traits\Modal;
 use App\Livewire\Traits\WithFlashMessage;
 use App\Services\Organization\OrganizationChart\OrganizationChartService;
 use App\Validation\Organization\OrganizationChart\OrganizationChartRules;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -95,9 +96,23 @@ class OrganizationChartConfigPage extends Component
 
         $data = $this->validate(OrganizationChartRules::update($this->chartId));
 
-        // Upload da foto se o usuário enviar uma nova
+        // Upload da nova foto, se houver
         if ($this->responsible_photo instanceof TemporaryUploadedFile) {
+
+            // Buscar a foto antiga
+            $organizationChart = $this->organizationChartService->find($this->chartId);
+            if ($organizationChart->responsible_photo) {
+                Storage::disk('public')->delete($organizationChart->responsible_photo);
+            }
+
+            // Salvar a nova foto
             $data['responsible_photo'] = $this->responsible_photo->store('organizationChart', 'public');
+
+            
+            // 3️⃣ Deletar o arquivo temporário do Livewire
+            if (file_exists($this->responsible_photo->getRealPath())) {
+                unlink($this->responsible_photo->getRealPath());
+            }
         }
 
         $this->organizationChartService->update($this->chartId, $data);

@@ -50,7 +50,7 @@ class OrganizationChartRules
                     ->ignore($chartId),
             ],
             'hierarchy' => 'required|integer',
-            'responsible_photo' => 'nullable|image|max:1024', // 1MB
+            'responsible_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'responsible_name' => 'nullable|string|max:255',
             'responsible_contact' => 'nullable|string|max:50',
             'responsible_email' => 'nullable|email|max:255',
