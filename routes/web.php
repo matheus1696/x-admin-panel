@@ -13,6 +13,7 @@ use App\Http\Controllers\ProfileController;
 use App\Livewire\Administration\User\UserPage;
 use App\Livewire\Configuration\Establishment\EstablishmentType\EstablishmentTypePage;
 use App\Livewire\Configuration\Financial\FinancialBlock\FinancialBlockPage;
+use App\Livewire\Configuration\Occupation\OccupationPage;
 use App\Livewire\Configuration\Region\RegionCityPage;
 use App\Livewire\Configuration\Region\RegionCountryPage;
 use App\Livewire\Configuration\Region\RegionStatePage;
@@ -80,20 +81,6 @@ Route::middleware('auth')->group(function () {
             });
 
         /*
-        | Ocupações
-        */
-        Route::prefix('occupations')
-            ->middleware('can:admin.occupations.manage')
-            ->name('occupations.')
-            ->group(function () {
-
-                Route::get('/', [OccupationController::class, 'index'])->name('index');
-                Route::get('/{occupation}/edit', [OccupationController::class, 'edit'])->name('edit');
-                Route::put('/{occupation}', [OccupationController::class, 'update'])->name('update');
-                Route::patch('/{occupation}/status', [OccupationController::class, 'status'])->name('status');
-            });
-
-        /*
         | Departamentos (Organograma)
         */
         Route::prefix('departments')
@@ -124,6 +111,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/configuration/establishment/type', EstablishmentTypePage::class)->middleware('can:admin.establishments.manage')->name('establishments.types.index');
         
         Route::get('/configuration/financial/block', FinancialBlockPage::class)->middleware('can:admin.financial-blocks.manage')->name('financial.blocks.index');
+
+        Route::get('/configuration/occupation', OccupationPage::class)->middleware('can:admin.occupations.manage')->name('occupations.index');
 
         Route::get('/configuration/region/countries', RegionCountryPage::class)->middleware('can:admin.regions.manage')->name('regions.countries.index');
 
