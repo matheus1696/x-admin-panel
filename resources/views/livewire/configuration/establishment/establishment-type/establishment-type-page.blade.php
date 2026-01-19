@@ -1,4 +1,11 @@
-<div>
+<div class="space-y-6">
+    
+    <!-- Flash Message -->
+    <x-alert.flash />
+
+    <!-- Header -->
+    <x-page.header  title="Tipos de Estabelecimento" subtitle="Tipos de Estabelecimento" icon="fa-solid fa-sitemap" />
+    
     <x-page.filter title="Filtros dos Tipos de Estabelecimento">
         {{-- Filtros Básicos --}}
         <x-slot name="showBasic">
@@ -59,19 +66,14 @@
             @foreach ($establishmentTypes as $establishmentType)
                 <tr>
                     <x-page.table-td class="truncate" :value="$establishmentType->title" />
-                    <x-page.table-td>
-                        <div class="flex items-center justify-center gap-2">
-                            @if ($establishmentType->status)
-                                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                <span class="text-xs font-medium text-green-700">Ativo</span>
-                            @else
-                                <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                                <span class="text-xs font-medium text-red-700">Inativo</span>
-                            @endif
+                    <x-page.table-td class="text-center">
+                        <div class="text-xs font-medium rounded-full py-0.5 px-1 {{ $organizationChart->status ? 'bg-green-300 text-green-700' : 'bg-red-300 text-red-700' }}">
+                            {{ $organizationChart->status ? 'Ativo' : 'Desativado' }}
                         </div>
                     </x-page.table-td>
                 </tr>
             @endforeach
         </x-slot>
     </x-page.table>
+
 </div>

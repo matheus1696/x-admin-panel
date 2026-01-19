@@ -11,6 +11,7 @@ use App\Http\Controllers\Audit\LogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Livewire\Administration\User\UserPage;
+use App\Livewire\Configuration\Establishment\EstablishmentType\EstablishmentTypePage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartConfigPage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartDashboardPage;
 use App\Livewire\Organization\Workflow\WorkflowProcessesPage;
@@ -72,10 +73,6 @@ Route::middleware('auth')->group(function () {
                 Route::get('/{establishment}/show', [EstablishmentController::class, 'show'])->name('show');
                 Route::get('/{establishment}/edit', [EstablishmentController::class, 'edit'])->name('edit');
                 Route::put('/{establishment}', [EstablishmentController::class, 'update'])->name('update');
-
-                // Tipos
-                Route::get('/types', [EstablishmentTypeController::class, 'index'])
-                    ->name('types.index');
             });
 
         /*
@@ -153,6 +150,9 @@ Route::middleware('auth')->group(function () {
 
                 Route::get('/logs', [LogController::class, 'index'])->name('logs.index');
             });
+
+        /* Configurações */
+        Route::get('/configuration/establishment/type', EstablishmentTypePage::class)->middleware('can:admin.establishments.manage')->name('establishments.types.index');
 
         /* Gerenciamento de Usuários & Acessos */
         Route::get('/administration/user', UserPage::class)->middleware('can:users.view')->name('users.index');
