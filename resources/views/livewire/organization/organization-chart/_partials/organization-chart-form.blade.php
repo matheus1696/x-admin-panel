@@ -30,22 +30,22 @@
 
     <div class="md:col-span-2 pt-2 border-t border-gray-200">
 
+        @php
+            $photoUrl =
+                $responsible_photo instanceof Livewire\Features\SupportFileUploads\TemporaryUploadedFile
+                    ? $responsible_photo->temporaryUrl()
+                    : ($current_responsible_photo
+                        ? asset('storage/' . $current_responsible_photo)
+                        : asset('https://tse4.mm.bing.net/th/id/OIP.dDKYQqVBsG1tIt2uJzEJHwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3'));
+        @endphp
+
         <div class="flex items-center justify-center">
-            @if($responsible_photo)
-                @if ($temporaryPhoto)
-                    <img src="{{ $responsible_photo->temporaryUrl() }}" alt="Foto Temporária" class="w-20 h-20 rounded-full mt-2 border border-slate-300">
-                @else
-                    <img src="{{ asset('storage/' . $responsible_photo) }}" alt="{{ $responsible_name ?? 'Foto do Responsável'}}" class="w-20 h-20 rounded-full mt-2 border border-slate-300">
-                @endif
-                
-            @else
-                <img src="{{ asset('https://tse4.mm.bing.net/th/id/OIP.dDKYQqVBsG1tIt2uJzEJHwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3') }}" class="w-20 h-20 rounded-full mt-2 border border-slate-300">
-            @endif
+            <img src="{{ $photoUrl }}" alt="{{ $responsible_name ?? 'Responsável' }}" class="w-20 h-20 rounded-full mt-2 border border-slate-300 object-cover">
         </div>
 
         <div>
             <x-form.label value="Foto do responsável" />
-            <x-form.input type="file" wire:model="responsible_photo" />
+            <x-form.input type="file" wire:model="responsible_photo" accept=".jpg,.jpeg,.png"/>
             <x-form.error :messages="$errors->get('responsible_photo')" />
         </div>
     </div>

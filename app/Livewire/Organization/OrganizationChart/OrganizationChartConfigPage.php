@@ -31,6 +31,7 @@ class OrganizationChartConfigPage extends Component
     public string $title = '';
     public string $acronym = '';
     public ?int $hierarchy = null;    
+    public ?string $current_responsible_photo = null;
     public $responsible_photo = null;
     public ?string $responsible_name = '';
     public ?string $responsible_contact = '';
@@ -79,7 +80,8 @@ class OrganizationChartConfigPage extends Component
         $this->responsible_name    = $organizationChart->responsible_name;
         $this->responsible_contact = $organizationChart->responsible_contact;
         $this->responsible_email   = $organizationChart->responsible_email;
-        $this->responsible_photo   = $organizationChart->responsible_photo;
+        $this->current_responsible_photo = $organizationChart->responsible_photo;
+        $this->responsible_photo         = null;
 
         $this->openModal('modal-form-edit-organitation-chart');
     }

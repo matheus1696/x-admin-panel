@@ -64,10 +64,6 @@
                     this.scale = newScale;
                 },
 
-                /* =========================
-                   POINTER EVENTS
-                ==========================*/
-
                 onPointerDown(event) {
                     this.pointers.set(event.pointerId, event);
 
