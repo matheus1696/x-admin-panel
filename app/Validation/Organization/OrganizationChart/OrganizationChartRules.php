@@ -5,7 +5,7 @@ namespace App\Validation\Organization\OrganizationChart;
 use Illuminate\Validation\Rule;
 
 /**
- * Esta classe centraliza as regras de validação do OrganizationChart
+ * Esta classe centraliza as regras de validação
  * para permitir reutilização entre Livewire e FormRequests.
  *
  * Motivo:

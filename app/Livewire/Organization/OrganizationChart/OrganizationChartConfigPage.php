@@ -21,7 +21,7 @@ class OrganizationChartConfigPage extends Component
         'acronym' => '',
         'filter' => '',
         'status' => 'all',
-        'perPage' => 25,
+        'perPage' => 50,
     ];
 
     /** Form */
@@ -33,6 +33,11 @@ class OrganizationChartConfigPage extends Component
     public function boot(OrganizationChartService $organizationChartService)
     {
         $this->organizationChartService = $organizationChartService;
+    }
+
+    public function updatedFilters()
+    {
+        $this->resetPage();
     }
 
     public function resetForm(): void

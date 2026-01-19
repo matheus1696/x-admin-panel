@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\Manage\UserController;
 use App\Http\Controllers\Audit\LogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\Administration\User\UserPage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartConfigPage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartDashboardPage;
 use App\Livewire\Organization\Workflow\WorkflowProcessesPage;
@@ -140,43 +141,7 @@ Route::middleware('auth')->group(function () {
                 Route::put('/{department}/status', [DepartmentController::class, 'status'])->name('status');
             });
 
-        /*
-        | Usuários & Acessos
-        */
-        Route::prefix('users')->name('users.')->group(function () {
-
-            Route::get('/', [UserController::class, 'index'])
-                ->middleware('can:users.view')
-                ->name('index');
-
-            Route::get('/create', [UserController::class, 'create'])
-                ->middleware('can:users.create')
-                ->name('create');
-
-            Route::post('/', [UserController::class, 'store'])
-                ->middleware('can:users.create')
-                ->name('store');
-
-            Route::get('/{user}/edit', [UserController::class, 'edit'])
-                ->middleware('can:users.update')
-                ->name('edit');
-
-            Route::put('/{user}', [UserController::class, 'update'])
-                ->middleware('can:users.update')
-                ->name('update');
-
-            Route::get('/{user}/permissions', [UserController::class, 'permissionEdit'])
-                ->middleware('can:users.permissions')
-                ->name('permissions.edit');
-
-            Route::put('/{user}/permissions', [UserController::class, 'permissionUpdate'])
-                ->middleware('can:users.permissions')
-                ->name('permissions.update');
-
-            Route::patch('/{user}/password', [UserController::class, 'password'])
-                ->middleware('can:users.password')
-                ->name('password.update');
-        });
+        
 
         /*
         | Auditoria
@@ -189,20 +154,15 @@ Route::middleware('auth')->group(function () {
                 Route::get('/logs', [LogController::class, 'index'])->name('logs.index');
             });
 
-        /*
-        | Workflow & Organograma (Livewire)
-        */
-        Route::get('/workflow', WorkflowProcessesPage::class)
-            ->middleware('can:workflow.manage')
-            ->name('workflow.index');
+        /* Gerenciamento de Usuários & Acessos */
+        Route::get('/administration/user', UserPage::class)->middleware('can:users.view')->name('users.index');
 
-        Route::get('/organization', OrganizationChartDashboardPage::class)
-            ->middleware('can:organization.view')
-            ->name('organization.index');
+        /* Organograma */   
+        Route::get('/organization', OrganizationChartDashboardPage::class)->middleware('can:organization.view')->name('organization.index');
+        Route::get('/organization/config', OrganizationChartConfigPage::class)->middleware('can:organization.manage')->name('organization.config.index');
 
-        Route::get('/organization/config', OrganizationChartConfigPage::class)
-            ->middleware('can:organization.manage')
-            ->name('organization.config.index');
+        /* Fluxo de Trabalho */
+        Route::get('/workflow', WorkflowProcessesPage::class)->middleware('can:workflow.manage')->name('workflow.index');
     });
 });
 

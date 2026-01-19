@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Organization\OrganizationChart;
+namespace App\Http\Requests\Administration\User;
 
-use App\Validation\Organization\OrganizationChart\OrganizationChartRules;
+use App\Validation\Administration\User\UserRules;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class OrganizationChartUpdateRequest extends FormRequest
+class UserStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,6 +22,6 @@ class OrganizationChartUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        return OrganizationChartRules::update($this->route('organization_chart')?->id);
+        return UserRules::store();
     }
 }

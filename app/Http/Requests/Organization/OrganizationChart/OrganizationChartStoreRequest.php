@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Organization\OrganizationChart;
 
+use App\Validation\Organization\OrganizationChart\OrganizationChartRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class OrganizationChartStoreRequest extends FormRequest
@@ -11,7 +12,7 @@ class OrganizationChartStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**

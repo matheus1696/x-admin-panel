@@ -132,34 +132,10 @@
         </x-sidebar.main-dropdown>
     @endcanany
 
-
     <!-- Usuários & Acessos -->
-    @canany(['users.view', 'users.create', 'users.update', 'users.permissions'])
-        <x-sidebar.main-dropdown
-            title="Usuários & Acessos"
-            icon="fa-solid fa-users"
-            :active="request()->routeIs('admin.users.*')"
-        >
-
-            @can('users.create')
-                <x-sidebar.dropdown-link
-                    href="{{ route('admin.users.create') }}"
-                    title="Criar Usuário"
-                    icon="fa-solid fa-user-plus"
-                />
-            @endcan
-
-            @can('users.view')
-                <x-sidebar.dropdown-link
-                    href="{{ route('admin.users.index') }}"
-                    title="Listar Usuários"
-                    icon="fa-solid fa-list"
-                />
-            @endcan
-
-        </x-sidebar.main-dropdown>
-    @endcanany
-
+    @can('users.view')
+        <x-sidebar.main-link href="{{ route('admin.users.index') }}" title="Gerenciamento de Usuários" icon="fa-solid fa-users" :active="request()->routeIs('admin.users.index')"/>
+    @endcan
 
     <!-- Auditoria -->
     @can('audit.logs.view')
@@ -184,5 +160,4 @@
         icon="fa-solid fa-user"
         :active="request()->routeIs('profile.*')"
     />
-
 </nav>

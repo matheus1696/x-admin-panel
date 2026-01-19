@@ -59,6 +59,12 @@ class User extends Authenticatable
         ];
     }
 
+    public function toggleStatus(): self
+    {
+        $this->update(['status' => !$this->status]);
+        return $this;
+    }
+
     //Criação do Filter Name
     public function setNameAttribute($value)
     {
