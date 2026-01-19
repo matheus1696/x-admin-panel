@@ -22,7 +22,7 @@ $levelData = $levels[$level] ?? ['color' => 'bg-slate-500'];
         <div class="h-10 w-0.5 bg-slate-400/30"></div>
     @endif
 
-    <div class="relative w-72 py-2 rounded-xl bg-white/80 backdrop-blur border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition" title="{{ $node->acronym }} - {{ $node->title }}" @click="open = !open">
+    <div class="relative w-96 py-2 rounded-xl bg-white/80 backdrop-blur border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition" title="{{ $node->acronym }} - {{ $node->title }}" @click="open = !open">
         <button x-show="{{ $node->children->isNotEmpty() ? 'true' : 'false' }}" class="size-5 bg-green-700 hover:bg-green-800 rounded-full absolute top-1 right-1 text-white text-xs">
             <i class="fa-solid fa-chevron-up transition-transform duration-300 text-[10px]" :class="open ? 'rotate-180' : ''"></i>
         </button>
@@ -30,17 +30,17 @@ $levelData = $levels[$level] ?? ['color' => 'bg-slate-500'];
 
         <div class="py-3 pl-4 pr-2 text-left">
             {{-- Card do responsável (foto, nome, contato, email) --}}
-            <div class="flex gap-4 items-center mb-2">
+            <div class="flex flex-col gap-2 items-center mb-4">
                 {{-- Foto --}}
                 <img 
                     src="{{ $node->responsible_photo ? asset('storage/' . $node->responsible_photo) : 'https://tse4.mm.bing.net/th/id/OIP.dDKYQqVBsG1tIt2uJzEJHwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3' }}" 
                     alt="{{ $node->responsible_name ?? '-' }}" 
-                    class="w-12 h-12 rounded-full mb-1 border border-slate-300 object-cover object-center"
+                    class="size-24 rounded-full mb-1 border border-slate-300 object-cover object-center"
                 />
 
                 <div class="text-center text-xs font-semibold text-slate-800 space-y-1">
                     {{-- Nome --}}
-                    <div class="text-center text-xs font-semibold text-slate-800 truncate">
+                    <div class="text-center text-sm font-semibold text-slate-800 truncate">
                         {{ $node->responsible_name ?? 'Sem Responsável pelo setor' }}
                     </div>
                     @if ( $node->contact )
@@ -49,7 +49,7 @@ $levelData = $levels[$level] ?? ['color' => 'bg-slate-500'];
                 </div>
             </div>
 
-            <div class="text-center text-sm font-semibold text-slate-800 truncate">
+            <div class="text-center text-md font-semibold text-slate-800 truncate">
                 {{ $node->acronym }} - {{ $node->title }}
             </div>
         </div>
