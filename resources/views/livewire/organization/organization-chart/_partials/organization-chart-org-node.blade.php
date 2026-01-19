@@ -35,7 +35,7 @@ $levelData = $levels[$level] ?? ['color' => 'bg-slate-500'];
                 <img 
                     src="{{ $node->responsible_photo ? asset('storage/' . $node->responsible_photo) : 'https://tse4.mm.bing.net/th/id/OIP.dDKYQqVBsG1tIt2uJzEJHwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3' }}" 
                     alt="{{ $node->responsible_name ?? '-' }}" 
-                    class="size-24 rounded-full mb-1 border border-slate-300 object-cover object-center"
+                    class="size-28 rounded-full mb-1 border border-slate-300 object-cover object-center"
                 />
 
                 <div class="text-center text-xs font-semibold text-slate-800 space-y-1">
