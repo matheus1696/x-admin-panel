@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\Manage\Establishment\DepartmentController;
 use App\Http\Controllers\Audit\LogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
