@@ -8,27 +8,24 @@
         :active="request()->routeIs('dashboard')"
     />
 
+    <x-sidebar.main-link
+        href="{{ route('admin.organization.index') }}"
+        title="Organograma"
+        icon="fa-solid fa-diagram-project"
+        :active="request()->routeIs('admin.organization.index')"
+    />
+
     <!-- Organização -->
     @canany(['organization.view', 'organization.manage', 'workflow.manage'])
         <x-sidebar.main-dropdown
             title="Organização"
             icon="fa-solid fa-sitemap"
-            :active="request()->routeIs('admin.organization.*') || request()->routeIs('admin.workflow.*')"
+            :active="request()->routeIs('admin.organization.config.*') || request()->routeIs('admin.workflow.*')"
         >
-
-            @can('organization.view')
-                <x-sidebar.dropdown-link
-                    href="{{ route('admin.organization.index') }}"
-                    title="Organograma"
-                    icon="fa-solid fa-diagram-project"
-                    :active="request()->routeIs('admin.organization.index')"
-                />
-            @endcan
-
             @can('organization.manage')
                 <x-sidebar.dropdown-link
                     href="{{ route('admin.organization.config.index') }}"
-                    title="Gerenciar Organograma"
+                    title="Gerenciamento do Organograma"
                     icon="fa-solid fa-gear"
                     :active="request()->routeIs('admin.organization.config.index')"
                 />
@@ -36,7 +33,7 @@
 
             @can('workflow.manage')
                 <x-sidebar.dropdown
-                    title="Fluxo de Trabalho"
+                    title="Gestão de Fluxo de Trabalho"
                     icon="fa-solid fa-diagram-project"
                     :active="request()->routeIs('admin.workflow.*')"
                 >
