@@ -15,7 +15,11 @@ class OrganizationChart extends Model
         'order',
         'hierarchy',
         'number_hierarchy',
-        'status'
+        'status',
+        'photo',
+        'responsible_name',
+        'contact',
+        'email',
     ];
 
     public function children()

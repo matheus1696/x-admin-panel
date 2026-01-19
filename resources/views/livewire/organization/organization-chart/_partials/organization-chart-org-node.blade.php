@@ -29,6 +29,20 @@ $levelData = $levels[$level] ?? ['color' => 'bg-slate-500'];
         <span class="absolute left-0 top-0 h-full w-1 {{ $levelData['color'] }} rounded-l-xl"></span>
 
         <div class="p-4 pl-5 text-left">
+            {{-- Card do responsável (foto, nome, contato, email) --}}
+            <div class="flex gap-2 items-center mb-2">
+                {{-- Foto --}}
+                <img src="{{ $node->photo ? asset('storage/'.$node->photo) : asset('https://tse4.mm.bing.net/th/id/OIP.dDKYQqVBsG1tIt2uJzEJHwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3') }}" alt="{{ $node->responsible_name ?? '-' }}" class="w-12 h-12 rounded-full mb-1 border border-slate-300">
+
+                <div class="text-center text-xs font-semibold text-slate-800 space-y-1">
+                    {{-- Nome --}}
+                    <div class="text-center text-xs font-semibold text-slate-800 truncate">
+                        {{ $node->responsible_name ?? 'Sem Responsável pelo setor' }}
+                    </div>
+                    <div>{{ $node->contact ?? '(81)0000-0000'}}</div>
+                </div>
+            </div>
+
             <div class="text-center text-sm font-semibold text-slate-800 truncate">
                 {{ $node->acronym }} - {{ $node->title }}
             </div>
