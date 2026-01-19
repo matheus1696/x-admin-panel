@@ -1,4 +1,11 @@
-<div>
+<div class="space-y-6">
+    
+    <!-- Flash Message -->
+    <x-alert.flash />
+
+    <!-- Header -->
+    <x-page.header icon="fa-solid fa-coins" title="Blocos de Financiamento" subtitle="Gerencie os blocos de financiamento" />    
+    
     <x-page.filter title="Filtros de Blocos de Financiamento">
         {{-- Filtros Básicos --}}
         <x-slot name="showBasic">
@@ -68,19 +75,14 @@
                 <tr>
                     <x-page.table-td class="text-center" :value="$financialBlock->acronym" />
                     <x-page.table-td :value="$financialBlock->title" />
-                    <x-page.table-td>
-                        <div class="flex items-center justify-center gap-2">
-                            @if ($financialBlock->status)
-                                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                <span class="text-xs font-medium text-green-700">Ativo</span>
-                            @else
-                                <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                                <span class="text-xs font-medium text-red-700">Inativo</span>
-                            @endif
+                    <x-page.table-td class="text-center">
+                        <div class="text-xs font-medium rounded-full py-0.5 px-1 {{ $financialBlock->status ? 'bg-green-300 text-green-700' : 'bg-red-300 text-red-700' }}">
+                            {{ $financialBlock->status ? 'Ativo' : 'Desativado' }}
                         </div>
                     </x-page.table-td>
                 </tr>
             @endforeach
         </x-slot>
     </x-page.table>
+
 </div>

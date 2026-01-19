@@ -12,6 +12,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Livewire\Administration\User\UserPage;
 use App\Livewire\Configuration\Establishment\EstablishmentType\EstablishmentTypePage;
+use App\Livewire\Configuration\Financial\FinancialBlock\FinancialBlockPage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartConfigPage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartDashboardPage;
 use App\Livewire\Organization\Workflow\WorkflowProcessesPage;
@@ -76,21 +77,6 @@ Route::middleware('auth')->group(function () {
             });
 
         /*
-        | Blocos Financeiros
-        */
-        Route::prefix('financial-blocks')
-            ->middleware('can:admin.financial-blocks.manage')
-            ->name('financial.blocks.')
-            ->group(function () {
-
-                Route::get('/', [FinancialBlockController::class, 'index'])->name('index');
-                Route::get('/create', [FinancialBlockController::class, 'create'])->name('create');
-                Route::post('/', [FinancialBlockController::class, 'store'])->name('store');
-                Route::get('/{financialBlock}/edit', [FinancialBlockController::class, 'edit'])->name('edit');
-                Route::put('/{financialBlock}', [FinancialBlockController::class, 'update'])->name('update');
-            });
-
-        /*
         | Ocupações
         */
         Route::prefix('occupations')
@@ -138,8 +124,6 @@ Route::middleware('auth')->group(function () {
                 Route::put('/{department}/status', [DepartmentController::class, 'status'])->name('status');
             });
 
-        
-
         /*
         | Auditoria
         */
@@ -153,6 +137,8 @@ Route::middleware('auth')->group(function () {
 
         /* Configurações */
         Route::get('/configuration/establishment/type', EstablishmentTypePage::class)->middleware('can:admin.establishments.manage')->name('establishments.types.index');
+        
+        Route::get('/configuration/financial/block', FinancialBlockPage::class)->middleware('can:admin.financial-blocks.manage')->name('financial.blocks.index');
 
         /* Gerenciamento de Usuários & Acessos */
         Route::get('/administration/user', UserPage::class)->middleware('can:users.view')->name('users.index');
