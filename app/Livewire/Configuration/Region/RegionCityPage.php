@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Livewire\Admin\Manage\Establishment;
+namespace App\Livewire\Configuration\Region;
 
-use App\Models\Manage\Company\FinancialBlock;
+use App\Models\Configuration\Region\RegionCity;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class FinancialBlockTable extends Component
+class RegionCityPage extends Component
 {
     use WithPagination;
 
-    public $acronym = '';
     public $name = '';
     public $status = 'all';
     public $sort = 'name_asc';
@@ -23,11 +22,9 @@ class FinancialBlockTable extends Component
 
     public function render()
     {
-        $query = FinancialBlock::query();
+        $query = RegionCity::query();
 
         $query->orderBy('status', 'desc');
-
-        if ($this->acronym) { $query->where('acronym', 'like', '%' . strtolower($this->acronym) . '%'); }
 
         if ($this->name) { $query->where('filter', 'like', '%' . strtolower($this->name) . '%'); }
 
@@ -43,8 +40,10 @@ class FinancialBlockTable extends Component
                 break;
         }
 
-        $financialBlocks = $query->paginate($this->perPage);
+        $cities = $query->paginate($this->perPage);
 
-        return view('livewire.admin.manage.establishment.financial-block-table', compact('financialBlocks'));
+        return view('livewire.configuration.region.region-city-page',[
+            'cities' => $cities
+        ])->layout('layouts.app');
     }
 }

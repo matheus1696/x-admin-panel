@@ -13,6 +13,9 @@ use App\Http\Controllers\ProfileController;
 use App\Livewire\Administration\User\UserPage;
 use App\Livewire\Configuration\Establishment\EstablishmentType\EstablishmentTypePage;
 use App\Livewire\Configuration\Financial\FinancialBlock\FinancialBlockPage;
+use App\Livewire\Configuration\Region\RegionCityPage;
+use App\Livewire\Configuration\Region\RegionCountryPage;
+use App\Livewire\Configuration\Region\RegionStatePage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartConfigPage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartDashboardPage;
 use App\Livewire\Organization\Workflow\WorkflowProcessesPage;
@@ -91,24 +94,6 @@ Route::middleware('auth')->group(function () {
             });
 
         /*
-        | Regiões
-        */
-        Route::prefix('regions')
-            ->middleware('can:admin.regions.manage')
-            ->name('regions.')
-            ->group(function () {
-
-                Route::get('/countries', [RegionController::class, 'countryIndex'])->name('countries.index');
-                Route::patch('/countries/{country}/status', [RegionController::class, 'countryStatus'])->name('countries.status');
-
-                Route::get('/states', [RegionController::class, 'stateIndex'])->name('states.index');
-                Route::patch('/states/{state}/status', [RegionController::class, 'stateStatus'])->name('states.status');
-
-                Route::get('/cities', [RegionController::class, 'cityIndex'])->name('cities.index');
-                Route::patch('/cities/{city}/status', [RegionController::class, 'cityStatus'])->name('cities.status');
-            });
-
-        /*
         | Departamentos (Organograma)
         */
         Route::prefix('departments')
@@ -139,6 +124,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/configuration/establishment/type', EstablishmentTypePage::class)->middleware('can:admin.establishments.manage')->name('establishments.types.index');
         
         Route::get('/configuration/financial/block', FinancialBlockPage::class)->middleware('can:admin.financial-blocks.manage')->name('financial.blocks.index');
+
+        Route::get('/configuration/region/countries', RegionCountryPage::class)->middleware('can:admin.regions.manage')->name('regions.countries.index');
+
+        Route::get('/configuration/region/states', RegionStatePage::class)->middleware('can:admin.regions.manage')->name('regions.states.index');
+
+        Route::get('/configuration/region/cities', RegionCityPage::class)->middleware('can:admin.regions.manage')->name('regions.cities.index');
 
         /* Gerenciamento de Usuários & Acessos */
         Route::get('/administration/user', UserPage::class)->middleware('can:users.view')->name('users.index');
