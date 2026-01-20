@@ -125,6 +125,18 @@
 
     <!-- Modal -->
     <x-modal :show="$showModal" wire:key="establishment-modal">
+        @if ($modalKey === 'modal-form-edit-establishment')
+            <x-slot name="header">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase">Editar Estabelecimento</h2>
+            </x-slot>
+
+            <form wire:submit.prevent="update" class="space-y-4">
+                @include('livewire.configuration.establishment.establishment._partials.establishment-form')
+                <div class="flex justify-end gap-2 pt-4">
+                    <x-button type="submit" text="Alterar" variant="sky" />
+                </div>
+            </form>
+        @endif
         @if ($modalKey === 'modal-form-create-departament')
             <x-slot name="header">
                 <h2 class="text-sm font-semibold text-gray-700 uppercase">Cadastrar Departamento</h2>

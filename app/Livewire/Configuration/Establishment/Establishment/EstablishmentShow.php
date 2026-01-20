@@ -50,14 +50,14 @@ class EstablishmentShow extends Component
         $this->departmentService = $departmentService;
     }
 
-    protected function resetForm(): void
-    {
-        $this->reset([ 'establishmentId', 'code', 'title', 'surname', 'filter', 'address', 'number', 'district', 'city_id', 'state_id', 'latitude', 'longitude', 'type_establishment_id', 'financial_block_id', 'description', 'contact', 'extension', 'type_contact']);
-    }
-
     public function mount($code): void
     {
         $this->establishmentCNES = $code;
+    }
+
+    protected function resetForm(): void
+    {
+        $this->reset([ 'establishmentId', 'code', 'title', 'surname', 'filter', 'address', 'number', 'district', 'city_id', 'state_id', 'latitude', 'longitude', 'type_establishment_id', 'financial_block_id', 'description', 'contact', 'extension', 'type_contact']);
     }
 
     /* EDIT */
