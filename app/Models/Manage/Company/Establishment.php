@@ -38,6 +38,17 @@ class Establishment extends Model
         return $this->belongsTo(FinancialBlock::class,'financial_block_id','id');
     }
 
+    public function departments()
+    {
+        return $this->hasMany(Department::class, 'establishment_id');
+    }
+
+    public function mainDepartment()
+    {
+        return $this->hasOne(Department::class, 'establishment_id')
+            ->where('type_contact', 'Main');
+    }
+
     public function toggleStatus(): self
     {
         $this->update(['status' => !$this->status]);

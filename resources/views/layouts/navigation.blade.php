@@ -1,19 +1,30 @@
 <nav class="lg:flex-1 space-y-1.5 overflow-hidden pb-2" x-data="{ activeDropdown: null }">
 
-    <!-- Dashboard -->
-    <x-sidebar.main-link
-        href="{{ route('dashboard') }}"
-        icon="fa-solid fa-chart-line"
-        title="Dashboard"
-        :active="request()->routeIs('dashboard')"
-    />
+    @auth
+        <!-- Dashboard -->
+        <x-sidebar.main-link
+            href="{{ route('dashboard') }}"
+            icon="fa-solid fa-chart-line"
+            title="Dashboard"
+            :active="request()->routeIs('dashboard')"
+        />
+    @endauth
 
     <x-sidebar.main-link
-        href="{{ route('admin.organization.index') }}"
-        title="Organograma"
-        icon="fa-solid fa-diagram-project"
-        :active="request()->routeIs('admin.organization.index')"
+        href="{{ route('contacts.index') }}"
+        icon="fa-solid fa-address-book"
+        title="Contatos"
+        :active="request()->routeIs('contacts.index')"
     />
+
+    @auth
+        <x-sidebar.main-link
+            href="{{ route('admin.organization.index') }}"
+            title="Organograma"
+            icon="fa-solid fa-diagram-project"
+            :active="request()->routeIs('admin.organization.index')"
+        />
+    @endauth
 
     <!-- Organização -->
     @canany(['organization.view', 'organization.manage', 'workflow.manage'])
@@ -149,12 +160,14 @@
         </x-sidebar.main-dropdown>
     @endcan
 
-
-    <!-- Perfil -->
-    <x-sidebar.main-link
-        href="{{ route('profile.edit') }}"
-        title="Perfil"
-        icon="fa-solid fa-user"
-        :active="request()->routeIs('profile.*')"
-    />
+    @auth
+        <!-- Perfil -->
+        <x-sidebar.main-link
+            href="{{ route('profile.edit') }}"
+            title="Perfil"
+            icon="fa-solid fa-user"
+            :active="request()->routeIs('profile.*')"
+        />        
+    @endauth
+    
 </nav>

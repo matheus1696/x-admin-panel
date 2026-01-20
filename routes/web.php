@@ -15,6 +15,7 @@ use App\Livewire\Configuration\Region\RegionStatePage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartConfigPage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartDashboardPage;
 use App\Livewire\Organization\Workflow\WorkflowProcessesPage;
+use App\Livewire\Public\Contact\ContactPage;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/', fn () => redirect()->route('login'));
+Route::get('/contacts', ContactPage::class)->name('contacts.index');
 
 /*
 |--------------------------------------------------------------------------
