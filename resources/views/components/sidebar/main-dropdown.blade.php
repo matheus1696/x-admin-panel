@@ -15,23 +15,14 @@
         }}"
     >
         <div class="flex items-center gap-2">
-            <i class="{{ $icon }} w-5 text-center text-sm {{ $active ? 'text-white' : 'text-green-600' }}"></i>
+            <i class="{{ $icon }} w-5 text-center text-sm {{ $active ? 'text-white' : 'text-green-700' }}"></i>
 
-            <span
-                :class="sidebarExpanded ? 'md:opacity-100' : 'md:opacity-0'"
-                class="transition-all duration-200 whitespace-nowrap"
-            >
+            <span :class="sidebarExpanded ? 'md:opacity-100' : 'md:opacity-0'" class="transition-all duration-200 whitespace-nowrap">
                 {{ $title }}
             </span>
         </div>
-
-        <svg
-            :class="openDropdown ? 'rotate-90' : ''"
-            class="w-4 h-4 transition-transform duration-200 {{ $active ? 'text-white' : 'text-gray-500' }}"
-            fill="none" stroke="currentColor" viewBox="0 0 24 24"
-        >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
+        
+        <i :class="openDropdown ? 'rotate-90' : ''" class="fa-solid fa-angle-right text-xs transition-transform duration-200 {{ $active ? 'text-white' : 'text-gray-500' }}"></i>
     </button>
 
     <div

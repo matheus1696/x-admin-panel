@@ -3,7 +3,6 @@
 namespace App\Services\Organization\OrganizationChart;
 
 use App\Models\Organization\OrganizationChart\OrganizationChart;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 

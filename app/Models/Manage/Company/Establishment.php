@@ -36,12 +36,18 @@ class Establishment extends Model
 
     public function FinancialBlock(){
         return $this->belongsTo(FinancialBlock::class,'financial_block_id','id');
-    }   
+    }
+
+    public function toggleStatus(): self
+    {
+        $this->update(['status' => !$this->status]);
+        return $this;
+    }
 
     //Criação do Filter Title
-    public function setNameAttribute($value)
+    public function setTitleAttribute($value)
     {
         $this->attributes['title'] = $value;
-        $this->attributes['title_filter'] = Str::ascii(strtolower($value));
+        $this->attributes['filter'] = Str::ascii(strtolower($value));
     }
 }

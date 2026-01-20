@@ -5,7 +5,7 @@
 
     <x-page.header icon="fa-solid fa-layer-group" title="Estabelecimento" subtitle="Gerencie os estabelecimento">
         <x-slot name="button">
-            <x-button href="" text="Novo Estabelecimento" icon="fa-solid fa-plus" />
+            <x-button wire:click="create" text="Novo Estabelecimento" icon="fa-solid fa-plus" />
         </x-slot>
     </x-page.header>
     
@@ -88,10 +88,29 @@
                                         <i class="fa-solid fa-eye"></i>
                                     </a>
                                 </x-button.btn-table>
+                                <x-button.btn-table wire:click="status({{ $establishment->id }})" title="Alterar Status">
+                                    <i class="fa-solid fa-toggle-on"></i>
+                                </x-button.btn-table>
                             </div>
                     </x-page.table-td>
                 </tr>
             @endforeach
         </x-slot>
     </x-page.table>
+
+    <!-- Modal -->
+    <x-modal :show="$showModal" wire:key="establishment-modal">
+        @if ($modalKey === 'modal-form-create-establishment')
+            <x-slot name="header">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase">Cadastrar Setor</h2>
+            </x-slot>
+
+            <form wire:submit.prevent="store" class="space-y-4">
+                @include('livewire.configuration.establishment.establishment._partials.establishment-form')
+                <div class="flex justify-end gap-2 pt-4">
+                    <x-button type="submit" text="Salvar" />
+                </div>
+            </form>
+        @endif
+    </x-modal>
 </div>

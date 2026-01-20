@@ -2,53 +2,90 @@
 
 namespace App\Livewire\Configuration\Establishment\Establishment;
 
-use App\Models\Manage\Company\Establishment;
+use App\Livewire\Traits\Modal;
+use App\Livewire\Traits\WithFlashMessage;
+use App\Models\Configuration\Region\RegionCity;
+use App\Models\Configuration\Region\RegionState;
+use App\Models\Manage\Company\EstablishmentType;
+use App\Models\Manage\Company\FinancialBlock;
+use App\Services\Configuration\Establishment\Establishment\EstablishmentService;
+use App\Validation\Configuration\Establishment\Establishment\EstablishmentRules;
+use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class EstablishmentList extends Component
 {
-    use WithPagination;
+    use WithPagination, WithFlashMessage, Modal;
 
-    public $code = '';
-    public $name = '';
-    public $status = 'all';
-    public $sort = 'name_asc';
-    public $perPage = 10;
+    protected EstablishmentService $establishmentService;
 
-    public function updated()
+    /** Filters */
+    public array $filters = [
+        'code' => '',
+        'filter' => '',
+        'status' => 'all',
+        'sort' => 'name_asc',
+        'perPage' => 10,
+    ];
+
+    public ?int $establishmentId = null;
+
+    public ?string $code = null;
+    public string $title = '';
+    public ?string $surname = null;
+    public string $filter = '';
+    public string $address = '';
+    public string $number = '';
+    public string $district = '';
+    public ?int $city_id = null;
+    public ?int $state_id = null;
+    public ?string $latitude = null;
+    public ?string $longitude = null;
+    public ?int $type_establishment_id = null;
+    public ?int $financial_block_id = null;
+    public ?string $description = null;
+
+    public function boot(EstablishmentService $establishmentService)
+    {
+        $this->establishmentService = $establishmentService;
+    }
+
+    public function updatedFilters()
     {
         $this->resetPage();
     }
 
-    public function render()
+    /* CREATE */
+    public function create(): void
     {
-        // Consulta base
-        $query = Establishment::query();
-        
-        // Filtros 
-        if ($this->code) { $query->where('code', 'like', '%' . strtolower($this->code) . '%'); }
+        $this->reset();
+        $this->openModal('modal-form-create-establishment');
+    }
 
-        //  
-        if ($this->name) { $query->where('filter', 'like', '%' . strtolower($this->name) . '%'); }
+    public function store(): void
+    {
+        $data = $this->validate(EstablishmentRules::store()); 
+        $this->establishmentService->store($data);
+        $this->reset();
+        $this->flashSuccess('Setor adicionado no organograma com sucesso.');
+        $this->closeModal();
+    }
 
-        if ($this->status !== 'all') { $query->where('status', $this->status); }
+    public function status(int $id): void
+    {
+        $this->establishmentService->status($id);
+        $this->flashSuccess('Setor foi atualizada com sucesso.');
+    }
 
-        // Ordenação
-        switch ($this->sort) {
-            case 'name_asc':
-                $query->orderBy('title', 'asc');
-                break;
-            case 'name_desc':
-                $query->orderBy('title', 'desc');
-                break;
-        }
-
-        // Paginação
-        $establishments = $query->paginate($this->perPage);
-
+    public function render(): View
+    {
         return view('livewire.configuration.establishment.establishment.establishment-list',[
-            'establishments' => $establishments,
+            'establishments' => $this->establishmentService->index($this->filters),
+            'states' => RegionState::all(),
+            'cities' => RegionCity::all(),
+            'establishmentTypes' => EstablishmentType::all(),
+            'financialBlocks' => FinancialBlock::all(),
         ])->layout('layouts.app');
     }
 }

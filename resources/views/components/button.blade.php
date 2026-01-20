@@ -7,15 +7,17 @@
 ])
 
 @php
-    $baseClasses = 'w-full text-xs px-4 py-2.5 rounded-lg font-medium transition-all duration-200
-    flex items-center justify-center gap-1 shadow transform';
+    $baseClasses = 'w-full text-xs font-medium transition-all duration-200
+    flex items-center justify-center gap-1  transform';
 
     $variants = [
-        'green' => 'bg-green-700 hover:bg-green-800 text-white',
-        'gray' => 'bg-gray-600 hover:bg-gray-700 text-white',
-        'yellow' => 'bg-yellow-500 hover:bg-yellow-600 text-white',
-        'red' => 'bg-red-600 hover:bg-red-700 text-white',
-        'sky' => 'bg-sky-600 hover:bg-sky-700 text-white',
+        'green' => 'bg-green-700 hover:bg-green-800 text-white pl-4 pr-2.5 py-2.5 rounded-lg shadow',
+        'gray' => 'bg-gray-600 hover:bg-gray-700 text-white pl-4 pr-2.5 py-2.5 rounded-lg shadow',
+        'yellow' => 'bg-yellow-500 hover:bg-yellow-600 text-white pl-4 pr-2.5 py-2.5 rounded-lg shadow',
+        'red' => 'bg-red-600 hover:bg-red-700 text-white pl-4 pr-2.5 py-2.5 rounded-lg shadow',
+        'sky' => 'bg-sky-600 hover:bg-sky-700 text-white pl-4 pr-2.5 py-2.5 rounded-lg shadow',
+        
+        'gray_outline' => 'text-gray-500 hover:text-gray-400',
     ];
 
     $classes = $baseClasses . ' ' . ($variants[$variant] ?? $variants['green']);
