@@ -4,6 +4,7 @@ namespace App\Services\Configuration\Establishment\Establishment;
 
 use App\Models\Manage\Company\Establishment;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Ramsey\Collection\Collection;
 
 class EstablishmentService
 {
@@ -37,6 +38,11 @@ class EstablishmentService
     public function store(array $data): void
     {
         Establishment::create($data);
+    }
+
+    public function show(int $establishmentCNES)
+    {
+        return Establishment::where('code', $establishmentCNES)->first();
     }
 
     public function update(int $id, array $data): void

@@ -1,7 +1,7 @@
 @props([ 'pagination' => null])
 
 <!-- 📊 Data Table Component -->
-<div class="mt-4 overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
+<div class="w-[448px] md:w-full mt-4 overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
     <!-- Table Wrapper -->
     <table class="w-full text-[13px] divide-y divide-gray-100">
         <!-- Cabeçalho -->

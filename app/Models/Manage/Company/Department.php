@@ -10,14 +10,7 @@ class Department extends Model
     //
     protected $fillable = [
         'title',
-        'acronym',
         'filter',
-        'description',
-        'parent_id',
-        'order',
-        'level',
-        'path',
-        'status',
         'contact',
         'extension',
         'type_contact',
