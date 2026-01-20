@@ -3,6 +3,7 @@
 namespace App\Livewire\Public\Contact;
 
 use App\Livewire\Traits\Modal;
+use App\Models\Manage\Company\Department;
 use App\Models\Manage\Company\Establishment;
 use Livewire\Component;
 
@@ -10,20 +11,46 @@ class ContactPage extends Component
 {
     use Modal;
 
-    public $selectedEstablishment = null;
+    public $searchEstablishment;
+    public $searchDepartment;
 
-    public function openDepartments(int $id)
+    public ?int $selectedEstablishmentId = null;
+    public $establishmentTitle = null;
+    public $departments = null;
+
+    public function loadDepartments()
     {
-        $this->selectedEstablishment = Establishment::with('departments')->findOrFail($id);
+        $query = Department::where('establishment_id', $this->selectedEstablishmentId);
 
+        if ($this->searchDepartment) {
+            $query->where('filter', 'like', '%' . strtolower($this->searchDepartment) . '%');
+        }
+
+        $this->departments = $query->orderBy('title')->get();
+    }
+
+    public function openDepartments($id)
+    {
+        $this->selectedEstablishmentId = $id;
+        $this->establishmentTitle = Establishment::find($id)->title;
+        $this->loadDepartments();
         $this->openModal('modal-info-contact');
+    }
+
+    public function updatedSearchDepartment(): void
+    {
+        $this->loadDepartments();
     }
 
     public function render()
     {
-        $establishments = Establishment::with('departments')->where('status', true)
-        ->orderBy('title')
-        ->get();
+        $query = Establishment::with('departments');
+
+        if ($this->searchEstablishment) {
+            $query->where('filter', 'like', '%' . strtolower($this->searchEstablishment) . '%');
+        }       
+        
+        $establishments = $query->where('status', true)->orderBy('title')->get();
 
         return view('livewire.public.contact.contact-page', [
             'establishments' => $establishments,

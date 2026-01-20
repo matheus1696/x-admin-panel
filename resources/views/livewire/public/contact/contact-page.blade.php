@@ -1,7 +1,14 @@
 <div class="space-y-8">
 
     {{-- Título --}}
-    <x-page.header title="Contatos" subtitle="Contatos da Secretaria de Saúde de Caruaru" icon="fa-solid fa-address-book" />
+    <x-page.header title="Contatos" subtitle="Contatos da Secretaria de Saúde de Caruaru" icon="fa-solid fa-address-book">
+        <x-slot name="button">
+            <div class="w-52 flex items-center rounded-lg shadow bg-gray-300">
+                <div class="px-3"> <i class="fa-solid fa-magnifying-glass text-white text-xs"></i> </div>
+                <x-form.input wire:model.live.debounce.500ms="searchEstablishment" placeholder="Pesquise pela unidade"/>
+            </div>
+        </x-slot>
+    </x-page.header>
 
     {{-- Grid de Unidades --}}
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-6">
@@ -66,7 +73,7 @@
             <x-slot name="header">
                 <div class="space-y-1">
                     <h2 class="text-sm font-semibold text-gray-800 uppercase">
-                        {{ $selectedEstablishment->title }}
+                        {{ $establishmentTitle }}
                     </h2>
                     <p class="text-xs text-gray-500">
                         Contatos Internos
@@ -75,7 +82,10 @@
             </x-slot>
 
             <div class="divide-y divide-gray-200">
-                @forelse ($selectedEstablishment->departments as $department)
+                <div class="pb-4">
+                    <x-form.input type="text" wire:model.live.debounce.500ms="searchDepartment" id="searchDepartment" placeholder="Buscar por setor"/>
+                </div>
+                @forelse ($departments as $department)
                     <div class="py-3 flex items-start justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-700">

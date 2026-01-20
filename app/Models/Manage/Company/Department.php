@@ -17,8 +17,8 @@ class Department extends Model
         'establishment_id'
     ];
 
-    public function CompanyEstablishment(){
-        return $this->belongsTo(Establishment::class,'establishment_id','id');
+    public function establishment(){
+        return $this->belongsTo(Establishment::class,'establishment_id');
     }
 
     //Criação do Filter Title
