@@ -1,15 +1,15 @@
-<div class="space-y-6">
+<div>
     
     <!-- Flash Message -->
     <x-alert.flash />
 
     <x-page.header icon="fa-solid fa-layer-group" title="Estabelecimento" subtitle="Dados da Unidade">
         <x-slot name="button">
-            <x-button href="{{ route('admin.establishments.index') }}" text="Voltar" icon="fa-solid fa-reply" variant="gray" />
+            <x-button href="{{ route('config.establishments.index') }}" text="Voltar página" icon="fa-solid fa-reply" variant="gray" />
         </x-slot>
     </x-page.header>
 
-    <div class="border rounded-2xl shadow-sm mt-5 {{ $establishment->status ? 'bg-white border-gray-200' : 'bg-red-50 border-red-200'}}">
+    <div class="border rounded-2xl shadow-sm my-6 {{ $establishment->status ? 'bg-white border-gray-200' : 'bg-red-50 border-red-200'}}">
         <!-- Header do Card -->
         <div class="px-6 py-4 border-b {{ $establishment->status ? 'border-gray-200' : 'border-red-200'}} flex items-center justify-between">
             <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide space-x-2">

@@ -6,11 +6,11 @@
     'button' => null,
 ])
 
-<div class="flex items-center justify-between gap-0.5 px-3">
+<div class="flex items-center justify-between gap-0.5 px-3 mb-6 mt-6 md:mt-0">
     <div>
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             <i class="{{ $icon }} mr-1 text-{{ $color }}-600"></i>     
-            <span class="text-gl text-gray-600 mt-1">{{ $title }}</span>
+            <span class="text-gl text-gray-600">{{ $title }}</span>
         </h2>
         <p class="text-sm text-gray-600 mt-1">{{ $subtitle }}</p>
     </div>

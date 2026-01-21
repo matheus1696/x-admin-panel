@@ -1,9 +1,9 @@
-<div class="space-y-8">
+<div>
 
     {{-- Título --}}
     <x-page.header title="Contatos" subtitle="Contatos da Secretaria de Saúde de Caruaru" icon="fa-solid fa-address-book">
         <x-slot name="button">
-            <div class="w-52 flex items-center rounded-lg shadow bg-gray-300">
+            <div class="w-52 md:w-96 flex items-center rounded-lg shadow bg-gray-300">
                 <div class="px-3"> <i class="fa-solid fa-magnifying-glass text-white text-xs"></i> </div>
                 <x-form.input wire:model.live.debounce.500ms="searchEstablishment" placeholder="Pesquise pela unidade"/>
             </div>

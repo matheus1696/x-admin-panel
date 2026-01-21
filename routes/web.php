@@ -24,82 +24,66 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/', fn () => redirect()->route('login'));
-Route::get('/contacts', ContactPage::class)->name('contacts.index');
+Route::get('/contatos', ContactPage::class)->name('contacts.index');
 
-/*
-|--------------------------------------------------------------------------
-| Authenticated
-|--------------------------------------------------------------------------
-*/
+/* Autenticado */
 Route::middleware('auth')->group(function () {
 
-    /*
-    |--------------------------------------------------------------------------
-    | Dashboard (SEM permissão)
-    |--------------------------------------------------------------------------
-    */
-    Route::get('/dashboard', [DashboardController::class, 'index'])
-        ->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Profile
-    |--------------------------------------------------------------------------
-    */
-    Route::prefix('profile')->name('profile.')->group(function () {
-        Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
+    Route::prefix('perfil')->name('profile.')->group(function () {
+        Route::get('/editar', [ProfileController::class, 'edit'])->name('edit');
         Route::patch('/update', [ProfileController::class, 'update'])->name('update');
 
-        Route::get('/password', [ProfileController::class, 'password'])->name('password.edit');
+        Route::get('/altera/senha', [ProfileController::class, 'password'])->name('password.edit');
         Route::patch('/password', [ProfileController::class, 'passwordUpdate'])->name('password.update');
     });
 
-    /*
-    |--------------------------------------------------------------------------
-    | Administração
-    |--------------------------------------------------------------------------
-    */
-    Route::prefix('admin')->name('admin.')->group(function () {
-
-        /*
-        | Auditoria
-        */
-        Route::prefix('audit')
-            ->middleware('can:audit.logs.view')
-            ->name('audit.')
-            ->group(function () {
-
-                Route::get('/logs', [LogController::class, 'index'])->name('logs.index');
-            });
-
-        /* Configurações */
-        Route::get('/configuration/establishment/list', EstablishmentList::class)->middleware('can:admin.establishments.manage')->name('establishments.index');
-
-        Route::get('/configuration/establishment/show/{code}', EstablishmentShow::class)->middleware('can:admin.establishments.manage')->name('establishments.show');
-
-        Route::get('/configuration/establishment/type', EstablishmentTypePage::class)->middleware('can:admin.establishments.manage')->name('establishments.types.index');
+    /* Administração do Sistema */
+    Route::prefix('administracao/sistema')->name('admin.')->group(function () {
         
-        Route::get('/configuration/financial/block', FinancialBlockPage::class)->middleware('can:admin.financial-blocks.manage')->name('financial.blocks.index');
+        /* Gerenciamento de Usuários & Acessos */
+        Route::get('usuario', UserPage::class)->middleware('can:users.view')->name('users.index');
+    });
 
-        Route::get('/configuration/occupation', OccupationPage::class)->middleware('can:admin.occupations.manage')->name('occupations.index');
+    /* Configurações */
+    Route::prefix('configuracao/sistema')->name('config.')->group(function () {
+
+        /* Configurações do Estabelecimento */
+        Route::prefix('estabelecimento')->name('establishments.')->middleware('can:config.establishments.manage')->group(function () {
+            Route::get('lista', EstablishmentList::class)->name('index');
+            Route::get('detalhe/{code}', EstablishmentShow::class)->name('show');
+            Route::get('tipo', EstablishmentTypePage::class)->name('types.index');
+        });
+
+        /* Gerenciamento de Ocupações */
+        Route::get('ocupacoes', OccupationPage::class)->middleware('can:config.occupations.manage')->name('occupations.index');
+
+        /* Gerenciamento do Bloco Financeiro */
+        Route::get('blocos/financeiro', FinancialBlockPage::class)->middleware('can:config.financial-blocks.manage')->name('financial.blocks.index');
 
         /* Gerenciamento de Região */
-        Route::get('/configuration/region/countries', RegionCountryPage::class)->middleware('can:admin.regions.manage')->name('regions.countries.index');
+        Route::prefix('regioes')->name('regions.')->middleware('can:config.regions.manage')->group(function () {
+            Route::get('paises', RegionCountryPage::class)->name('countries.index');
+            Route::get('estados', RegionStatePage::class)->name('states.index');
+            Route::get('cidades', RegionCityPage::class)->name('cities.index');
+        });
+    });
 
-        Route::get('/configuration/region/states', RegionStatePage::class)->middleware('can:admin.regions.manage')->name('regions.states.index');
-
-        Route::get('/configuration/region/cities', RegionCityPage::class)->middleware('can:admin.regions.manage')->name('regions.cities.index');
-
-        /* Gerenciamento de Usuários & Acessos */
-        Route::get('/administration/user', UserPage::class)->middleware('can:users.view')->name('users.index');
+    /* Organização */
+    Route::prefix('organizacao')->name('organization.')->group(function () {
 
         /* Organograma */   
-        Route::get('/organization', OrganizationChartDashboardPage::class)->middleware('can:organization.view')->name('organization.index');
-        
-        Route::get('/organization/config', OrganizationChartConfigPage::class)->middleware('can:organization.manage')->name('organization.config.index');
+        Route::get('dashboard', OrganizationChartDashboardPage::class)->middleware('can:organization.chart.dashboard.view')->name('chart.dashboard.index');
+        Route::get('configuracao', OrganizationChartConfigPage::class)->middleware('can:organization.chart.config.manage')->name('chart.config.index');
 
         /* Fluxo de Trabalho */
-        Route::get('/organization/workflow', WorkflowProcessesPage::class)->middleware('can:workflow.manage')->name('workflow.index');
+        Route::get('fluxo/trabalho', WorkflowProcessesPage::class)->middleware('can:organization.workflow.manage')->name('workflow.index');
+    });
+
+    /* Auditoria do Sistema */
+    Route::prefix('auditoria')->name('audit.')->middleware('can:audit.logs.view')->group(function () {
+        Route::get('/logs', [LogController::class, 'index'])->name('logs.index');
     });
 });
 

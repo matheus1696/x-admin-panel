@@ -48,12 +48,12 @@
             this.open = false;
         }
     }"
-    class="relative"
+    class="relative w-full"
 >
     <!-- Campo principal -->
     <div
         @click="open = !open"
-        class="rounded-md border px-3 py-2 text-[13px] shadow-sm transition-all duration-200 cursor-pointer flex justify-between items-center {{ $errors->has($name) && !$disabled ? $errorBorder : $baseBorder }}"
+        class="w-full rounded-md border px-3 py-2 text-[13px] shadow-sm transition-all duration-200 cursor-pointer flex justify-between items-center {{ $errors->has($name) && !$disabled ? $errorBorder : $baseBorder }}"
         :class="open ? 'ring-1 ring-green-700' : ''"
     >
         <span

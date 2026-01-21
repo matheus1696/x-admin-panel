@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<div>
     
     <!-- Flash Message -->
     <x-alert.flash />
@@ -19,7 +19,7 @@
 
             <div class="md:col-span-6">
                 <x-form.label value="Estabelecimento" />
-                <x-form.input type="text" placeholder="Buscar por título do estabelecimento..." wire:model.live.debounce.500ms="name"/>
+                <x-form.input type="text" placeholder="Buscar por título do estabelecimento..." wire:model.live.debounce.500ms="title"/>
             </div>
 
             <div class="md:col-span-2">
@@ -84,7 +84,7 @@
                     <x-page.table-td>
                         <div class="flex items-center justify-center gap-2">
                                 <x-button.btn-table title="Detalhe do Estabelecimento">
-                                    <a href="{{ route('admin.establishments.show', $establishment->code) }}">
+                                    <a href="{{ route('config.establishments.show', $establishment->code) }}">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>
                                 </x-button.btn-table>

@@ -106,9 +106,11 @@
                                 <x-button.btn-table wire:click="edit({{ $user->id }})" title="Editar Usuário">
                                     <i class="fa-solid fa-pen"></i>
                                 </x-button.btn-table>
-                                <x-button.btn-table wire:click="permission({{ $user->id }})" title="Editar Permissões do Usuário">
-                                    <i class="fa-solid fa-key"></i>
-                                </x-button.btn-table>
+                                @can('user.permissions')
+                                    <x-button.btn-table wire:click="permission({{ $user->id }})" title="Editar Permissões do Usuário">
+                                        <i class="fa-solid fa-key"></i>
+                                    </x-button.btn-table>
+                                @endcan
                             </div>
                         @endif
                     </x-page.table-td>

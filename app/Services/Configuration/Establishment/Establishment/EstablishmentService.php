@@ -4,7 +4,6 @@ namespace App\Services\Configuration\Establishment\Establishment;
 
 use App\Models\Manage\Company\Establishment;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Ramsey\Collection\Collection;
 
 class EstablishmentService
 {
@@ -19,7 +18,7 @@ class EstablishmentService
 
         if ($filters['code']) { $query->where('code', 'like', '%' . strtolower($filters['code']) . '%'); }
 
-        if ($filters['filter']) { $query->where('filter', 'like', '%' . strtolower($filters['filter']) . '%'); }
+        if ($filters['title']) { $query->where('filter', 'like', '%' . strtolower($filters['title']) . '%'); }
 
         if ($filters['status'] !== 'all') { $query->where('status', $filters['status']); }
 

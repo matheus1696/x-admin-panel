@@ -227,7 +227,7 @@
 
                 <!-- Conteúdo Principal -->
                 <div class="flex-1 bg-gray-50" style="min-height: calc(100vh - 4rem);">
-                    <main class="p-4 lg:px-8 lg:py-6 mx-auto w-full">
+                    <main class="px-4 lg:px-8 lg:py-6 mx-auto w-full">
                         {{ $slot }}
                     </main>
                 </div>

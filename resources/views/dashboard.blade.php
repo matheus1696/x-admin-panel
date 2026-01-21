@@ -48,11 +48,11 @@
                             <i class="fa-solid fa-user text-green-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
                             <p class="text-sm font-medium text-gray-700">Perfil</p>
                         </a>
-                        <a href="#" class="p-4 bg-gray-50 hover:bg-green-50 rounded-xl border border-gray-200 hover:border-green-300 transition-all duration-200 group text-center">
+                        <a href="{{ route('contacts.index') }}" class="p-4 bg-gray-50 hover:bg-green-50 rounded-xl border border-gray-200 hover:border-green-300 transition-all duration-200 group text-center">
                             <i class="fa-solid fa-phone text-green-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
                             <p class="text-sm font-medium text-gray-700">Lista Telefônica</p>
                         </a>
-                        <a href="{{ route('admin.organization.index') }}" class="p-4 bg-gray-50 hover:bg-green-50 rounded-xl border border-gray-200 hover:border-green-300 transition-all duration-200 group text-center">
+                        <a href="{{ route('organization.chart.dashboard.index') }}" class="p-4 bg-gray-50 hover:bg-green-50 rounded-xl border border-gray-200 hover:border-green-300 transition-all duration-200 group text-center">
                             <i class="fa-solid fa-sitemap text-green-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
                             <p class="text-sm font-medium text-gray-700">Organograma</p>
                         </a>

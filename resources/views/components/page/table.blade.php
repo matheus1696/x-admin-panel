@@ -1,7 +1,7 @@
 @props([ 'pagination' => null])
 
 <!-- 📊 Data Table Component -->
-<div class="w-[448px] md:w-full mt-4 overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
+<div class="w-[calc(100vw-35px)] md:w-full mt-4 overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
     <!-- Table Wrapper -->
     <table class="w-full text-[13px] divide-y divide-gray-100">
         <!-- Cabeçalho -->
@@ -18,11 +18,11 @@
 
 <!-- Paginação -->
 @if ($pagination)
-    <div class="flex flex-col items-center justify-between bg-gray-50">
+    <div class="flex flex-col items-center justify-between bg-gray-50 mt-3">
         <!-- Informação de paginação -->
         @if(method_exists($pagination, 'total'))
             <div class="text-xs text-gray-600/60">
-                <span class="hidden sm:inline">Mostrando</span>
+                <span>Mostrando</span>
                 <span class="font-medium">{{ $pagination->firstItem() ?? 0 }}-{{ $pagination->lastItem() ?? 0 }}</span>
                 de <span class="font-medium">{{ $pagination->total() }}</span>
             </div>

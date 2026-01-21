@@ -23,7 +23,7 @@ class EstablishmentList extends Component
     /** Filters */
     public array $filters = [
         'code' => '',
-        'filter' => '',
+        'title' => '',
         'status' => 'all',
         'sort' => 'name_asc',
         'perPage' => 10,
@@ -80,8 +80,10 @@ class EstablishmentList extends Component
 
     public function render(): View
     {
+        $establishments = $this->establishmentService->index($this->filters);
+
         return view('livewire.configuration.establishment.establishment.establishment-list',[
-            'establishments' => $this->establishmentService->index($this->filters),
+            'establishments' => $establishments,
             'states' => RegionState::all(),
             'cities' => RegionCity::all(),
             'establishmentTypes' => EstablishmentType::all(),

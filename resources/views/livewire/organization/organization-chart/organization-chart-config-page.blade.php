@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<div>
     
     <!-- Flash Message -->
     <x-alert.flash />
@@ -20,9 +20,9 @@
                 <x-form.input wire:model.live.debounce.500ms="filters.acronym" placeholder="Buscar por sigla..." />
             </div>
 
-            {{-- Nome do Setor --}}
+            {{-- Setor --}}
             <div class="col-span-12 md:col-span-8">
-                <x-form.label value="Nome do Setor" />
+                <x-form.label value="Setor" />
                 <x-form.input wire:model.live.debounce.500ms="filters.filter" placeholder="Buscar por setor..." />
             </div>
 
