@@ -14,1292 +14,225 @@ class DepartmentSeeder extends Seeder
     public function run(): void
     {
         //
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0351',
-            'extension' => '0351',
-            'type_contact' => 'Main',
-            'establishment_id' => 1,
-        ]);
-
-        Department::create([
-            'title' => 'Farmácia',
-            'filter' => 'farmácia',
-            'contact' => '(81) 3101-0352',
-            'extension' => '0352',
-            'type_contact' => 'Internal',
-            'establishment_id' => 1,
-        ]);
-
-        Department::create([
-            'title' => 'Infocras',
-            'filter' => 'infocras',
-            'contact' => '(81) 3101-0353',
-            'extension' => '0353',
-            'type_contact' => 'Internal',
-            'establishment_id' => 1,
-        ]);
-
-        Department::create([
-            'title' => 'Almoxarifado',
-            'filter' => 'almoxarifado',
-            'contact' => null,
-            'extension' => null,
-            'type_contact' => 'Without',
-            'establishment_id' => 1,
-        ]);
-
-        Department::create([
-            'title' => 'Sala de Exames',
-            'filter' => 'sala de exames',
-            'contact' => '(81) 3101-0356',
-            'extension' => '0356',
-            'type_contact' => 'Main',
-            'establishment_id' => 2,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0405',
-            'extension' => '0405',
-            'type_contact' => 'Main',
-            'establishment_id' => 3,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0354',
-            'extension' => '0354',
-            'type_contact' => 'Main',
-            'establishment_id' => 4,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0409',
-            'extension' => '0409',
-            'type_contact' => 'Main',
-            'establishment_id' => 5,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0274',
-            'extension' => '0274',
-            'type_contact' => 'Main',
-            'establishment_id' => 6,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0390',
-            'extension' => '0390',
-            'type_contact' => 'Main',
-            'establishment_id' => 7,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0360',
-            'extension' => '0360',
-            'type_contact' => 'Main',
-            'establishment_id' => 9,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0366',
-            'extension' => '0366',
-            'type_contact' => 'Main',
-            'establishment_id' => 10,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0367',
-            'extension' => '0367',
-            'type_contact' => 'Internal',
-            'establishment_id' => 10,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0207',
-            'extension' => '0207',
-            'type_contact' => 'Main',
-            'establishment_id' => 13,
-        ]);
-
-        Department::create([
-            'title' => 'Gerência',
-            'filter' => 'gerência',
-            'contact' => '(81) 3101-0208',
-            'extension' => '0208',
-            'type_contact' => 'Internal',
-            'establishment_id' => 13,
-        ]);
-
-        Department::create([
-            'title' => 'Coordenação',
-            'filter' => 'coordenação',
-            'contact' => '(81) 3101-0209',
-            'extension' => '0209',
-            'type_contact' => 'Internal',
-            'establishment_id' => 13,
-        ]);
-
-        Department::create([
-            'title' => 'Farmácia',
-            'filter' => 'farmacia',
-            'contact' => '(81) 3101-0210',
-            'extension' => '0210',
-            'type_contact' => 'Internal',
-            'establishment_id' => 13,
-        ]);
-
-        Department::create([
-            'title' => 'Odonto',
-            'filter' => 'odonto',
-            'contact' => '(81) 3101-0211',
-            'extension' => '0211',
-            'type_contact' => 'Internal',
-            'establishment_id' => 13,
-        ]);
-
-        Department::create([
-            'title' => 'Estoque Medicamentos',
-            'filter' => 'estoque medicamentos',
-            'contact' => '(81) 3101-0212',
-            'extension' => '0212',
-            'type_contact' => 'Internal',
-            'establishment_id' => 13,
-        ]);
-
-        Department::create([
-            'title' => 'Estoque Material',
-            'filter' => 'estoque material',
-            'contact' => '(81) 3101-0213',
-            'extension' => '0213',
-            'type_contact' => 'Internal',
-            'establishment_id' => 13,
-        ]);
-
-        Department::create([
-            'title' => 'Remédio na Porta',
-            'filter' => 'remédio na porta',
-            'contact' => '(81) 3101-0214',
-            'extension' => '0214',
-            'type_contact' => 'Internal',
-            'establishment_id' => 13,
-        ]);
-
-        Department::create([
-            'title' => 'Administração',
-            'filter' => 'administração',
-            'contact' => '(81) 3101-0368',
-            'extension' => '0368',
-            'type_contact' => 'Main',
-            'establishment_id' => 11,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0369',
-            'extension' => '0369',
-            'type_contact' => 'Main',
-            'establishment_id' => 12,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0375',
-            'extension' => '0375',
-            'type_contact' => 'Main',
-            'establishment_id' => 23,
-        ]);
-
-        Department::create([
-            'title' => 'Administração',
-            'filter' => 'administração',
-            'contact' => '(81) 3101-0374',
-            'extension' => '0374',
-            'type_contact' => 'Main',
-            'establishment_id' => 15,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0373',
-            'extension' => '0373',
-            'type_contact' => 'Main',
-            'establishment_id' => 24,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0384',
-            'extension' => '0384',
-            'type_contact' => 'Main',
-            'establishment_id' => 16,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0382',
-            'extension' => '0382',
-            'type_contact' => 'Main',
-            'establishment_id' => 17,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0378',
-            'extension' => '0378',
-            'type_contact' => 'Main',
-            'establishment_id' => 18,
-        ]);
-
-        Department::create([
-            'title' => 'Administração',
-            'filter' => 'administração',
-            'contact' => '(81) 3101-0379',
-            'extension' => '0379',
-            'type_contact' => 'Internal',
-            'establishment_id' => 18,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0380',
-            'extension' => '0380',
-            'type_contact' => 'Main',
-            'establishment_id' => 19,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0358',
-            'extension' => '0358',
-            'type_contact' => 'Main',
-            'establishment_id' => 20,
-        ]);
-
-        Department::create([
-            'title' => 'Farmácia',
-            'filter' => 'farmacia',
-            'contact' => '(81) 3101-0359',
-            'extension' => '0359',
-            'type_contact' => 'Internal',
-            'establishment_id' => 20,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0417',
-            'extension' => '0417',
-            'type_contact' => 'Main',
-            'establishment_id' => 21,
-        ]);
-
-        Department::create([
-            'title' => 'Gerência',
-            'filter' => 'gerência',
-            'contact' => '(81) 3101-0235',
-            'extension' => '0235',
-            'type_contact' => 'Internal',
-            'establishment_id' => 98,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0376',
-            'extension' => '0376',
-            'type_contact' => 'Main',
-            'establishment_id' => 26,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0210',
-            'extension' => '0210',
-            'type_contact' => 'Internal',
-            'establishment_id' => 27,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0306',
-            'extension' => '0306',
-            'type_contact' => 'Main',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'Gerência',
-            'filter' => 'gerência',
-            'contact' => '(81) 3101-0307',
-            'extension' => '0307',
-            'type_contact' => 'Internal',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'Administração',
-            'filter' => 'administração',
-            'contact' => '(81) 3101-0308',
-            'extension' => '0308',
-            'type_contact' => 'Internal',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'Posto de Enfermagem II',
-            'filter' => 'posto de enfermagem ii',
-            'contact' => '(81) 3101-0309',
-            'extension' => '0309',
-            'type_contact' => 'Internal',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'Laboratório',
-            'filter' => 'laboratório',
-            'contact' => '(81) 3101-0310',
-            'extension' => '0310',
-            'type_contact' => 'Internal',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'Serviço Social',
-            'filter' => 'serviço social',
-            'contact' => '(81) 3101-0311',
-            'extension' => '0311',
-            'type_contact' => 'Internal',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'Nutrição',
-            'filter' => 'nutrição',
-            'contact' => '(81) 3101-0312',
-            'extension' => '0312',
-            'type_contact' => 'Internal',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'Farmácia',
-            'filter' => 'farmacia',
-            'contact' => '(81) 3101-0313',
-            'extension' => '0313',
-            'type_contact' => 'Internal',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'CCIH',
-            'filter' => 'ccih',
-            'contact' => '(81) 3101-0314',
-            'extension' => '0314',
-            'type_contact' => 'Internal',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'Pediatria',
-            'filter' => 'pediatria',
-            'contact' => '(81) 3101-0315',
-            'extension' => '0315',
-            'type_contact' => 'Internal',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'Clínica Médica',
-            'filter' => 'clínica médica',
-            'contact' => '(81) 3101-0316',
-            'extension' => '0316',
-            'type_contact' => 'Internal',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'Direção',
-            'filter' => 'direção',
-            'contact' => '(81) 3101-0317',
-            'extension' => '0317',
-            'type_contact' => 'Internal',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'Posto de Enfermagem I',
-            'filter' => 'posto de enfermagem i',
-            'contact' => '(81) 3101-0318',
-            'extension' => '0318',
-            'type_contact' => 'Internal',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0319',
-            'extension' => '0319',
-            'type_contact' => 'Main',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'SAME',
-            'filter' => 'same',
-            'contact' => '(81) 3101-0320',
-            'extension' => '0320',
-            'type_contact' => 'Internal',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'Ambulatório',
-            'filter' => 'ambulatório',
-            'contact' => '(81) 3101-0321',
-            'extension' => '0321',
-            'type_contact' => 'Internal',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'Raio X',
-            'filter' => 'raio x',
-            'contact' => '(81) 3101-0322',
-            'extension' => '0322',
-            'type_contact' => 'Internal',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'Faturamento',
-            'filter' => 'faturamento',
-            'contact' => '(81) 3101-0323',
-            'extension' => '0323',
-            'type_contact' => 'Internal',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'RH',
-            'filter' => 'rh',
-            'contact' => '(81) 3101-0324',
-            'extension' => '0324',
-            'type_contact' => 'Internal',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'Manutenção',
-            'filter' => 'manutenção',
-            'contact' => '(81) 3101-0325',
-            'extension' => '0325',
-            'type_contact' => 'Internal',
-            'establishment_id' => 28,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0385',
-            'extension' => '0385',
-            'type_contact' => 'Main',
-            'establishment_id' => 29,
-        ]);
-
-        Department::create([
-            'title' => 'Administração',
-            'filter' => 'administração',
-            'contact' => '(81) 3101-0386',
-            'extension' => '0386',
-            'type_contact' => 'Internal',
-            'establishment_id' => 29,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0387',
-            'extension' => '0387',
-            'type_contact' => 'Main',
-            'establishment_id' => 30,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0388',
-            'extension' => '0388',
-            'type_contact' => 'Main',
-            'establishment_id' => 31,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0389',
-            'extension' => '0389',
-            'type_contact' => 'Main',
-            'establishment_id' => 32,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0391',
-            'extension' => '0391',
-            'type_contact' => 'Main',
-            'establishment_id' => 33,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0392',
-            'extension' => '0392',
-            'type_contact' => 'Main',
-            'establishment_id' => 34,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0393',
-            'extension' => '0393',
-            'type_contact' => 'Main',
-            'establishment_id' => 35,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0394',
-            'extension' => '0394',
-            'type_contact' => 'Main',
-            'establishment_id' => 36,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0395',
-            'extension' => '0395',
-            'type_contact' => 'Main',
-            'establishment_id' => 37,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0396',
-            'extension' => '0396',
-            'type_contact' => 'Main',
-            'establishment_id' => 38,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0397',
-            'extension' => '0397',
-            'type_contact' => 'Main',
-            'establishment_id' => 39,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0398',
-            'extension' => '0398',
-            'type_contact' => 'Main',
-            'establishment_id' => 40,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0399',
-            'extension' => '0399',
-            'type_contact' => 'Main',
-            'establishment_id' => 41,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0400',
-            'extension' => '0400',
-            'type_contact' => 'Main',
-            'establishment_id' => 42,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0401',
-            'extension' => '0401',
-            'type_contact' => 'Main',
-            'establishment_id' => 43,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0402',
-            'extension' => '0402',
-            'type_contact' => 'Main',
-            'establishment_id' => 44,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0403',
-            'extension' => '0403',
-            'type_contact' => 'Main',
-            'establishment_id' => 45,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0404',
-            'extension' => '0404',
-            'type_contact' => 'Main',
-            'establishment_id' => 46,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0406',
-            'extension' => '0406',
-            'type_contact' => 'Main',
-            'establishment_id' => 47,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0407',
-            'extension' => '0407',
-            'type_contact' => 'Main',
-            'establishment_id' => 48,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0408',
-            'extension' => '0408',
-            'type_contact' => 'Main',
-            'establishment_id' => 49,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0410',
-            'extension' => '0410',
-            'type_contact' => 'Main',
-            'establishment_id' => 50,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0411',
-            'extension' => '0411',
-            'type_contact' => 'Main',
-            'establishment_id' => 51,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0412',
-            'extension' => '0412',
-            'type_contact' => 'Main',
-            'establishment_id' => 52,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0413',
-            'extension' => '0413',
-            'type_contact' => 'Main',
-            'establishment_id' => 53,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0414',
-            'extension' => '0414',
-            'type_contact' => 'Main',
-            'establishment_id' => 54,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0415',
-            'extension' => '0415',
-            'type_contact' => 'Main',
-            'establishment_id' => 55,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0416',
-            'extension' => '0416',
-            'type_contact' => 'Main',
-            'establishment_id' => 56,
-        ]);
-
-        Department::create([
-            'title' => 'Administração',
-            'filter' => 'administração',
-            'contact' => '(81) 3101-0418',
-            'extension' => '0418',
-            'type_contact' => 'Internal',
-            'establishment_id' => 56,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0419',
-            'extension' => '0419',
-            'type_contact' => 'Main',
-            'establishment_id' => 57,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0420',
-            'extension' => '0420',
-            'type_contact' => 'Main',
-            'establishment_id' => 58,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0421',
-            'extension' => '0421',
-            'type_contact' => 'Main',
-            'establishment_id' => 59,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0422',
-            'extension' => '0422',
-            'type_contact' => 'Main',
-            'establishment_id' => 60,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0423',
-            'extension' => '0423',
-            'type_contact' => 'Main',
-            'establishment_id' => 61,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0424',
-            'extension' => '0424',
-            'type_contact' => 'Main',
-            'establishment_id' => 62,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0425',
-            'extension' => '0425',
-            'type_contact' => 'Main',
-            'establishment_id' => 63,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0426',
-            'extension' => '0426',
-            'type_contact' => 'Main',
-            'establishment_id' => 64,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0427',
-            'extension' => '0427',
-            'type_contact' => 'Main',
-            'establishment_id' => 65,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0428',
-            'extension' => '0428',
-            'type_contact' => 'Main',
-            'establishment_id' => 66,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0429',
-            'extension' => '0429',
-            'type_contact' => 'Main',
-            'establishment_id' => 67,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0430',
-            'extension' => '0430',
-            'type_contact' => 'Main',
-            'establishment_id' => 68,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0431',
-            'extension' => '0431',
-            'type_contact' => 'Main',
-            'establishment_id' => 69,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0432',
-            'extension' => '0432',
-            'type_contact' => 'Main',
-            'establishment_id' => 70,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0433',
-            'extension' => '0433',
-            'type_contact' => 'Main',
-            'establishment_id' => 71,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0434',
-            'extension' => '0434',
-            'type_contact' => 'Main',
-            'establishment_id' => 72,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0435',
-            'extension' => '0435',
-            'type_contact' => 'Main',
-            'establishment_id' => 73,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0436',
-            'extension' => '0436',
-            'type_contact' => 'Main',
-            'establishment_id' => 74,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0437',
-            'extension' => '0437',
-            'type_contact' => 'Main',
-            'establishment_id' => 75,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0438',
-            'extension' => '0438',
-            'type_contact' => 'Main',
-            'establishment_id' => 76,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0439',
-            'extension' => '0439',
-            'type_contact' => 'Main',
-            'establishment_id' => 77,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0440',
-            'extension' => '0440',
-            'type_contact' => 'Main',
-            'establishment_id' => 78,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0441',
-            'extension' => '0441',
-            'type_contact' => 'Main',
-            'establishment_id' => 79,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0442',
-            'extension' => '0442',
-            'type_contact' => 'Main',
-            'establishment_id' => 80,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0443',
-            'extension' => '0443',
-            'type_contact' => 'Main',
-            'establishment_id' => 81,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0444',
-            'extension' => '0444',
-            'type_contact' => 'Main',
-            'establishment_id' => 82,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0445',
-            'extension' => '0445',
-            'type_contact' => 'Main',
-            'establishment_id' => 83,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0446',
-            'extension' => '0446',
-            'type_contact' => 'Main',
-            'establishment_id' => 84,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0447',
-            'extension' => '0447',
-            'type_contact' => 'Main',
-            'establishment_id' => 85,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0448',
-            'extension' => '0448',
-            'type_contact' => 'Main',
-            'establishment_id' => 86,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0449',
-            'extension' => '0449',
-            'type_contact' => 'Main',
-            'establishment_id' => 87,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0450',
-            'extension' => '0450',
-            'type_contact' => 'Main',
-            'establishment_id' => 88,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0451',
-            'extension' => '0451',
-            'type_contact' => 'Main',
-            'establishment_id' => 89,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0452',
-            'extension' => '0452',
-            'type_contact' => 'Main',
-            'establishment_id' => 90,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0453',
-            'extension' => '0453',
-            'type_contact' => 'Main',
-            'establishment_id' => 91,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0454',
-            'extension' => '0454',
-            'type_contact' => 'Main',
-            'establishment_id' => 92,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0455',
-            'extension' => '0455',
-            'type_contact' => 'Main',
-            'establishment_id' => 93,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0456',
-            'extension' => '0456',
-            'type_contact' => 'Main',
-            'establishment_id' => 94,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0457',
-            'extension' => '0457',
-            'type_contact' => 'Main',
-            'establishment_id' => 95,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0458',
-            'extension' => '0458',
-            'type_contact' => 'Main',
-            'establishment_id' => 96,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0459',
-            'extension' => '0459',
-            'type_contact' => 'Main',
-            'establishment_id' => 97,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0460',
-            'extension' => '0460',
-            'type_contact' => 'Main',
-            'establishment_id' => 98,
-        ]);
-
-        Department::create([
-            'title' => 'Gerência',
-            'filter' => 'gerência',
-            'contact' => '(81) 3101-0461',
-            'extension' => '0461',
-            'type_contact' => 'Internal',
-            'establishment_id' => 99,
-        ]);
-
-        Department::create([
-            'title' => 'Administração',
-            'filter' => 'administração',
-            'contact' => '(81) 3101-0462',
-            'extension' => '0462',
-            'type_contact' => 'Internal',
-            'establishment_id' => 99,
-        ]);
-
-        Department::create([
-            'title' => 'Recepção',
-            'filter' => 'recepção',
-            'contact' => '(81) 3101-0463',
-            'extension' => '0463',
-            'type_contact' => 'Main',
-            'establishment_id' => 100,
-        ]);
-
-        Department::create([
-            'title' => 'Farmácia',
-            'filter' => 'farmacia',
-            'contact' => '(81) 3101-0464',
-            'extension' => '0464',
-            'type_contact' => 'Internal',
-            'establishment_id' => 100,
-        ]);
-
-        Department::create([
-            'title' => 'Almoxarifado',
-            'filter' => 'almoxarifado',
-            'contact' => null,
-            'extension' => null,
-            'type_contact' => 'Without',
-            'establishment_id' => 100,
-        ]);
-
-        Department::create([
-            'title' => 'Direção',
-            'filter' => 'direção',
-            'contact' => '(81) 3101-0465',
-            'extension' => '0465',
-            'type_contact' => 'Internal',
-            'establishment_id' => 100,
-        ]);
-
-        Department::create([
-            'title' => 'RH',
-            'filter' => 'rh',
-            'contact' => '(81) 3101-0466',
-            'extension' => '0466',
-            'type_contact' => 'Internal',
-            'establishment_id' => 100,
-        ]);
-
-        Department::create([
-            'title' => 'Faturamento',
-            'filter' => 'faturamento',
-            'contact' => '(81) 3101-0467',
-            'extension' => '0467',
-            'type_contact' => 'Internal',
-            'establishment_id' => 100,
-        ]);
-
-        Department::create([
-            'title' => 'Serviço Social',
-            'filter' => 'serviço social',
-            'contact' => '(81) 3101-0468',
-            'extension' => '0468',
-            'type_contact' => 'Internal',
-            'establishment_id' => 100,
-        ]);
-
-        Department::create([
-            'title' => 'Nutrição',
-            'filter' => 'nutrição',
-            'contact' => '(81) 3101-0469',
-            'extension' => '0469',
-            'type_contact' => 'Internal',
-            'establishment_id' => 100,
-        ]);
-
-        Department::create([
-            'title' => 'Laboratório',
-            'filter' => 'laboratório',
-            'contact' => '(81) 3101-0470',
-            'extension' => '0470',
-            'type_contact' => 'Internal',
-            'establishment_id' => 100,
-        ]);
-
-        Department::create([
-            'title' => 'Raio X',
-            'filter' => 'raio x',
-            'contact' => '(81) 3101-0471',
-            'extension' => '0471',
-            'type_contact' => 'Internal',
-            'establishment_id' => 100,
-        ]);
-
-        Department::create([
-            'title' => 'Posto de Enfermagem',
-            'filter' => 'posto de enfermagem',
-            'contact' => '(81) 3101-0472',
-            'extension' => '0472',
-            'type_contact' => 'Internal',
-            'establishment_id' => 100,
-        ]);
-
-        Department::create([
-            'title' => 'Ambulatório',
-            'filter' => 'ambulatório',
-            'contact' => '(81) 3101-0473',
-            'extension' => '0473',
-            'type_contact' => 'Internal',
-            'establishment_id' => 100,
-        ]);
-
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0351', 'extension'=>'0351', 'type_contact'=>'Main', 'establishment_id'=>1,]);
+        Department::create([ 'title'=>'Farmácia', 'filter'=>'farmácia', 'contact'=>'(81) 3101-0352', 'extension'=>'0352', 'type_contact'=>'Internal', 'establishment_id'=>1]);
+        Department::create([ 'title'=>'Infocras', 'filter'=>'infocras', 'contact'=>'(81) 3101-0353', 'extension'=>'0353', 'type_contact'=>'Internal', 'establishment_id'=>1,]);
+        Department::create([ 'title'=>'Almoxarifado', 'filter'=>'almoxarifado', 'establishment_id'=>1]);
+        Department::create([ 'title'=>'Sala de Exames', 'filter'=>'sala de exames', 'contact'=>'(81) 3101-0356', 'extension'=>'0356', 'type_contact'=>'Main', 'establishment_id'=>2,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0405', 'extension'=>'0405', 'type_contact'=>'Main', 'establishment_id'=>3,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0354', 'extension'=>'0354', 'type_contact'=>'Main', 'establishment_id'=>4,]);
+        Department::create([ 'title'=>'Administração', 'filter'=>'administração', 'contact'=>'(81) 3101-0355', 'extension'=>'0355', 'type_contact'=>'Internal', 'establishment_id'=>4,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0409', 'extension'=>'0409', 'type_contact'=>'Main', 'establishment_id'=>5,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0274', 'extension'=>'0274', 'type_contact'=>'Main', 'establishment_id'=>6,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0390', 'extension'=>'0390', 'type_contact'=>'Main', 'establishment_id'=>7,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0360', 'extension'=>'0360', 'type_contact'=>'Main', 'establishment_id'=>9,]);
+        Department::create([ 'title'=>'Administração', 'filter'=>'administração', 'contact'=>'(81) 3101-0361', 'extension'=>'0361', 'type_contact'=>'Internal', 'establishment_id'=>9,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0366', 'extension'=>'0366', 'type_contact'=>'Main', 'establishment_id'=>10,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0367', 'extension'=>'0367', 'type_contact'=>'Internal', 'establishment_id'=>10,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0207', 'extension'=>'0207', 'type_contact'=>'Main', 'establishment_id'=>13,]);
+        Department::create([ 'title'=>'Gerência', 'filter'=>'gerência', 'contact'=>'(81) 3101-0208', 'extension'=>'0208', 'type_contact'=>'Internal', 'establishment_id'=>13,]);
+        Department::create([ 'title'=>'Coordenação', 'filter'=>'coordenação', 'contact'=>'(81) 3101-0209', 'extension'=>'0209', 'type_contact'=>'Internal', 'establishment_id'=>13,]);
+        Department::create([ 'title'=>'Farmácia', 'filter'=>'farmacia', 'contact'=>'(81) 3101-0210', 'extension'=>'0210', 'type_contact'=>'Internal', 'establishment_id'=>13,]);
+        Department::create([ 'title'=>'Odonto', 'filter'=>'odonto', 'contact'=>'(81) 3101-0211', 'extension'=>'0211', 'type_contact'=>'Internal', 'establishment_id'=>13,]);
+        Department::create([ 'title'=>'Estoque Medicamentos', 'filter'=>'estoque medicamentos', 'contact'=>'(81) 3101-0212', 'extension'=>'0212', 'type_contact'=>'Internal', 'establishment_id'=>13,]);
+        Department::create([ 'title'=>'Estoque Material', 'filter'=>'estoque material', 'contact'=>'(81) 3101-0213', 'extension'=>'0213', 'type_contact'=>'Internal', 'establishment_id'=>13,]);
+        Department::create([ 'title'=>'Remédio na Porta', 'filter'=>'remédio na porta', 'contact'=>'(81) 3101-0214', 'extension'=>'0214', 'type_contact'=>'Internal', 'establishment_id'=>13,]);
+        Department::create([ 'title'=>'Administração', 'filter'=>'administração', 'contact'=>'(81) 3101-0368', 'extension'=>'0368', 'type_contact'=>'Main', 'establishment_id'=>11,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0369', 'extension'=>'0369', 'type_contact'=>'Main', 'establishment_id'=>12,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0375', 'extension'=>'0375', 'type_contact'=>'Main', 'establishment_id'=>23,]);
+        Department::create([ 'title'=>'Administração', 'filter'=>'administração', 'contact'=>'(81) 3101-0374', 'extension'=>'0374', 'type_contact'=>'Main', 'establishment_id'=>15,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0373', 'extension'=>'0373', 'type_contact'=>'Main', 'establishment_id'=>24,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0384', 'extension'=>'0384', 'type_contact'=>'Main', 'establishment_id'=>16,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0382', 'extension'=>'0382', 'type_contact'=>'Main', 'establishment_id'=>17,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0378', 'extension'=>'0378', 'type_contact'=>'Main', 'establishment_id'=>18,]);
+        Department::create([ 'title'=>'Administração', 'filter'=>'administração', 'contact'=>'(81) 3101-0379', 'extension'=>'0379', 'type_contact'=>'Internal', 'establishment_id'=>18,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0380', 'extension'=>'0380', 'type_contact'=>'Main', 'establishment_id'=>19,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0358', 'extension'=>'0358', 'type_contact'=>'Main', 'establishment_id'=>20,]);
+        Department::create([ 'title'=>'Farmácia', 'filter'=>'farmacia', 'contact'=>'(81) 3101-0359', 'extension'=>'0359', 'type_contact'=>'Internal', 'establishment_id'=>20,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0417', 'extension'=>'0417', 'type_contact'=>'Main', 'establishment_id'=>21,]);
+        Department::create([ 'title'=>'Gerência', 'filter'=>'gerência', 'contact'=>'(81) 3101-0235', 'extension'=>'0235', 'type_contact'=>'Internal', 'establishment_id'=>98,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0345', 'extension'=>'0345', 'type_contact'=>'Main', 'establishment_id'=>25,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0376', 'extension'=>'0376', 'type_contact'=>'Main', 'establishment_id'=>26,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0210', 'extension'=>'0210', 'type_contact'=>'Internal', 'establishment_id'=>27,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0306', 'extension'=>'0306', 'type_contact'=>'Main', 'establishment_id'=>28,]);
+        Department::create([ 'title'=>'Gerência', 'filter'=>'gerência', 'contact'=>'(81) 3101-0307', 'extension'=>'0307', 'type_contact'=>'Internal', 'establishment_id'=>28,]);
+        Department::create([ 'title'=>'Administração', 'filter'=>'administração', 'contact'=>'(81) 3101-0308', 'extension'=>'0308', 'type_contact'=>'Internal', 'establishment_id'=>28,]);
+        Department::create([ 'title'=>'Posto de Enfermagem II', 'filter'=>'posto de enfermagem ii', 'contact'=>'(81) 3101-0309', 'extension'=>'0309', 'type_contact'=>'Internal', 'establishment_id'=>28,]);
+        Department::create([ 'title'=>'Laboratório', 'filter'=>'laboratório', 'contact'=>'(81) 3101-0310', 'extension'=>'0310', 'type_contact'=>'Internal', 'establishment_id'=>28,]);
+        Department::create([ 'title'=>'Serviço Social', 'filter'=>'serviço social', 'contact'=>'(81) 3101-0311', 'extension'=>'0311', 'type_contact'=>'Internal', 'establishment_id'=>28,]);
+        Department::create([ 'title'=>'Nutrição', 'filter'=>'nutrição', 'contact'=>'(81) 3101-0312', 'extension'=>'0312', 'type_contact'=>'Internal', 'establishment_id'=>28,]);
+        Department::create([ 'title'=>'Farmácia', 'filter'=>'farmacia', 'contact'=>'(81) 3101-0313', 'extension'=>'0313', 'type_contact'=>'Internal', 'establishment_id'=>28,]);
+        Department::create([ 'title'=>'CCIH', 'filter'=>'ccih', 'contact'=>'(81) 3101-0314', 'extension'=>'0314', 'type_contact'=>'Internal', 'establishment_id'=>28,]);
+        Department::create([ 'title'=>'Pediatria', 'filter'=>'pediatria', 'contact'=>'(81) 3101-0315', 'extension'=>'0315', 'type_contact'=>'Internal', 'establishment_id'=>28,]);
+        Department::create([ 'title'=>'Coordenação de Nutrição', 'filter'=>'nutrição', 'contact'=>'(81) 3101-0316', 'extension'=>'0316', 'type_contact'=>'Internal', 'establishment_id'=>28,]);
+        Department::create([ 'title'=>'Posto de Enfermagem I', 'filter'=>'posto de enfermagem i', 'contact'=>'(81) 3101-0317', 'extension'=>'0317', 'type_contact'=>'Internal', 'establishment_id'=>28,]);
+        Department::create([ 'title'=>'Sala de Admissão', 'filter'=>'sala de adimissão', 'contact'=>'(81) 3101-0318', 'extension'=>'0318', 'type_contact'=>'Internal', 'establishment_id'=>28,]);
+        Department::create([ 'title'=>'Coordenação de Enfermagem', 'filter'=>'coordenação de enfermagem', 'contact'=>'(81) 3101-0319', 'extension'=>'0319', 'type_contact'=>'Internal', 'establishment_id'=>28,]);
+        Department::create([ 'title'=>'SAME', 'filter'=>'same', 'contact'=>'(81) 3101-0320', 'extension'=>'0320', 'type_contact'=>'Internal', 'establishment_id'=>28,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0371', 'extension'=>'0371', 'type_contact'=>'Main', 'establishment_id'=>30,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0372', 'extension'=>'0372', 'type_contact'=>'Main', 'establishment_id'=>29,]);
+        Department::create([ 'title'=>'Recepção Obstetra', 'filter'=>'recepção', 'contact'=>'(81) 3101-0326', 'extension'=>'0326', 'type_contact'=>'Main', 'establishment_id'=>31,]);
+        Department::create([ 'title'=>'Recepção Ambulatório', 'filter'=>'recepcao', 'contact'=>'(81) 3101-0327', 'extension'=>'0327', 'type_contact'=>'Internal', 'establishment_id'=>31,]);
+        Department::create([ 'title'=>'Almoxarifado', 'filter'=>'almoxarifado', 'contact'=>'(81) 3101-0328', 'extension'=>'0328', 'type_contact'=>'Internal', 'establishment_id'=>31,]);
+        Department::create([ 'title'=>'Rouparia', 'filter'=>'rouparia', 'contact'=>'(81) 3101-0329', 'extension'=>'0329', 'type_contact'=>'Internal', 'establishment_id'=>31,]);
+        Department::create([ 'title'=>'Repouso Médico (Feminino)', 'filter'=>'repouso', 'contact'=>'(81) 3101-0330', 'extension'=>'0330', 'type_contact'=>'Internal', 'establishment_id'=>31,]);
+        Department::create([ 'title'=>'Repouso Médico (Masculino)', 'filter'=>'repouso', 'contact'=>'(81) 3101-0331', 'extension'=>'0331', 'type_contact'=>'Internal', 'establishment_id'=>31,]);
+        Department::create([ 'title'=>'PPP', 'filter'=>'ppp', 'contact'=>'(81) 3101-0332', 'extension'=>'0332', 'type_contact'=>'Internal', 'establishment_id'=>31,]);
+        Department::create([ 'title'=>'Nutrição', 'filter'=>'nutrição', 'contact'=>'(81) 3101-0333', 'extension'=>'0333', 'type_contact'=>'Internal', 'establishment_id'=>31,]);
+        Department::create([ 'title'=>'Farmácia', 'filter'=>'farmacia', 'contact'=>'(81) 3101-0334', 'extension'=>'0334', 'type_contact'=>'Internal', 'establishment_id'=>31,]);
+        Department::create([ 'title'=>'CME', 'filter'=>'cme', 'contact'=>'(81) 3101-0335', 'extension'=>'0335', 'type_contact'=>'Internal', 'establishment_id'=>31,]);
+        Department::create([ 'title'=>'Clínica Cirurgica', 'filter'=>'clinica cirurgica', 'contact'=>'(81) 3101-0336', 'extension'=>'0336', 'type_contact'=>'Internal', 'establishment_id'=>31,]);
+        Department::create([ 'title'=>'Classificação de Risco', 'filter'=>'classificacao de risco', 'contact'=>'(81) 3101-0337', 'extension'=>'0337', 'type_contact'=>'Internal', 'establishment_id'=>31,]);
+        Department::create([ 'title'=>'Bloco Cirurgico', 'filter'=>'bloco cirurgico', 'contact'=>'(81) 3101-0338', 'extension'=>'0338', 'type_contact'=>'Internal', 'establishment_id'=>31,]);
+        Department::create([ 'title'=>'Gerência', 'filter'=>'gerência', 'contact'=>'(81) 3101-0339', 'extension'=>'0339', 'type_contact'=>'Internal', 'establishment_id'=>31,]);
+        Department::create([ 'title'=>'Alojamento Conjunto', 'filter'=>'alojamento conjunto', 'contact'=>'(81) 3101-0340', 'extension'=>'0340', 'type_contact'=>'Internal', 'establishment_id'=>31,]);
+        Department::create([ 'title'=>'Serviço Social', 'filter'=>'serviço social', 'contact'=>'(81) 3101-0341', 'extension'=>'0341', 'type_contact'=>'Internal', 'establishment_id'=>31,]);
+        Department::create([ 'title'=>'TFD', 'filter'=>'tfd', 'contact'=>'(81) 3101-0346', 'extension'=>'0346', 'type_contact'=>'Main', 'establishment_id'=>14,]);
+        Department::create([ 'title'=>'Controle', 'filter'=>'controle', 'contact'=>'(81) 3101-0347', 'extension'=>'0347', 'type_contact'=>'Internal', 'establishment_id'=>14,]);
+        Department::create([ 'title'=>'Alta Complexidade', 'filter'=>'alta', 'contact'=>'(81) 3101-0348', 'extension'=>'0348', 'type_contact'=>'Internal', 'establishment_id'=>14,]);
+        Department::create([ 'title'=>'Programação', 'filter'=>'programação', 'contact'=>'(81) 3101-0349', 'extension'=>'0349', 'type_contact'=>'Internal', 'establishment_id'=>14,]);
+        Department::create([ 'title'=>'Callcenter', 'filter'=>'callcenter', 'contact'=>'(81) 3101-0350', 'extension'=>'0350', 'type_contact'=>'Internal', 'establishment_id'=>14,]);
+        Department::create([ 'title'=>'Nutrição', 'filter'=>'nutrição', 'contact'=>'(81) 3101-0249', 'extension'=>'0249', 'type_contact'=>'Internal', 'establishment_id'=>97,]);
+        Department::create([ 'title'=>'Tecnologia da Informação e Comunicação', 'filter'=>'tecnologia da informação e comunicação', 'contact'=>'(81) 3101-0250', 'extension'=>'0250', 'type_contact'=>'Internal', 'establishment_id'=>97,]);
+        Department::create([ 'title'=>'Administração', 'filter'=>'administracao', 'contact'=>'(81) 3101-0251', 'extension'=>'0251', 'type_contact'=>'Internal', 'establishment_id'=>97,]);
+        Department::create([ 'title'=>'Coordenação de Enfermagem', 'filter'=>'coordenação de enfermagem', 'contact'=>'(81) 3101-0252', 'extension'=>'0252', 'type_contact'=>'Internal', 'establishment_id'=>97,]);
+        Department::create([ 'title'=>'Farmácia', 'filter'=>'farmacia', 'contact'=>'(81) 3101-0254', 'extension'=>'0254', 'type_contact'=>'Internal', 'establishment_id'=>97,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0248', 'extension'=>'0248', 'type_contact'=>'Internal', 'establishment_id'=>97,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0201', 'extension'=>'0201', 'type_contact'=>'Main', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Manutenção', 'filter'=>'manutenção', 'contact'=>'(81) 3101-0245', 'extension'=>'0245', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Engenharia', 'filter'=>'engenharia', 'contact'=>'(81) 3101-0246', 'extension'=>'0246', 'type_contact'=>'Internal', 'establishment_id'=>94]);
+        Department::create([ 'title'=>'Tecnoligia da Informação e Comunicação', 'filter'=>'tecnologia da informação e comunicação', 'contact'=>'(81) 3101-0230', 'extension'=>'0230', 'type_contact'=>'Internal', 'establishment_id'=>94]);
+        Department::create([ 'title'=>'Engenharia', 'filter'=>'engenharia', 'contact'=>'(81) 3101-0231', 'extension'=>'0231', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Almoxarifado', 'filter'=>'almoxarifado', 'contact'=>'(81) 3101-0222', 'extension'=>'0222', 'type_contact'=>'Internal', 'establishment_id'=>94]);
+        Department::create([ 'title'=>'Recurso Humano', 'filter'=>'recurso humano', 'contact'=>'(81) 3101-0255', 'extension'=>'0255', 'type_contact'=>'Internal', 'establishment_id'=>94]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0202', 'extension'=>'0202', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Transporte', 'filter'=>'transporte', 'contact'=>'(81) 3101-0203', 'extension'=>'0203', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Nutrição', 'filter'=>'nutrição', 'contact'=>'(81) 3101-0204', 'extension'=>'0204', 'type_contact'=>'Internal', 'establishment_id'=>94]);
+        Department::create([ 'title'=>'Ouvidoria', 'filter'=>'ouvidoria', 'contact'=>'(81) 3101-0205', 'extension'=>'0205', 'type_contact'=>'Internal', 'establishment_id'=>94]);
+        Department::create([ 'title'=>'PNI', 'filter'=>'pni', 'contact'=>'(81) 3101-0206', 'extension'=>'0206', 'type_contact'=>'Internal', 'establishment_id'=>94]);
+        Department::create([ 'title'=>'CAF - Recepção', 'filter'=>'caf', 'contact'=>'(81) 3101-0207', 'extension'=>'0207', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'CAF - Gerência', 'filter'=>'caf', 'contact'=>'(81) 3101-0208', 'extension'=>'0208', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'CAF - Coordenação', 'filter'=>'caf', 'contact'=>'(81) 3101-0209', 'extension'=>'0209', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'CAF - Farmácia', 'filter'=>'caf', 'contact'=>'(81) 3101-0210', 'extension'=>'0210', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'CAF - Odonto', 'filter'=>'caf', 'contact'=>'(81) 3101-0211', 'extension'=>'0211', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'CAF - Estoque Medicamentos', 'filter'=>'caf', 'contact'=>'(81) 3101-0212', 'extension'=>'0212', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'CAF - Estoque Material', 'filter'=>'caf', 'contact'=>'(81) 3101-0213', 'extension'=>'0213', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'CAF - Remédio na Porta', 'filter'=>'caf', 'contact'=>'(81) 3101-0214', 'extension'=>'0214', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Vigiância Sanitária', 'filter'=>'vigilância', 'contact'=>'(81) 3101-0215', 'extension'=>'0215', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Vigilância Ambiental', 'filter'=>'vigilância', 'contact'=>'(81) 3101-0216', 'extension'=>'0216', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Vigilância Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0217', 'extension'=>'0217', 'type_contact'=>'Main', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Vigilância Recurso Humano', 'filter'=>'recursos humano', 'contact'=>'(81) 3101-0218', 'extension'=>'0218', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Gabinete Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0219', 'extension'=>'0219', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Gabinete', 'filter'=>'gabinete', 'contact'=>'(81) 3101-0220', 'extension'=>'0220', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Atenção Especializada - Secretário Execultivo', 'filter'=>'secretário execultivo', 'contact'=>'(81) 3101-0221', 'extension'=>'0221', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Atenção Especializada - Cirurgias', 'filter'=>'cirurgias', 'contact'=>'(81) 3101-0223', 'extension'=>'0223', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Atenção Especializada - Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0224', 'extension'=>'0224', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Administração', 'filter'=>'administração', 'contact'=>'(81) 3101-0225', 'extension'=>'0225', 'type_contact'=>'Internal', 'establishment_id'=>94]);
+        Department::create([ 'title'=>'Compras', 'filter'=>'compras', 'contact'=>'(81) 3101-0226', 'extension'=>'0226', 'type_contact'=>'Internal', 'establishment_id'=>94]);
+        Department::create([ 'title'=>'Análise de Processos', 'filter'=>'análise de processos', 'contact'=>'(81) 3101-0227', 'extension'=>'0227', 'type_contact'=>'Internal', 'establishment_id'=>94]);
+        Department::create([ 'title'=>'Gestão de Contratos', 'filter'=>'gestão de contratos', 'contact'=>'(81) 3101-0227', 'extension'=>'0227', 'type_contact'=>'Internal', 'establishment_id'=>94]);
+        Department::create([ 'title'=>'Fundo Municipal de Saúde', 'filter'=>'fundo municipal de saúde', 'contact'=>'(81) 3101-0228', 'extension'=>'0228', 'type_contact'=>'Internal', 'establishment_id'=>94]);
+        Department::create([ 'title'=>'Gerência Geral', 'filter'=>'gerência geral', 'contact'=>'(81) 3101-0229', 'extension'=>'0229', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Auditoria', 'filter'=>'auditoria', 'contact'=>'(81) 3101-0236', 'extension'=>'0236', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'CPL', 'filter'=>'cpl', 'contact'=>'(81) 3101-0237', 'extension'=>'0237', 'type_contact'=>'Internal', 'establishment_id'=>94]);
+        Department::create([ 'title'=>'CPL', 'filter'=>'cpl', 'contact'=>'(81) 3101-0238', 'extension'=>'0238', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'CPL', 'filter'=>'cpl', 'contact'=>'(81) 3101-0239', 'extension'=>'0239', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Atenção Básico - Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0240', 'extension'=>'0240', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Conselho Municipal', 'filter'=>'conselho municipal', 'contact'=>'(81) 3101-0243', 'extension'=>'0243', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Portaria', 'filter'=>'portaria', 'contact'=>'(81) 3101-0244', 'extension'=>'0244', 'type_contact'=>'Internal', 'establishment_id'=>94,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0422', 'extension'=>'0422', 'type_contact'=>'Main', 'establishment_id'=>32,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0402', 'extension'=>'0402', 'type_contact'=>'Main', 'establishment_id'=>33,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0410', 'extension'=>'0410', 'type_contact'=>'Main', 'establishment_id'=>34,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0429', 'extension'=>'0429', 'type_contact'=>'Main', 'establishment_id'=>35,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0414', 'extension'=>'0414', 'type_contact'=>'Main', 'establishment_id'=>36,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0357', 'extension'=>'0357', 'type_contact'=>'Main', 'establishment_id'=>37,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0393', 'extension'=>'0393', 'type_contact'=>'Main', 'establishment_id'=>38,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0415', 'extension'=>'0415', 'type_contact'=>'Main', 'establishment_id'=>39,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0413', 'extension'=>'0413', 'type_contact'=>'Main', 'establishment_id'=>40,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0408', 'extension'=>'0408', 'type_contact'=>'Main', 'establishment_id'=>41,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0365', 'extension'=>'0365', 'type_contact'=>'Main', 'establishment_id'=>42,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0396', 'extension'=>'0396', 'type_contact'=>'Main', 'establishment_id'=>43,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0427', 'extension'=>'0427', 'type_contact'=>'Main', 'establishment_id'=>44,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0267', 'extension'=>'0267', 'type_contact'=>'Main', 'establishment_id'=>45,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0407', 'extension'=>'0407', 'type_contact'=>'Main', 'establishment_id'=>46,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0401', 'extension'=>'0401', 'type_contact'=>'Main', 'establishment_id'=>47,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0399', 'extension'=>'0399', 'type_contact'=>'Main', 'establishment_id'=>48,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0272', 'extension'=>'0272', 'type_contact'=>'Main', 'establishment_id'=>49,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0386', 'extension'=>'0386', 'type_contact'=>'Main', 'establishment_id'=>50,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0412', 'extension'=>'0412', 'type_contact'=>'Main', 'establishment_id'=>51,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0428', 'extension'=>'0428', 'type_contact'=>'Main', 'establishment_id'=>52,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0268', 'extension'=>'0268', 'type_contact'=>'Main', 'establishment_id'=>53,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0275', 'extension'=>'0275', 'type_contact'=>'Main', 'establishment_id'=>54,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0420', 'extension'=>'0420', 'type_contact'=>'Main', 'establishment_id'=>55,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0323', 'extension'=>'0323', 'type_contact'=>'Main', 'establishment_id'=>56,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0404', 'extension'=>'0404', 'type_contact'=>'Main', 'establishment_id'=>57,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0419', 'extension'=>'0419', 'type_contact'=>'Main', 'establishment_id'=>58,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0377', 'extension'=>'0377', 'type_contact'=>'Main', 'establishment_id'=>59,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0325', 'extension'=>'0325', 'type_contact'=>'Main', 'establishment_id'=>60,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0392', 'extension'=>'0392', 'type_contact'=>'Main', 'establishment_id'=>61,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0426', 'extension'=>'0426', 'type_contact'=>'Main', 'establishment_id'=>62,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0387', 'extension'=>'0387', 'type_contact'=>'Main', 'establishment_id'=>63,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0389', 'extension'=>'0389', 'type_contact'=>'Main', 'establishment_id'=>64,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0271', 'extension'=>'0271', 'type_contact'=>'Main', 'establishment_id'=>65,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0411', 'extension'=>'0411', 'type_contact'=>'Main', 'establishment_id'=>66,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0416', 'extension'=>'0416', 'type_contact'=>'Main', 'establishment_id'=>67,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0273', 'extension'=>'0273', 'type_contact'=>'Main', 'establishment_id'=>68,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0421', 'extension'=>'0421', 'type_contact'=>'Main', 'establishment_id'=>69,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0406', 'extension'=>'0406', 'type_contact'=>'Main', 'establishment_id'=>70,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0270', 'extension'=>'0270', 'type_contact'=>'Main', 'establishment_id'=>8,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0395', 'extension'=>'0395', 'type_contact'=>'Main', 'establishment_id'=>71,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0430', 'extension'=>'0430', 'type_contact'=>'Main', 'establishment_id'=>72,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0394', 'extension'=>'0394', 'type_contact'=>'Main', 'establishment_id'=>73,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0400', 'extension'=>'0400', 'type_contact'=>'Main', 'establishment_id'=>74,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0423', 'extension'=>'0423', 'type_contact'=>'Main', 'establishment_id'=>75,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0388', 'extension'=>'0388', 'type_contact'=>'Main', 'establishment_id'=>76,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0324', 'extension'=>'0324', 'type_contact'=>'Main', 'establishment_id'=>77,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0397', 'extension'=>'0397', 'type_contact'=>'Main', 'establishment_id'=>78,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0391', 'extension'=>'0391', 'type_contact'=>'Main', 'establishment_id'=>79,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0269', 'extension'=>'0269', 'type_contact'=>'Main', 'establishment_id'=>80,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0418', 'extension'=>'0418', 'type_contact'=>'Main', 'establishment_id'=>81,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0425', 'extension'=>'0425', 'type_contact'=>'Main', 'establishment_id'=>82,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0393', 'extension'=>'0393', 'type_contact'=>'Main', 'establishment_id'=>83,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0424', 'extension'=>'0424', 'type_contact'=>'Main', 'establishment_id'=>84,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0398', 'extension'=>'0398', 'type_contact'=>'Main', 'establishment_id'=>85,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0256', 'extension'=>'0256', 'type_contact'=>'Main', 'establishment_id'=>91,]);
+        Department::create([ 'title'=>'Administração', 'filter'=>'administração', 'contact'=>'(81) 3101-0257', 'extension'=>'0257', 'type_contact'=>'Internal', 'establishment_id'=>91,]);
+        Department::create([ 'title'=>'Coordenação de Enfermagem', 'filter'=>'coordenação de enfermagem', 'contact'=>'(81) 3101-0258', 'extension'=>'0258', 'type_contact'=>'Internal', 'establishment_id'=>91,]);
+        Department::create([ 'title'=>'Serviço Social', 'filter'=>'serviço social', 'contact'=>'(81) 3101-0259', 'extension'=>'0259', 'type_contact'=>'Internal', 'establishment_id'=>91,]);
+        Department::create([ 'title'=>'Farmácia', 'filter'=>'farmacia', 'contact'=>'(81) 3101-0260', 'extension'=>'0260', 'type_contact'=>'Internal', 'establishment_id'=>91,]);
+        Department::create([ 'title'=>'Gerência', 'filter'=>'gerência', 'contact'=>'(81) 3101-0261', 'extension'=>'0261', 'type_contact'=>'Internal', 'establishment_id'=>91,]);
+        Department::create([ 'title'=>'Sala Vermelha', 'filter'=>'sala vermelha', 'contact'=>'(81) 3101-0262', 'extension'=>'0262', 'type_contact'=>'Internal', 'establishment_id'=>91,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0276', 'extension'=>'0276', 'type_contact'=>'Main', 'establishment_id'=>93,]);
+        Department::create([ 'title'=>'Administração', 'filter'=>'administracao', 'contact'=>'(81) 3101-0277', 'extension'=>'0276', 'type_contact'=>'Internal', 'establishment_id'=>93,]);
+        Department::create([ 'title'=>'SAME', 'filter'=>'same', 'contact'=>'(81) 3101-0278', 'extension'=>'0278', 'type_contact'=>'Internal', 'establishment_id'=>93,]);
+        Department::create([ 'title'=>'Classificação de Risco', 'filter'=>'classificacao de risco', 'contact'=>'(81) 3101-0279', 'extension'=>'0279', 'type_contact'=>'Internal', 'establishment_id'=>93,]);
+        Department::create([ 'title'=>'Pediatria', 'filter'=>'pediatria', 'contact'=>'(81) 3101-0280', 'extension'=>'0280', 'type_contact'=>'Internal', 'establishment_id'=>93,]);
+        Department::create([ 'title'=>'Copa', 'filter'=>'copa', 'contact'=>'(81) 3101-0281', 'extension'=>'0281', 'type_contact'=>'Internal', 'establishment_id'=>93,]);
+        Department::create([ 'title'=>'Serviço Social', 'filter'=>'serviço social', 'contact'=>'(81) 3101-0282', 'extension'=>'0282', 'type_contact'=>'Internal', 'establishment_id'=>93,]);
+        Department::create([ 'title'=>'Farmácia', 'filter'=>'farmacia', 'contact'=>'(81) 3101-0283', 'extension'=>'0283', 'type_contact'=>'Internal', 'establishment_id'=>93,]);
+        Department::create([ 'title'=>'Sala Verde', 'filter'=>'sala verde', 'contact'=>'(81) 3101-0284', 'extension'=>'0284', 'type_contact'=>'Internal', 'establishment_id'=>93,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0286', 'extension'=>'0286', 'type_contact'=>'Main', 'establishment_id'=>95,]);
+        Department::create([ 'title'=>'Farmácia', 'filter'=>'farmacia', 'contact'=>'(81) 3101-0287', 'extension'=>'0287', 'type_contact'=>'Internal', 'establishment_id'=>95,]);
+        Department::create([ 'title'=>'Serviço Social', 'filter'=>'serviço social', 'contact'=>'(81) 3101-0288', 'extension'=>'0288', 'type_contact'=>'Internal', 'establishment_id'=>95,]);
+        Department::create([ 'title'=>'Coleta', 'filter'=>'coleta', 'contact'=>'(81) 3101-0289', 'extension'=>'0289', 'type_contact'=>'Internal', 'establishment_id'=>95,]);
+        Department::create([ 'title'=>'Coordenação de Enfermagem', 'filter'=>'coordenação de enfermagemcoordenação', 'contact'=>'(81) 3101-0290', 'extension'=>'0290', 'type_contact'=>'Internal', 'establishment_id'=>95,]);
+        Department::create([ 'title'=>'Administração', 'filter'=>'administração', 'contact'=>'(81) 3101-0291', 'extension'=>'0291', 'type_contact'=>'Internal', 'establishment_id'=>95,]);
+        Department::create([ 'title'=>'Nutrição', 'filter'=>'nutrição', 'contact'=>'(81) 3101-0292', 'extension'=>'0292', 'type_contact'=>'Internal', 'establishment_id'=>95,]);
+        Department::create([ 'title'=>'SAME', 'filter'=>'', 'contact'=>'(81) 3101-0293', 'extension'=>'0293', 'type_contact'=>'Internal', 'establishment_id'=>95,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0370', 'extension'=>'0370', 'type_contact'=>'Main', 'establishment_id'=>88,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0362', 'extension'=>'0362', 'type_contact'=>'Main', 'establishment_id'=>89,]);
+        Department::create([ 'title'=>'Infocras', 'filter'=>'infocras', 'contact'=>'(81) 3101-0363', 'extension'=>'0363', 'type_contact'=>'Internal', 'establishment_id'=>89,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0403', 'extension'=>'0403', 'type_contact'=>'Main', 'establishment_id'=>90,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0364', 'extension'=>'0364', 'type_contact'=>'Main', 'establishment_id'=>96,]);
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepção', 'contact'=>'(81) 3101-0217', 'extension'=>'0217', 'type_contact'=>'Main', 'establishment_id'=>87,]);
+        Department::create([ 'title'=>'Vigilância Ambiental', 'filter'=>'vigilância', 'contact'=>'(81) 3101-0216', 'extension'=>'0216', 'type_contact'=>'Internal', 'establishment_id'=>87,]);
+        Department::create([ 'title'=>'Vigilância Sanitária', 'filter'=>'vigilância', 'contact'=>'(81) 3101-0215', 'extension'=>'0215', 'type_contact'=>'Internal', 'establishment_id'=>87,]);
+        Department::create([ 'title'=>'Recursos Humanos', 'filter'=>'recursos', 'contact'=>'(81) 3101-0218', 'extension'=>'0218', 'type_contact'=>'Internal', 'establishment_id'=>87,]);
+        
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepcão', 'contact'=>'(81) 3101-0293', 'extension'=>'0293', 'type_contact'=>'Main', 'establishment_id'=>99,]);
+
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepcão', 'contact'=>'(81) 3101-0300', 'extension'=>'0300', 'type_contact'=>'Main', 'establishment_id'=>92,]);
+
+        Department::create([ 'title'=>'Recepção', 'filter'=>'recepcão', 'contact'=>'192', 'extension'=>'192', 'type_contact'=>'Main', 'establishment_id'=>97,]);
     }
 }
