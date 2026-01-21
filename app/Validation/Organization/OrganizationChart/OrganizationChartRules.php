@@ -27,6 +27,7 @@ class OrganizationChartRules
             'acronym' => [
                 'required',
                 'string',
+                'uppercase',
                 'max:10',
                 Rule::unique('organization_charts', 'acronym'),
             ],
@@ -45,6 +46,7 @@ class OrganizationChartRules
             'acronym' => [
                 'required',
                 'string',
+                'uppercase',
                 'max:10',
                 Rule::unique('organization_charts', 'acronym')
                     ->ignore($chartId),

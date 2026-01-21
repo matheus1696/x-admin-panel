@@ -31,6 +31,7 @@ class ContactPage extends Component
 
     public function openDepartments($id)
     {
+        $this->reset(['searchDepartment']);
         $this->selectedEstablishmentId = $id;
         $this->establishmentTitle = Establishment::find($id)->title;
         $this->loadDepartments();
