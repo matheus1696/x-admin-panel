@@ -2,12 +2,16 @@
 
 namespace App\Models\Organization\OrganizationChart;
 
+use App\Models\Traits\HasStatus;
+use App\Models\Traits\HasTitleFilter;
+use App\Models\Traits\HasUuid;
+use App\Models\Traits\HasUuidRouteKey;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class OrganizationChart extends Model
 {
-    //
+    use HasStatus, HasTitleFilter, HasUuid, HasUuidRouteKey;
+
     protected $fillable = [
         'acronym',
         'title',
@@ -27,18 +31,5 @@ class OrganizationChart extends Model
         return $this->hasMany(OrganizationChart::class, 'hierarchy')
             ->where('status', true)
             ->orderBy('order');
-    }
-
-    public function toggleStatus(): self
-    {
-        $this->update(['status' => !$this->status]);
-        return $this;
-    }
-
-    //Criação do Filter
-    public function setTitleAttribute($value)
-    {
-        $this->attributes['title'] = $value;
-        $this->attributes['filter'] = Str::ascii(strtolower($value));
     }
 }

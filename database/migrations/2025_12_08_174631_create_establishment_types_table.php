@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('establishment_types', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
             $table->string('title');
             $table->string('filter');
             $table->boolean('status')->default(true);

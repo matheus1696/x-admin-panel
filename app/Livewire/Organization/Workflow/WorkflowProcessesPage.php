@@ -15,6 +15,8 @@ class WorkflowProcessesPage extends Component
 {
     use WithPagination, WithFlashMessage, Modal;
 
+    protected WorkflowService $workflowService;
+
     public array $filters = [
         'workflow' => '',
         'status' => 'all',
@@ -24,6 +26,11 @@ class WorkflowProcessesPage extends Component
     public $workflowId = null;
     public $title = '';
     public $description = '';
+
+    public function boot(WorkflowService $workflowService)
+    {
+        $this->workflowService = $workflowService;
+    }
 
     public function updatedFilters()
     {
@@ -42,62 +49,54 @@ class WorkflowProcessesPage extends Component
         $this->openModal('modal-form-create-workflow');
     }
 
-    public function store(WorkflowService $WorkflowService)
+    public function store()
     {
         $data = $this->validate((new WorkflowStoreRequest())->rules());
 
-        $WorkflowService->create($data);
+        $this->workflowService->create($data);
 
         $this->flashSuccess('Tipo de tarefa criado com sucesso.');
         $this->closeModal();
     }
 
-    public function edit(Workflow $Workflow)
+    public function edit(int $id)
     {
         $this->resetForm();
 
-        $this->workflowId = $Workflow->id;
-        $this->title = $Workflow->title;
-        $this->description = $Workflow->description;
+        $workflow = $this->workflowService->find($id);
+
+        $this->workflowId = $workflow->id;
+        $this->title = $workflow->title;
+        $this->description = $workflow->description;
 
         $this->openModal('modal-form-edit-workflow');
     }
 
-    public function update(WorkflowService $WorkflowService)
+    public function update()
     {
         $data = $this->validate((new WorkflowUpdateRequest())->rules());
 
-        $WorkflowService->update($this->workflowId, $data);
+        $this->workflowService->update($this->workflowId, $data);
 
         $this->flashSuccess('Tipo de tarefa foi atualizada com sucesso.');
         $this->closeModal();
     }
 
-    public function status(WorkflowService $WorkflowService, Workflow $Workflow)
+    public function status(int $id)
     {
-        $WorkflowService->status($Workflow->id);
+        $this->workflowService->status($id);
         $this->flashSuccess('Tipo de tarefa foi atualizada com sucesso.');
     }
 
-    public function workflowStage(Workflow $Workflow)
+    public function workflowStage(int $id)
     {
-        $this->workflowId = $Workflow->id;
+        $this->workflowId = $id;
         $this->openModal('modal-form-workflow-steps');
     }
 
     public function render()
     {
-        $query = Workflow::query();
-
-        if ($this->filters['workflow']) {
-            $query->where('filter', 'like', '%' . strtolower($this->filters['workflow']) . '%');
-        }
-
-        if ($this->filters['status'] !== 'all') {
-            $query->where('status', $this->filters['status']);
-        }
-
-        $workflows = $query->orderBy('title')->paginate($this->filters['perPage']);
+        $workflows = $this->workflowService->index($this->filters);
 
         return view('livewire.organization.workflow.workflow-processes-page', [
             'workflows' => $workflows,

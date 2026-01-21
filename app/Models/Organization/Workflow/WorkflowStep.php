@@ -2,12 +2,16 @@
 
 namespace App\Models\Organization\Workflow;
 
+use App\Models\Traits\HasStatus;
+use App\Models\Traits\HasTitleFilter;
+use App\Models\Traits\HasUuid;
+use App\Models\Traits\HasUuidRouteKey;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class WorkflowStep extends Model
 {
-    //
+    use HasStatus, HasTitleFilter, HasUuid, HasUuidRouteKey;
+    
     protected $fillable = [
         'workflow_id',
         'title',
@@ -29,12 +33,5 @@ class WorkflowStep extends Model
     public function workflow()
     {
         return $this->belongsTo(Workflow::class);
-    }
-
-    //Criação do Filter
-    public function setTitleAttribute($value)
-    {
-        $this->attributes['title'] = $value;
-        $this->attributes['filter'] = Str::ascii(strtolower($value));
     }
 }

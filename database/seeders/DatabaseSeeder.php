@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Administration\User\User;
 use Database\Seeders\Organization\OrganizationChartSeed;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -37,6 +37,8 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
         ])->assignRole('super-admin');
 
-        User::factory(25)->create();
+        if (env('APP_DEBUG')) {
+            User::factory(25)->create();
+        }
     }
 }

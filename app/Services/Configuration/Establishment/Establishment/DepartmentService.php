@@ -2,7 +2,7 @@
 
 namespace App\Services\Configuration\Establishment\Establishment;
 
-use App\Models\Manage\Company\Department;
+use App\Models\Configuration\Establishment\Establishment\Department;
 use Illuminate\Support\Collection;
 
 class DepartmentService

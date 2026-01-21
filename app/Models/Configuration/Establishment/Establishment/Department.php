@@ -1,12 +1,16 @@
 <?php
 
-namespace App\Models\Manage\Company;
+namespace App\Models\Configuration\Establishment\Establishment;
 
+use App\Models\Traits\HasStatus;
+use App\Models\Traits\HasTitleFilter;
+use App\Models\Traits\HasUuid;
+use App\Models\Traits\HasUuidRouteKey;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Department extends Model
-{
+{    
+    use HasStatus, HasTitleFilter, HasUuid, HasUuidRouteKey;
     //
     protected $fillable = [
         'title',
@@ -19,12 +23,5 @@ class Department extends Model
 
     public function establishment(){
         return $this->belongsTo(Establishment::class,'establishment_id');
-    }
-
-    //Criação do Filter Title
-    public function setTitleAttribute($value)
-    {
-        $this->attributes['title'] = $value;
-        $this->attributes['filter'] = Str::ascii(strtolower($value));
     }
 }

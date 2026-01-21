@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Configuration\Region;
+namespace App\Models\Configuration\Occupation;
 
 use App\Models\Traits\HasStatus;
 use App\Models\Traits\HasTitleFilter;
@@ -9,23 +9,15 @@ use App\Models\Traits\HasUuidRouteKey;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class RegionCity extends Model
+class Occupation extends Model
 {
     use HasFactory, HasStatus, HasTitleFilter, HasUuid, HasUuidRouteKey;
 
-    protected $table = 'region_cities';
-
     protected $fillable = [
         'code',
-        'city',
+        'title',
         'filter',
-        'code_cep',
         'status',
-        'state_id',
     ];
-
-    public function RegionState(){
-        return $this->belongsTo(RegionState::class,'state_id','id');
-    }
 }
 

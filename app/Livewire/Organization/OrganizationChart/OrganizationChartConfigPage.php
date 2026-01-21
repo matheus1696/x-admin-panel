@@ -43,11 +43,6 @@ class OrganizationChartConfigPage extends Component
         $this->organizationChartService = $organizationChartService;
     }
 
-    public function updatedFilters()
-    {
-        $this->resetPage();
-    }
-
     /* CREATE */
     public function create(): void
     {
@@ -71,6 +66,8 @@ class OrganizationChartConfigPage extends Component
     /* EDIT */
     public function edit(int $id): void
     {
+        $this->reset();
+        
         $organizationChart = $this->organizationChartService->find($id);
 
         $this->chartId             = $organizationChart->id;

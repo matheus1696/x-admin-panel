@@ -39,7 +39,7 @@
                         <i class="fa-solid fa-bolt text-green-600"></i>
                         Ações Rápidas
                     </h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-4">
+                    <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-4">
                         <a href="#" class="p-4 bg-gray-50 hover:bg-orange-50 rounded-xl border border-gray-200 hover:border-orange-300 transition-all duration-200 group text-center">
                             <i class="fa-solid fa-ticket text-orange-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
                             <p class="text-sm font-medium text-gray-700">Abrir Chamado</p>

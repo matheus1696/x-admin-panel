@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Manage\Company\EstablishmentType;
+use App\Models\Configuration\Establishment\EstablishmentType\EstablishmentType;
 use Illuminate\Database\Seeder;
 
 class EstablishmentTypesSeeder extends Seeder

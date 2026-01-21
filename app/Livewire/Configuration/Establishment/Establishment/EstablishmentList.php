@@ -4,10 +4,10 @@ namespace App\Livewire\Configuration\Establishment\Establishment;
 
 use App\Livewire\Traits\Modal;
 use App\Livewire\Traits\WithFlashMessage;
+use App\Models\Configuration\Establishment\EstablishmentType\EstablishmentType;
+use App\Models\Configuration\FinancialBlock\FinancialBlock;
 use App\Models\Configuration\Region\RegionCity;
 use App\Models\Configuration\Region\RegionState;
-use App\Models\Manage\Company\EstablishmentType;
-use App\Models\Manage\Company\FinancialBlock;
 use App\Services\Configuration\Establishment\Establishment\EstablishmentService;
 use App\Validation\Configuration\Establishment\Establishment\EstablishmentRules;
 use Illuminate\View\View;

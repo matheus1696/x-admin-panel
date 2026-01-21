@@ -2,7 +2,7 @@
 
 namespace App\Services\Administration\User;
 
-use App\Models\User;
+use App\Models\Administration\User\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('workflows', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
             $table->string('title'); // Processo Licitatório
             $table->string('filter');
             $table->text('description')->nullable();

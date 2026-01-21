@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Configuration\Establishment\EstablishmentType;
 
-use App\Models\Manage\Company\EstablishmentType;
+use App\Models\Configuration\Establishment\EstablishmentType\EstablishmentType;
 use Livewire\Component;
 use Livewire\WithPagination;
 

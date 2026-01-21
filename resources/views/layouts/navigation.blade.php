@@ -13,13 +13,13 @@
     @endauth
 
     <!-- Organização -->
-    @canany(['organization.view', 'organization.manage', 'workflow.manage'])
+    @canany(['organization.chart.config.manage','organization.workflow.manage',])
         <x-sidebar.main-dropdown title="Organização" icon="fa-solid fa-sitemap" :active="request()->routeIs('organization.chart.config.*') || request()->routeIs('organization.workflow.*')" >
-            @can('organization.manage')
+            @can('organization.chart.config.manage')
                 <x-sidebar.dropdown-link href="{{ route('organization.chart.config.index') }}" title="Gerenciamento do Organograma" icon="fa-solid fa-gear" :active="request()->routeIs('organization.chart.config.index')" />
             @endcan
 
-            @can('workflow.manage')
+            @can('organization.workflow.manage')
                 <x-sidebar.dropdown title="Gestão de Fluxo de Trabalho" icon="fa-solid fa-diagram-project" :active="request()->routeIs('organization.workflow.*')" >
                     <x-sidebar.dropdown-link href="{{ route('organization.workflow.index') }}" title="Processos"  :active="request()->routeIs('organization.workflow.index')" />
                 </x-sidebar.dropdown>

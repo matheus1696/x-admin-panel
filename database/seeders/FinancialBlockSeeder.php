@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Manage\Company\FinancialBlock;
+use App\Models\Configuration\FinancialBlock\FinancialBlock;
 use Illuminate\Database\Seeder;
 
 class FinancialBlockSeeder extends Seeder

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('organization_charts', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
             $table->string('acronym')->nullable();
             $table->string('title');
             $table->string('filter');

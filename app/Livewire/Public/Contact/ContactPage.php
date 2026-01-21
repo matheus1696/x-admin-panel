@@ -3,8 +3,8 @@
 namespace App\Livewire\Public\Contact;
 
 use App\Livewire\Traits\Modal;
-use App\Models\Manage\Company\Department;
-use App\Models\Manage\Company\Establishment;
+use App\Models\Configuration\Establishment\Establishment\Department;
+use App\Models\Configuration\Establishment\Establishment\Establishment;
 use Livewire\Component;
 
 class ContactPage extends Component

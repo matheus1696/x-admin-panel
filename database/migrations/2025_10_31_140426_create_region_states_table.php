@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('region_states', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
             $table->string('acronym')->unique();
             $table->string('title');
             $table->string('filter');

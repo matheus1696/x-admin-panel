@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('workflow_steps', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
             $table->foreignId('workflow_id')->constrained()->cascadeOnDelete();
 
             $table->string('title'); // Pesquisa de Preço

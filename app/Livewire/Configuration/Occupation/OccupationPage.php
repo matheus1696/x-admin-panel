@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Configuration\Occupation;
 
-use App\Models\Configuration\Occupation;
+use App\Models\Configuration\Occupation\Occupation;
 use Livewire\Component;
 use Livewire\WithPagination;
 

@@ -2,7 +2,7 @@
 
 namespace App\Services\Configuration\Establishment\Establishment;
 
-use App\Models\Manage\Company\Establishment;
+use App\Models\Configuration\Establishment\Establishment\Establishment;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class EstablishmentService

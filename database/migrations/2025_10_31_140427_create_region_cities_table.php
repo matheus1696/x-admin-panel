@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('region_cities', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
             $table->string('code_ibge');
             $table->string('title');
             $table->string('filter');

@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Configuration\Financial\FinancialBlock;
 
-use App\Models\Manage\Company\FinancialBlock;
+use App\Models\Configuration\FinancialBlock\FinancialBlock;
 use Livewire\Component;
 use Livewire\WithPagination;
 

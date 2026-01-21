@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Administration\User;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -59,31 +59,10 @@ class User extends Authenticatable
         ];
     }
 
-    public function toggleStatus(): self
-    {
-        $this->update(['status' => !$this->status]);
-        return $this;
-    }
-
     //Criação do Filter Name
     public function setNameAttribute($value)
     {
         $this->attributes['name'] = $value;
         $this->attributes['name_filter'] = Str::ascii(strtolower($value));
-    }
-    
-    //UUID
-    protected static function booted()
-    {
-        static::creating(function ($user) {
-            if (!$user->uuid) {
-                $user->uuid = (string) Str::uuid();
-            }
-        });
-    }
-
-    public function getRouteKeyName()
-    {
-        return 'uuid';
     }
 }

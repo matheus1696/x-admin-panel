@@ -1,14 +1,20 @@
 <?php
 
-namespace App\Models\Manage\Company;
+namespace App\Models\Configuration\Establishment\Establishment;
 
+use App\Models\Configuration\Establishment\EstablishmentType\EstablishmentType;
+use App\Models\Configuration\FinancialBlock\FinancialBlock;
 use App\Models\Configuration\Region\RegionCity;
+use App\Models\Traits\HasStatus;
+use App\Models\Traits\HasTitleFilter;
+use App\Models\Traits\HasUuid;
+use App\Models\Traits\HasUuidRouteKey;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Establishment extends Model
 {
-    //
+    use HasStatus, HasTitleFilter, HasUuid, HasUuidRouteKey;
+
     protected $fillable = [
         'code',
         'title',
@@ -47,18 +53,5 @@ class Establishment extends Model
     {
         return $this->hasOne(Department::class, 'establishment_id')
             ->where('type_contact', 'Main');
-    }
-
-    public function toggleStatus(): self
-    {
-        $this->update(['status' => !$this->status]);
-        return $this;
-    }
-
-    //Criação do Filter Title
-    public function setTitleAttribute($value)
-    {
-        $this->attributes['title'] = $value;
-        $this->attributes['filter'] = Str::ascii(strtolower($value));
     }
 }

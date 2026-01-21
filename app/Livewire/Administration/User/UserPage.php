@@ -4,8 +4,8 @@ namespace App\Livewire\Administration\User;
 
 use App\Livewire\Traits\Modal;
 use App\Livewire\Traits\WithFlashMessage;
-use App\Models\Configuration\Gender;
-use App\Models\Configuration\Occupation;
+use App\Models\Administration\User\Gender;
+use App\Models\Configuration\Occupation\Occupation;
 use App\Services\Administration\User\UserService;
 use App\Validation\Administration\User\UserRules;
 use Illuminate\View\View;

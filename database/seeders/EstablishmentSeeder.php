@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Manage\Company\Establishment;
+use App\Models\Configuration\Establishment\Establishment\Establishment;
 use Illuminate\Database\Seeder;
 
 class EstablishmentSeeder extends Seeder
@@ -210,5 +210,9 @@ class EstablishmentSeeder extends Seeder
         Establishment::create([ 'code'=>0000000, 'title'=>'Complexo da Saúde Jaqueline', 'filter'=>'complexo da saúde jaqueline', 'address'=>'Rua Djalma Dutra', 'number'=>'S/N', 'district'=>'Nossa Senhora das Dores', 'city_id'=>'2604106', 'state_id'=>'26', 'type_establishment_id'=>68, 'financial_block_id'=>1,]);        
 
         Establishment::create([ 'code'=>4437454, 'title'=>'AME do Salgado', 'filter'=>'ame do salgado', 'address'=>'Rua Presidente Artur Bernardes', 'number'=>'S/N', 'district'=>'Salgado', 'city_id'=>'2604106', 'state_id'=>'26', 'latitude'=>'', 'longitude'=>'', 'type_establishment_id'=>36, 'financial_block_id'=>2,]);
+
+        Establishment::create([ 'code'=>4430565, 'title'=>'Farmácia Caruaru do Salgado', 'filter'=>'farmacia caruaru do saldago', 'address'=>'Rua Presidente Artur Bernardes', 'number'=>'S/N', 'district'=>'Salgado', 'city_id'=>'2604106', 'state_id'=>'26', 'latitude'=>'', 'longitude'=>'', 'type_establishment_id'=>43, 'financial_block_id'=>2,]);
+
+        Establishment::create([ 'code'=>123456789, 'title'=>'UBS Irmã Rute (UBS Vila Kennedy I e UBS Caiuca I)', 'filter'=>'ubs irmã rute (ubs vila kennedy i e ubs caiuca i)', 'address'=>'Vila Kennedy', 'number'=>'S/N', 'district'=>'Salgado', 'city_id'=>'2604106', 'state_id'=>'26', 'latitude'=>'', 'longitude'=>'', 'type_establishment_id'=>2, 'financial_block_id'=>2,]);
     }
 }
