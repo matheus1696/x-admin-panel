@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class WorkflowRunStatus extends Model
 {
     protected $fillable = [
-        'name',
+        'title',
         'code',
         'color',
     ];
