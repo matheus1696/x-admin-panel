@@ -14,7 +14,7 @@
 
     <!-- Atividades (Tarefas) -->
     @auth
-        <x-sidebar.main-link href="{{ route('workflow.run.index') }}" icon="fa-solid fa-chart-line" title="Atividades" :active="request()->routeIs('workflow.run.index')" />
+        <x-sidebar.main-link href="{{ route('workflow.run.index') }}" icon="fa-solid fa-list-check" title="Atividades" :active="request()->routeIs('workflow.run.index')" />
     @endauth
 
     <!-- Organização -->

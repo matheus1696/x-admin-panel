@@ -4,11 +4,7 @@
     <x-alert.flash />
 
     <!-- Header -->
-    <x-page.header 
-        title="Tarefas de Fluxo de Trabalho" 
-        subtitle="Gerencie todos os fluxos de trabalho do sistema" 
-        icon="fa-solid fa-diagram-project"
-    >
+    <x-page.header title="Cronograma de Atividades" subtitle="Visualize todas as atividades e os andamentos" icon="fa-solid fa-list-check" >
         <x-slot name="button">
             <x-button text="Nova Tarefa" icon="fa-solid fa-plus" wire:click="create" />
         </x-slot>
