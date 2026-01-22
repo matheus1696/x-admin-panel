@@ -7,21 +7,33 @@ use App\Http\Requests\Organization\Workflow\WorkflowStepUpdateRequest;
 use App\Livewire\Traits\WithFlashMessage;
 use App\Models\Organization\Workflow\WorkflowStep;
 use App\Services\Organization\Workflow\WorkflowStepService;
+use App\Validation\Organization\Workflow\WorkflowStepRules;
 use Livewire\Component;
 
 class WorkflowSteps extends Component
 {
     use WithFlashMessage;
 
+    protected WorkflowStepService $workflowStepService;
+
     public $workflowId;
+    public $workflowStepId;
+
     public $workflowSteps;
+
     public $title;
     public $deadline_days;
-    public $workflowStepId;
+    public bool $required = true;
+    public bool $allow_parallel = true;
+
+    public function boot(WorkflowStepService $workflowStepService)
+    {
+        $this->workflowStepService = $workflowStepService;
+    }
 
     private function resetForm()
     {
-        $this->reset(['title', 'deadline_days']);
+        $this->reset(['title', 'deadline_days', 'required', 'allow_parallel',]);
         $this->resetValidation();
     }
 
@@ -33,34 +45,41 @@ class WorkflowSteps extends Component
 
     public function loadWorkflowStep()
     {
-        $this->workflowSteps = WorkflowStep::where('workflow_id', $this->workflowId)->orderBy('order')->get();
+        $this->workflowSteps = $this->workflowStepService->listByWorkflow($this->workflowId);
     }
 
-    public function store(WorkflowStepService $workflowStepService)
+    public function store()
     {
-        $data = $this->validate((new WorkflowStepStoreRequest())->rules());
-        $data['workflow_id'] = $this->workflowId;
-        $data['order'] = $this->workflowSteps->count() + 1;
+        $data = $this->validate(WorkflowStepRules::store());
 
-        $workflowStepService->create($data);
+        $data['workflow_id'] = $this->workflowId;
+        $data['step_order'] = $this->workflowSteps->count() + 1;
+
+        $this->workflowStepService->create($data);
 
         $this->resetForm();
         $this->flashSuccess('Ativiade criado com sucesso.');
         $this->loadWorkflowStep();
     }
 
-    public function edit(WorkflowStep $workflowStep)
+    public function edit(int $id)
     {
+        $this->resetForm();
+
+        $workflowStep = $this->workflowStepService->find($id);
+
         $this->workflowStepId = $workflowStep->id;
         $this->title = $workflowStep->title;
         $this->deadline_days = $workflowStep->deadline_days;
+        $this->required = $workflowStep->required;
+        $this->allow_parallel = $workflowStep->allow_parallel;
     }
 
-    public function update(WorkflowStepService $workflowStepService)
+    public function update()
     {
-        $data = $this->validate((new WorkflowStepUpdateRequest())->rules());
+        $data = $this->validate(WorkflowStepRules::update($this->workflowStepId));
 
-        $workflowStepService->update($this->workflowStepId, $data);
+        $this->workflowStepService->update($this->workflowStepId, $data);
 
         $this->workflowStepId = null;
         $this->resetForm();
@@ -69,9 +88,9 @@ class WorkflowSteps extends Component
         $this->loadWorkflowStep();
     }
 
-    public function orderUp(WorkflowStepService $workflowStepService, WorkflowStep $workflowStep)
+    public function orderUp(int $id)
     {
-        $workflowStepService->order($workflowStep);
+        $this->workflowStepService->order($id);
         $this->loadWorkflowStep();
     }
 

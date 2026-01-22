@@ -81,7 +81,7 @@
                             <x-button.btn-table wire:click="edit({{ $workflow->id }})" title="Editar Tipo de Tarefa">
                                 <i class="fa-solid fa-pen"></i>
                             </x-button.btn-table>
-                            <x-button.btn-table wire:click="workflowStage({{ $workflow->id }})" title="Editar Tipo de Tarefa">
+                            <x-button.btn-table wire:click="workflowStep({{ $workflow->id }})" title="Editar Tipo de Tarefa">
                                 <i class="fa-solid fa-eye"></i>
                             </x-button.btn-table>
                         </div>

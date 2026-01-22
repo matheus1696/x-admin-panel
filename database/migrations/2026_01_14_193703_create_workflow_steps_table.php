@@ -16,11 +16,14 @@ return new class extends Migration
             $table->uuid('uuid')->unique();
             $table->foreignId('workflow_id')->constrained()->cascadeOnDelete();
 
-            $table->string('title'); // Pesquisa de Preço
+            $table->string('title');
             $table->string('filter');
-            $table->integer('order'); // ordem no fluxo
-            $table->integer('deadline_days'); // prazo em dias
-            $table->boolean('required')->default(true); // obrigatório
+            $table->integer('step_order');
+            $table->integer('deadline_days');
+
+            $table->boolean('required')->default(true);
+            $table->boolean('allow_parallel')->default(false);
+            $table->string('step_type')->default('manual');
             $table->timestamps();
         });
     }

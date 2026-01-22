@@ -1,6 +1,6 @@
 @props([
     'show' => false,
-    'maxWidth' => 'max-w-xl',
+    'maxWidth' => 'max-w-5xl',
 ])
 
 @if($show)
@@ -38,7 +38,7 @@
             @endisset
 
             {{-- Body --}}
-            <div class="px-6 pt-3 pb-6 max-h-[400px] md:max-h-[700px] overflow-scroll">
+            <div class="px-6 pt-3 pb-6 max-h-[400px] md:max-h-[700px] overflow-y-scroll">
                 {{ $slot }}
             </div>
 

@@ -5,29 +5,50 @@
 
     {{-- Formulário --}}
     <form wire:submit.prevent="{{ $workflowStepId ? 'update' : 'store' }}" class="pb-5 border-b mb-5">
-        <div class="grid grid-cols-6 items-end gap-3">
-            <div class="col-span-3">
-                <x-form.label value="Etapa" />
-                <x-form.input wire:model.defer="title" placeholder="Título da Etapa"/>
-                <x-form.error :messages="$errors->get('title')" />
+        <div class="grid grid-cols-12 gap-3 items-end">
+
+            <div class="col-span-12 md:col-span-6">
+                <x-form.label value="Nome da Etapa" />
+                <x-form.input wire:model.defer="title" placeholder="Digite a etapa do processo"/>
             </div>
-            <div>
-                <x-form.label value="Dias" />
-                <x-form.input type="number" wire:model.defer="deadline_days" placeholder="60"/>
-                <x-form.error :messages="$errors->get('deadline_days')" />
+
+            <div class="col-span-4 md:col-span-2">
+                <x-form.label value="Prazo (dias)" />
+                <x-form.input type="number" min="0" wire:model.defer="deadline_days" placeholder="Tempo em dias para conclusão" />
             </div>
-            <div class="col-span-2 py-0.5 text-xs text-white">
-                @if($workflowStepId)
-                    <div class="flex gap-1">
-                        <x-button type="submit" text="Atualizar" variant="sky"/>
-                        <x-button wire:click="closedUpdate" icon="fa-solid fa-times" variant="red"/>
-                    </div>
-                @else
-                    <div class="flex gap-1">
-                        <x-button type="submit" text="Nova Etapa"/>
-                    </div>
-                @endif                
+
+            <div class="col-span-4 md:col-span-2">
+                <x-form.label value="Obrigatória" />
+                <x-form.select-livewire
+                    wire:model.defer="required"
+                    name="required"
+                    :collection="collect([
+                        ['value' => true, 'label' => 'Sim'],
+                        ['value' => false, 'label' => 'Não'],
+                    ])"
+                    value-field="value"
+                    label-field="label"
+                />
+                <x-form.error :messages="$errors->get('required')" />
             </div>
+
+            <div class="col-span-4 md:col-span-2">
+                <x-form.label value="Paralelo?" />
+                <x-form.select-livewire
+                    wire:model.defer="allow_parallel"
+                    name="allow_parallel"
+                    :collection="collect([
+                        ['value' => true, 'label' => 'Sim'],
+                        ['value' => false, 'label' => 'Não'],
+                    ])"
+                    value-field="value"
+                    label-field="label"
+                />
+                <x-form.error :messages="$errors->get('allow_parallel')" />
+            </div>
+        </div>
+        <div class="flex justify-end mt-3">
+            <x-button type="submit" text="{{ $workflowStepId ? 'Atualizar Etapa' : 'Adicionar Etapa' }}" variant="{{ $workflowStepId ? 'sky' : '' }}"/>
         </div>
     </form>
 
@@ -37,22 +58,26 @@
             <tr>
                 <x-page.table-th class="text-center">Ordem</x-page.table-th>
                 <x-page.table-th>Atividade</x-page.table-th>
-                <x-page.table-th class="text-center">Dias</x-page.table-th>
+                <x-page.table-th class="text-center">Prazo</x-page.table-th>
+                <x-page.table-th class="text-center w-20">Obrigatório</x-page.table-th>
+                <x-page.table-th class="text-center w-20">Paralelo?</x-page.table-th>
                 <x-page.table-th class="text-center w-28">Ações</x-page.table-th>
             </tr>
         </x-slot>
         <x-slot name="tbody">
             @forelse ($workflowSteps as $workflowStep)
                 <tr class="hover:bg-gray-50">
-                    <x-page.table-td class="text-center">{{ $workflowStep->order }}</x-page.table-td>
+                    <x-page.table-td class="text-center">{{ $workflowStep->step_order }}</x-page.table-td>
                     <x-page.table-td>{{ $workflowStep->title }}</x-page.table-td>
                     <x-page.table-td class="text-center">{{ $workflowStep->deadline_days }}</x-page.table-td>
+                    <x-page.table-status :condition="$workflowStep->required" />
+                    <x-page.table-status :condition="$workflowStep->allow_parallel" />
                     <x-page.table-td class="text-center">
                         <div class="flex items-center justify-center gap-2">
                             <x-button.btn-table wire:click="edit({{ $workflowStep->id }})" title="Editar Atividade">
                                 <i class="fa-solid fa-pen"></i>
                             </x-button.btn-table>
-                            @if ( $workflowStep->order != 1)
+                            @if ( $workflowStep->step_order != 1)
                                 <x-button.btn-table wire:click="orderUp({{ $workflowStep->id }})" title="Subir Atividade">
                                     <i class="fa-solid fa-arrow-up"></i>
                                 </x-button.btn-table>
@@ -63,7 +88,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="4" class="px-4 py-4 text-center text-gray-500">
+                    <td colspan="6" class="px-4 py-4 text-center text-gray-500">
                         Sem atividades adicionadas.
                     </td>
                 </tr>

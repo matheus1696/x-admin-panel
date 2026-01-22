@@ -7,17 +7,22 @@ use App\Models\Organization\Workflow\WorkflowStep;
 
 class WorkflowStepService
 {
+    public function find(int $id): WorkflowStep
+    {
+        return WorkflowStep::findOrFail($id);
+    }
+
+    public function listByWorkflow(int $workflowId)
+    {
+        return WorkflowStep::where('workflow_id', $workflowId)
+            ->orderBy('step_order')
+            ->get();
+    }
+
     public function create(array $data): WorkflowStep
     {
-        $workflowStep = WorkflowStep::create([
-            'workflow_id' => $data['workflow_id'],
-            'title' => $data['title'],
-            'deadline_days' => $data['deadline_days'] ?? null,
-            'order' => $data['order'],
-        ]);
-
-        Workflow::find($data['workflow_id'])->increment('days', $data['deadline_days'] ?? 0);
-
+        $workflowStep = WorkflowStep::create($data);
+        Workflow::find($data['workflow_id'])->increment('total_estimated_days', $data['deadline_days'] ?? 0);
         return $workflowStep;
     }
 
@@ -25,47 +30,39 @@ class WorkflowStepService
     {
         $workflowStep = WorkflowStep::findOrFail($id);
 
-        if ($workflowStep->deadline_days > $data['deadline_days']) {
-            Workflow::find($workflowStep->workflow_id)->decrement('days', $workflowStep->deadline_days - $data['deadline_days']);
-        } else {
-            Workflow::find($workflowStep->workflow_id)->increment('days', $data['deadline_days'] - $workflowStep->deadline_days);
+        $diff = ($data['deadline_days'] ?? 0) - $workflowStep->deadline_days;
+
+        if ($diff !== 0) {
+            Workflow::where('id', $workflowStep->workflow_id)
+                ->increment('total_estimated_days', $diff);
         }
 
-        $workflowStep->update([
-            'title' => $data['title'],
-            'deadline_days' => $data['deadline_days'] ?? null,
-        ]);
-
+        $workflowStep->update($data);
         return $workflowStep;
     }
 
-    public function order($data): WorkflowStep
+    public function order(int $id): void
     {
-        $workflowSteps = WorkflowStep::where('workflow_id', $data->workflow_id)->get();
-
-        if ($data->order > 1) {
-            $data->order -= 1;
-            $data->save();
+        $workflowStep = WorkflowStep::find($id);
+        if ($workflowStep->step_order > 1) {
+            $workflowStep->step_order -= 1;
+            $workflowStep->save();
         }
 
+        $workflowSteps = WorkflowStep::where('workflow_id', $workflowStep->workflow_id)->get();
+
         foreach ($workflowSteps as $item) {
-            if ($item->id != $data->id && $item->order >= $data->order && $item->order < $data->order + 1) {
-                $item->order += 1;
+            if ($item->id != $workflowStep->id && $item->step_order >= $workflowStep->step_order && $item->step_order < $workflowStep->step_order + 1) {
+                $item->step_order += 1;
                 $item->save();
             }
         }
-
-        return $data;
-    }
-
-    public function status(int $id): WorkflowStep
-    {
-        $workflowStep = WorkflowStep::findOrFail($id);
-        return $workflowStep->toggleStatus();
     }
 
     public function delete(WorkflowStep $workflowStep): void
     {
+        Workflow::whereKey($workflowStep->workflow_id)->decrement('total_estimated_days', $workflowStep->deadline_days);
+
         $workflowStep->delete();
     }
 }

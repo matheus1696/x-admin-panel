@@ -15,16 +15,19 @@ class WorkflowStep extends Model
     protected $fillable = [
         'workflow_id',
         'title',
-        'filter',
-        'order',
+        'code',
+        'step_order',
         'deadline_days',
         'required',
+        'allow_parallel',
+        'step_type',
     ];
 
     protected $casts = [
         'required' => 'boolean',
+        'allow_parallel' => 'boolean',
         'deadline_days' => 'integer',
-        'order' => 'integer',
+        'step_order' => 'integer',
     ];
 
     /**

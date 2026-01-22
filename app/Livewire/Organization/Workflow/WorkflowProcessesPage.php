@@ -18,7 +18,7 @@ class WorkflowProcessesPage extends Component
     protected WorkflowService $workflowService;
 
     public array $filters = [
-        'workflow' => '',
+        'title' => '',
         'status' => 'all',
         'perPage' => 10,
     ];
@@ -55,7 +55,7 @@ class WorkflowProcessesPage extends Component
 
         $this->workflowService->create($data);
 
-        $this->flashSuccess('Tipo de tarefa criado com sucesso.');
+        $this->flashSuccess('Processo criado com sucesso.');
         $this->closeModal();
     }
 
@@ -88,7 +88,7 @@ class WorkflowProcessesPage extends Component
         $this->flashSuccess('Tipo de tarefa foi atualizada com sucesso.');
     }
 
-    public function workflowStage(int $id)
+    public function workflowStep(int $id)
     {
         $this->workflowId = $id;
         $this->openModal('modal-form-workflow-steps');

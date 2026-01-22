@@ -16,8 +16,8 @@ class WorkflowService
     {
         $query = Workflow::query();
 
-        if ($filters['workflow']) {
-            $query->where('filter', 'like', '%' . strtolower($filters['workflow']) . '%');
+        if ($filters['title']) {
+            $query->where('filter', 'like', '%' . strtolower($filters['title']) . '%');
         }
 
         if ($filters['status'] !== 'all') {
@@ -29,21 +29,13 @@ class WorkflowService
 
     public function create(array $data): Workflow
     {
-        return Workflow::create([
-            'title' => $data['title'],
-            'description' => $data['description'] ?? null,
-        ]);
+        return Workflow::create($data);
     }
 
     public function update(int $id, array $data): Workflow
     {
         $workflow = Workflow::findOrFail($id);
-
-        $workflow->update([
-            'title' => $data['title'],
-            'description' => $data['description'] ?? null,
-        ]);
-
+        $workflow->update($data);
         return $workflow;
     }
 

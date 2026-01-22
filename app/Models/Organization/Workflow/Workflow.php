@@ -16,10 +16,16 @@ class Workflow extends Model
         'title',
         'filter',
         'description',
+        'total_estimated_days',
         'status',
     ];
 
-    public function workflowStage(){
+    protected $casts = [
+        'status' => 'boolean',
+        'total_estimated_days' => 'integer',
+    ];
+
+    public function workflowSteps(){
         return $this->hasMany(WorkflowStep::class)->orderBy('order');
     }
 }

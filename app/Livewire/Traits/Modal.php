@@ -17,6 +17,7 @@ trait Modal
     {
         $this->modalKey = $key;
         $this->showModal = true;
+        $this->resetValidation();
     }
 
     /**
@@ -26,5 +27,6 @@ trait Modal
     {
         $this->modalKey = null;
         $this->showModal = false;
+        $this->resetValidation();
     }
 }
