@@ -15,7 +15,7 @@ class WorkflowStep extends Model
     protected $fillable = [
         'workflow_id',
         'title',
-        'code',
+        'filter',
         'step_order',
         'deadline_days',
         'required',
@@ -36,5 +36,10 @@ class WorkflowStep extends Model
     public function workflow()
     {
         return $this->belongsTo(Workflow::class);
+    }
+
+        public function workflowRunSteps()
+    {
+        return $this->hasMany(WorkflowRunStep::class);
     }
 }

@@ -21,7 +21,8 @@
 
             @can('organization.workflow.manage')
                 <x-sidebar.dropdown title="Gestão de Fluxo de Trabalho" icon="fa-solid fa-diagram-project" :active="request()->routeIs('organization.workflow.*')" >
-                    <x-sidebar.dropdown-link href="{{ route('organization.workflow.index') }}" title="Processos"  :active="request()->routeIs('organization.workflow.index')" />
+                    <x-sidebar.dropdown-link href="{{ route('organization.workflow.config.index') }}" title="Cadastro de Processos"  :active="request()->routeIs('organization.workflow.config.index')" />
+                    <x-sidebar.dropdown-link href="{{ route('organization.workflow.config.status') }}" title="Status do Processos"  :active="request()->routeIs('organization.workflow.config.status')" />
                 </x-sidebar.dropdown>
             @endcan
         </x-sidebar.main-dropdown>

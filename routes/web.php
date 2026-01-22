@@ -15,6 +15,7 @@ use App\Livewire\Configuration\Region\RegionStatePage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartConfigPage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartDashboardPage;
 use App\Livewire\Organization\Workflow\WorkflowProcessesPage;
+use App\Livewire\Organization\Workflow\WorkflowRunStatus;
 use App\Livewire\Public\Contact\ContactPage;
 use Illuminate\Support\Facades\Route;
 
@@ -78,7 +79,8 @@ Route::middleware('auth')->group(function () {
         Route::get('configuracao', OrganizationChartConfigPage::class)->middleware('can:organization.chart.config.manage')->name('chart.config.index');
 
         /* Fluxo de Trabalho */
-        Route::get('fluxo/trabalho', WorkflowProcessesPage::class)->middleware('can:organization.workflow.manage')->name('workflow.index');
+        Route::get('fluxo/trabalho', WorkflowProcessesPage::class)->middleware('can:organization.workflow.manage')->name('workflow.config.index');
+        Route::get('fluxo/trabalho/status', WorkflowRunStatus::class)->middleware('can:organization.workflow.manage')->name('workflow.config.status');
     });
 
     /* Auditoria do Sistema */
