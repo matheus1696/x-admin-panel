@@ -1,11 +1,11 @@
 <?php
 
-namespace Database\Seeders\Organization;
+namespace Database\Seeders\Organization\OrganizationChart;
 
 use App\Models\Organization\OrganizationChart\OrganizationChart;
 use Illuminate\Database\Seeder;
 
-class OrganizationChartSeed extends Seeder
+class OrganizationChartSeeder extends Seeder
 {
     public function run(): void
     {

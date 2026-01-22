@@ -8,7 +8,6 @@ class WorkflowRunStatus extends Model
 {
     protected $fillable = [
         'title',
-        'code',
         'color',
     ];
 

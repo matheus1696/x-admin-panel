@@ -3,7 +3,17 @@
 namespace Database\Seeders;
 
 use App\Models\Administration\User\User;
-use Database\Seeders\Organization\OrganizationChartSeed;
+use Database\Seeders\Configuration\Establishment\Establishment\DepartmentSeeder;
+use Database\Seeders\Configuration\Establishment\Establishment\EstablishmentSeeder;
+use Database\Seeders\Configuration\Establishment\EstablishmentType\EstablishmentTypesSeeder;
+use Database\Seeders\Configuration\FinancialBlock\FinancialBlockSeeder;
+use Database\Seeders\Configuration\Occupation\OccupationSeeder;
+use Database\Seeders\Configuration\Region\RegionCitySeeder;
+use Database\Seeders\Configuration\Region\RegionCountrySeeder;
+use Database\Seeders\Configuration\Region\RegionStateSeeder;
+use Database\Seeders\Organization\OrganizationChart\OrganizationChartSeeder;
+use Database\Seeders\Organization\Workflow\WorkflowRunStatusSeeder;
+use Database\Seeders\Organization\Workflow\WorkflowRunStepStatusSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -28,7 +38,9 @@ class DatabaseSeeder extends Seeder
             EstablishmentTypesSeeder::class,
             EstablishmentSeeder::class,
             DepartmentSeeder::class,
-            OrganizationChartSeed::class,
+            OrganizationChartSeeder::class,
+            WorkflowRunStatusSeeder::class,
+            WorkflowRunStepStatusSeeder::class,
         ]);
 
         User::factory()->create([

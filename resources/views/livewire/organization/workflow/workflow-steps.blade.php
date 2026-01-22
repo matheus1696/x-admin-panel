@@ -9,7 +9,7 @@
 
             <div class="col-span-12 md:col-span-6">
                 <x-form.label value="Nome da Etapa" />
-                <x-form.input wire:model.defer="title" placeholder="Digite a etapa do processo"/>
+                <x-form.input wire:model.defer="title" placeholder="Digite a etapa do processo" autofocus/>
             </div>
 
             <div class="col-span-4 md:col-span-2">

@@ -15,6 +15,7 @@ use App\Livewire\Configuration\Region\RegionStatePage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartConfigPage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartDashboardPage;
 use App\Livewire\Organization\Workflow\WorkflowProcessesPage;
+use App\Livewire\Organization\Workflow\WorkflowRunPage;
 use App\Livewire\Organization\Workflow\WorkflowRunStatus;
 use App\Livewire\Organization\Workflow\WorkflowRunStatusPage;
 use App\Livewire\Public\Contact\ContactPage;
@@ -32,6 +33,8 @@ Route::get('/contatos', ContactPage::class)->name('contacts.index');
 Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('atividades', WorkflowRunPage::class)->name('workflow.run.index');
 
     Route::prefix('perfil')->name('profile.')->group(function () {
         Route::get('/editar', [ProfileController::class, 'edit'])->name('edit');

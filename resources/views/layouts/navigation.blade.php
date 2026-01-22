@@ -12,6 +12,11 @@
         <x-sidebar.main-link href="{{ route('organization.chart.dashboard.index') }}" title="Organograma" icon="fa-solid fa-diagram-project" :active="request()->routeIs('organization.chart.dashboard.index')" />
     @endauth
 
+    <!-- Atividades (Tarefas) -->
+    @auth
+        <x-sidebar.main-link href="{{ route('workflow.run.index') }}" icon="fa-solid fa-chart-line" title="Atividades" :active="request()->routeIs('workflow.run.index')" />
+    @endauth
+
     <!-- Organização -->
     @canany(['organization.chart.config.manage','organization.workflow.manage',])
         <x-sidebar.main-dropdown title="Organização" icon="fa-solid fa-sitemap" :active="request()->routeIs('organization.chart.config.*') || request()->routeIs('organization.workflow.*')" >
@@ -21,8 +26,8 @@
 
             @can('organization.workflow.manage')
                 <x-sidebar.dropdown title="Gestão de Fluxo de Trabalho" icon="fa-solid fa-diagram-project" :active="request()->routeIs('organization.workflow.*')" >
-                    <x-sidebar.dropdown-link href="{{ route('organization.workflow.config.index') }}" title="Cadastro de Processos"  :active="request()->routeIs('organization.workflow.config.index')" />
-                    <x-sidebar.dropdown-link href="{{ route('organization.workflow.config.status') }}" title="Status do Processos"  :active="request()->routeIs('organization.workflow.config.status')" />
+                    <x-sidebar.dropdown-link href="{{ route('organization.workflow.config.index') }}" title="Fluxo dos Processos"  :active="request()->routeIs('organization.workflow.config.index')" />
+                    <x-sidebar.dropdown-link href="{{ route('organization.workflow.config.status') }}" title="Status dos Processos"  :active="request()->routeIs('organization.workflow.config.status')" />
                 </x-sidebar.dropdown>
             @endcan
         </x-sidebar.main-dropdown>

@@ -24,7 +24,7 @@ class WorkflowSteps extends Component
     public $title;
     public $deadline_days;
     public bool $required = true;
-    public bool $allow_parallel = true;
+    public bool $allow_parallel = false;
 
     public function boot(WorkflowStepService $workflowStepService)
     {

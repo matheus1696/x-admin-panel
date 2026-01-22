@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Configuration\FinancialBlock;
 
 use App\Models\Configuration\FinancialBlock\FinancialBlock;
 use Illuminate\Database\Seeder;

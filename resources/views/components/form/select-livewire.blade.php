@@ -74,19 +74,13 @@
         x-show="open"
         x-transition
         @click.outside="open = false"
-        class="w-full absolute mt-1.5 bg-white border border-gray-300 rounded-lg shadow-lg z-20 max-h-60 overflow-auto"
+        class="w-full absolute mt-1.5 bg-white border border-gray-300 rounded-lg shadow-lg z-50 max-h-60 overflow-auto"
     >
         <!-- Campo de busca -->
         <div class="sticky top-0 bg-white border-b p-2">
             <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-[13px]"></i>
-                <input
-                    type="text"
-                    x-model="search"
-                    placeholder="Buscar..."
-                    class="w-full pl-8 pr-3 py-2 text-[13px] text-gray-700 border border-gray-200 rounded-md bg-gray-50 
-                           focus:outline-none focus:border-green-700"
-                    @click.stop
+                <input type="text" x-model="search" placeholder="Buscar..." class="w-full pl-8 pr-3 py-2 text-[13px] text-gray-700 border border-gray-200 rounded-md" @click.stop
                 >
             </div>
         </div>
@@ -96,7 +90,7 @@
             <div
                 @click="selectOption(option)"
                 class="px-3 py-2 text-[13px] text-gray-700 cursor-pointer hover:bg-green-600 hover:text-white transition"
-                :class="{'bg-green-600 text-white': selectedValue == option.value}"
+                :class="{'bg-green-700 text-white': selectedValue == option.value}"
             >
                 <span x-text="option.label"></span>
             </div>

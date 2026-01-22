@@ -12,7 +12,7 @@
         x-transition:leave="ease-in duration-300"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        class="fixed -top-10 inset-0 z-50 flex items-center justify-center bg-black/75 p-5"
+        class="fixed -top-10 inset-0 z-40 flex items-center justify-center bg-black/75 p-5"
     >
         <div
             role="dialog"
@@ -38,7 +38,7 @@
             @endisset
 
             {{-- Body --}}
-            <div class="px-6 pt-3 pb-6 max-h-[400px] md:max-h-[700px] overflow-y-scroll">
+            <div class="px-6 pt-3 pb-6 max-h-[calc(100vh-150px)] overflow-y-auto">
                 {{ $slot }}
             </div>
 

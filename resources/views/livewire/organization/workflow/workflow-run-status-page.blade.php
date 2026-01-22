@@ -6,47 +6,37 @@
     <!-- Header -->
     <x-page.header title="Gestão de Status" subtitle="Gerencie os status de execução dos fluxos e etapas" icon="fa-solid fa-diagram-project" />
        
-    <div class="mb-10">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-sm font-semibold uppercase text-gray-600">
-                Status do Processo
-            </h2>
-
-            <x-button
-                text="Novo Status do Processo"
-                wire:click="createRunStatus"
-            />
+    <div>
+        <div class="flex items-center justify-between pl-3 mb-4">
+            <h2 class="flex-1 text-sm font-semibold uppercase text-gray-600">Status do Processo</h2>
+            <div>
+                <x-button text="Novo Status do Processo" wire:click="createRunStatus" />
+            </div>
         </div>
 
         <x-page.table>
             <x-slot name="thead">
                 <tr>
+                    <x-page.table-th class="text-center w-24" value="Apresentação" />
                     <x-page.table-th value="Título" />
-                    <x-page.table-th value="Código" />
-                    <x-page.table-th class="text-center w-24" value="Cor" />
                     <x-page.table-th class="text-center w-28" value="Ações" />
                 </tr>
             </x-slot>
 
             <x-slot name="tbody">
-                @foreach ($workflowRunStatuses as $status)
+                @foreach ($workflowRunStatuses as $workflowRunStatus)
                     <tr>
-                        <x-page.table-td :value="$status->name" />
-                        <x-page.table-td class="text-xs text-gray-500" :value="$status->code" />
-
                         <x-page.table-td class="text-center">
-                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium
-                                bg-{{ $status->color }}-100 text-{{ $status->color }}-700">
-                                {{ ucfirst($status->color) }}
+                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium  {{ $workflowRunStatus->color }}">
+                               {{ $workflowRunStatus->title }}
                             </span>
                         </x-page.table-td>
 
+                        <x-page.table-td :value="$workflowRunStatus->title" />
+
                         <x-page.table-td class="text-center">
                             <div class="flex justify-center gap-2">
-                                <x-button.btn-table
-                                    wire:click="editRunStatus({{ $status->id }})"
-                                    title="Editar Status"
-                                >
+                                <x-button.btn-table wire:click="editRunStatus({{ $workflowRunStatus->id }})" title="Editar Status" >
                                     <i class="fa-solid fa-pen"></i>
                                 </x-button.btn-table>
                             </div>
@@ -57,48 +47,38 @@
         </x-page.table>
     </div>
 
+    <div class="my-10 h-0.5 bg-gray-300/30 rounded-full"></div>
 
     <div>
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-sm font-semibold uppercase text-gray-600">
-                Status das Etapas
-            </h2>
-
-            <x-button
-                text="Novo Status da Etapa"
-                wire:click="createRunStepStatus"
-            />
+        <div class="flex items-center justify-between pl-4 mb-4">
+            <h2 class="text-sm font-semibold uppercase text-gray-600">Status das Etapas</h2>
+            <div>
+                <x-button text="Novo Status da Etapa" wire:click="createRunStepStatus" />
+            </div>
         </div>
 
         <x-page.table>
             <x-slot name="thead">
                 <tr>
+                    <x-page.table-th class="text-center w-24" value="Apresentação" />
                     <x-page.table-th value="Título" />
-                    <x-page.table-th value="Código" />
-                    <x-page.table-th class="text-center w-24" value="Cor" />
                     <x-page.table-th class="text-center w-28" value="Ações" />
                 </tr>
             </x-slot>
 
             <x-slot name="tbody">
-                @foreach ($workflowRunStepStatuses as $status)
+                @foreach ($workflowRunStepStatuses as $workflowRunStepStatus)
                     <tr>
-                        <x-page.table-td :value="$status->name" />
-                        <x-page.table-td class="text-xs text-gray-500" :value="$status->code" />
-
                         <x-page.table-td class="text-center">
-                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium
-                                bg-{{ $status->color }}-100 text-{{ $status->color }}-700">
-                                {{ ucfirst($status->color) }}
+                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $workflowRunStepStatus->color }}">
+                                {{ $workflowRunStepStatus->title }}
                             </span>
                         </x-page.table-td>
+                        <x-page.table-td :value="$workflowRunStepStatus->title" />
 
                         <x-page.table-td class="text-center">
                             <div class="flex justify-center gap-2">
-                                <x-button.btn-table
-                                    wire:click="editRunStepStatus({{ $status->id }})"
-                                    title="Editar Status"
-                                >
+                                <x-button.btn-table wire:click="editRunStepStatus({{ $workflowRunStepStatus->id }})" title="Editar Status" >
                                     <i class="fa-solid fa-pen"></i>
                                 </x-button.btn-table>
                             </div>

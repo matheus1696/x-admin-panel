@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('workflow_run_step_statuses', function (Blueprint $table) {
             $table->id();
             $table->string('title');       // Em andamento, Concluído...
-            $table->string('code')->unique(); // running, completed
             $table->string('color')->nullable();
             $table->timestamps();
         });

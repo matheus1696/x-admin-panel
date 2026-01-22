@@ -16,8 +16,10 @@ return new class extends Migration
             $table->uuid('uuid')->unique();
 
             $table->foreignId('workflow_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('current_workflow_step_id')->nullable()->constrained('workflow_steps');
 
-            $table->string('title')->nullable(); // Ex: Processo Licitatório 2026
+            $table->string('title');
+            $table->longText('description')->nullable();
             $table->foreignId('workflow_run_status_id')->constrained('workflow_run_statuses');
 
             $table->timestamp('started_at')->nullable();

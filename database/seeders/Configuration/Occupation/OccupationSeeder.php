@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Configuration\Occupation;
 
 use App\Models\Configuration\Occupation\Occupation;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;

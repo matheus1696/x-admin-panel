@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Configuration\Establishment\Establishment;
 
 use App\Models\Configuration\Establishment\Establishment\Department;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;

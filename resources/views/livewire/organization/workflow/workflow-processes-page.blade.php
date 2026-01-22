@@ -54,7 +54,7 @@
             <tr>
                 <x-page.table-th class="w-40" value="Título" />
                 <x-page.table-th class="hidden lg:table-cell" value="Descrição" />
-                <x-page.table-th class="text-center w-16" value="Dias" />
+                <x-page.table-th class="text-center w-16" value="Estimativa" />
                 <x-page.table-th class="text-center w-28" value="Status" />
                 <x-page.table-th class="text-center w-28" value="Ações" />
             </tr>
@@ -65,7 +65,7 @@
                 <tr>
                     <x-page.table-td class="truncate" :value="$workflow->title" />
                     <x-page.table-td class="hidden lg:table-cell truncate" :value="$workflow->description ?? '-'" />
-                    <x-page.table-td class="text-center" :value="$workflow->days ?? '-'" />
+                    <x-page.table-td class="text-center" :value="$workflow->total_estimated_days. ' Dias' ?? '-'" />
 
                     <x-page.table-td class="text-center">
                         <div class="text-xs font-medium rounded-full py-0.5 px-1 {{ $workflow->status ? 'bg-green-300 text-green-700' : 'bg-red-300 text-red-700' }}">

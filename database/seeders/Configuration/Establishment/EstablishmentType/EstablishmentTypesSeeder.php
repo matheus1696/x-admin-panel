@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Configuration\Establishment\EstablishmentType;
 
 use App\Models\Configuration\Establishment\EstablishmentType\EstablishmentType;
 use Illuminate\Database\Seeder;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Configuration\Region;
 
 use App\Models\Configuration\Region\RegionCity;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;

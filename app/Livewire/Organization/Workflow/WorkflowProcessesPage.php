@@ -6,7 +6,6 @@ use App\Http\Requests\Organization\Workflow\WorkflowStoreRequest;
 use App\Http\Requests\Organization\Workflow\WorkflowUpdateRequest;
 use App\Livewire\Traits\Modal;
 use App\Livewire\Traits\WithFlashMessage;
-use App\Models\Organization\Workflow\Workflow;
 use App\Services\Organization\Workflow\WorkflowService;
 use Livewire\Component;
 use Livewire\WithPagination;

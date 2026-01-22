@@ -1,18 +1,9 @@
-<div class="grid grid-cols-3 gap-4">
+<div class="grid grid-cols-1 gap-4">
 
-    <div class="col-span-1">
+    <div>
         <x-form.label value="Título" />
         <x-form.input wire:model.defer="title" placeholder="Em andamento" required />
         <x-form.error :messages="$errors->get('title')" />
-    </div>
-
-    <div class="col-span-1">
-        <x-form.label value="Código" />
-        <x-form.input wire:model.defer="code" placeholder="running" required />
-        <x-form.error :messages="$errors->get('code')" />
-        <p class="text-xs text-gray-500 mt-1">
-            Código interno (único, sem espaços)
-        </p>
     </div>
 
     <div>
@@ -21,11 +12,26 @@
             wire:model.defer="color"
             name="color"
             :collection="collect([
-                ['value' => 'gray',   'label' => 'Cinza (Rascunho)'],
-                ['value' => 'blue',   'label' => 'Azul (Em andamento)'],
-                ['value' => 'green',  'label' => 'Verde (Concluído)'],
-                ['value' => 'yellow', 'label' => 'Amarelo (Atenção)'],
-                ['value' => 'red',    'label' => 'Vermelho (Bloqueado)'],
+                [
+                    'value' => 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+                    'label' => 'Cinza (Rascunho)',
+                ],
+                [
+                    'value' => 'bg-blue-100 text-blue-700 hover:bg-blue-200',
+                    'label' => 'Azul (Em andamento)',
+                ],
+                [
+                    'value' => 'bg-green-100 text-green-700 hover:bg-green-200',
+                    'label' => 'Verde (Concluído)',
+                ],
+                [
+                    'value' => 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200',
+                    'label' => 'Amarelo (Atenção)',
+                ],
+                [
+                    'value' => 'bg-red-100 text-red-700 hover:bg-red-200',
+                    'label' => 'Vermelho (Bloqueado)',
+                ],
             ])"
             value-field="value"
             label-field="label"

@@ -12,6 +12,7 @@ class WorkflowRun extends Model
     protected $fillable = [
         'workflow_id',
         'workflow_run_status_id',
+        'current_workflow_step_id',
         'started_at',
         'finished_at',
         'title',
@@ -25,6 +26,11 @@ class WorkflowRun extends Model
     public function workflow()
     {
         return $this->belongsTo(Workflow::class);
+    }
+
+    public function currentWorkflowStep()
+    {
+        return $this->belongsTo(WorkflowStep::class, 'current_workflow_step_id');
     }
 
     public function workflowRunSteps()
