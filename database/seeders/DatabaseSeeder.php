@@ -49,6 +49,12 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
         ])->assignRole('super-admin');
 
+        User::factory()->create([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => Hash::make('password'),
+        ]);
+
         if (env('APP_DEBUG')) {
             User::factory(25)->create();
         }
