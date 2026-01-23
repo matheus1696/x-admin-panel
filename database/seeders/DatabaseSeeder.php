@@ -12,6 +12,8 @@ use Database\Seeders\Configuration\Region\RegionCitySeeder;
 use Database\Seeders\Configuration\Region\RegionCountrySeeder;
 use Database\Seeders\Configuration\Region\RegionStateSeeder;
 use Database\Seeders\Organization\OrganizationChart\OrganizationChartSeeder;
+use Database\Seeders\Organization\Workflow\WorkflowProcessSeeder;
+use Database\Seeders\Organization\Workflow\WorkflowStepSeeder;
 use Database\Seeders\Organization\Workflow\WorkflowRunStatusSeeder;
 use Database\Seeders\Organization\Workflow\WorkflowRunStepStatusSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -39,6 +41,8 @@ class DatabaseSeeder extends Seeder
             EstablishmentSeeder::class,
             DepartmentSeeder::class,
             OrganizationChartSeeder::class,
+            WorkflowProcessSeeder::class,
+            WorkflowStepSeeder::class,
             WorkflowRunStatusSeeder::class,
             WorkflowRunStepStatusSeeder::class,
         ]);

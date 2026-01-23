@@ -2,20 +2,33 @@
     'icon' => 'fa-solid fa-icons',
     'color' => 'green',
     'title' => 'Título da Página',
-    'subtitle' => 'Subtitulo da Página',
+    'subtitle' => 'Subtítulo da Página',
     'button' => null,
 ])
 
-<div class="flex items-center justify-between gap-0.5 px-3 mb-6 mt-6 md:mt-0">
-    <div>
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            <i class="{{ $icon }} mr-1 text-{{ $color }}-600"></i>     
-            <span class="text-gl text-gray-600">{{ $title }}</span>
-        </h2>
-        <p class="text-sm text-gray-600 mt-1">{{ $subtitle }}</p>
+<!-- 🧭 Page Header -->
+<div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8">
+    <!-- Título -->
+    <div class="flex items-start gap-4">
+        <div class="flex items-center justify-center size-11 rounded-2xl
+                    bg-{{ $color }}-100 text-{{ $color }}-600 shadow-sm">
+            <i class="{{ $icon }} text-lg"></i>
+        </div>
+
+        <div>
+            <h2 class="text-xl font-semibold text-gray-900 leading-tight">
+                {{ $title }}
+            </h2>
+            <p class="text-sm text-gray-500 mt-1">
+                {{ $subtitle }}
+            </p>
+        </div>
     </div>
-    
-    <div class="flex items-center justify-center">
-        {{ $button }}
-    </div>
+
+    <!-- Ação -->
+    @if($button)
+        <div class="flex items-center justify-end">
+            {{ $button }}
+        </div>
+    @endif
 </div>

@@ -48,49 +48,62 @@
         </x-slot>
     </x-page.filter>
 
-    <!-- Tabela de Tarefas -->
-    <x-page.table :pagination="$workflowRuns">
-        <x-slot name="thead">
-            <tr>
-                <x-page.table-th value="Título" />
-                <x-page.table-th class="text-center w-40" value="Etapa Atual" />
-                <x-page.table-th class="text-center w-28" value="Status" />
-                <x-page.table-th class="text-center w-28" value="Ações" />
-            </tr>
-        </x-slot>
-
-        
-
-        <x-slot name="tbody">
-            @forelse ($workflowRuns as $workflowRun)
-                <tr class="hover:bg-gray-50">
-                    <x-page.table-td class="truncate" :value="$workflowRun->title" />
-                    <x-page.table-td class="text-center" :value="$workflowRun->currentWorkflowStep->title" ></x-page.table-td>
-
-                    <x-page.table-td class="text-center">
-                        <div class="text-xs font-medium rounded-full py-0.5 px-2 
-                            {!! $workflowRun->workflowRunStatus?->color ?? 'bg-gray-300 text-gray-700' !!}">
-                            {{ $workflowRun->workflowRunStatus?->title ?? 'Desconhecido' }}
+    <!-- Tarefas -->
+    <div class="space-y-4">
+        @forelse ($workflowRuns as $workflowRun)
+            <div 
+                x-data="{ open: false }"
+                class="bg-white border rounded-xl shadow-sm hover:shadow transition"
+            >
+                <!-- HEADER DO PROCESSO -->
+                <div class="flex items-center justify-between gap-3 p-4 cursor-pointer" @click="open = !open" >
+                    
+                    <!-- ÍCONE COLLAPSE -->
+                    <i class="fa-solid fa-chevron-right text-gray-400 transition" :class="{ 'rotate-90': open }"></i>
+                    
+                    <div class="flex-1 flex flex-col gap-1">
+                        
+                        <div class="flex items-center gap-3">
+                            <h3 class="font-semibold text-gray-800 text-sm">
+                                {{ $workflowRun->title }}
+                            </h3>
+                            
+                            <!-- STATUS -->
+                            <span class="text-xs font-medium px-3 py-1 rounded-full
+                                {!! $workflowRun->workflowRunStatus?->color ?? 'bg-gray-200 text-gray-700' !!}">
+                                {{ $workflowRun->workflowRunStatus?->title ?? 'Desconhecido' }}
+                            </span>
                         </div>
-                    </x-page.table-td>
+                        
 
-                    <x-page.table-td class="text-center">
-                        <div class="flex items-center justify-center gap-2">
-                            <x-button.btn-table wire:click="info({{ $workflowRun->id }})" title="Visualizar Detalhes">
-                                <i class="fa-solid fa-eye"></i>
-                            </x-button.btn-table>
+                        <div class="hidden md:flex items-center gap-2 text-xs text-gray-500">
+                            <span>Etapa atual:</span>
+                            <span class="font-medium text-gray-700 truncate">
+                                {{ $workflowRun->currentWorkflowStep?->title ?? 'Não iniciada' }}
+                            </span>
                         </div>
-                    </x-page.table-td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="5" class="px-4 py-4 text-center text-gray-500">
-                        Nenhuma tarefa encontrada.
-                    </td>
-                </tr>
-            @endforelse
-        </x-slot>
-    </x-page.table>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+
+                        <!-- AÇÕES -->
+                        <x-button wire:click.stop="info({{ $workflowRun->id }})" title="Detalhes" icon="fa-solid fa-eye" variant="gray_outline" />
+                    </div>
+                </div>
+
+                <!-- CONTEÚDO EXPANDIDO -->
+                <div x-show="open" x-collapse class="border-t bg-gray-50">
+                    @include('livewire.organization.workflow._partials.workflow-run-steps', [
+                        'workflowRun' => $workflowRun
+                    ])
+                </div>
+            </div>
+        @empty
+            <div class="text-center text-gray-500 py-8">
+                Nenhuma tarefa encontrada.
+            </div>
+        @endforelse
+    </div>
 
     <!-- Modal de Criação -->
     <x-modal :show="$showModal" wire:key="workflow-modal">

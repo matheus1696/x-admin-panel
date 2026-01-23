@@ -45,16 +45,22 @@ class ContactPage extends Component
 
     public function render()
     {
-        $query = Establishment::with('departments');
+        $query = Department::with('establishment');
 
         if ($this->searchEstablishment) {
-            $query->where('filter', 'like', '%' . strtolower($this->searchEstablishment) . '%');
-        }       
-        
-        $establishments = $query->where('status', true)->orderBy('title')->get();
+            $query->where(function ($q) {
+                $q->whereHas('establishment', function ($q) {
+                    $q->where('filter', 'like', '%' . strtolower($this->searchEstablishment) . '%');
+                })
+                ->orWhere('contact', 'like', '%' . $this->searchEstablishment . '%')
+                ->orWhere('filter', 'like', '%' . strtolower($this->searchEstablishment) . '%');
+            });
+        }
+
+        $viewDepartments = $query->get();
 
         return view('livewire.public.contact.contact-page', [
-            'establishments' => $establishments,
+            'viewDepartments' => $viewDepartments,
         ])->layout('layouts.app');
     }
 }
