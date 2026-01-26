@@ -28,7 +28,7 @@ return new class extends Migration
             $table->unsignedBigInteger('type_establishment_id');
             $table->unsignedBigInteger('financial_block_id');
             $table->text('description')->nullable();
-            $table->boolean('status')->default(true);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
 
             $table->foreign('city_id')->references('id')->on('region_cities');

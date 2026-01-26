@@ -55,7 +55,7 @@ class EstablishmentSeeder extends Seeder
 
         Establishment::create([ 'code'=>9037306, 'title'=>'Centro de Zoonoses de Caruaru', 'filter'=>'centro de zoonoses de caruaru', 'address'=>'Rua Sao Sebastiao', 'number'=>'S/N', 'district'=>'Alto do Moura', 'city_id'=>'2604106', 'state_id'=>'26', 'latitude'=>'-82850216139', 'longitude'=>'-360003277659', 'type_establishment_id'=>50, 'financial_block_id'=>4,]);
 
-        Establishment::create([ 'code'=>7717342, 'title'=>'Centro Municipal de Especialidades Medicas II', 'filter'=>'centro municipal de especialidades medicas ii', 'address'=>'Av Dom Bosco', 'number'=>'143', 'district'=>'Mauricio de Nassau', 'city_id'=>'2604106', 'state_id'=>'26', 'latitude'=>'', 'longitude'=>'', 'type_establishment_id'=>36, 'financial_block_id'=>2, 'status'=>false]);
+        Establishment::create([ 'code'=>7717342, 'title'=>'Centro Municipal de Especialidades Medicas II', 'filter'=>'centro municipal de especialidades medicas ii', 'address'=>'Av Dom Bosco', 'number'=>'143', 'district'=>'Mauricio de Nassau', 'city_id'=>'2604106', 'state_id'=>'26', 'latitude'=>'', 'longitude'=>'', 'type_establishment_id'=>36, 'financial_block_id'=>2, 'is_active'=>false]);
 
         Establishment::create([ 'code'=>3083748, 'title'=>'CEO - Centro de Especialidades Odontológicas Municipal', 'filter'=>'ceo - centro de especializades odontológicas municipal', 'address'=>'Rua Martim Afonso', 'number'=>'267', 'district'=>'Sao Francisco', 'city_id'=>'2604106', 'state_id'=>'26', 'latitude'=>'-82916756775', 'longitude'=>'-359800100327', 'type_establishment_id'=>36, 'financial_block_id'=>3,]);
 
@@ -183,7 +183,7 @@ class EstablishmentSeeder extends Seeder
 
         Establishment::create([ 'code'=>2864940, 'title'=>'UBS Xique Xique I e II Dr Xisto Zeno Valones', 'filter'=>'ubs xique xique i e ii dr xisto zeno valones', 'address'=>'Av 16 de Setembro', 'number'=>'S/N', 'district'=>'Xique Xique', 'city_id'=>'2604106', 'state_id'=>'26', 'latitude'=>'-8265366653', 'longitude'=>'-360012960434', 'type_establishment_id'=>2, 'financial_block_id'=>3,]);
 
-        Establishment::create([ 'code'=>2682281, 'title'=>'Unidade de Fisioterapia da 3 Idade', 'filter'=>'unidade de fisioterapia da 3 idade', 'address'=>'Av Lourival Jose Da Silva', 'number'=>'483', 'district'=>'Petropolis', 'city_id'=>'2604106', 'state_id'=>'26', 'latitude'=>'-82891553', 'longitude'=>'-35973624', 'type_establishment_id'=>36, 'financial_block_id'=>2, 'status'=>false]);
+        Establishment::create([ 'code'=>2682281, 'title'=>'Unidade de Fisioterapia da 3 Idade', 'filter'=>'unidade de fisioterapia da 3 idade', 'address'=>'Av Lourival Jose Da Silva', 'number'=>'483', 'district'=>'Petropolis', 'city_id'=>'2604106', 'state_id'=>'26', 'latitude'=>'-82891553', 'longitude'=>'-35973624', 'type_establishment_id'=>36, 'financial_block_id'=>2, 'is_active'=>false]);
 
         Establishment::create([ 'code'=>2346028, 'title'=>'Unidade de Vigilancia em Saúde', 'filter'=>'unidade de vigilancia em saúde', 'address'=>'Av Vera Cruz', 'number'=>'654', 'district'=>'Sao Francisco', 'city_id'=>'2604106', 'state_id'=>'26', 'latitude'=>'-82883632578', 'longitude'=>'-359797739983', 'type_establishment_id'=>50, 'financial_block_id'=>4,]);
 

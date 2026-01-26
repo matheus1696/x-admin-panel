@@ -3,6 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Administration\User\User;
+use Database\Seeders\Administration\Task\TaskCategorySeeder;
+use Database\Seeders\Administration\Task\TaskPrioritySeeder;
+use Database\Seeders\Administration\Task\TaskStatusSeeder;
+use Database\Seeders\Administration\Task\TaskStepStatusSeeder;
 use Database\Seeders\Configuration\Establishment\Establishment\DepartmentSeeder;
 use Database\Seeders\Configuration\Establishment\Establishment\EstablishmentSeeder;
 use Database\Seeders\Configuration\Establishment\EstablishmentType\EstablishmentTypesSeeder;
@@ -14,8 +18,6 @@ use Database\Seeders\Configuration\Region\RegionStateSeeder;
 use Database\Seeders\Organization\OrganizationChart\OrganizationChartSeeder;
 use Database\Seeders\Organization\Workflow\WorkflowProcessSeeder;
 use Database\Seeders\Organization\Workflow\WorkflowStepSeeder;
-use Database\Seeders\Organization\Workflow\WorkflowRunStatusSeeder;
-use Database\Seeders\Organization\Workflow\WorkflowRunStepStatusSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -43,8 +45,10 @@ class DatabaseSeeder extends Seeder
             OrganizationChartSeeder::class,
             WorkflowProcessSeeder::class,
             WorkflowStepSeeder::class,
-            WorkflowRunStatusSeeder::class,
-            WorkflowRunStepStatusSeeder::class,
+            TaskStatusSeeder::class,
+            TaskStepStatusSeeder::class,
+            TaskCategorySeeder::class,
+            TaskPrioritySeeder::class,
         ]);
 
         User::factory()->create([

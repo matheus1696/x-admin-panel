@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('filter');
             $table->text('description')->nullable();
             $table->integer('total_estimated_days')->default(0);
-            $table->boolean('status')->default(true);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

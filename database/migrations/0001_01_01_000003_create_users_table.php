@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('cpf', 14)->nullable()->unique();
             $table->string('matriculation', 10)->nullable()->unique();
             $table->date('birth_date')->nullable();
-            $table->boolean('status')->default(true);
+            $table->boolean('is_active')->default(true);
             $table->foreignId('gender_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('occupation_id')->nullable()->constrained()->onDelete('set null');
             $table->rememberToken();

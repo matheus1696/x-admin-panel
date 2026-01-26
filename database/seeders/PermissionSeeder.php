@@ -23,51 +23,53 @@ class PermissionSeeder extends Seeder
 
             // Organização (Governança)
             [
-                'name' => 'organization.chart.dashboard.view',
-                'description' => 'Visualizar Organograma',
-                'translation' => 'Organograma',
-            ],
-            [
-                'name' => 'organization.chart.config.manage',
+                'name' => 'organization.manage.chart',
                 'description' => 'Gerenciar Organograma',
                 'translation' => 'Gerenciar Organograma',
             ],
             [
-                'name' => 'organization.workflow.manage',
+                'name' => 'organization.manage.workflow',
                 'description' => 'Gerenciar Fluxo de Trabalho',
                 'translation' => 'Fluxo de Trabalho',
             ],
 
             // Configuração do Sistema (Cadastros Mestres)
             [
-                'name' => 'config.establishments.manage',
+                'name' => 'configuration.manage.establishments',
                 'description' => 'Gerenciar Estabelecimentos',
                 'translation' => 'Estabelecimentos',
             ],
             [
-                'name' => 'config.occupations.manage',
+                'name' => 'configuration.manage.occupations',
                 'description' => 'Gerenciar Ocupações',
                 'translation' => 'Ocupações',
             ],
             [
-                'name' => 'config.regions.manage',
+                'name' => 'configuration.manage.regions',
                 'description' => 'Gerenciar Regiões',
                 'translation' => 'Regiões',
             ],
             [
-                'name' => 'config.financial-blocks.manage',
+                'name' => 'configuration.manage.financial-blocks',
                 'description' => 'Gerenciar Blocos Financeiros',
                 'translation' => 'Blocos Financeiros',
             ],
 
+            // Tarefas
+            [
+                'name' => 'administration.manage.task',
+                'description' => 'Gerencia Tarefas',
+                'translation' => 'Gerencia Tarefas',
+            ],
+
             // Usuários & Acessos
             [
-                'name' => 'users.view',
+                'name' => 'administration.manage.users',
                 'description' => 'Visualizar Usuários',
                 'translation' => 'Listar Usuários',
             ],
             [
-                'name' => 'users.permissions',
+                'name' => 'administration.manage.users.permissions',
                 'description' => 'Gerenciar Permissões de Usuários',
                 'translation' => 'Permissões de Usuários',
             ],
@@ -99,13 +101,13 @@ class PermissionSeeder extends Seeder
             'translation' => 'Super Admin',
         ]);
 
-        $admin = Role::firstOrCreate(['name' => 'admin'], [
+        $administration = Role::firstOrCreate(['name' => 'administration'], [
             'type' => 'Administração do sistema',
             'description' => 'Administração do sistema',
             'translation' => 'Administração do sistema',
         ]);
 
-        $config = Role::firstOrCreate(['name' => 'config'], [
+        $configuration = Role::firstOrCreate(['name' => 'config'], [
             'type' => 'Configuração do sistema',
             'description' => 'Configuração do sistema',
             'translation' => 'Configuração do sistema',
@@ -139,24 +141,24 @@ class PermissionSeeder extends Seeder
         $superAdmin->givePermissionTo(Permission::all());
 
         // Administração de Sistema
-        $admin->givePermissionTo([
-            'users.view',
-            'users.permissions',
+        $administration->givePermissionTo([
+            'administration.manage.users',
+            'administration.manage.users.permissions',
+            'administration.manage.task'
         ]);
 
         // Configuração do Sistema
-        $config->givePermissionTo([
-            'config.establishments.manage',
-            'config.occupations.manage',
-            'config.regions.manage',
-            'config.financial-blocks.manage',
+        $configuration->givePermissionTo([
+            'configuration.manage.establishments',
+            'configuration.manage.occupations',
+            'configuration.manage.regions',
+            'configuration.manage.financial-blocks',
         ]);
 
         // Organização
         $organization->givePermissionTo([
-            'organization.chart.dashboard.view',
-            'organization.chart.config.manage',
-            'organization.workflow.manage',
+            'organization.manage.chart',
+            'organization.manage.workflow',
         ]);
 
         // Auditoria

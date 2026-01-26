@@ -2,7 +2,7 @@
 
 namespace App\Models\Configuration\Occupation;
 
-use App\Models\Traits\HasStatus;
+use App\Models\Traits\HasActive;
 use App\Models\Traits\HasTitleFilter;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasUuidRouteKey;
@@ -11,13 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Occupation extends Model
 {
-    use HasFactory, HasStatus, HasTitleFilter, HasUuid, HasUuidRouteKey;
+    use HasFactory, HasActive, HasTitleFilter, HasUuid, HasUuidRouteKey;
 
     protected $fillable = [
         'code',
         'title',
         'filter',
-        'status',
+        'is_active',
     ];
 }
 

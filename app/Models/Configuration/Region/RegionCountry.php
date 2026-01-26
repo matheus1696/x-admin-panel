@@ -2,7 +2,7 @@
 
 namespace App\Models\Configuration\Region;
 
-use App\Models\Traits\HasStatus;
+use App\Models\Traits\HasActive;
 use App\Models\Traits\HasTitleFilter;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasUuidRouteKey;
@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RegionCountry extends Model
 {
-    use HasFactory, HasStatus, HasTitleFilter, HasUuid, HasUuidRouteKey;
+    use HasFactory, HasActive, HasTitleFilter, HasUuid, HasUuidRouteKey;
 
     protected $table = 'region_countries';
 
@@ -25,7 +25,7 @@ class RegionCountry extends Model
         'filter_country_ing',
         'code_iso',
         'code_ddi',
-        'status',
+        'is_active',
     ];
 }
 

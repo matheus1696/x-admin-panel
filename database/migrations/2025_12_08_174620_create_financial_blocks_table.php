@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('filter');
             $table->string('acronym');
             $table->string('color')->nullable();
-            $table->boolean('status')->default(true);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

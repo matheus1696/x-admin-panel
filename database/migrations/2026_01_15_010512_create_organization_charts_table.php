@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('order')->nullable();
             $table->integer('hierarchy');
             $table->string('number_hierarchy')->nullable();
-            $table->boolean('status')->default(true);
+            $table->boolean('is_active')->default(true);
             $table->string('responsible_photo')->nullable();
             $table->string('responsible_name')->nullable();
             $table->string('responsible_contact')->nullable();

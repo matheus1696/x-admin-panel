@@ -2,7 +2,7 @@
 
 namespace App\Models\Organization\OrganizationChart;
 
-use App\Models\Traits\HasStatus;
+use App\Models\Traits\HasActive;
 use App\Models\Traits\HasTitleFilter;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasUuidRouteKey;
@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class OrganizationChart extends Model
 {
-    use HasStatus, HasTitleFilter, HasUuid, HasUuidRouteKey;
+    use HasActive, HasTitleFilter, HasUuid, HasUuidRouteKey;
 
     protected $fillable = [
         'acronym',
@@ -19,7 +19,7 @@ class OrganizationChart extends Model
         'order',
         'hierarchy',
         'number_hierarchy',
-        'status',
+        'is_active',
         'responsible_photo',
         'responsible_name',
         'responsible_contact',
@@ -29,7 +29,7 @@ class OrganizationChart extends Model
     public function children()
     {
         return $this->hasMany(OrganizationChart::class, 'hierarchy')
-            ->where('status', true)
+            ->where('is_active', true)
             ->orderBy('order');
     }
 }

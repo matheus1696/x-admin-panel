@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('code')->unique();
             $table->string('title');
             $table->string('filter');
-            $table->boolean('status')->default(false);
+            $table->boolean('is_active')->default(false);
             $table->timestamps();
         });
     }

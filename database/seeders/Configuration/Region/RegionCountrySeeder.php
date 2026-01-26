@@ -72,7 +72,7 @@ class RegionCountrySeeder extends Seeder
 
         RegionCountry::create([ 'id'=>72, 'acronym_2'=>"BW", 'acronym_3'=>"BWA", 'title'=>"Botsuana", 'filter'=>"botsuana", 'country_ing'=>"Botswana", 'filter_country_ing'=>"botswana", 'code_iso'=>72, ]);
 
-        RegionCountry::create([ 'id'=>74, 'acronym_2'=>"BR", 'acronym_3'=>"BRA", 'title'=>"Brasil", 'filter'=>"brasil", 'country_ing'=>"Brazil", 'filter_country_ing'=>"brazil", 'code_iso'=>74, 'status'=>true, ]);
+        RegionCountry::create([ 'id'=>74, 'acronym_2'=>"BR", 'acronym_3'=>"BRA", 'title'=>"Brasil", 'filter'=>"brasil", 'country_ing'=>"Brazil", 'filter_country_ing'=>"brazil", 'code_iso'=>74, 'is_active'=>true, ]);
 
         RegionCountry::create([ 'id'=>76, 'acronym_2'=>"BN", 'acronym_3'=>"BRN", 'title'=>"Brunei", 'filter'=>"brunei", 'country_ing'=>"Brunei", 'filter_country_ing'=>"brunei", 'code_iso'=>76, ]);
 

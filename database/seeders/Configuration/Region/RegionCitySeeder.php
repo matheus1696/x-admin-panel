@@ -14,7 +14,7 @@ class RegionCitySeeder extends Seeder
     public function run(): void
     {
         //
-        RegionCity::create([ 'id'=>'2604106', 'code_ibge'=>'2604106', 'title'=>'Caruaru', 'filter'=>'caruaru', 'status'=>true, 'state_id'=>26, ]);
+        RegionCity::create([ 'id'=>'2604106', 'code_ibge'=>'2604106', 'title'=>'Caruaru', 'filter'=>'caruaru', 'is_active'=>true, 'state_id'=>26, ]);
 
         RegionCity::create([ 'id'=>'5200050', 'code_ibge'=>'5200050', 'title'=>'Abadia de Goiás', 'filter'=>'abadia de goiás', 'state_id'=>52, ]);
 

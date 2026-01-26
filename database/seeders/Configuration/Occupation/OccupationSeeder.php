@@ -1911,7 +1911,7 @@ class OccupationSeeder extends Seeder
 
         Occupation::create(['code'=>'317205','title'=>'Operador de computador','filter'=>'operador de computador']);
 
-        Occupation::create(['code'=>'317210','title'=>'Técnico de suporte ao usuário de tecnologia da informação','filter'=>'técnico de suporte ao usuário de tecnologia da informação', 'status' => true]);
+        Occupation::create(['code'=>'317210','title'=>'Técnico de suporte ao usuário de tecnologia da informação','filter'=>'técnico de suporte ao usuário de tecnologia da informação', 'is_active' => true]);
 
         Occupation::create(['code'=>'318005','title'=>'Desenhista técnico','filter'=>'desenhista técnico']);
 
@@ -2009,7 +2009,7 @@ class OccupationSeeder extends Seeder
 
         Occupation::create(['code'=>'322140','title'=>'Instrutor de pilates','filter'=>'instrutor de pilates']);
 
-        Occupation::create(['code'=>'322205','title'=>'Técnico de enfermagem','filter'=>'técnico de enfermagem', 'status' => true]);
+        Occupation::create(['code'=>'322205','title'=>'Técnico de enfermagem','filter'=>'técnico de enfermagem', 'is_active' => true]);
 
         Occupation::create(['code'=>'322210','title'=>'Técnico de enfermagem de terapia intensiva','filter'=>'técnico de enfermagem de terapia intensiva']);
 
@@ -2019,7 +2019,7 @@ class OccupationSeeder extends Seeder
 
         Occupation::create(['code'=>'322225','title'=>'Instrumentador cirúrgico','filter'=>'instrumentador cirúrgico']);
 
-        Occupation::create(['code'=>'322230','title'=>'Auxiliar de enfermagem','filter'=>'auxiliar de enfermagem', 'status' => true]);
+        Occupation::create(['code'=>'322230','title'=>'Auxiliar de enfermagem','filter'=>'auxiliar de enfermagem', 'is_active' => true]);
 
         Occupation::create(['code'=>'322235','title'=>'Auxiliar de enfermagem do trabalho','filter'=>'auxiliar de enfermagem do trabalho']);
 
@@ -2029,7 +2029,7 @@ class OccupationSeeder extends Seeder
 
         Occupation::create(['code'=>'322250','title'=>'Auxiliar de enfermagem da estratégia de saúde da família','filter'=>'auxiliar de enfermagem da estratégia de saúde da família']);
 
-        Occupation::create(['code'=>'322255','title'=>'Técnico em agente comunitário de saúde','filter'=>'técnico em agente comunitário de saúde', 'status' => true]);
+        Occupation::create(['code'=>'322255','title'=>'Técnico em agente comunitário de saúde','filter'=>'técnico em agente comunitário de saúde', 'is_active' => true]);
 
         Occupation::create(['code'=>'322305','title'=>'Técnico em óptica e optometria','filter'=>'técnico em óptica e optometria']);
 
@@ -2869,7 +2869,7 @@ class OccupationSeeder extends Seeder
 
         Occupation::create(['code'=>'514305','title'=>'Limpador de vidros','filter'=>'limpador de vidros']);
 
-        Occupation::create(['code'=>'514310','title'=>'Auxiliar de manutenção predial','filter'=>'auxiliar de manutenção predial', 'status' => true]);
+        Occupation::create(['code'=>'514310','title'=>'Auxiliar de manutenção predial','filter'=>'auxiliar de manutenção predial', 'is_active' => true]);
 
         Occupation::create(['code'=>'514315','title'=>'Limpador de fachadas','filter'=>'limpador de fachadas']);
 
@@ -2879,7 +2879,7 @@ class OccupationSeeder extends Seeder
 
         Occupation::create(['code'=>'514330','title'=>'Limpador de piscinas','filter'=>'limpador de piscinas']);
 
-        Occupation::create(['code'=>'515105','title'=>'Agente comunitário de saúde','filter'=>'agente comunitário de saúde', 'status' => true]);
+        Occupation::create(['code'=>'515105','title'=>'Agente comunitário de saúde','filter'=>'agente comunitário de saúde', 'is_active' => true]);
 
         Occupation::create(['code'=>'515110','title'=>'Atendente de enfermagem','filter'=>'atendente de enfermagem']);
 

@@ -31,7 +31,7 @@ class User extends Authenticatable
         'matriculation',
         'cpf',
         'birth_date',
-        'status',
+        'is_active',
         'gender_id',
         'occupation_id',
     ];

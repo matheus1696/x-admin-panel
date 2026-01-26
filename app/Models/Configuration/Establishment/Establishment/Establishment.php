@@ -5,7 +5,7 @@ namespace App\Models\Configuration\Establishment\Establishment;
 use App\Models\Configuration\Establishment\EstablishmentType\EstablishmentType;
 use App\Models\Configuration\FinancialBlock\FinancialBlock;
 use App\Models\Configuration\Region\RegionCity;
-use App\Models\Traits\HasStatus;
+use App\Models\Traits\HasActive;
 use App\Models\Traits\HasTitleFilter;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasUuidRouteKey;
@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Establishment extends Model
 {
-    use HasStatus, HasTitleFilter, HasUuid, HasUuidRouteKey;
+    use HasActive, HasTitleFilter, HasUuid, HasUuidRouteKey;
 
     protected $fillable = [
         'code',
@@ -29,7 +29,7 @@ class Establishment extends Model
         'longitude',
         'type_establishment_id',
         'financial_block_id',
-        'status',
+        'is_active',
     ];
 
     public function RegionCity(){

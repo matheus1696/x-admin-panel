@@ -2,7 +2,7 @@
 
 namespace App\Models\Organization\Workflow;
 
-use App\Models\Traits\HasStatus;
+use App\Models\Traits\HasActive;
 use App\Models\Traits\HasTitleFilter;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasUuidRouteKey;
@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class WorkflowStep extends Model
 {
-    use HasStatus, HasTitleFilter, HasUuid, HasUuidRouteKey;
+    use HasActive, HasTitleFilter, HasUuid, HasUuidRouteKey;
     
     protected $fillable = [
         'workflow_id',
