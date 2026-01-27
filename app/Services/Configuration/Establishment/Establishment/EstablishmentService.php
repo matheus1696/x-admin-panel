@@ -20,7 +20,7 @@ class EstablishmentService
 
         if ($filters['title']) { $query->where('filter', 'like', '%' . strtolower($filters['title']) . '%'); }
 
-        if ($filters['status'] !== 'all') { $query->where('status', $filters['status']); }
+        if ($filters['status'] !== 'all') { $query->where('is_active', $filters['status']); }
 
         switch ($filters['sort']) {
             case 'name_asc':

@@ -25,7 +25,7 @@ class UserService
         if ($filters['email']) { $query->where('email', 'like', '%' . $filters['email'] . '%'); }
 
         // Filtro de status
-        if ($filters['status'] !== 'all') { $query->where('status', $filters['status']); }
+        if ($filters['status'] !== 'all') { $query->where('is_active', $filters['status']); }
 
         // Ordenação
         switch ($filters['sort']) {

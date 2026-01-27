@@ -12,7 +12,7 @@ class OrganizationChartService
     {
         return OrganizationChart::with('children.children')
             ->where('hierarchy', 0)
-            ->where('status', true)
+            ->where('is_active', true)
             ->orderBy('order')
             ->get();
     }
@@ -32,7 +32,7 @@ class OrganizationChartService
             $query->where('filter', 'like', '%' . strtolower($filters['filter']) . '%');
         }
         if ($filters['status'] !== 'all') {
-            $query->where('status', $filters['status']);
+            $query->where('is_active', $filters['status']);
         }
         return $query->orderBy('order')->get();
     }

@@ -21,7 +21,7 @@ class WorkflowService
         }
 
         if ($filters['status'] !== 'all') {
-            $query->where('status', $filters['status']);
+            $query->where('is_active', $filters['status']);
         }
 
         return $query->orderBy('title')->paginate($filters['perPage']);
