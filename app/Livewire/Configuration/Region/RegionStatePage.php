@@ -28,7 +28,7 @@ class RegionStatePage extends Component
 
         if ($this->name) { $query->where('filter', 'like', '%' . strtolower($this->name) . '%'); }
 
-        if ($this->status !== 'all') { $query->where('status', $this->status); }
+        if ($this->status !== 'all') { $query->where('is_active', $this->status); }
 
         // Ordenação
         switch ($this->sort) {

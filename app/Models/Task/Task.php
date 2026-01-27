@@ -3,6 +3,7 @@
 namespace App\Models\Task;
 
 use App\Models\Administration\Task\TaskStatus;
+use App\Models\Administration\User\User;
 use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 
@@ -37,6 +38,10 @@ class Task extends Model
     public function taskSteps()
     {
         return $this->hasMany(TaskStep::class, 'task_id')->orderBy('code');
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     protected static function booted()

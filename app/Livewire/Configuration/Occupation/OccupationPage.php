@@ -29,7 +29,7 @@ class OccupationPage extends Component
         $query = Occupation::query();
 
         // Filtros padrão
-        $query->orderBy('status', 'desc');
+        $query->orderBy('is_active', 'desc');
 
         // Filtros por código
         if ($this->code) { $query->where('code', 'like', '%' . strtolower($this->code) . '%'); }
@@ -38,7 +38,7 @@ class OccupationPage extends Component
         if ($this->name) { $query->where('filter', 'like', '%' . strtolower($this->name) . '%'); }
 
         // Filtros por status
-        if ($this->status !== 'all') { $query->where('status', $this->status); }
+        if ($this->status !== 'all') { $query->where('is_active', $this->status); }
 
         // Ordenação
         switch ($this->sort) {

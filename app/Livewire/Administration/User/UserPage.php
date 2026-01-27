@@ -134,8 +134,8 @@ class UserPage extends Component
 
         return view('livewire.administration.user.user-page', [
             'users' => $users,
-            'occupations' => Occupation::where('status', true)->orderBy('title')->get(),
-            'genders' => Gender::where('status', true)->orderBy('title')->get(),
+            'occupations' => Occupation::where('is_active', true)->orderBy('title')->get(),
+            'genders' => Gender::where('is_active', true)->orderBy('title')->get(),
             'roles' => Role::where('name', '!=', 'super-admin')->orderBy('type')->with('permissions')->get(),
         ])->layout('layouts.app');
     }

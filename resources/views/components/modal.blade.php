@@ -38,7 +38,7 @@
             @endisset
 
             {{-- Body --}}
-            <div class="px-6 pt-3 pb-6 max-h-[calc(100vh-150px)] overflow-y-auto">
+            <div class="px-6 pt-3 pb-6 max-h-[calc(100vh-150px)]">
                 {{ $slot }}
             </div>
 

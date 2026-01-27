@@ -16,7 +16,7 @@
     
     <div class="col-span-1">
         <x-form.select-livewire
-            name="category_id"
+            name="task_category_id"
             wire:model.defer="task_category_id"
             :collection="$taskCategories"
             value-field="id"
@@ -26,7 +26,7 @@
     
     <div class="col-span-1">
         <x-form.select-livewire
-            name="priority_id"
+            name="task_priority_id"
             wire:model.defer="task_priority_id"
             :collection="$taskPriorities"
             value-field="id"
@@ -36,7 +36,7 @@
     
     <div class="col-span-1">
         <x-form.select-livewire
-            name="status_id"
+            name="task_step_status_id"
             wire:model.defer="task_step_status_id"
             :collection="$taskStepStatuses"
             value-field="id"

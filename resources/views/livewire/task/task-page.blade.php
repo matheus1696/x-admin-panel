@@ -52,14 +52,12 @@
     <div class="bg-white border border-gray-200 rounded-xl shadow-sm">
         
         <!-- HEADER DA GRID -->
-        <div class="grid grid-cols-12 gap-4 px-5 py-3 bg-green-50/80 border-b border-gray-200 text-xs font-semibold text-gray-600">
-            <div class="col-span-3 pl-10">Título</div>
-            <div class="col-span-1 text-center">Responsável</div>
+        <div class="grid grid-cols-12 gap-4 px-5 py-2 bg-green-50/80 border-b border-gray-200 text-xs font-semibold text-gray-600">
+            <div class="col-span-4 pl-10">Título</div>
+            <div class="col-span-2 text-center">Responsável</div>
             <div class="col-span-1 text-center">Categoria</div>
             <div class="col-span-1 text-center">Prioridade</div>
             <div class="col-span-1 text-center">Status</div>
-            <div class="col-span-1 text-center">Criado</div>
-            <div class="col-span-1 text-center">Atualizado</div>
             <div class="col-span-1 text-center">Início</div>
             <div class="col-span-1 text-center">Prazo</div>
             <div class="col-span-1 text-center">Finalizado</div>
@@ -70,11 +68,11 @@
                 class="border-b border-gray-300 last:border-b-0 hover:bg-green-50/50 transition-colors duration-150">
                 
                 <!-- LINHA DA TASK -->
-                <div class="grid grid-cols-12 gap-2 px-5 py-3 items-center divide-x">
+                <div class="grid grid-cols-12 gap-2 px-5 items-center divide-x">
                     
                     <!-- TÍTULO -->
-                    <div class="col-span-3 flex items-center gap-2">                        
-                        <div class="w-full flex items-center gap-2">
+                    <div class="col-span-4 flex items-center gap-2">                        
+                        <div class="flex-1 flex items-center gap-2">
                             @if ($task->taskSteps->count() > 0)
                                 <div>
                                     <x-button @click="openSteps = !openSteps; openCreateStep = false" variant="gray_outline">
@@ -83,38 +81,30 @@
                                 </div>
                             @endif
 
-                            <span class="flex-1 font-medium text-gray-800 truncate text-sm">
+                            <span class="flex-1 font-medium text-gray-700 truncate text-xs">
                                 {{ $task->code }} - {{ $task->title }}
                             </span>
                         </div>
 
-                        <div x-show="!openCreateStep" class="flex items-center justify-center gap-2">
-                            <x-button icon="fa-solid fa-copy" variant="gray_outline" title="Copiar etapas de um fluxo" wire:click="openCopyWorkflowModal({{ $task->id }})"/>
-                            <x-button icon="fa-solid fa-plus" variant="gray_outline" @click="openCreateStep = true; openSteps = true" />
+                        <div x-show="!openCreateStep" class="flex items-end justify-end gap-2">
+                            @if ($task->taskSteps->count() < 1)
+                                <x-button icon="fa-solid fa-copy" variant="gray_outline" title="Copiar etapas de um fluxo" wire:click="openCopyWorkflowModal({{ $task->id }})"/>                                
+                            @endif
+                            <x-button icon="fa-solid fa-plus" variant="gray_outline" @click="openCreateStep = true" wire:click="createStep()"/>
                         </div>
                     </div>
 
                     <!-- RESPONSÁVEL -->
-                    <div class="col-span-1">
-                        <div class="relative flex items-center gap-2 px-2" >
-                            <!-- AVATAR / PLACEHOLDER -->
-                            <div>
-                                @if($task->responsible)
-                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-700 to-green-800 
-                                                flex items-center justify-center text-white text-sm font-semibold shadow-sm">
-                                        {{ substr($task->responsible->name, 0, 1) }}
-                                    </div>
-                                @else
-                                    <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                                        <i class="fa-solid fa-user-plus text-gray-400 text-xs"></i>
-                                    </div>
-                                @endif
-                            </div>
-
-                            <!-- NOME -->
-                            <span class="text-xs text-gray-700 truncate mt-1 text-center">
-                                {{ $task->responsible?->name }}
-                            </span>
+                    <div class="col-span-2">
+                        <div class="px-2">
+                            <x-form.select
+                                wire:model.live="inlineResponsible.{{ $task->id }}"
+                                name="user_id"
+                                :collection="$users"
+                                label-field="name"
+                                :selected="$task->user?->id"
+                                variant="inline"
+                            />
                         </div>
                     </div>
 
@@ -158,24 +148,6 @@
                     </div>
 
                     <!-- DATAS -->
-                    <!-- Criado em -->
-                    <div class="col-span-1">
-                        <div class="flex flex-col items-center">
-                            <div class="text-xs text-gray-700 font-medium">
-                                {{ $task->created_at->format('d/m/Y') }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Atualizado em -->
-                    <div class="col-span-1">
-                        <div class="flex flex-col items-center">
-                            <div class="text-xs text-gray-700 font-medium">
-                                {{ $task->updated_at->format('d/m/Y') }}
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Iniciado em -->
                     <div class="col-span-1">
                         <div class="flex flex-col items-center">
@@ -249,18 +221,6 @@
                 </div>
             </form>
         @endif
-        @if ($modalKey === 'modal-form-create-task-step')
-            <x-slot name="header">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase">Adicionar Etapa</h2>
-            </x-slot>
-
-            <form wire:submit.prevent="store" class="space-y-4">
-                @include('livewire.task._partials.task-form')
-                <div class="flex justify-end gap-2 pt-4">
-                    <x-button type="submit" text="Salvar" />
-                </div>
-            </form>
-        @endif
         @if ($modalKey === 'modal-copy-workflow-steps')
             <x-slot name="header">
                 <h2 class="text-sm font-semibold text-gray-700 uppercase">
@@ -281,7 +241,7 @@
                     />
                 </div>
 
-                <div class="flex justify-end gap-2 pt-4">
+                <div class="flex justify-end gap-2">
                     <x-button variant="red" text="Cancelar" wire:click="closeModal" />
                     <x-button type="submit" text="Copiar etapas" />
                 </div>

@@ -41,8 +41,11 @@ class TaskPage extends Component
     public $user_id;
     public $task_category_id;
     public $task_priority_id;
-    public $task_status_id;
+    public $task_step_status_id;
     public $deadline_at;
+
+    public $openCreateStep;
+    public array $inlineResponsible = [];
 
     public function boot(
         TaskService $taskService, 
@@ -56,8 +59,8 @@ class TaskPage extends Component
 
     protected function setDefaults(): void
     {
-        $this->priority_id = TaskPriority::where('is_default', true)->value('id');
-        $this->status_id = TaskStepStatus::where('is_default', true)->value('id');
+        $this->task_priority_id = TaskPriority::where('is_default', true)->value('id');
+        $this->task_step_status_id = TaskStepStatus::where('is_default', true)->value('id');
     }
 
     public function mount()
@@ -68,6 +71,11 @@ class TaskPage extends Component
     public function updatedFilters()
     {
         $this->resetPage();
+    }
+
+    public function resetForm()
+    {
+        $this->reset();
     }
     
     public function create()
@@ -85,6 +93,12 @@ class TaskPage extends Component
         $this->flashSuccess('Tarefa criada com sucesso.');
         $this->closeModal();
     }
+
+    public function createStep()
+    {
+        $this->reset();
+        $this->setDefaults();
+    }
     
     public function storeStep(int $id)
     {
@@ -92,6 +106,7 @@ class TaskPage extends Component
         $data['task_id'] = $id;
         TaskStep::create($data);
 
+        $this->flashSuccess('Tarefa criada com sucesso.');
         $this->reset();
         $this->setDefaults();
     }
@@ -135,6 +150,15 @@ class TaskPage extends Component
 
         $this->flashSuccess('Etapas copiadas com sucesso.');
         $this->closeModal();
+    }
+
+    public function updatedInlineResponsible($value, $key)
+    {
+        Task::where('id', $key)->update([
+            'user_id' => $value ?: null,
+        ]);
+
+        $this->flashSuccess('Responsável atualizado.');
     }
 
     public function render()

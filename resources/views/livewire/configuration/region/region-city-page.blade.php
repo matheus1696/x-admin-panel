@@ -67,8 +67,8 @@
                 <tr>
                     <x-page.table-td :value="$city->title" />
                     <x-page.table-td class="text-center">
-                        <div class="text-xs font-medium rounded-full py-0.5 px-1 {{ $city->status ? 'bg-green-300 text-green-700' : 'bg-red-300 text-red-700' }}">
-                            {{ $city->status ? 'Ativo' : 'Desativado' }}
+                        <div class="text-xs font-medium rounded-full py-0.5 px-1 {{ $city->is_active ? 'bg-green-300 text-green-700' : 'bg-red-300 text-red-700' }}">
+                            {{ $city->is_active ? 'Ativo' : 'Desativado' }}
                         </div>
                     </x-page.table-td>
                 </tr>
