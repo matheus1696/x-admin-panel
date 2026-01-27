@@ -18,4 +18,9 @@ class TaskCategory extends Model
     {
         return $this->hasMany(Task::class);
     }
+
+    public static function default()
+    {
+        return static::where('is_default', true)->first();
+    }
 }

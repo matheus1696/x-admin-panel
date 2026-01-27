@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid('uuid')->unique();
 
             $table->foreignId('task_id')->constrained('tasks')->cascadeOnDelete();
-            $table->string('code');
+            $table->string('code')->nullable()->unique();
             $table->string('title');
             $table->longText('description')->nullable();
             $table->foreignId('user_id')->nullable()->constrained('users');

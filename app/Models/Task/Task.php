@@ -36,6 +36,16 @@ class Task extends Model
 
     public function taskSteps()
     {
-        return $this->hasMany(TaskStep::class, 'task_id')->orderBy('step_order');
+        return $this->hasMany(TaskStep::class, 'task_id')->orderBy('code');
     }
+
+    protected static function booted()
+    {
+        static::created(function ($task) {
+            $task->update([
+                'code' => 'TK' . str_pad($task->id, 5, '0', STR_PAD_LEFT),
+            ]);
+        });
+    }
+    
 }

@@ -26,7 +26,7 @@ class TaskService
             $query->where('workflow_run_status_id', $filters['workflow_run_status_id']);
         }
 
-        return $query->orderBy('title')->paginate($filters['perPage']);
+        return $query->orderBy('code')->paginate($filters['perPage']);
     }
 
     public function create(array $data): Task

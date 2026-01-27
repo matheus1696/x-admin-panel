@@ -20,7 +20,7 @@
         'indigo' => 'bg-indigo-600 hover:bg-indigo-700 text-white pl-4 pr-2.5 py-3 rounded-lg shadow',
         'purple' => 'bg-purple-600 hover:bg-purple-700 text-white pl-4 pr-2.5 py-3 rounded-lg shadow',
         
-        'gray_outline'   => 'text-gray-500 hover:text-gray-400',
+        'gray_outline'   => 'text-gray-400 hover:text-gray-300',
         'sky_outline'    => 'text-sky-600 hover:text-sky-500',
         'green_outline'  => 'text-green-700 hover:text-green-800',
         'yellow_outline' => 'text-yellow-600 hover:text-yellow-500',

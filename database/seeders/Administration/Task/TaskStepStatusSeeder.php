@@ -13,22 +13,27 @@ class TaskStepStatusSeeder extends Seeder
             [
                 'title' => 'Pendente',
                 'color' => 'bg-gray-100 text-gray-600 hover:bg-gray-200',
+                'is_default' => true
             ],
             [
                 'title' => 'Aguardando Dependência',
                 'color' => 'bg-purple-100 text-purple-700 hover:bg-purple-200',
+                'is_default' => false
             ],
             [
                 'title' => 'Em execução',
                 'color' => 'bg-blue-100 text-blue-600 hover:bg-blue-200',
+                'is_default' => false
             ],
             [
                 'title' => 'Bloqueada',
                 'color' => 'bg-red-100 text-red-700 hover:bg-red-200',
+                'is_default' => false
             ],
             [
                 'title' => 'Concluída',
                 'color' => 'bg-green-100 text-green-700 hover:bg-green-200',
+                'is_default' => false
             ],
         ]);
     }

@@ -1,50 +1,140 @@
 <div class="divide-y">
 
     <div x-show="openCreateStep" x-collapse class="border-t bg-white px-4 py-3" >
-        @include('livewire.task._partials.task-step-form', ['task' => $task])
+        <form wire:submit.prevent="storeStep({{$task->id}})" class="space-y-4">
+            @include('livewire.task._partials.task-step-form', ['task' => $task])
+        </form>
     </div>
 
-    @foreach ($task->taskSteps as $step)
-        <div class="grid grid-cols-12 gap-2 items-center px-4 py-2 bg-white hover:bg-gray-50">
+    <div x-show="openSteps" x-collapse class="divide-y">
+        @foreach ($task->taskSteps as $step)
+            <div class="grid grid-cols-12 gap-2 px-5 py-3 items-center divide-x text-xs">
 
-            <!-- TÍTULO -->
-            <div class="col-span-5">
-                <input type="text"
-                    class="w-full text-sm border-0 bg-transparent focus:ring-0 focus:outline-none"
-                    wire:model.lazy="steps.{{ $step->id }}.uuid"
-                />
+                <div class="col-span-3 text-start">
+                    <span class="pl-8 pr-3 line-clamp-1">{{ $step->code }} - {{ $step->title }}</span>
+                </div>
+
+                <!-- RESPONSÁVEL -->
+                <div class="col-span-1">
+                    <div class="relative flex items-center gap-2 px-2" >
+                        <!-- AVATAR / PLACEHOLDER -->
+                        <div>
+                            @if($task->user)
+                                <div class="size-6 rounded-full bg-gradient-to-br from-green-700 to-green-800 
+                                            flex items-center justify-center text-white text-sm font-semibold shadow-sm">
+                                    {{ substr($task->user->name, 0, 1) }}
+                                </div>
+                            @else
+                                <div class="size-6 rounded-full bg-gray-200 flex items-center justify-center">
+                                    <i class="fa-solid fa-user-plus text-gray-400 text-[10px]"></i>
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- NOME -->
+                        <span class="text-xs text-gray-700 truncate mt-1 text-center">
+                            {{ $task->user?->name }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- CATEGORIA -->
+                <div class="col-span-1">
+                    <div class="flex justify-center">
+                        @if($step->taskCategory)
+                            <span class="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full truncate max-w-full">
+                                {{ $step->taskCategory->title }}
+                            </span>
+                        @else
+                            <span class="text-xs text-gray-400 italic">—</span>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- PRIORIDADE -->
+                <div class="col-span-1">
+                    <div class="flex justify-center">
+                        @if($step->taskPriority)
+                            <span class="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full truncate max-w-full">
+                                {{ $step->taskPriority->title }}
+                            </span>
+                        @else
+                            <span class="text-xs text-gray-400 italic">—</span>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- STATUS -->
+                <div class="col-span-1">
+                    <div class="flex justify-center">
+                        @if($step->taskStepStatus)
+                            <span class="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full truncate max-w-full">
+                                {{ $step->taskStepStatus->title }}
+                            </span>
+                        @else
+                            <span class="text-xs text-gray-400 italic">—</span>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- DATAS -->
+                <!-- Criado em -->
+                <div class="col-span-1">
+                    <div class="flex flex-col items-center">
+                        <div class="text-xs text-gray-700 font-medium">
+                            {{ $step->created_at->format('d/m/Y') }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Atualizado em -->
+                <div class="col-span-1">
+                    <div class="flex flex-col items-center">
+                        <div class="text-xs text-gray-700 font-medium">
+                            {{ $step->updated_at->format('d/m/Y') }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Iniciado em -->
+                <div class="col-span-1">
+                    <div class="flex flex-col items-center">
+                        @if ($step->started_at)
+                            <div class="text-xs text-gray-700 font-medium">
+                                {{ $step->started_at->format('d/m/Y') }}
+                            </div>
+                        @else
+                            <span class="text-xs text-gray-400 italic">—</span>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Prazo -->
+                <div class="col-span-1">
+                    <div class="flex flex-col items-center">
+                        @if ($step->deadline_at)
+                            <div class="text-xs text-gray-700 font-medium">
+                                {{ $step->deadline_at->format('d/m/Y') }}
+                            </div>
+                        @else
+                            <span class="text-xs text-gray-400 italic">—</span>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Finalizado em -->
+                <div class="col-span-1">
+                    <div class="flex flex-col items-center">
+                        @if ($step->finished_at)
+                            <div class="text-xs text-green-600 font-medium">
+                                {{ $step->finished_at->format('d/m/Y') }}
+                            </div>
+                        @else
+                            <span class="text-xs text-gray-400 italic">—</span>
+                        @endif
+                    </div>
+                </div>
             </div>
-
-            <!-- DATA LIMITE -->
-            <div class="col-span-2">
-                <input
-                    type="date"
-                    class="text-sm border border-gray-200 rounded px-2 py-1 w-full"
-                    wire:model.lazy="steps.{{ $step->id }}.deadline_at"
-                />
-            </div>
-
-            <!-- RESPONSÁVEL -->
-            <div class="col-span-3">
-                <x-form.select-livewire
-                    wire:model.lazy="steps.{{ $step->id }}.user_id"
-                    :collection="$users"
-                    value-field="id"
-                    label-field="name"
-                    placeholder="Responsável"
-                />
-            </div>
-
-            <!-- STATUS -->
-            <div class="col-span-1 text-center">
-                <x-form.select-livewire
-                    wire:model.lazy="steps.{{ $step->id }}.status_id"
-                    :collection="$taskStepStatuses"
-                    value-field="id"
-                    label-field="title"
-                />
-            </div>
-
-        </div>
-    @endforeach
+        @endforeach
+    </div>
 </div>

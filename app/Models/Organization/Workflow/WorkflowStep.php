@@ -37,9 +37,4 @@ class WorkflowStep extends Model
     {
         return $this->belongsTo(Workflow::class);
     }
-
-        public function workflowRunSteps()
-    {
-        return $this->hasMany(WorkflowRunStep::class);
-    }
 }

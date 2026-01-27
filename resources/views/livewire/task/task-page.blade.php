@@ -49,109 +49,193 @@
     </x-page.filter>
 
     <!-- Tarefas -->
-    <div class="bg-white border rounded-xl shadow-sm divide-y">
-
+    <div class="bg-white border border-gray-200 rounded-xl shadow-sm">
+        
         <!-- HEADER DA GRID -->
-        <div class="grid grid-cols-12 gap-3 px-4 py-2 text-[11px] text-gray-500 bg-gray-50 border-b font-medium">
-            <div class="col-span-4">Título</div>
-            <div class="col-span-1">Responsável</div>
+        <div class="grid grid-cols-12 gap-4 px-5 py-3 bg-green-50/80 border-b border-gray-200 text-xs font-semibold text-gray-600">
+            <div class="col-span-3 pl-10">Título</div>
+            <div class="col-span-1 text-center">Responsável</div>
             <div class="col-span-1 text-center">Categoria</div>
             <div class="col-span-1 text-center">Prioridade</div>
             <div class="col-span-1 text-center">Status</div>
-            <div class="col-span-1 text-center">Criado em</div>
-            <div class="col-span-1 text-center">Iniciado em</div>
+            <div class="col-span-1 text-center">Criado</div>
+            <div class="col-span-1 text-center">Atualizado</div>
+            <div class="col-span-1 text-center">Início</div>
             <div class="col-span-1 text-center">Prazo</div>
-            <div class="col-span-1 text-center">Finalizado em</div>
+            <div class="col-span-1 text-center">Finalizado</div>
         </div>
 
         @forelse ($tasks as $task)
-            <div x-data="{ openSteps: false, openCreateStep: false }">
-
+            <div x-data="{ openSteps: false, openCreateStep: false }" 
+                class="border-b border-gray-300 last:border-b-0 hover:bg-green-50/50 transition-colors duration-150">
+                
                 <!-- LINHA DA TASK -->
-                <div class="grid grid-cols-12 gap-3 px-4 py-3 text-xs items-center hover:bg-gray-50 transition">
-
+                <div class="grid grid-cols-12 gap-2 px-5 py-3 items-center divide-x">
+                    
                     <!-- TÍTULO -->
-                    <div class="col-span-4 flex items-center gap-3 pr-5">                        
-                        <div class="w-full flex items-center gap-3">
+                    <div class="col-span-3 flex items-center gap-2">                        
+                        <div class="w-full flex items-center gap-2">
                             @if ($task->taskSteps->count() > 0)
-                                <i
-                                    class="fa-solid fa-chevron-right text-gray-400 transition cursor-pointer"
-                                    :class="{ 'rotate-90': openSteps }"
-                                    @click.stop="openCreateStep = false; openSteps = !openSteps"
-                                ></i>
+                                <div>
+                                    <x-button @click="openSteps = !openSteps; openCreateStep = false" variant="gray_outline">
+                                        <i class="fa-solid fa-chevron-right text-xs transition-transform duration-200" :class="{ 'rotate-90': openSteps }"></i>
+                                    </x-button>
+                                </div>
                             @endif
 
-                            <span class="flex-1 font-medium text-gray-800 truncate">
-                                {{ $task->title }}
+                            <span class="flex-1 font-medium text-gray-800 truncate text-sm">
+                                {{ $task->code }} - {{ $task->title }}
                             </span>
                         </div>
 
-                        <span>
-                            <x-button icon="fa-solid fa-plus" variant="green_outline" title="Adicionar etapa" @click.stop="openCreateStep = true; openSteps = !openSteps" />
-                        </span>
+                        <div x-show="!openCreateStep" class="flex items-center justify-center gap-2">
+                            <x-button icon="fa-solid fa-copy" variant="gray_outline" title="Copiar etapas de um fluxo" wire:click="openCopyWorkflowModal({{ $task->id }})"/>
+                            <x-button icon="fa-solid fa-plus" variant="gray_outline" @click="openCreateStep = true; openSteps = true" />
+                        </div>
                     </div>
 
                     <!-- RESPONSÁVEL -->
-                    <div class="col-span-1 text-gray-600 truncate">
-                        {{ $task->responsible?->name ?? '—' }}
+                    <div class="col-span-1">
+                        <div class="relative flex items-center gap-2 px-2" >
+                            <!-- AVATAR / PLACEHOLDER -->
+                            <div>
+                                @if($task->responsible)
+                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-green-700 to-green-800 
+                                                flex items-center justify-center text-white text-sm font-semibold shadow-sm">
+                                        {{ substr($task->responsible->name, 0, 1) }}
+                                    </div>
+                                @else
+                                    <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                                        <i class="fa-solid fa-user-plus text-gray-400 text-xs"></i>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <!-- NOME -->
+                            <span class="text-xs text-gray-700 truncate mt-1 text-center">
+                                {{ $task->responsible?->name }}
+                            </span>
+                        </div>
                     </div>
 
-                    <!-- RESPONSÁVEL -->
-                    <div class="col-span-1 text-gray-600 truncate">
-                        {{ $task->responsible?->name ?? '—' }}
+                    <!-- CATEGORIA -->
+                    <div class="col-span-1">
+                        <div class="flex justify-center">
+                            @if($task->category)
+                                <span class="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full truncate max-w-full">
+                                    {{ $task->category }}
+                                </span>
+                            @else
+                                <span class="text-xs text-gray-400 italic">—</span>
+                            @endif
+                        </div>
                     </div>
 
                     <!-- PRIORIDADE -->
-                    <div class="col-span-1 text-center">
-                        <span class="px-2 py-0.5 rounded-full bg-gray-200 text-gray-700 text-[11px]">
-                            {{ $task->priority?->title ?? 'Normal' }}
-                        </span>
+                    <div class="col-span-1">
+                        <div class="flex justify-center">
+                            @if($task->priority)
+                                <span class="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full truncate max-w-full">
+                                    {{ $task->priority->title }}
+                                </span>
+                            @else
+                                <span class="text-xs text-gray-400 italic">—</span>
+                            @endif
+                        </div>
                     </div>
 
                     <!-- STATUS -->
-                    <div class="col-span-1 text-center">
-                        <span class="px-2 py-0.5 rounded-full text-[11px] font-medium
-                            {!! $task->taskStatus?->color ?? 'bg-gray-200 text-gray-700' !!}">
-                            {{ $task->taskStatus?->title ?? 'Rascunho' }}
-                        </span>
+                    <div class="col-span-1">
+                        <div class="flex justify-center">
+                            @if($task->taskStatus)
+                                <span class="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full truncate max-w-full">
+                                    {{ $task->taskStatus->title }}
+                                </span>
+                            @else
+                                <span class="text-xs text-gray-400 italic">—</span>
+                            @endif
+                        </div>
                     </div>
 
                     <!-- DATAS -->
-                    <div class="col-span-1 flex flex-col text-[11px] text-gray-500 text-center leading-tight">
-                        <span>{{ $task->created_at->format('d/m/Y') }}</span>
+                    <!-- Criado em -->
+                    <div class="col-span-1">
+                        <div class="flex flex-col items-center">
+                            <div class="text-xs text-gray-700 font-medium">
+                                {{ $task->created_at->format('d/m/Y') }}
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-span-1 flex flex-col text-[11px] text-gray-500 text-center leading-tight">
-                        @if ($task->started_at)
-                            <span>Início: {{ $task->started_at->format('d/m/Y') }}</span>
-                        @endif
+
+                    <!-- Atualizado em -->
+                    <div class="col-span-1">
+                        <div class="flex flex-col items-center">
+                            <div class="text-xs text-gray-700 font-medium">
+                                {{ $task->updated_at->format('d/m/Y') }}
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-span-1 flex flex-col text-[11px] text-gray-500 text-center leading-tight">
-                        @if ($task->deadline_at)
-                            <span>Fim: {{ $task->deadline_at->format('d/m/Y') }}</span>
-                        @endif
+
+                    <!-- Iniciado em -->
+                    <div class="col-span-1">
+                        <div class="flex flex-col items-center">
+                            @if ($task->started_at)
+                                <div class="text-xs text-gray-700 font-medium">
+                                    {{ $task->started_at->format('d/m/Y') }}
+                                </div>
+                            @else
+                                <span class="text-xs text-gray-400 italic">—</span>
+                            @endif
+                        </div>
                     </div>
-                    <div class="col-span-1 flex flex-col text-[11px] text-gray-500 text-center leading-tight">
-                        @if ($task->finished_at)
-                            <span>Fim: {{ $task->finished_at->format('d/m/Y') }}</span>
-                        @endif
+
+                    <!-- Prazo -->
+                    <div class="col-span-1">
+                        <div class="flex flex-col items-center">
+                            @if ($task->deadline_at)
+                                <div class="text-xs text-gray-700 font-medium">
+                                    {{ $task->deadline_at->format('d/m/Y') }}
+                                </div>
+                            @else
+                                <span class="text-xs text-gray-400 italic">—</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Finalizado em -->
+                    <div class="col-span-1">
+                        <div class="flex flex-col items-center">
+                            @if ($task->finished_at)
+                                <div class="text-xs text-green-600 font-medium">
+                                    {{ $task->finished_at->format('d/m/Y') }}
+                                </div>
+                            @else
+                                <span class="text-xs text-gray-400 italic">—</span>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
-                <!-- ETAPAS -->
-                <div x-show="openSteps" x-collapse class="bg-gray-50 border-t" >
-                    @include('livewire.task._partials.task-steps', ['task' => $task])
+                <!-- ETAPAS (Collapsible) -->
+                <div class="bg-gray-50/30 border-t border-gray-100">
+                    <div>
+                        @include('livewire.task._partials.task-steps', ['task' => $task])
+                    </div>
                 </div>
-
             </div>
         @empty
-            <div class="text-center text-gray-500 py-10 text-sm">
-                Nenhuma tarefa encontrada.
+            <!-- Estado Vazio -->
+            <div class="flex flex-col items-center justify-center py-12 px-4">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <i class="fa-solid fa-list-check text-gray-400 text-2xl"></i>
+                </div>
+                <h3 class="text-base font-medium text-gray-700 mb-2">Nenhuma tarefa encontrada</h3>
+                <p class="text-sm text-gray-500">Comece criando sua primeira tarefa</p>
             </div>
         @endforelse
-
     </div>
 
-    <!-- Modal de Criação -->
+    <!-- Modal -->
     <x-modal :show="$showModal" wire:key="workflow-modal">
         @if ($modalKey === 'modal-form-create-task')
             <x-slot name="header">
@@ -177,6 +261,33 @@
                 </div>
             </form>
         @endif
+        @if ($modalKey === 'modal-copy-workflow-steps')
+            <x-slot name="header">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase">
+                    Copiar etapas de um fluxo
+                </h2>
+            </x-slot>
+
+            <form wire:submit.prevent="copyWorkflowSteps" class="space-y-4">
+
+                <div>
+                    <x-form.label value="Fluxo de trabalho" />
+                    <x-form.select-livewire
+                        name="workflow_id"
+                        wire:model="workflow_id"
+                        :collection="$workflows"
+                        value-field="id"
+                        label-field="title"
+                    />
+                </div>
+
+                <div class="flex justify-end gap-2 pt-4">
+                    <x-button variant="red" text="Cancelar" wire:click="closeModal" />
+                    <x-button type="submit" text="Copiar etapas" />
+                </div>
+            </form>
+        @endif
+
     </x-modal>
 
 </div>

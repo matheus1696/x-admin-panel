@@ -19,4 +19,9 @@ class TaskStepStatus extends Model
     {
         return $this->hasMany(TaskStep::class);
     }
+
+    public static function default()
+    {
+        return static::where('is_default', true)->first();
+    }
 }

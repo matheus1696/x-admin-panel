@@ -2,6 +2,8 @@
 
 namespace App\Models\Task;
 
+use App\Models\Administration\Task\TaskCategory;
+use App\Models\Administration\Task\TaskPriority;
 use App\Models\Administration\Task\TaskStepStatus;
 use App\Models\Administration\User\User;
 use App\Models\Traits\HasUuid;
@@ -19,7 +21,7 @@ class TaskStep extends Model
         'user_id',
         'task_category_id',
         'task_priority_id',
-        'task_step_status_id',
+        'task_status_id',
         'started_at',
         'deadline_at',
         'finished_at',
@@ -36,10 +38,27 @@ class TaskStep extends Model
     }
 
     public function taskStepStatus(){
-        return $this->belongsTo(TaskStepStatus::class, 'task_step_status_id');
+        return $this->belongsTo(TaskStepStatus::class, 'task_status_id');
+    }
+
+    public function taskPriority(){
+        return $this->belongsTo(TaskPriority::class, 'task_priority_id');
+    }
+
+    public function taskCategory(){
+        return $this->belongsTo(TaskCategory::class, 'task_category_id');
     }
 
     public function user(){
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($task) {
+            $task->update([
+                'code' => 'TK' . str_pad($task->id, 5, '0', STR_PAD_LEFT),
+            ]);
+        });
     }
 }
