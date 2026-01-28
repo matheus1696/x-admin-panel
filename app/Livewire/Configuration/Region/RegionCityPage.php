@@ -24,7 +24,7 @@ class RegionCityPage extends Component
     {
         $query = RegionCity::query();
 
-        $query->orderBy('status', 'desc');
+        $query->orderBy('is_active', 'desc');
 
         if ($this->name) { $query->where('filter', 'like', '%' . strtolower($this->name) . '%'); }
 

@@ -19,6 +19,7 @@ class TaskStep extends Model
         'title',
         'description',
         'user_id',
+        'organization_id',
         'task_category_id',
         'task_priority_id',
         'task_status_id',

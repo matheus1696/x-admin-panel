@@ -5,16 +5,16 @@
 
     <x-page.header icon="fa-solid fa-layer-group" title="Estabelecimento" subtitle="Dados da Unidade">
         <x-slot name="button">
-            <x-button href="{{ route('config.establishments.index') }}" text="Voltar página" icon="fa-solid fa-reply" variant="gray" />
+            <x-button href="{{ route('configuration.manage.establishments.view') }}" text="Voltar página" icon="fa-solid fa-reply" variant="gray" />
         </x-slot>
     </x-page.header>
 
-    <div class="border rounded-2xl shadow-sm my-6 {{ $establishment->status ? 'bg-white border-gray-200' : 'bg-red-50 border-red-200'}}">
+    <div class="border rounded-2xl shadow-sm my-6 {{ $establishment->is_active ? 'bg-white border-gray-200' : 'bg-red-50 border-red-200'}}">
         <!-- Header do Card -->
-        <div class="px-6 py-4 border-b {{ $establishment->status ? 'border-gray-200' : 'border-red-200'}} flex items-center justify-between">
+        <div class="px-6 py-4 border-b {{ $establishment->is_active ? 'border-gray-200' : 'border-red-200'}} flex items-center justify-between">
             <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide space-x-2">
                 <span>Dados Principais</span>
-                <span class="text-[11px] px-2 rounded-full {{ $establishment->status ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'}}">{{ $establishment->status ? 'Ativada' : 'Inativada'}}</span>
+                <span class="text-[11px] px-2 rounded-full {{ $establishment->is_active ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'}}">{{ $establishment->is_active ? 'Ativada' : 'Inativada'}}</span>
             </h2>
 
             <div class="flex items-center justify-center gap-2">
@@ -76,7 +76,7 @@
     <div class="py-4 w-full border-t border-gray-200">
         <div>
             <!-- Header -->
-            <div class="flex items-center justify-between px-2 gap-3">
+            <div class="flex items-center justify-between px-2 pb-2 gap-3">
                 <div class="flex items-center gap-2">
                     <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Departamentos</h3>
                     <div class="bg-green-50 hover:bg-green-100 border border-green-200 px-2 py-1 rounded-lg">

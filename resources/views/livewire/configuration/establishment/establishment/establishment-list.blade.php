@@ -47,10 +47,8 @@
                     default="Selecione a quantidade de itens"
                 />
             </div>
-        </x-slot>
 
-        {{-- Filtros Avançados --}}
-        <x-slot name="showAdvanced">
+            
             <div class="md:col-span-2">
                 <x-form.label value="Ordenar por" />                
                 <x-form.select-livewire 
@@ -84,7 +82,7 @@
                     <x-page.table-td>
                         <div class="flex items-center justify-center gap-2">
                                 <x-button.btn-table title="Detalhe do Estabelecimento">
-                                    <a href="{{ route('config.establishments.show', $establishment->code) }}">
+                                    <a href="{{ route('configuration.manage.establishments.show', $establishment->code) }}">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>
                                 </x-button.btn-table>

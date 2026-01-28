@@ -21,6 +21,7 @@ class WorkflowStep extends Model
         'required',
         'allow_parallel',
         'step_type',
+        'organization_id',
     ];
 
     protected $casts = [

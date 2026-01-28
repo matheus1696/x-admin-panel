@@ -25,7 +25,7 @@ class FinancialBlockPage extends Component
     {
         $query = FinancialBlock::query();
 
-        $query->orderBy('status', 'desc');
+        $query->orderBy('is_active', 'desc');
 
         if ($this->acronym) { $query->where('acronym', 'like', '%' . strtolower($this->acronym) . '%'); }
 

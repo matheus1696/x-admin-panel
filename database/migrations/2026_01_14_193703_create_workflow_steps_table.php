@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('workflow_steps', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->foreignId('workflow_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('workflow_id')->constrained('workflows')->cascadeOnDelete();
 
+            $table->foreignId('organization_id')->nullable()->constrained('organization_charts')->cascadeOnDelete();
             $table->string('title');
             $table->string('filter');
             $table->integer('step_order');

@@ -16,7 +16,6 @@ use App\Livewire\Configuration\Region\RegionStatePage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartConfigPage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartDashboardPage;
 use App\Livewire\Organization\Workflow\WorkflowProcessesPage;
-use App\Livewire\Organization\Workflow\WorkflowRunStatusPage;
 use App\Livewire\Public\Contact\ContactPage;
 use App\Livewire\Task\TaskPage;
 use Illuminate\Support\Facades\Route;
@@ -93,12 +92,11 @@ Route::middleware('auth')->group(function () {
         /*
         | Estabelecimentos
         */
-        Route::prefix('estabelecimentos') ->middleware('can:configuration.manage.establishments') ->name('establishments.')
-            ->group(function () {
-                Route::get('/', EstablishmentList::class)->name('view');
-                Route::get('/{code}', EstablishmentShow::class)->name('show');
-                Route::get('/tipos', EstablishmentTypePage::class)->name('types');
-            });
+        Route::prefix('estabelecimentos')->middleware('can:configuration.manage.establishments')->name('establishments.')->group(function () {
+            Route::get('/lista', EstablishmentList::class)->name('view');
+            Route::get('/unidade/{code}', EstablishmentShow::class)->name('show');
+            Route::get('/tipos', EstablishmentTypePage::class)->name('types');
+        });
 
         /*
         | Ocupações (CBO)
