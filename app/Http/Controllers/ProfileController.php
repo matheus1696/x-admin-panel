@@ -21,8 +21,8 @@ class ProfileController extends Controller
      */
     public function edit(): View
     {
-        $genders = Gender::where('status', true)->get();
-        $occupations = Occupation::where('status', true)->get();
+        $genders = Gender::where('is_active', true)->get();
+        $occupations = Occupation::where('is_active', true)->get();
 
         ActivityLogHelper::action('Visualizou a página de edição do seu perfil');
 

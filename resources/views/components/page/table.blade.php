@@ -1,17 +1,15 @@
 @props([ 'pagination' => null])
 
 <!-- 📊 Data Table Component -->
-<div class="w-[calc(100vw-35px)] md:w-full overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
-    <!-- Table Wrapper -->
-    <table class="w-full text-[13px] divide-y divide-gray-100">
-        <!-- Cabeçalho -->
-        <thead class="font-semibold uppercase tracking-wider bg-green-100 text-green-800 text-left border-b border-green-200">
-            {{ $thead ?? ''}}
+<div class="relative overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
+    <table class="w-full text-[13px] table-auto [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_td]:px-3 [&_td]:py-2">
+
+        <thead class="sticky top-0 z-10 bg-green-100 text-green-800 uppercase tracking-wider border-b">
+            {{ $thead ?? '' }}
         </thead>
 
-        <!-- Corpo -->
-        <tbody class="divide-y divide-gray-200/75 [&>tr:hover]:bg-green-50 [&>tr:nth-child(even)]:bg-green-50/75">
-            {{ $tbody ?? ''}}
+        <tbody class="divide-y divide-gray-200 [&>tr:hover]:bg-green-100/50 [&>tr:nth-child(even)]:bg-gray-50"> 
+            {{ $tbody ?? '' }}
         </tbody>
     </table>
 </div>

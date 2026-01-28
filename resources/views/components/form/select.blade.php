@@ -48,7 +48,13 @@
         search: '',
         highlighted: 0,
         options: {{ json_encode($options) }},
-        selectedValue: @json($selected),
+        selectedValue: 
+        @if (filled($attributes->wire('model'))) 
+            @entangle($attributes->wire('model')->value).live,
+        @else 
+            {{ json_encode($selected) }}
+        @endif,
+        
 
         get filteredOptions() {
             if (!this.search) return this.options;
@@ -59,13 +65,6 @@
 
         select(option) {
             this.selectedValue = option.value;
-
-            this.$nextTick(() => {
-                this.$refs.hidden.dispatchEvent(
-                    new Event('input', { bubbles: true })
-                );
-            });
-
             this.close();
         },
 
@@ -100,13 +99,15 @@
         }
     }"
     x-init="
-        if (selectedValue !== null && selectedValue !== '') {
-            $nextTick(() => {
-                $refs.hidden.dispatchEvent(
-                    new Event('input', { bubbles: true })
-                );
-            });
-        }
+        @if (!filled($attributes->wire('model'))) 
+            if (selectedValue !== null && selectedValue !== '') {
+                $nextTick(() => {
+                    $refs.hidden.dispatchEvent(
+                        new Event('input', { bubbles: true })
+                    );
+                });
+            }
+        @endif
 
         $watch('open', v => !v && (search = '', highlighted = 0))
     "
@@ -164,7 +165,7 @@
         </div>
 
         <!-- Opções -->
-        <template x-for="(option, index) in filteredOptions" :key="option.value">
+        <template x-for="(option, index) in filteredOptions" :key="`${option.value}-${index}`">
             <div
                 @click="select(option)"
                 @mouseenter="highlighted = index"

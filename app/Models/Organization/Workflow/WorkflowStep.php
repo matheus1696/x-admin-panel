@@ -2,6 +2,7 @@
 
 namespace App\Models\Organization\Workflow;
 
+use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Traits\HasActive;
 use App\Models\Traits\HasTitleFilter;
 use App\Models\Traits\HasUuid;
@@ -37,5 +38,13 @@ class WorkflowStep extends Model
     public function workflow()
     {
         return $this->belongsTo(Workflow::class);
+    }
+
+    /**
+     * Process workflow
+     */
+    public function organization()
+    {
+        return $this->belongsTo(OrganizationChart::class, 'organization_id');
     }
 }

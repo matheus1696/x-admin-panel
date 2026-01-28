@@ -2,10 +2,8 @@
 
 namespace App\Livewire\Organization\Workflow;
 
-use App\Http\Requests\Organization\Workflow\WorkflowStepStoreRequest;
-use App\Http\Requests\Organization\Workflow\WorkflowStepUpdateRequest;
 use App\Livewire\Traits\WithFlashMessage;
-use App\Models\Organization\Workflow\WorkflowStep;
+use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Services\Organization\Workflow\WorkflowStepService;
 use App\Validation\Organization\Workflow\WorkflowStepRules;
 use Livewire\Component;
@@ -18,11 +16,13 @@ class WorkflowSteps extends Component
 
     public $workflowId;
     public $workflowStepId;
+    public $organizations;
 
     public $workflowSteps;
 
     public $title;
     public $deadline_days;
+    public $organization_id;
     public bool $required = true;
     public bool $allow_parallel = false;
 
@@ -33,13 +33,14 @@ class WorkflowSteps extends Component
 
     private function resetForm()
     {
-        $this->reset(['title', 'deadline_days', 'required', 'allow_parallel',]);
+        $this->reset(['title', 'deadline_days', 'required', 'allow_parallel', 'organization_id']);
         $this->resetValidation();
     }
 
     public function mount($workflowId)
     {
         $this->workflowId = $workflowId;
+        $this->organizations = OrganizationChart::orderBy('hierarchy')->get();
         $this->loadWorkflowStep();
     }
 
@@ -69,6 +70,7 @@ class WorkflowSteps extends Component
         $workflowStep = $this->workflowStepService->find($id);
 
         $this->workflowStepId = $workflowStep->id;
+        $this->organization_id = $workflowStep->organization_id;
         $this->title = $workflowStep->title;
         $this->deadline_days = $workflowStep->deadline_days;
         $this->required = $workflowStep->required;

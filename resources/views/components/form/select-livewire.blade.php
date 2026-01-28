@@ -24,7 +24,7 @@
         })->toArray();
     }
 
-    $defaultTailwind = "w-full rounded-md border px-3 py-2 text-xs shadow-sm transition-all duration-200 cursor-pointer flex items-center gap-2";
+    $defaultTailwind = "w-full rounded-md border px-3 py-2 text-xs shadow-sm transition-all duration-200 cursor-pointer";
 
     $variants = [
         'default' => [
@@ -72,8 +72,8 @@
         @click="open = !open"
         class=" {{ $errors->has($name) && !$disabled ? $errorBorder : $baseBorder }}"
     >
-        {{ $avatar ?? null }}
-        <div class="flex-1 flex justify-between">
+        <div class="flex justify-between">
+            {{$avatar ?? null}}
             <span
                 class="truncate"
                 :class="selectedValue ? 'text-gray-700' : 'text-gray-400'"
