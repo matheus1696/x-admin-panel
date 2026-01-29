@@ -1,18 +1,21 @@
 @props([
-    'name' => null,
+    'name',
     'options' => [],
     'collection' => null,
+
+    'labelField' => 'title',
     'labelAcronym' => null,
-    'labelField' => 'name',
     'valueField' => 'id',
-    'default' => 'Selecione uma opção',
-    'disabled' => false,
+
     'selected' => null,
-    'wireModel' => null,
-    'variant' => 'default', // default | inline
+    'placeholder' => 'Selecione uma opção',
+
+    'disabled' => false,
+    'variant' => 'default',
 ])
 
 @php
+    //Estilo Select
     if ($collection) {
         $options = $collection->map(function ($item) use ($labelAcronym, $labelField, $valueField) {
             return [
@@ -23,7 +26,10 @@
             ];
         })->toArray();
     }
+@endphp
 
+@php
+    //Estilo Select
     $defaultTailwind = "w-full rounded-md border px-3 py-2 text-xs shadow-sm transition-all duration-200 cursor-pointer";
 
     $variants = [
@@ -42,29 +48,80 @@
     
     $baseBorder  = $defaultTailwind . ' ' . $variantConfig['base'];
     $errorBorder = $defaultTailwind . ' ' . $variantConfig['error'];
+@endphp
 
-    $wireModelName = $wireModel ?? $name;
+@php
+    $wireModel = $attributes->wire('model')->value();
+
+    if (! $wireModel) {
+        throw new Exception('x-form.select-livewire requer wire:model');
+    }
 @endphp
 
 <div
     x-data="{
         open: false,
         search: '',
-        selectedValue: @entangle($wireModelName).live,
-        options: {{ json_encode($options) }},
-        
+        highlighted: 0,
+        selectedValue: @entangle($wireModel).live,
+        options: {{ Js::from($options) }},
+
         get filteredOptions() {
-            if (!this.search) return this.options;
-            return this.options.filter(opt => 
+            if (!this.search) return this.options
+            return this.options.filter(opt =>
                 opt.label.toLowerCase().includes(this.search.toLowerCase())
-            );
+            )
         },
-        
+
+        openDropdown() {
+            if (this.open) return
+            this.open = true
+            this.$nextTick(() => this.$refs.search?.focus())
+        },
+
+        closeDropdown() {
+            this.open = false
+            this.search = ''
+            this.highlighted = 0
+        },
+
         selectOption(option) {
-            this.selectedValue = option.value;
-            this.open = false;
-        }
+            this.selectedValue = option.value
+            this.closeDropdown()
+        },
+
+        moveNext() {
+            if (this.highlighted < this.filteredOptions.length - 1) {
+                this.highlighted++
+                this.scrollIntoView()
+            }
+        },
+
+        movePrev() {
+            if (this.highlighted > 0) {
+                this.highlighted--
+                this.scrollIntoView()
+            }
+        },
+
+        scrollIntoView() {
+            this.$refs[`option_${this.highlighted}`]?.scrollIntoView({
+                block: 'nearest'
+            })
+        },
+
+        selectHighlighted() {
+            const option = this.filteredOptions[this.highlighted]
+            if (option) this.selectOption(option)
+        },
     }"
+    @keydown.arrow-down.prevent="open ? moveNext() : openDropdown()"
+    @keydown.arrow-up.prevent="movePrev"
+    @keydown.enter.prevent="selectHighlighted"
+    @keydown.escape.window="closeDropdown"
+    role="combobox"
+    aria-haspopup="listbox"
+    :aria-expanded="open"
     class="relative w-full"
 >
     <!-- Campo principal -->
@@ -78,8 +135,8 @@
                 class="truncate"
                 :class="selectedValue ? 'text-gray-700' : 'text-gray-400'"
                 x-text="selectedValue 
-                    ? (options.find(o => o.value == selectedValue)?.label || '{{ $default }}')
-                    : '{{ $default }}'">
+                    ? (options.find(o => o.value == selectedValue)?.label || '{{ $placeholder }}')
+                    : '{{ $placeholder }}'">
             </span>
             <i 
                 class="fa-solid fa-chevron-down text-gray-400 ml-2 text-[10px] transition-transform duration-200"
@@ -92,29 +149,44 @@
     <div
         x-show="open"
         x-transition
-        @click.outside="open = false"
-        class="w-full absolute mt-1.5 bg-white border border-gray-300 rounded-lg shadow-lg z-50 max-h-60 overflow-auto"
+        @click.outside="closeDropdown"
+        role="listbox"
+        :id="'listbox-{{ $name }}'"
+        class="absolute z-50 mt-1.5 w-full max-h-60 overflow-auto rounded-lg border border-gray-300 bg-white shadow-lg"
     >
         <!-- Campo de busca -->
         <div class="sticky top-0 bg-white border-b p-2">
             <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                <input type="text" x-model="search" placeholder="Buscar..." class="w-full pl-8 pr-3 py-2 text-xs text-gray-700 border border-gray-200 rounded-md focus:outline-none ring-transparent focus:ring-green-700 focus:border-green-700" @click.stop
-                >
+
+                <input
+                    x-ref="search"
+                    x-model="search"
+                    type="text"
+                    placeholder="Buscar..."
+                    class="w-full pl-8 pr-3 py-2 text-xs border rounded-md focus:ring-green-700 focus:border-green-700"
+                    role="searchbox"
+                />
             </div>
         </div>
 
         <!-- Opções -->
-        <template x-for="option in filteredOptions" :key="option.value">
+        <template x-for="(option, index) in filteredOptions" :key="option.value">
             <div
+                :id="'option-' + index"
+                :ref="'option_' + index"
+                role="option"
+                :aria-selected="selectedValue == option.value"
                 @click="selectOption(option)"
-                class="flex items-center justify-center gap-2 px-3 py-2 text-xs text-gray-700 cursor-pointer hover:bg-green-600 hover:text-white transition"
-                :class="{'bg-green-700 text-white': selectedValue == option.value}"
+                class="flex items-center gap-2 px-3 py-2 text-xs cursor-pointer transition"
+                :class="{
+                    'bg-green-700 text-white': index === highlighted,
+                    'text-gray-700 hover:bg-green-600 hover:text-white': index !== highlighted
+                }"
             >
                 {{ $avatar ?? null }}
-                <div class="flex-1">
-                    <span x-text="option.label" class=" line-clamp-1" :title="option.label"></span>
-                </div>
+
+                <span x-text="option.label" class="line-clamp-1"></span>
             </div>
         </template>
 

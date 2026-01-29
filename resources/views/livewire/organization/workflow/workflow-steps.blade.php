@@ -19,7 +19,7 @@
 
             <div class="col-span-4 md:col-span-4">
                 <x-form.label value="Setor" />
-                <x-form.select
+                <x-form.select-livewire
                     wire:model.defer="organization_id"
                     name="organization_id"
                     :collection="$organizations"

@@ -1,13 +1,16 @@
 @props([
-    'name' => null,
+    'name',
     'options' => [],
     'collection' => null,
-    'labelAcronym' => null,
+
     'labelField' => 'title',
+    'labelAcronym' => null,
     'valueField' => 'id',
-    'default' => 'Selecione uma opção',
-    'disabled' => false,
+
     'selected' => null,
+    'placeholder' => 'Selecione uma opção',
+
+    'disabled' => false,
     'variant' => 'default',
 ])
 
@@ -27,8 +30,8 @@
 
     $variants = [
         'default' => [
-            'base' => "ring-1 ring-green-700 border-gray-300 bg-gray-50 text-gray-700",
-            'error' => "ring-1 ring-red-700 border-red-500 bg-red-50 text-red-700",
+            'base' => "border-gray-300 bg-gray-50 text-gray-700 focus:border-green-700",
+            'error' => "border-red-500 bg-red-50 text-red-700",
         ],
         'inline' => [
             'base' => "border-transparent bg-transparent text-gray-700 px-0 py-1 shadow-none",
@@ -47,14 +50,9 @@
         open: false,
         search: '',
         highlighted: 0,
-        options: {{ json_encode($options) }},
-        selectedValue: 
-        @if (filled($attributes->wire('model'))) 
-            @entangle($attributes->wire('model')->value).live,
-        @else 
-            {{ json_encode($selected) }}
-        @endif,
-        
+        options: @js($options),
+        selectedValue: @json($selected),
+        disabled: @js($disabled),
 
         get filteredOptions() {
             if (!this.search) return this.options;
@@ -63,15 +61,26 @@
             );
         },
 
+        get selectedOption() {
+            return this.options.find(o => o.value == this.selectedValue) || null
+        },
+
         select(option) {
-            this.selectedValue = option.value;
-            this.close();
+            this.selectedValue = option.value
+            this.$nextTick(() => {
+                this.$refs.hidden.dispatchEvent(new Event('input', { bubbles: true }))
+            })
+            this.close()
         },
 
         openDropdown() {
-            if ({{ $disabled ? 'true' : 'false' }}) return;
-            this.open = true;
-            this.$nextTick(() => this.$refs.search?.focus());
+            if (this.disabled) return
+
+            this.open = true
+
+            this.$nextTick(() => {
+                this.$refs.search?.focus()
+            })
         },
 
         close() {
@@ -99,37 +108,39 @@
         }
     }"
     x-init="
-        @if (!filled($attributes->wire('model'))) 
-            if (selectedValue !== null && selectedValue !== '') {
-                $nextTick(() => {
-                    $refs.hidden.dispatchEvent(
-                        new Event('input', { bubbles: true })
-                    );
-                });
-            }
-        @endif
+        if (selectedValue !== null && selectedValue !== '') {
+            $nextTick(() => {
+                $refs.hidden.dispatchEvent(
+                    new Event('input', { bubbles: true })
+                )
+            })
+        }
 
-        $watch('open', v => !v && (search = '', highlighted = 0))
+        $watch('open', value => {
+            if (value) {
+                $nextTick(() => $refs.search?.focus())
+            } else {
+                search = ''
+                highlighted = 0
+            }
+        })
     "
     class="relative w-full"
     @keydown.escape.window="close"
-    @keydown.enter.prevent="open && selectHighlighted()"
-    @keydown.arrow-down.prevent="open ? moveNext() : openDropdown()"
-    @keydown.arrow-up.prevent="open && movePrev()"
+    @keydown.arrow-down.prevent="!disabled && (open ? moveNext() : openDropdown())"
+    @keydown.arrow-up.prevent="!disabled && open && movePrev()"
+    @keydown.enter.prevent="!disabled && open && selectHighlighted()"
 >
 
     <!-- Campo -->
     <div
-        @click="open ? close() : openDropdown()"
+        @click="!disabled && (open ? close() : openDropdown())"
         class="{{ $errors->has($name) && !$disabled ? $errorBorder : $baseBorder }}
                {{ $disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer' }}"
     >
         <div class="flex-1 truncate"
              :class="selectedValue ? 'text-gray-700' : 'text-gray-400'"
-             x-text="
-                selectedValue
-                ? (options.find(o => o.value == selectedValue)?.label || '{{ $default }}')
-                : '{{ $default }}'
+             x-text="selectedOption ? selectedOption.label : '{{ $placeholder }}'
              ">
         </div>
 
@@ -143,7 +154,6 @@
         type="hidden"
         name="{{ $name }}"
         :value="selectedValue"
-        {{ $attributes->whereStartsWith('wire:') }}
     >
 
     <!-- Dropdown -->
@@ -151,7 +161,7 @@
         x-show="open"
         x-transition
         @click.outside="close"
-        class="absolute z-50 mt-0.5 w-full bg-white border border-gray-300 shadow-lg max-h-60 overflow-auto"
+        class="absolute z-50 mt-0.5 w-full bg-white border border-gray-300 shadow-lg max-h-60 overflow-auto rounded-lg"
     >
         <!-- Busca -->
         <div class="sticky top-0 bg-white border-b p-2">
@@ -165,14 +175,14 @@
         </div>
 
         <!-- Opções -->
-        <template x-for="(option, index) in filteredOptions" :key="`${option.value}-${index}`">
+        <template x-for="(option, index) in filteredOptions" :key="option.value">
             <div
                 @click="select(option)"
                 @mouseenter="highlighted = index"
-                class="px-3 py-2 text-xs cursor-pointer transition"
+                class="px-3 py-2.5 text-xs cursor-pointer transition border-b border-gray-200"
                 :class="{
                     'bg-green-700 text-white': highlighted === index,
-                    'bg-green-600 text-white': selectedValue == option.value
+                    'bg-green-50 text-green-800 font-semibold': selectedValue == option.value && highlighted !== index
                 }"
             >
                 <span x-text="option.label"></span>
