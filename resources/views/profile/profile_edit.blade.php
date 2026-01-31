@@ -27,7 +27,7 @@
                     <!-- Ocupação -->
                     <div class="col-span-2 md:col-span-4">
                         <x-form.label value="Ocupação" for="occupation_id" />
-                        <x-form.select name="occupation_id" :collection="$occupations" labelField="title" valueField="id" default="Selecione a profissão" :selected="old('occupation_id', Auth::user()->occupation_id ?? '')"/>
+                        <x-form.select name="occupation_id" :collection="$occupations" labelField="title" valueField="id" placeholder="Selecione a profissão" :selected="old('occupation_id', Auth::user()->occupation_id ?? '')"/>
                         <x-form.error :messages="$errors->get('occupation_id')" />
                     </div>
 
@@ -41,7 +41,7 @@
                     <!-- Gênero -->
                     <div class="md:col-span-2">
                         <x-form.label value="Gênero" for="gender_id" />
-                        <x-form.select name="gender_id" :collection="$genders" labelField="title" valueField="id" default="Selecione o gênero" :selected="old('gender_id', Auth::user()->gender_id ?? '')"/>
+                        <x-form.select name="gender_id" :collection="$genders" labelField="title" valueField="id" placeholder="Selecione o gênero" :selected="old('gender_id', Auth::user()->gender_id ?? '')"/>
                         <x-form.error :messages="$errors->get('gender_id')" />
                     </div>
                     

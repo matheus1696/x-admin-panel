@@ -50,15 +50,16 @@
         open: false,
         search: '',
         highlighted: 0,
-        options: @js($options),
-        selectedValue: @json($selected),
-        disabled: @js($disabled),
+        options: {{ json_encode($options) }},
+        selectedValue: {{ json_encode($selected) }},
+        placeholder: {{ json_encode($placeholder) }},
+        disabled: {{ json_encode($disabled) }},
 
         get filteredOptions() {
-            if (!this.search) return this.options;
+            if (!this.search) return this.options
             return this.options.filter(o =>
                 o.label.toLowerCase().includes(this.search.toLowerCase())
-            );
+            )
         },
 
         get selectedOption() {
@@ -68,44 +69,45 @@
         select(option) {
             this.selectedValue = option.value
             this.$nextTick(() => {
-                this.$refs.hidden.dispatchEvent(new Event('input', { bubbles: true }))
+                this.$refs.hidden.dispatchEvent(
+                    new Event('input', { bubbles: true })
+                )
             })
             this.close()
         },
 
         openDropdown() {
             if (this.disabled) return
-
             this.open = true
-
-            this.$nextTick(() => {
-                this.$refs.search?.focus()
-            })
         },
 
         close() {
-            this.open = false;
-            this.search = '';
-            this.highlighted = 0;
+            this.open = false
+            this.search = ''
+            this.highlighted = 0
+        },
+
+        toggle() {
+            if (this.disabled) return
+            this.open ? this.close() : this.openDropdown()
         },
 
         moveNext() {
             if (this.highlighted < this.filteredOptions.length - 1) {
-                this.highlighted++;
+                this.highlighted++
             }
         },
 
         movePrev() {
             if (this.highlighted > 0) {
-                this.highlighted--;
+                this.highlighted--
             }
         },
 
         selectHighlighted() {
-            if (this.filteredOptions[this.highlighted]) {
-                this.select(this.filteredOptions[this.highlighted]);
-            }
-        }
+            const option = this.filteredOptions[this.highlighted]
+            if (option) this.select(option)
+        },
     }"
     x-init="
         if (selectedValue !== null && selectedValue !== '') {
@@ -126,22 +128,31 @@
         })
     "
     class="relative w-full"
+    @click.outside="close"
+    @focusout="
+        if (!$el.contains($event.relatedTarget)) {
+            close()
+        }
+    "
     @keydown.escape.window="close"
     @keydown.arrow-down.prevent="!disabled && (open ? moveNext() : openDropdown())"
     @keydown.arrow-up.prevent="!disabled && open && movePrev()"
-    @keydown.enter.prevent="!disabled && open && selectHighlighted()"
+    @keydown.enter.prevent="open && selectHighlighted()"
+    @keydown.enter.prevent.stop
 >
 
     <!-- Campo -->
     <div
-        @click="!disabled && (open ? close() : openDropdown())"
+        tabindex="0"
+        role="combobox"
+        :aria-expanded="open"
+        @click="toggle()"
         class="{{ $errors->has($name) && !$disabled ? $errorBorder : $baseBorder }}
                {{ $disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer' }}"
     >
         <div class="flex-1 truncate"
-             :class="selectedValue ? 'text-gray-700' : 'text-gray-400'"
-             x-text="selectedOption ? selectedOption.label : '{{ $placeholder }}'
-             ">
+            :class="selectedValue ? 'text-gray-700' : 'text-gray-400'"
+            x-text="selectedOption ? selectedOption.label : placeholder">
         </div>
 
         <i class="fa-solid fa-chevron-down text-[10px] transition-transform"
@@ -156,12 +167,11 @@
         :value="selectedValue"
     >
 
-    <!-- Dropdown -->
     <div
         x-show="open"
         x-transition
         @click.outside="close"
-        class="absolute z-50 mt-0.5 w-full bg-white border border-gray-300 shadow-lg max-h-60 overflow-auto rounded-lg"
+        class="absolute z-50 mt-0.5 w-full bg-white border border-gray-300 shadow-lg max-h-60 overflow-y-scroll rounded-lg"
     >
         <!-- Busca -->
         <div class="sticky top-0 bg-white border-b p-2">
@@ -170,7 +180,7 @@
                 type="text"
                 x-model="search"
                 placeholder="Buscar..."
-                class="w-full px-3 py-2 text-xs border rounded-md focus:ring-green-700 focus:border-green-700"
+                class="w-full px-3 py-2 text-xs border rounded-md focus:ring-0 focus:border-green-700"
             >
         </div>
 
