@@ -116,7 +116,7 @@
                     new Event('input', { bubbles: true })
                 )
             })
-        }
+        },
 
         $watch('open', value => {
             if (value) {

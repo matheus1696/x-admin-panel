@@ -23,7 +23,6 @@
                     wire:model.defer="organization_id"
                     name="organization_id"
                     :collection="$organizations"
-                    :selected="$organization_id"
                     value-field="id"
                     label-acronym="acronym"
                     label-field="title"
