@@ -58,7 +58,7 @@ class TaskStep extends Model
     {
         static::created(function ($task) {
             $task->update([
-                'code' => 'TK' . str_pad($task->id, 5, '0', STR_PAD_LEFT),
+                'code' => 'TS' . str_pad($task->id, 5, '0', STR_PAD_LEFT),
             ]);
         });
     }
