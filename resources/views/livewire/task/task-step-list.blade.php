@@ -3,13 +3,22 @@
     <!-- Flash Message -->
     <x-alert.flash />
     
-    <div class="grid grid-cols-12 gap-2 px-5 items-center divide-x">
+    <div class="grid grid-cols-12 gap-2 px-5 items-center divide-x border-b hover:bg-green-200/50 transition-colors duration-150">
         
         <!-- TÍTULO -->
-        <div class="col-span-4 flex items-center gap-2">                        
+        <div class="col-span-4 flex items-center">                        
             <div class="flex-1 flex items-center gap-2">
-                <span class="flex-1 text-gray-700 truncate text-xs pl-10">
-                    {{ $step->code }} - {{ $step->title }}
+                <div>
+                    <x-button variant="green_outline" :text="$step->code"
+                        @click=" openAsideTask = false; openAsideTaskStep = true; 
+                        if (activeTaskStepItem === {{ $step->id }})
+                            activeTaskStepItem = null; 
+                        else 
+                            activeTaskStepItem = {{ $step->id }} "
+                         />
+                </div> -
+                <span class="flex-1 text-gray-700 line-clamp-1 text-xs">
+                    {{ $step->title }}
                 </span>
             </div>
         </div>
@@ -81,5 +90,18 @@
                 @endif
             </div>
         </div>
+    </div>
+
+    <div
+        x-show="openAsideTaskStep && activeTaskStepItem === {{ $step->id }}"
+        x-transition:enter="transform transition ease-in-out duration-300"
+        x-transition:enter-start="translate-x-full"
+        x-transition:enter-end="translate-x-0"
+        x-transition:leave="transform transition ease-in-out duration-300"
+        x-transition:leave-start="translate-x-0"
+        x-transition:leave-end="translate-x-full"
+        class="fixed top-0 right-0 z-50 h-screen w-1/3 bg-red-700 text-white p-4"
+    >
+        <livewire:task.task-step-aside :stepId="$step->id" :key="'aside-'.$step->id" />
     </div>
 </div>

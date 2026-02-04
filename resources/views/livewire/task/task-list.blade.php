@@ -3,25 +3,34 @@
     <!-- Flash Message -->
     <x-alert.flash />
 
-    <div x-data="{ openSteps: false, openCreateStep: false }" 
-        class="border-y border-gray-300 last:border-b-0 hover:bg-green-50/50 transition-colors duration-150">
+    <div x-data="{ openSteps: false, openCreateStep: false, openAsideTask: false }" class="border-y border-gray-300 last:border-b-0 hover:bg-green-50/50 transition-colors duration-150">
         
         <!-- LINHA DA TASK -->
-        <div class="grid grid-cols-12 gap-2 px-5 items-center divide-x">
+        <div class="grid grid-cols-12 gap-2 px-5 py-2 items-center divide-x">
             
             <!-- TÍTULO -->
-            <div class="col-span-4 flex items-center gap-2">                        
-                <div class="flex-1 flex items-center gap-2">
-                    @if ($task->taskSteps->count() > 0)
-                        <div>
-                            <x-button @click="openSteps = !openSteps; openCreateStep = false" variant="gray_outline">
-                                <i class="fa-solid fa-chevron-right text-xs transition-transform duration-200" :class="{ 'rotate-90': openSteps }"></i>
-                            </x-button>
-                        </div>
-                    @endif
+            <div class="col-span-4 flex items-center">                        
+                <div class="flex-1 flex items-center gap-1">
+                    <div class="w-4">
+                        @if ($task->taskSteps->count() > 0)
+                            <div>
+                                <x-button @click="openSteps = !openSteps; openCreateStep = false" variant="gray_outline">
+                                    <i class="fa-solid fa-chevron-right text-xs transition-transform duration-200" :class="{ 'rotate-90': openSteps }"></i>
+                                </x-button>
+                            </div>
+                        @endif
+                    </div>
 
-                    <span class="flex-1 font-medium text-gray-700 truncate text-xs">
-                        {{ $task->code }} - {{ $task->title }}
+                    <div>
+                        <x-button variant="green_outline" :text="$task->code" @click=" openAsideTask = true; openAsideTaskStep = false;
+                        if (activeItem === {{ $task->id }})
+                            activeItem = null; 
+                        else 
+                            activeItem = {{ $task->id }} "
+                         />
+                    </div> -
+                    <span class="flex-1 font-medium text-gray-700 line-clamp-1 text-xs">
+                        {{ $task->title }}
                     </span>
                 </div>
 
@@ -44,39 +53,27 @@
             <!-- CATEGORIA -->
             <div class="col-span-1">
                 <div class="flex justify-center">
-                    @if($task->category)
-                        <span class="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full truncate max-w-full">
-                            {{ $task->category->name }}
-                        </span>
-                    @else
-                        <span class="text-xs text-gray-400 italic">—</span>
-                    @endif
+                    <span class="px-3 py-1 text-[11px] font-medium bg-gray-100 text-gray-700 rounded-full truncate max-w-full">
+                        {{ $task->category->title ?? '—' }}
+                    </span>
                 </div>
             </div>
 
             <!-- PRIORIDADE -->
             <div class="col-span-1">
                 <div class="flex justify-center">
-                    @if($task->priority)
-                        <span class="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full truncate max-w-full">
-                            {{ $task->priority->title }}
-                        </span>
-                    @else
-                        <span class="text-xs text-gray-400 italic">—</span>
-                    @endif
+                    <span class="px-3 py-1 text-[11px] font-medium rounded-full truncate max-w-full {!! $task->priority->color ?? 'bg-gray-100 text-gray-700' !!}">
+                        {{ $task->priority->title ?? '—' }}
+                    </span>
                 </div>
             </div>
 
             <!-- STATUS -->
             <div class="col-span-1">
                 <div class="flex justify-center">
-                    @if($task->taskStatus)
-                        <span class="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full truncate max-w-full">
-                            {{ $task->taskStatus->title }}
-                        </span>
-                    @else
-                        <span class="text-xs text-gray-400 italic">—</span>
-                    @endif
+                    <span class="px-3 py-1 text-[11px] font-medium rounded-full truncate max-w-full {!! $task->taskStatus->color ?? 'bg-gray-100 text-gray-700' !!}">
+                        {{ $task->taskStatus->title ?? '—' }}
+                    </span>
                 </div>
             </div>
 
@@ -143,6 +140,19 @@
                 <livewire:task.task-step-list :stepId="$step->id" :key="$step->id" />
             @endforeach
         </div>
+
+        <div
+            x-show="openAsideTask && activeItem === {{ $task->id }}"
+            x-transition:enter="transform transition ease-in-out duration-300"
+            x-transition:enter-start="translate-x-full"
+            x-transition:enter-end="translate-x-0"
+            x-transition:leave="transform transition ease-in-out duration-300"
+            x-transition:leave-start="translate-x-0"
+            x-transition:leave-end="translate-x-full"
+            class="fixed top-0 right-0 z-50 h-screen w-2/4 bg-white text-gray-900 overflow-y-auto shadow-lg border-l-2 border-green-700"
+        >
+            <livewire:task.task-aside :taskId="$task->id" :key="'aside-'.$task->id" />
+        </div>
     </div>    
 
     <!-- Modal -->
@@ -174,4 +184,5 @@
             </form>
         @endif
     </x-modal>
+
 </div>

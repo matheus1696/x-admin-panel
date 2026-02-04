@@ -1,0 +1,3 @@
+<div>
+    {{ $step->title}}
+</div>

@@ -68,6 +68,10 @@ class TaskPage extends Component
     {
         $data = $this->validate(TaskRules::store());
 
+        if ($data['task_status_id'] == 2) {            
+            $data['started_at'] = now();
+        }
+
         $this->taskService->create($data);
 
         $this->resetForm();

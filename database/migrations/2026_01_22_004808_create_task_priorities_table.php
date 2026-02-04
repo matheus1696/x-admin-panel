@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('task_priorities', function (Blueprint $table) {
             $table->id();
             $table->string('title')->unique();
+            $table->string('color')->nullable();
             $table->unsignedTinyInteger('level');
             $table->boolean('is_default')->default(false);
             $table->boolean('is_active')->default(true);

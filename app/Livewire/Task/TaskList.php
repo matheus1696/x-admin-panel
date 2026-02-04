@@ -63,9 +63,9 @@ class TaskList extends Component
 
     public function updatedResponsableId()
     {
-        Task::where('id', $this->taskId)->update([
-            'user_id' => $this->responsable_id,
-        ]);
+        $data = $this->validate(TaskStepRules::responsable());
+
+        Task::where('id', $this->taskId)->update($data);
         
         $this->flashSuccess('Responsável atualizado.');
     }
