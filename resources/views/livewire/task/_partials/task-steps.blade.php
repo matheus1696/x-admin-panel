@@ -10,12 +10,12 @@
         @foreach ($task->taskSteps as $step)
             <div class="grid grid-cols-12 gap-2 px-5 py-3 items-center divide-x text-xs">
 
-                <div class="col-span-3 text-start">
+                <div class="col-span-4 text-start">
                     <span class="pl-8 pr-3 line-clamp-1">{{ $step->code }} - {{ $step->title }}</span>
                 </div>
 
                 <!-- RESPONSÁVEL -->
-                <div class="col-span-1">
+                <div class="col-span-2">
                     <div class="relative flex items-center gap-2 px-2" >
                         <!-- AVATAR / PLACEHOLDER -->
                         <div>
@@ -74,25 +74,6 @@
                         @else
                             <span class="text-xs text-gray-400 italic">—</span>
                         @endif
-                    </div>
-                </div>
-
-                <!-- DATAS -->
-                <!-- Criado em -->
-                <div class="col-span-1">
-                    <div class="flex flex-col items-center">
-                        <div class="text-xs text-gray-700 font-medium">
-                            {{ $step->created_at->format('d/m/Y') }}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Atualizado em -->
-                <div class="col-span-1">
-                    <div class="flex flex-col items-center">
-                        <div class="text-xs text-gray-700 font-medium">
-                            {{ $step->updated_at->format('d/m/Y') }}
-                        </div>
                     </div>
                 </div>
 

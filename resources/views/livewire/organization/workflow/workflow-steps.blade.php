@@ -9,12 +9,14 @@
 
             <div class="col-span-12 md:col-span-9">
                 <x-form.label value="Nome da Etapa" />
-                <x-form.input wire:model.defer="title" placeholder="Digite a etapa do processo" autofocus/>
+                <x-form.input wire:model.defer="title" name="title" placeholder="Digite a etapa do processo" autofocus/>
+                <x-form.error for="title" />
             </div>
 
             <div class="col-span-4 md:col-span-3">
                 <x-form.label value="Prazo (dias)" />
-                <x-form.input type="number" min="0" wire:model.defer="deadline_days" placeholder="Tempo em dias para conclusão" />
+                <x-form.input type="number" min="0" wire:model.defer="deadline_days" name="deadline_days" placeholder="Tempo em dias para conclusão" />
+                <x-form.error for="deadline_days" />
             </div>
 
             <div class="col-span-4 md:col-span-4">
@@ -27,7 +29,7 @@
                     label-acronym="acronym"
                     label-field="title"
                 />
-                <x-form.error :messages="$errors->get('organization_id')" />
+                <x-form.error for="organization_id" />
             </div>
 
             <div class="col-span-4 md:col-span-4">
@@ -42,7 +44,7 @@
                     value-field="value"
                     label-field="label"
                 />
-                <x-form.error :messages="$errors->get('required')" />
+                <x-form.error for="required" />
             </div>
 
             <div class="col-span-4 md:col-span-4">
@@ -57,7 +59,7 @@
                     value-field="value"
                     label-field="label"
                 />
-                <x-form.error :messages="$errors->get('allow_parallel')" />
+                <x-form.error for="allow_parallel" />
             </div>
         </div>
         <div class="flex justify-end mt-3">

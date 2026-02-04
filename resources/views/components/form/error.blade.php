@@ -1,7 +1,17 @@
-@props(['messages'])
+@props([
+    'for',
+])
 
-@if (!empty($messages))
-    <p {{ $attributes->merge(['class' => 'text-xs text-red-600 dark:text-red-400 pt-1 pl-1']) }}>
-        {{ is_array($messages) ? $messages[0] : $messages }}
+@php
+    $message = null;
+
+    if ($errors && $errors->has($for)) {
+        $message = $errors->first($for);
+    }
+@endphp
+
+@if ($message)
+    <p {{ $attributes->merge([ 'class' => 'text-xs text-red-600 pt-1 pl-1' ]) }}>
+        {{ $message }}
     </p>
 @endif

@@ -44,6 +44,14 @@ class WorkflowSteps extends Component
         $this->loadWorkflowStep();
     }
 
+    public function updated($property)
+    {
+        $this->validateOnly(
+            $property,
+            WorkflowStepRules::store()
+        );
+    }
+
     public function loadWorkflowStep()
     {
         $this->workflowSteps = $this->workflowStepService->listByWorkflow($this->workflowId);

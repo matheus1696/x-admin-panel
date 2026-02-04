@@ -1,57 +1,23 @@
 <div class="grid grid-cols-12 gap-2 items-center">
     <!-- TÍTULO -->
-    <div class="col-span-3">
-        <x-form.input type="text" placeholder="Título da etapa" wire:model.defer="title" autofocus />
+    <div class="col-span-4">
+        <x-form.input type="text" name="title" wire:model.defer="title" placeholder="Título da etapa" autofocus />
+    </div>
+    
+    <div class="col-span-2">
+        <x-form.select-livewire name="user_id" wire:model.defer="user_id" :collection="$users" value-field="id" label-field="name" />
     </div>
     
     <div class="col-span-1">
-        <x-form.select-livewire
-            name="user_id"
-            wire:model.defer="user_id"
-            :collection="$users"
-            value-field="id"
-            label-field="name"
-        />
+        <x-form.select-livewire name="task_category_id" wire:model.defer="task_category_id" :collection="$taskCategories" value-field="id" label-field="title" />
     </div>
     
     <div class="col-span-1">
-        <x-form.select-livewire
-            name="task_category_id"
-            wire:model.defer="task_category_id"
-            :collection="$taskCategories"
-            value-field="id"
-            label-field="title"
-        />
+        <x-form.select-livewire name="task_priority_id" wire:model.defer="task_priority_id" :collection="$taskPriorities" value-field="id" label-field="title" />
     </div>
     
     <div class="col-span-1">
-        <x-form.select-livewire
-            name="task_priority_id"
-            wire:model.defer="task_priority_id"
-            :collection="$taskPriorities"
-            value-field="id"
-            label-field="title"
-        />
-    </div>
-    
-    <div class="col-span-1">
-        <x-form.select-livewire
-            name="task_step_status_id"
-            wire:model.defer="task_step_status_id"
-            :collection="$taskStepStatuses"
-            value-field="id"
-            label-field="title"
-        />
-    </div>
-    
-    <!-- DATA -->
-    <div class="col-span-1">
-        <x-form.input disabled />
-    </div>
-    
-    <!-- DATA -->
-    <div class="col-span-1">
-        <x-form.input disabled />
+        <x-form.select-livewire name="task_step_status_id" wire:model.defer="task_step_status_id" :collection="$taskStepStatuses" value-field="id" label-field="title" />
     </div>
     
     <!-- DATA -->
@@ -61,7 +27,7 @@
 
     <!-- DATA -->
     <div class="col-span-1">
-        <x-form.input type="date" wire:model.defer="deadline_at" />
+        <x-form.input type="date" name="deadline_at" wire:model.defer="deadline_at" />
     </div>
 
     <!-- AÇÃO -->

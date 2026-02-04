@@ -3,7 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\ActivityLog;
-use App\Models\User;
+use App\Models\Administration\User\User;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;

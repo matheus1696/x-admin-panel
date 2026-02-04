@@ -24,7 +24,7 @@
                     <x-form.label for="email" :value="__('Email')" />
                     <x-form.input name="email" type="email" :value="old('email', $request->email)" required autofocus autocomplete="email" placeholder="Seu endereço de email" 
                     />
-                    <x-form.error :messages="$errors->get('email')"/>
+                    <x-form.error for="email" />
                 </div>
 
                 <!-- Password -->
@@ -37,7 +37,7 @@
                         autocomplete="new-password" 
                         placeholder="Digite sua nova senha" 
                     />
-                    <x-form.error :messages="$errors->get('password')"/>
+                    <x-form.error for="password" />
                     
                     <!-- Password Strength Hint -->
                     <p class="mt-1 text-xs text-gray-500">
@@ -55,7 +55,7 @@
                         autocomplete="new-password" 
                         placeholder="Confirme sua nova senha" 
                     />
-                    <x-form.error :messages="$errors->get('password_confirmation')"/>
+                    <x-form.error for="password_confirmation" />
                 </div>
 
                 <!-- Submit Button -->

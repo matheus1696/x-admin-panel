@@ -8,7 +8,6 @@ class TaskRules
     {
         return [
             'title' => 'required|min:4',
-            'description' => 'nullable|min:10',
         ];
     }
 
@@ -16,7 +15,6 @@ class TaskRules
     {
         return [
             'title' => 'required|min:4',
-            'description' => 'nullable|min:10',
         ];
     }
 }

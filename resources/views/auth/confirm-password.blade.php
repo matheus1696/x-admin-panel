@@ -20,7 +20,7 @@
                 <div>
                     <x-form.label for="password" :value="__('Password')" />
                     <x-form.input name="password" type="password" required autocomplete="current-password" placeholder="Digite sua senha atual" />
-                    <x-form.error :messages="$errors->get('password')"/>
+                    <x-form.error for="password"/>
                 </div>
 
                 <!-- Submit Button -->

@@ -23,7 +23,7 @@
                 <div>
                     <x-form.label for="email" :value="__('Email')" />
                     <x-form.input name="email" type="email" :value="old('email')" required autofocus autocomplete="email" placeholder="Seu endereço de email" />
-                    <x-form.error :messages="$errors->get('email')"/>
+                    <x-form.error for="email"/>
                 </div>
 
                 <!-- Actions -->

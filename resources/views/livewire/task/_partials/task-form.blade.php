@@ -1,14 +1,39 @@
-<div class="grid grid-cols-1 items-center justify-center gap-4">
-    <div>
-        <x-form.label value="Ativiade" />
-        <x-form.input wire:model.defer="title" placeholder="Descrição da Atividade" required/>
-        <x-form.error :messages="$errors->get('title')" />
+<div class="grid grid-cols-12 gap-2 items-center">
+    <!-- TÍTULO -->
+    <div class="col-span-4">
+        <x-form.input type="text" name="title" wire:model.defer="title" placeholder="Título da etapa" autofocus />
     </div>
-    <div>
-        <x-form.label value="Descrição" />
-        <x-form.textarea wire:model.defer="description" placeholder="Descreva um pouco da atividade de forma geral (opcional)" rows="4"/>
-        <x-form.error :messages="$errors->get('description')" />
+    
+    <div class="col-span-2">
+        <x-form.select-livewire name="user_id" wire:model.defer="user_id" :collection="$users" value-field="id" label-field="name" />
     </div>
+    
+    <div class="col-span-1">
+        <x-form.select-livewire name="task_category_id" wire:model.defer="task_category_id" :collection="$taskCategories" value-field="id" label-field="title" />
+    </div>
+    
+    <div class="col-span-1">
+        <x-form.select-livewire name="task_priority_id" wire:model.defer="task_priority_id" :collection="$taskPriorities" value-field="id" label-field="title" />
+    </div>
+    
+    <div class="col-span-1">
+        <x-form.select-livewire name="task_status_id" wire:model.defer="task_status_id" :collection="$taskStatuses" value-field="id" label-field="title" />
+    </div>
+    
+    <!-- DATA -->
+    <div class="col-span-1">
+        <x-form.input disabled />
+    </div>
+
+    <!-- DATA -->
+    <div class="col-span-1">
+        <x-form.input type="date" name="deadline_at" wire:model.defer="deadline_at" />
+    </div>
+
+    <!-- AÇÃO -->
+    <div class="col-span-1 flex justify-center gap-2">
+        <x-button type="submit" icon="fa-solid fa-check" variant="green" />
+        <x-button type="button" icon="fa-solid fa-close" variant="red" @click="openCreateTask = false" />
+    </div>
+
 </div>
-
-

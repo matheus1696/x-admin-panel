@@ -140,6 +140,7 @@
             href="{{ route('audit.logs.view') }}"
             title="Auditoria"
             icon="fa-solid fa-shield-halved"
+            :active="request()->routeIs('audit.logs.view')"
         />
     @endcan
 

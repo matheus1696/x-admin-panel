@@ -2,6 +2,7 @@
 
 namespace App\Models\Task;
 
+use App\Models\Administration\Task\TaskCategory;
 use App\Models\Administration\Task\TaskStatus;
 use App\Models\Administration\User\User;
 use App\Models\Traits\HasUuid;
@@ -42,6 +43,10 @@ class Task extends Model
 
     public function user(){
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function category(){
+        return $this->belongsTo(TaskCategory::class, 'task_category_id');
     }
 
     protected static function booted()

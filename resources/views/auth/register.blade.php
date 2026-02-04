@@ -23,36 +23,36 @@
                 <div>
                     <x-form.label for="name" :value="__('Name')" />
                     <x-form.input name="name" type="text" :value="old('name')" required autofocus autocomplete="name" placeholder="{{ __('Your Name') }}" />
-                    <x-form.error :messages="$errors->get('name')"/>
+                    <x-form.error for="name"/>
                 </div>
 
                 <!-- Email Address -->
                 <div>
                     <x-form.label for="email" :value="__('Email')" />
                     <x-form.input name="email" type="email" :value="old('email')" required autocomplete="email" placeholder="{{ __('Email Address') }}" />
-                    <x-form.error :messages="$errors->get('email')"/>
+                    <x-form.error for="email"/>
                 </div>
 
                 <!-- Password -->
                 <div>
                     <x-form.label for="password" :value="__('Password')" />
                     <x-form.input name="password" type="password" required placeholder="{{ __('Password') }}" />
-                    <x-form.error :messages="$errors->get('password')"/>
+                    <x-form.error for="password"/>
                 </div>
 
                 <!-- Confirm Password -->
                 <div>
                     <x-form.label for="password_confirmation" :value="__('Confirm Password')" />
                     <x-form.input name="password_confirmation" type="password" required placeholder="{{ __('Confirm Password') }}" />
-                    <x-form.error :messages="$errors->get('password_confirmation')"/>
+                    <x-form.error for="password_confirmation"/>
                 </div>
 
                 <!-- Terms & Privacy (Opcional) -->
-                <div class="flex items-start">
-                    <div class="flex items-center h-5">
-                        <input id="terms" name="terms" type="checkbox" class="focus:ring-green-500 h-4 w-4 text-green-600 border-gray-300 rounded" required>
+                <div class="flex items-center justify-center h-5">
+                    <div>
+                        <input id="terms" name="terms" type="checkbox" class="focus:ring-green-500 text-green-600 border-gray-300 rounded" required>
                     </div>
-                    <div class="ml-3 text-sm">
+                    <div class="ml-3 text-[11px]">
                         <label for="terms" class="font-medium text-gray-700">
                             {{ __("I agree to the") }}
                             <a href="#" class="text-green-600 hover:text-green-500">{{ __("Terms of Service") }}</a>

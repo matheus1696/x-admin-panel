@@ -29,14 +29,14 @@
                 <div>
                     <x-form.label for="email" :value="__('Email')" />
                     <x-form.input name="email" type="email" {{-- :value="old('email')" --}} value="admin@example.com" required autofocus autocomplete="email" placeholder="{{ __('Email Address') }}" />
-                    <x-form.error :messages="$errors->get('email')"/>
+                    <x-form.error for="email" />
                 </div>
 
                 <!-- Password -->
                 <div>
                     <x-form.label for="password" :value="__('Password')" />
                     <x-form.input name="password" type="password" required :placeholder="__('Your Password')" value="password"/>
-                    <x-form.error :messages="$errors->get('password')"/>
+                    <x-form.error for="password" />
                 </div>
 
                 <!-- Remember Me & Forgot Password -->
