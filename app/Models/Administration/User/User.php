@@ -3,6 +3,8 @@
 namespace App\Models\Administration\User;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Models\Configuration\Occupation\Occupation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -57,6 +59,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function occupation(){
+        return $this->belongsTo(Occupation::class, 'occupation_id');
     }
 
     //Criação do Filter Name

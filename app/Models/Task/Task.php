@@ -54,6 +54,11 @@ class Task extends Model
         return $this->belongsTo(TaskPriority::class, 'task_priority_id');
     }
 
+    public function taskStepsFinished()
+    {
+        return $this->hasMany(TaskStep::class, 'task_id')->where('finished_at', '!=', null)->orderBy('code');
+    }
+
     protected static function booted()
     {
         static::created(function ($task) {

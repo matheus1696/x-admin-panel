@@ -141,16 +141,29 @@
             @endforeach
         </div>
 
-        <div
+        <!-- Overlay que escurece o resto da página -->
+        <div 
             x-show="openAsideTask && activeItem === {{ $task->id }}"
+            x-transition:enter="transition-opacity ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition-opacity ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            @click="openAsideTask = false; activeItem = null"
+            class="fixed inset-0 bg-black bg-opacity-70 z-40"
+            aria-hidden="true"
+        ></div>
+
+        <div x-show="openAsideTask && activeItem === {{ $task->id }}"
             x-transition:enter="transform transition ease-in-out duration-300"
             x-transition:enter-start="translate-x-full"
             x-transition:enter-end="translate-x-0"
             x-transition:leave="transform transition ease-in-out duration-300"
             x-transition:leave-start="translate-x-0"
             x-transition:leave-end="translate-x-full"
-            class="fixed top-0 right-0 z-50 h-screen w-2/4 bg-white text-gray-900 overflow-y-auto shadow-lg border-l-2 border-green-700"
-        >
+            class="fixed top-0 right-0 z-50 h-screen w-full md:w-2/4 bg-white text-gray-900 overflow-y-auto shadow-lg border-l-2 border-green-700">
+
             <livewire:task.task-aside :taskId="$task->id" :key="'aside-'.$task->id" />
         </div>
     </div>    
