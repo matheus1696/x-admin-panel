@@ -51,22 +51,43 @@
 
         <!-- DESCRIÇÃO -->
         <section class="p-6 border-b border-gray-100">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="flex-1 text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                    <i class="far fa-file-alt text-xs"></i>
-                    Descrição
-                </h3>
+            <div class="flex items-center justify-between mb-1">
+                <div class="flex items-center gap-3">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                        <i class="far fa-file-alt text-xs"></i>
+                        Descrição
+                    </h3>
+                    
+                    @if(!$isEditingDescription && trim($task->description))
+                        <span class="text-xs text-gray-400">{{ strlen(trim($task->description)) }} caracteres
+                        </span>
+                    @endif
+                </div>
                 
-                <div>
+                <div class="flex items-center gap-2">
                     @if(!$isEditingDescription)
-                        <x-button wire:click="enableDescriptionEdit" variant="green_outline"  icon="fas fa-edit" />
+                        <x-button 
+                            wire:click="enableDescriptionEdit" 
+                            variant="green_outline"  
+                            icon="fas fa-edit"
+                            class="text-xs px-3 py-1.5"
+                        />
                     @else
-                        <!-- Botões de ação -->
-                        <div class="flex justify-end gap-3 pt-2">
-                            <x-button wire:click="cancelDescriptionEdit" variant="red_outline" icon="fas fa-times" :disabled="$savingDescription" />
-                            
-                            <x-button wire:click="saveDescription" variant="green_outline" icon="fas fa-check" :disabled="$savingDescription" />
-                        </div>
+                        <x-button 
+                            wire:click="cancelDescriptionEdit" 
+                            variant="red_outline" 
+                            icon="fas fa-times"
+                            class="text-xs px-3 py-1.5"
+                            :disabled="$savingDescription"
+                        />
+                        
+                        <x-button 
+                            wire:click="saveDescription" 
+                            variant="green_outline" 
+                            icon="fas fa-check"
+                            class="text-xs px-3 py-1.5"
+                            :disabled="$savingDescription"
+                        />
                     @endif
                 </div>
             </div>
@@ -82,10 +103,14 @@
                             placeholder="Descreva detalhadamente esta tarefa..."
                             :autofocus="true"
                             wire:keydown.enter.prevent="saveDescription"
+                            class="text-sm"
                         ></x-form.textarea>
                         
                         <!-- Contador de caracteres -->
-                        <div class="flex justify-end mt-2">
+                        <div class="flex justify-between mt-2">
+                            <span class="text-xs text-gray-500">
+                                Dica: Descreva objetivos, requisitos e observações importantes
+                            </span>
                             <span class="text-xs {{ strlen($description ?? '') > 1000 ? 'text-red-500' : 'text-gray-500' }}">
                                 {{ strlen($description ?? '') }}/1000 caracteres
                             </span>
@@ -95,21 +120,22 @@
             @else
                 <!-- Modo Visualização -->
                 <div class="space-y-3" wire:key="description-view-{{ $task->id }}">
-                    <div>
+                    <div class="rounded-lg px-2.5 py-1.5 border border-gray-200 hover:bg-gray-50/80 transition-colors cursor-pointer min-h-[120px]"
+                        wire:click="enableDescriptionEdit">
                         
                         @if(trim($task->description))
-                            <p class="text-gray-700 leading-relaxed whitespace-pre-wrap text-xs">{{ trim($task->description) }}</p>
+                            <div class="prose prose-sm max-w-none">
+                                <p class="text-gray-700 leading-relaxed whitespace-pre-wrap text-xs">{{ trim($task->description) }}</p>
+                            </div>
                         @else
-                            <div class="flex items-center justify-center h-full min-h-[80px] text-gray-400 group">
-                                <div class="text-center">
-                                    <i class="far fa-file-alt text-2xl mb-2 group-hover:text-green-700 transition-colors"></i>
-                                    <p class="text-sm group-hover:text-green-700 transition-colors">
-                                        Clique para adicionar uma descrição
-                                    </p>
-                                    <p class="text-xs mt-1 text-gray-500">
-                                        Descreva os detalhes, objetivos e observações desta tarefa
-                                    </p>
-                                </div>
+                            <div class="flex flex-col items-center justify-center h-full py-8 text-gray-400 group">
+                                <i class="far fa-file-alt text-3xl mb-3 group-hover:text-green-600 transition-colors"></i>
+                                <p class="text-sm font-medium group-hover:text-green-600 transition-colors mb-1">
+                                    Adicionar descrição
+                                </p>
+                                <p class="text-xs text-center text-gray-500 max-w-xs">
+                                    Clique aqui para descrever os detalhes desta tarefa
+                                </p>
                             </div>
                         @endif
                     </div>
@@ -138,9 +164,9 @@
                             </div>
                             <div>
                                 <span class="block font-semibold text-gray-900">{{ $task->user->name ?? ''}}</span>
-                                <span class="text-sm text-gray-500 line-clamp-1">{{ $task->user->occupation->title ?? ''}}</span>
+                                <span class="text-xs text-gray-500 line-clamp-1">{{ $task->user->occupation->title ?? ''}}</span>
                                 <div class="flex items-center gap-2 mt-1">
-                                    <span class="text-green-700 hover:text-green-800 text-sm flex items-center gap-1">
+                                    <span class="text-green-700 hover:text-green-800 text-xs flex items-center gap-1">
                                         <i class="far fa-envelope text-xs"></i>
                                         {{ $task->user->email ?? ''}}
                                     </span>
@@ -150,7 +176,7 @@
                     </div>
 
                     <!-- Progresso -->
-                    <div>
+                    <div class="pt-4">
                         <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
                             <i class="fas fa-chart-line text-xs"></i>
                             Progresso
@@ -169,42 +195,79 @@
 
                 <!-- Datas importantes -->
                 <div class="space-y-4">
-                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-                        <i class="far fa-calendar-alt text-xs"></i>
-                        Datas importantes
-                    </h3>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                            <i class="far fa-calendar-alt text-xs"></i>
+                            Datas importantes
+                        </h3>
+                        
+                        @if($task->deadline_at)
+                            <span class="text-xs {{ $task->deadline_at->isPast() ? 'text-red-600' : 'text-green-600' }} font-medium">
+                                @if($task->deadline_at->isPast())
+                                    <i class="fas fa-exclamation-triangle mr-1"></i> Atrasada
+                                @else
+                                    <i class="fas fa-clock mr-1"></i>
+                                    {{ $task->deadline_at->diffInDays(now()) }} dias restantes
+                                @endif
+                            </span>
+                        @endif
+                    </div>
                     
-                    <div class="space-y-4">
-
+                    <div class="space-y-3">
                         <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center text-green-700">
-                                    <i class="fas fa-play"></i>
+                                    <i class="fas fa-flag-checkered"></i>
                                 </div>
                                 <div>
                                     <span class="block text-sm text-gray-500">Início</span>
-                                    <span class="font-semibold text-gray-900">{{ $task->created_at->format('d/m/Y') ?? '-' }}</span>
+                                    <span class="font-semibold text-gray-900">{{ $task->created_at->format('d/m/Y') }}</span>
                                 </div>
                             </div>
-                            <span class="text-sm text-gray-500">{{ $task->taskStatus->name ?? '-' }}</span>
+                            <span class="text-sm text-gray-500">{{ $task->created_at->diffForHumans() }}</span>
                         </div>
-
                         
-                        <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-100">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center text-green-700">
-                                    <i class="far fa-calendar-check"></i>
+                        @if($task->deadline_at)
+                            <div class="flex items-center justify-between p-3 {{ $task->deadline_at->isPast() ? 'bg-red-50 border-red-100' : 'bg-green-50 border-green-100' }} rounded-lg border">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg {{ $task->deadline_at->isPast() ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600' }} flex items-center justify-center">
+                                        <i class="far fa-calendar-check"></i>
+                                    </div>
+                                    <div>
+                                        <span class="block text-sm text-gray-500">Prazo final</span>
+                                        <span class="font-semibold {{ $task->deadline_at->isPast() ? 'text-red-700' : 'text-gray-900' }}">
+                                            {{ $task->deadline_at->format('d/m/Y') }}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <span class="block text-sm text-gray-500">Prazo final</span>
-                                    <span class="font-semibold text-gray-900">{{ $task->deadline_at->format('d/m/Y') ?? '-' }}</span>
-                                </div>
+                                <span class="px-2.5 py-1 text-xs font-semibold rounded-full {{ $task->deadline_at->isPast() ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700' }}">
+                                    @if($task->deadline_at->isPast())
+                                        <i class="fas fa-exclamation-circle mr-1"></i>
+                                        {{ abs($task->deadline_at->diffInDays(now())) }} dias atrasado
+                                    @else
+                                        <i class="fas fa-clock mr-1"></i>
+                                        {{ $task->deadline_at->diffInDays(now()) }} dias
+                                    @endif
+                                </span>
                             </div>
-                            <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">
-                                <i class="fas fa-clock mr-1"></i>
-                                {{ (int) now()->diffInDays($task->deadline_at) }} dias
-                            </span>
-                        </div>
+                        @endif
+                        
+                        @if($task->completed_at)
+                            <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-100">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div>
+                                        <span class="block text-sm text-gray-500">Concluído em</span>
+                                        <span class="font-semibold text-gray-900">{{ $task->completed_at->format('d/m/Y') }}</span>
+                                    </div>
+                                </div>
+                                <span class="text-sm text-green-600 font-medium">
+                                    <i class="fas fa-check mr-1"></i> Finalizada
+                                </span>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
