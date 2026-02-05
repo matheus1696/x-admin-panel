@@ -1,6 +1,6 @@
 <div>
     <!-- HEADER -->
-    <header class="p-6 border-b border-gray-200 flex justify-between items-start bg-green-50">
+    <header class="p-6 border-b border-gray-200 flex justify-between items-start bg-green-50/50">
         <div class="flex-1 pr-4">
             <div class="flex items-center gap-3 mb-3">
                 <span class="px-3 py-1.5 text-xs font-semibold rounded-full bg-green-100 text-green-700 flex items-center gap-1.5">
@@ -39,9 +39,7 @@
             </div>
         </div>
 
-        <button @click="openAsideTask = false" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full px-4 py-2 transition-colors"
-            aria-label="Fechar detalhes"
-        >
+        <button @click="openAsideTask = false" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full px-4 py-2 transition-colors" aria-label="Fechar detalhes" >
             <i class="fas fa-times text-lg"></i>
         </button>
     </header>
@@ -149,30 +147,33 @@
                 <!-- Responsável -->
                 <div class="space-y-4">
                     <div>
-                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-                            <i class="fas fa-user text-xs"></i>
-                            Responsável
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+                            <i class="fas fa-user text-xs"></i>Responsável
                         </h3>
-                        <div class="flex items-center gap-3">
-                            <div class="relative">
-                                <div class="w-12 h-12 rounded-full bg-gradient-to-r from-green-700 to-green-700 flex items-center justify-center text-white font-bold text-lg shadow-sm">
-                                    {{ Str::substr(Auth::user()->name, 0, 2) }}
+                        @if ($task->user)
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="relative">
+                                    <div class="w-12 h-12 rounded-full bg-gradient-to-r from-green-700 to-green-700 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                                        {{ Str::substr($task->user->name  ?? '--', 0, 2) }}
+                                    </div>
+                                    <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-400 rounded-full border-2 border-white flex items-center justify-center">
+                                        <i class="fas fa-check text-xs text-white"></i>
+                                    </div>
                                 </div>
-                                <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-400 rounded-full border-2 border-white flex items-center justify-center">
-                                    <i class="fas fa-check text-xs text-white"></i>
+                                <div>
+                                    <span class="block font-semibold text-gray-900">{{ $task->user->name ?? ''}}</span>
+                                    <span class="text-xs text-gray-500 line-clamp-1">{{ $task->user->occupation->title ?? ''}}</span>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="text-green-700 hover:text-green-800 text-xs flex items-center gap-1">
+                                            <i class="far fa-envelope text-xs"></i>
+                                            {{ $task->user->email ?? ''}}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                            <div>
-                                <span class="block font-semibold text-gray-900">{{ $task->user->name ?? ''}}</span>
-                                <span class="text-xs text-gray-500 line-clamp-1">{{ $task->user->occupation->title ?? ''}}</span>
-                                <div class="flex items-center gap-2 mt-1">
-                                    <span class="text-green-700 hover:text-green-800 text-xs flex items-center gap-1">
-                                        <i class="far fa-envelope text-xs"></i>
-                                        {{ $task->user->email ?? ''}}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
+                        @else
+                            <p class="text-xs text-gray-500 mb-14">Nenhum responsável atribuído</p>
+                        @endif
                     </div>
 
                     <!-- Progresso -->
@@ -201,31 +202,47 @@
                             Datas importantes
                         </h3>
                         
-                        @if($task->deadline_at)
+                        @if($task->deadline_at != null)
                             <span class="text-xs {{ $task->deadline_at->isPast() ? 'text-red-600' : 'text-green-600' }} font-medium">
                                 @if($task->deadline_at->isPast())
                                     <i class="fas fa-exclamation-triangle mr-1"></i> Atrasada
                                 @else
                                     <i class="fas fa-clock mr-1"></i>
-                                    {{ $task->deadline_at->diffInDays(now()) }} dias restantes
+                                    {{ (int) now()->diffInDays($task->deadline_at) }} dias restantes
                                 @endif
                             </span>
+                        @else
+                            <span class="text-xs text-gray-400">Sem prazo definido</span>
                         @endif
                     </div>
                     
                     <div class="space-y-3">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center text-green-700">
-                                    <i class="fas fa-flag-checkered"></i>
+                        @if ($task->started_at)
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center text-green-700">
+                                        <i class="fas fa-flag-checkered"></i>
+                                    </div>
+                                    <div>
+                                        <span class="block text-sm text-gray-500">Início</span>
+                                        <span class="font-semibold text-gray-900">{{ $task->started_at->diffForHumans() }}</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <span class="block text-sm text-gray-500">Início</span>
-                                    <span class="font-semibold text-gray-900">{{ $task->created_at->format('d/m/Y') }}</span>
+                                <span class="text-sm text-gray-500">{{  $task->started_at->diffForHumans() }}</span>
+                            </div>
+                        @else
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center text-green-700">
+                                        <i class="fas fa-flag-checkered"></i>
+                                    </div>
+                                    <div>
+                                        <span class="block text-sm text-gray-500">Início</span>
+                                        <span class="font-semibold text-gray-900">Não iniciada</span>
+                                    </div>
                                 </div>
                             </div>
-                            <span class="text-sm text-gray-500">{{ $task->created_at->diffForHumans() }}</span>
-                        </div>
+                        @endif
                         
                         @if($task->deadline_at)
                             <div class="flex items-center justify-between p-3 {{ $task->deadline_at->isPast() ? 'bg-red-50 border-red-100' : 'bg-green-50 border-green-100' }} rounded-lg border">
@@ -243,12 +260,24 @@
                                 <span class="px-2.5 py-1 text-xs font-semibold rounded-full {{ $task->deadline_at->isPast() ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700' }}">
                                     @if($task->deadline_at->isPast())
                                         <i class="fas fa-exclamation-circle mr-1"></i>
-                                        {{ abs($task->deadline_at->diffInDays(now())) }} dias atrasado
+                                        {{ (int) abs($task->deadline_at->diffInDays(now())) }} dias atrasado
                                     @else
                                         <i class="fas fa-clock mr-1"></i>
-                                        {{ $task->deadline_at->diffInDays(now()) }} dias
+                                        {{ (int) now()->diffInDays($task->deadline_at) }} dias
                                     @endif
                                 </span>
+                            </div>
+                        @else
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-600">
+                                        <i class="far fa-calendar-check"></i>
+                                    </div>
+                                    <div>
+                                        <span class="block text-sm text-gray-500">Prazo final</span>
+                                        <span class="font-semibold text-gray-900">Não definido</span>
+                                    </div>
+                                </div>
                             </div>
                         @endif
                         

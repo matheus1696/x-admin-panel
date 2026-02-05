@@ -2,6 +2,7 @@
     'name' => null,
     'options' => [],
     'collection' => null,
+    'classes' => 'border-gray-300 bg-gray-100 text-gray-700 placeholder-gray-400 focus:border-green-700 focus:border-green-700',
 
     'labelField' => 'title',
     'labelAcronym' => null,
@@ -17,7 +18,7 @@
 @php
     if ($collection) {
         $options = $collection
-            ->map(function ($item) use ($labelAcronym, $labelField, $valueField) {
+            ->map(function ($item) use ($labelAcronym, $labelField, $valueField,) {
                 return [
                     'value' => data_get($item, $valueField),
                     'label' => $labelAcronym
@@ -44,6 +45,13 @@
         'inline' => [
             'base' => 'border-transparent bg-transparent text-gray-700 px-0 py-1 focus:border-green-600 focus:bg-white',
             'error' => 'border-red-500 bg-transparent text-red-700 px-0 py-1',
+        ],
+
+        'rounded' => [
+            'base' =>
+                'rounded-full px-3 '. $classes,
+            'error' =>
+                'rounded-full px-3 '. $classes,
         ],
     ];
 
@@ -167,7 +175,9 @@
         <div class="flex justify-between">
             <span class="flex-1 truncate" :class="selectedOption ? 'text-gray-700' : 'text-gray-400'" x-text="selectedOption ? selectedOption.label : placeholder">
             </span>
-            <i class="fa-solid fa-chevron-down text-gray-400 ml-2 text-[10px] transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
+            <div>
+                <i class="fa-solid fa-chevron-down text-gray-400 ml-2 text-[10px] transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
+            </div>
         </div>
     </div>
 

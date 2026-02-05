@@ -31,7 +31,7 @@ class TaskStepRules
     public static function responsable(): array
     {
         return [
-            'user_id' => 'nullable|exists:users,id',
+            'responsable_id' => 'nullable|exists:users,id',
         ];
     }
 }
