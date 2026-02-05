@@ -45,22 +45,26 @@
             <!-- RESPONSÁVEL -->
             <div class="col-span-2">
                 <div class="px-2">
-                    <x-form.select-livewire wire:model.live="responsable_id" :collection="$users" valueField="id" labelField="name" :selected="$task->user_id" variant="rounded" />
+                    <x-form.select-livewire wire:model.live="responsable_id" :collection="$users" valueField="id" labelField="name" :selected="$task->user_id" variant="inline" />
                 </div>
             </div>
 
 
             <!-- CATEGORIA -->
             <div class="col-span-1">
-                <div class="px-2">
-                    <x-form.select-livewire wire:model.live="task_category_id" :collection="$taskCategories" valueField="id" labelField="title" :selected="$task->task_category_id" variant="rounded" />
+                <div class="flex justify-center">
+                    <span class="px-3 py-1 text-[11px] font-medium bg-gray-100 text-gray-700 rounded-full truncate max-w-full">
+                        {{ $task->category->title ?? '—' }}
+                    </span>
                 </div>
             </div>
 
             <!-- PRIORIDADE -->
             <div class="col-span-1">
-                <div class="px-2">
-                    <x-form.select-livewire wire:model.live="task_priority_id" :collection="$taskPriorities" valueField="id" labelField="title" :selected="$task->task_priority_id" variant="rounded" classes="{!! $task->priority->color !!}" />
+                <div class="flex justify-center">
+                    <span class="px-3 py-1 text-[11px] font-medium rounded-full truncate max-w-full {!! $task->priority->color ?? 'bg-gray-100 text-gray-700' !!}">
+                        {{ $task->priority->title ?? '—' }}
+                    </span>
                 </div>
             </div>
 
