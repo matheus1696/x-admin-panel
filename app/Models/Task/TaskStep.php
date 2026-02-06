@@ -26,6 +26,7 @@ class TaskStep extends Model
         'started_at',
         'deadline_at',
         'finished_at',
+        'created_user_id'
     ];
 
     protected $casts = [
@@ -50,7 +51,7 @@ class TaskStep extends Model
         return $this->belongsTo(TaskCategory::class, 'task_category_id');
     }
 
-    public function user(){
+    public function responsable(){
         return $this->belongsTo(User::class, 'user_id');
     }
 

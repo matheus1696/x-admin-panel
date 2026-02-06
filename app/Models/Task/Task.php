@@ -24,6 +24,7 @@ class Task extends Model
         'started_at',
         'deadline_at',
         'finished_at',
+        'created_user_id'
     ];
 
     protected $casts = [
@@ -42,7 +43,7 @@ class Task extends Model
         return $this->hasMany(TaskStep::class, 'task_id')->orderBy('code');
     }
 
-    public function user(){
+    public function responsable(){
         return $this->belongsTo(User::class, 'user_id');
     }
 
