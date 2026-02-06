@@ -181,124 +181,62 @@
             @endif
         </section>
 
-<!-- ETAPAS -->
-<section class="p-6 border-b border-gray-100">
-    <div class="flex items-center justify-between mb-2">
-        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-            <i class="fas fa-list-check text-xs"></i>
-            Etapas da tarefa
-        </h3>
+        <!-- ETAPAS -->
+        <section class="p-6 border-b border-gray-100">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fas fa-list-check text-xs"></i>
+                    Etapas da tarefa
+                </h3>
 
-        <span class="text-xs text-gray-400">
-            {{ $task->taskStepsFinished->count() }}/{{ $task->taskSteps->count() }} concluídas
-        </span>
-    </div>
+                <span class="text-xs text-gray-400">
+                    {{ $task->taskStepsFinished->count() }}/{{ $task->taskSteps->count() }} concluídas
+                </span>
+            </div>
 
-    <div class="w-full bg-gray-200 rounded-full h-1.5 mb-4">
-        <div class="bg-green-700 h-1.5 rounded-full"
-            style="width: {{ $task->taskStepsFinished->count() > 0
-                ? round(($task->taskStepsFinished->count() / $task->taskSteps->count()) * 100, 2)
-                : 0 }}%">
-        </div>
-    </div>
-
-    @if($task->taskSteps->count())
-        <ul class="divide-y divide-gray-100">
-            @foreach($task->taskSteps as $step)
-                <li class="flex items-start justify-between py-3 gap-4">
-                    
-                    <div class="flex items-start gap-3">
-                        <!-- Status -->
-                        <div class="mt-0.5 w-5 h-5 rounded-full flex items-center justify-center
-                            {{ $step->finished_at ? 'bg-green-600 text-white' : 'border border-gray-300' }}">
-                            
-                            @if($step->finished_at)
-                                <i class="fas fa-check text-[10px]"></i>
-                            @endif
-                        </div>
-
-                        <!-- Conteúdo -->
-                        <div>
-                            <p class="text-sm font-medium text-gray-900 leading-tight">
-                                {{ $step->title }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Status texto -->
-                    <span class="text-xs text-gray-400 whitespace-nowrap">
-                        {{ $step->taskStepStatus?->title }}
-                    </span>
-                </li>
-            @endforeach
-        </ul>
-    @else
-        <p class="text-xs text-gray-400">
-            Nenhuma etapa cadastrada
-        </p>
-    @endif
-</section>
-
-        <!-- DATAS DETALHADAS -->
-        <section class="p-6">
-            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
-                <i class="far fa-clock text-xs"></i>
-                Linha do tempo
-            </h3>
-            
-            <div class="space-y-4">
-                <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700">
-                            <i class="fas fa-plus text-xs"></i>
-                        </div>
-                        <div>
-                            <span class="block text-sm font-medium text-gray-900">Tarefa criada</span>
-                            <span class="text-xs text-gray-500">Por: Sistema</span>
-                        </div>
-                    </div>
-                    <span class="text-sm text-gray-500">10/01/2026 • 14:30</span>
-                </div>
-
-                <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700">
-                            <i class="fas fa-user-check text-xs"></i>
-                        </div>
-                        <div>
-                            <span class="block text-sm font-medium text-gray-900">Atribuída a João Silva</span>
-                            <span class="text-xs text-gray-500">Por: Maria Souza</span>
-                        </div>
-                    </div>
-                    <span class="text-sm text-gray-500">12/01/2026 • 09:15</span>
-                </div>
-
-                <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600">
-                            <i class="fas fa-play text-xs"></i>
-                        </div>
-                        <div>
-                            <span class="block text-sm font-medium text-gray-900">Status: Em andamento</span>
-                            <span class="text-xs text-gray-500">Por: João Silva</span>
-                        </div>
-                    </div>
-                    <span class="text-sm text-gray-500">20/01/2026 • 08:00</span>
-                </div>
-
-                <div class="flex justify-between items-center py-3">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
-                            <i class="far fa-clock text-xs"></i>
-                        </div>
-                        <div>
-                            <span class="block text-sm font-medium text-gray-900">Última atualização</span>
-                            <span class="text-xs text-gray-500">Status alterado</span>
-                        </div>
-                    </div>
-                    <span class="text-sm text-gray-500">15/01/2026 • 16:45</span>
+            <div class="w-full bg-gray-200 rounded-full h-1.5 mb-4">
+                <div class="bg-green-700 h-1.5 rounded-full"
+                    style="width: {{ $task->taskStepsFinished->count() > 0
+                        ? round(($task->taskStepsFinished->count() / $task->taskSteps->count()) * 100, 2)
+                        : 0 }}%">
                 </div>
             </div>
+
+            @if($task->taskSteps->count())
+                <ul class="divide-y divide-gray-100">
+                    @foreach($task->taskSteps as $step)
+                        <li class="flex items-start justify-between py-3 gap-4">
+                            
+                            <div class="flex items-start gap-3">
+                                <!-- Status -->
+                                <div class="mt-0.5 w-5 h-5 rounded-full flex items-center justify-center
+                                    {{ $step->finished_at ? 'bg-green-600 text-white' : 'border border-gray-300' }}">
+                                    
+                                    @if($step->finished_at)
+                                        <i class="fas fa-check text-[10px]"></i>
+                                    @endif
+                                </div>
+
+                                <!-- Conteúdo -->
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900 leading-tight">
+                                        {{ $step->title }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Status texto -->
+                            <span class="text-xs text-gray-400 whitespace-nowrap">
+                                {{ $step->taskStepStatus?->title }}
+                            </span>
+                        </li>
+                    @endforeach
+                </ul>
+            @else
+                <p class="text-xs text-gray-400">
+                    Nenhuma etapa cadastrada
+                </p>
+            @endif
         </section>
 
     </div>

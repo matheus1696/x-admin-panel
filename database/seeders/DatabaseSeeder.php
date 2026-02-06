@@ -6,6 +6,7 @@ use App\Models\Administration\User\User;
 use Database\Seeders\Administration\Task\TaskCategorySeeder;
 use Database\Seeders\Administration\Task\TaskPrioritySeeder;
 use Database\Seeders\Administration\Task\TaskStatusSeeder;
+use Database\Seeders\Administration\Task\TaskStepCategorySeeder;
 use Database\Seeders\Administration\Task\TaskStepStatusSeeder;
 use Database\Seeders\Configuration\Establishment\Establishment\DepartmentSeeder;
 use Database\Seeders\Configuration\Establishment\Establishment\EstablishmentSeeder;
@@ -48,6 +49,7 @@ class DatabaseSeeder extends Seeder
             TaskStatusSeeder::class,
             TaskStepStatusSeeder::class,
             TaskCategorySeeder::class,
+            TaskStepCategorySeeder::class,
             TaskPrioritySeeder::class,
         ]);
 

@@ -6,6 +6,7 @@ use App\Models\Administration\Task\TaskCategory;
 use App\Models\Administration\Task\TaskPriority;
 use App\Models\Administration\Task\TaskStepStatus;
 use App\Models\Administration\User\User;
+use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 
@@ -53,6 +54,10 @@ class TaskStep extends Model
 
     public function responsable(){
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function responsable_organization(){
+        return $this->belongsTo(OrganizationChart::class, 'organization_id');
     }
 
     protected static function booted()

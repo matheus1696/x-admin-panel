@@ -107,6 +107,8 @@ class TaskList extends Component
         $workflow = Workflow::findOrFail($this->workflow_id);
         $currentDeadline = now();
 
+        dd($workflow->workflowSteps);
+
         foreach ($workflow->workflowSteps as $key => $step) {
 
             if ($step->deadline_days) {

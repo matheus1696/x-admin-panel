@@ -3,7 +3,7 @@
     <!-- Flash Message -->
     <x-alert.flash />
 
-    <div x-data="{ openSteps: false, openCreateStep: false, openAsideTask: false }" class="border-y border-gray-300 last:border-b-0 hover:bg-green-50/50 transition-colors duration-150">
+    <div x-data="{ openSteps: false, openCreateStep: false, openAsideTask: false }" class="border-y border-gray-300 last:border-b-0 hover:bg-green-50/25 transition-colors duration-150">
         
         <!-- LINHA DA TASK -->
         <div class="grid grid-cols-12 gap-2 px-5 py-2 items-center divide-x">

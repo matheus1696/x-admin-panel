@@ -21,7 +21,7 @@ return new class extends Migration
             $table->longText('description')->nullable();
             $table->foreignId('user_id')->nullable()->constrained('users');
             $table->foreignId('organization_id')->nullable()->constrained('organization_charts');
-            $table->foreignId('task_category_id')->nullable()->constrained('task_categories');
+            $table->foreignId('task_category_id')->nullable()->constrained('task_step_categories');
             $table->foreignId('task_priority_id')->nullable()->constrained('task_priorities');
             $table->foreignId('task_status_id')->nullable()->constrained('task_step_statuses');
 
