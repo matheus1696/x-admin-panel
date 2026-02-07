@@ -47,11 +47,11 @@ class Task extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function category(){
+    public function taskCategory(){
         return $this->belongsTo(TaskCategory::class, 'task_category_id');
     }
 
-    public function priority(){
+    public function taskPriority(){
         return $this->belongsTo(TaskPriority::class, 'task_priority_id');
     }
 

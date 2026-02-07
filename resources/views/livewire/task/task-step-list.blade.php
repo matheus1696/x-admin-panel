@@ -3,13 +3,13 @@
     <!-- Flash Message -->
     <x-alert.flash />
     
-    <div class="grid grid-cols-12 gap-2 px-5 items-center divide-x border-b hover:bg-green-200/50 transition-colors duration-150">
+    <div class="grid grid-cols-5 md:grid-cols-12 gap-2 px-5 py-1.5 items-center divide-x border-b hover:bg-green-200/50 transition-colors duration-150">
         
         <!-- TÍTULO -->
-        <div class="col-span-4 flex items-center">                        
+        <div class="col-span-3 flex items-center justify-center">                        
             <div class="flex-1 flex items-center gap-2">
                 <div>
-                    <x-button variant="green_outline" :text="$step->code"
+                    <x-button variant="green_text" :text="$step->code"
                         @click=" openAsideTask = false; openAsideTaskStep = true; 
                         if (activeTaskStepItem === {{ $step->id }})
                             activeTaskStepItem = null; 
@@ -24,53 +24,38 @@
         </div>
 
         <!-- ORGANIZACAO -->
-        <div class="col-span-2">
-            <div class="px-2">
-                <x-form.select-livewire wire:model.live="responsable_organization_id" :collection="$organizations" valueField="id" labelAcronym="acronym" labelField="title" :selected="$step->organization_id" variant="inline" />
+        <div class="col-span-2 hidden md:block">
+            <div>
+                <x-form.select-livewire wire:model.live="responsable_organization_id" :collection="$organizations" valueField="id" labelAcronym="acronym" labelField="title" :selected="$step->organization_id" variant="pills" size="xs" />
             </div>
         </div>
 
         <!-- RESPONSÁVEL -->
         <div class="col-span-2">
-            <div class="px-2">
-                <x-form.select-livewire wire:model.live="responsable_id" :collection="$users" valueField="id" labelField="name" :selected="$step->user_id" variant="inline" />
+            <div>
+                <x-form.select-livewire wire:model.live="responsable_id" :collection="$users" valueField="id" labelField="name" :selected="$step->user_id" variant="pills" size="xs" />
             </div>
         </div>
 
-        <!-- PRIORIDADE -->
-        <div class="col-span-1">
-            <div class="flex justify-center">
-                @if($step->priority)
-                    <span class="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full truncate max-w-full">
-                        {{ $step->priority->title }}
-                    </span>
-                @else
-                    <span class="text-xs text-gray-400 italic">—</span>
-                @endif
+        <div class="col-span-3 hidden md:grid grid-cols-2 items-center justify-center gap-2 divide-x">
+            <!-- PRIORIDADE -->
+            <div>
+                <x-form.select-livewire wire:model.live="list_priority_id" :collection="$taskPriorities" valueField="id" labelField="title" :selected="$step->task_priority_id" variant="pills" size="xs"  borderColor="{{ $step->taskPriority?->color }}" />
             </div>
-        </div>
 
-        <!-- STATUS -->
-        <div class="col-span-1">
-            <div class="flex justify-center">
-                @if($step->taskStatus)
-                    <span class="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-full truncate max-w-full">
-                        {{ $step->taskStatus->title }}
-                    </span>
-                @else
-                    <span class="text-xs text-gray-400 italic">—</span>
-                @endif
+            <!-- STATUS -->
+            <div>
+                <x-form.select-livewire wire:model.live="list_task_step_status_id" :collection="$taskStepStatuses" valueField="id" labelField="title" :selected="$step->task_status_id" variant="pills" size="xs" borderColor="{{ $step->taskStepStatus?->color }}"/>
             </div>
         </div>
 
         <!-- DATAS -->
-
-        <!-- Prazo -->
-        <div class="col-span-1">
+        <!-- Inicio -->
+        <div class="col-span-1 hidden md:block">
             <div class="flex flex-col items-center">
-                @if ($step->deadline_at)
+                @if ($step->started_at)
                     <div class="text-xs text-gray-700 font-medium">
-                        {{ $step->deadline_at->format('d/m/Y') }}
+                        {{ $step->started_at->format('d/m/Y') }}
                     </div>
                 @else
                     <span class="text-xs text-gray-400 italic">—</span>
@@ -78,12 +63,12 @@
             </div>
         </div>
 
-        <!-- Finalizado em -->
-        <div class="col-span-1">
+        <!-- Prazo -->
+        <div class="col-span-1 hidden md:block">
             <div class="flex flex-col items-center">
-                @if ($step->finished_at)
-                    <div class="text-xs text-green-600 font-medium">
-                        {{ $step->finished_at->format('d/m/Y') }}
+                @if ($step->deadline_at)
+                    <div class="text-xs text-gray-700 font-medium">
+                        {{ $step->deadline_at->format('d/m/Y') }}
                     </div>
                 @else
                     <span class="text-xs text-gray-400 italic">—</span>

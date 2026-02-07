@@ -6,6 +6,7 @@ use App\Livewire\Traits\Modal;
 use App\Livewire\Traits\WithFlashMessage;
 use App\Models\Administration\Task\TaskCategory;
 use App\Models\Administration\Task\TaskPriority;
+use App\Models\Administration\Task\TaskStepCategory;
 use App\Models\Administration\Task\TaskStepStatus;
 use App\Models\Administration\User\User;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
@@ -30,6 +31,9 @@ class TaskList extends Component
     public int $workflow_id;
 
     public $responsable_id;
+    public $list_category_id;
+    public $list_priority_id;
+    public $list_status_id;
 
     public $title;
     public ?int $user_id = null;
@@ -70,6 +74,39 @@ class TaskList extends Component
         ]);
         
         $this->flashSuccess('Responsável atualizado.');
+    }
+
+    public function updatedListCategoryId()
+    {
+        $data = $this->validate(TaskStepRules::category());
+
+        Task::where('id', $this->taskId)->update([
+            'task_category_id' => $data['list_category_id'],
+        ]);
+        
+        $this->flashSuccess('Categoria atualizada.');
+    }
+
+    public function updatedListPriorityId()
+    {
+        $data = $this->validate(TaskStepRules::priority());
+
+        Task::where('id', $this->taskId)->update([
+            'task_priority_id' => $data['list_priority_id'],
+        ]);
+        
+        $this->flashSuccess('Prioridade atualizada.');
+    }
+
+    public function updatedListStatusId()
+    {
+        $data = $this->validate(TaskStepRules::status());
+
+        Task::where('id', $this->taskId)->update([
+            'task_status_id' => $data['list_status_id'],
+        ]);
+        
+        $this->flashSuccess('Status atualizado.');
     }
 
     public function createStep()
@@ -140,8 +177,10 @@ class TaskList extends Component
             'task' => $this->taskService->find($this->taskId),
             'users' => User::orderBy('name')->get(),
             'organizations' => OrganizationChart::orderBy('hierarchy')->get(),
+            'taskStatuses' => $this->taskStatusService->index(),
             'taskCategories' => TaskCategory::orderBy('title')->get(),
             'taskPriorities' => TaskPriority::orderBy('level')->get(),
+            'taskStepCategories' => TaskStepCategory::orderBy('title')->get(),
             'taskStepStatuses' => $this->taskStepStatusesService->index(),
             'workflows' => Workflow::orderBy('title')->get(),
         ]);

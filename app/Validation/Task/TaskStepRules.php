@@ -34,4 +34,25 @@ class TaskStepRules
             'responsable_id' => 'nullable|exists:users,id',
         ];
     }
+
+    public static function category(): array
+    {
+        return [
+            'list_category_id' => 'nullable|exists:task_categories,id',
+        ];
+    }
+
+    public static function priority(): array
+    {
+        return [
+            'list_priority_id' => 'nullable|exists:task_priorities,id',
+        ];
+    }
+
+    public static function status(): array
+    {
+        return [
+            'list_status_id' => 'nullable|exists:task_step_statuses,id',
+        ];
+    }
 }

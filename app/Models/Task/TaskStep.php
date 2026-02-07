@@ -2,8 +2,8 @@
 
 namespace App\Models\Task;
 
-use App\Models\Administration\Task\TaskCategory;
 use App\Models\Administration\Task\TaskPriority;
+use App\Models\Administration\Task\TaskStepCategory;
 use App\Models\Administration\Task\TaskStepStatus;
 use App\Models\Administration\User\User;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
@@ -49,7 +49,7 @@ class TaskStep extends Model
     }
 
     public function taskCategory(){
-        return $this->belongsTo(TaskCategory::class, 'task_category_id');
+        return $this->belongsTo(TaskStepCategory::class, 'task_category_id');
     }
 
     public function responsable(){

@@ -5,6 +5,8 @@ namespace App\Livewire\Task;
 use App\Models\Task\TaskStep;
 use Livewire\Component;
 
+use function Livewire\str;
+
 class TaskStepAside extends Component
 {
     public $stepId;
@@ -34,7 +36,7 @@ class TaskStepAside extends Component
         $this->savingDescription = true;
 
         TaskStep::findOrFail($this->stepId)->update([
-            'description' => $this->description,
+            'description' => str($this->description)->trim(),
             'updated_at' => now(),
         ]);
 

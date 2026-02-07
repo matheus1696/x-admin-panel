@@ -12,27 +12,32 @@ class TaskStatusSeeder extends Seeder
         TaskStatus::insert([
             [
                 'title' => 'Rascunho',
-                'color' => 'bg-gray-100 text-gray-800 hover:bg-gray-200',
+                'color' => 'gray',
+                'color_code_tailwind' => 'bg-gray-100 text-gray-800 hover:bg-gray-200',
                 'is_default' => true
             ],
             [
                 'title' => 'Em andamento',
-                'color' => 'bg-blue-100 text-blue-600 hover:bg-blue-200',
+                'color' => 'blue',
+                'color_code_tailwind' => 'bg-blue-100 text-blue-600 hover:bg-blue-200',
                 'is_default' => false
             ],
             [
                 'title' => 'Pausado',
-                'color' => 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200',
+                'color' => 'yellow',
+                'color_code_tailwind' => 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200',
                 'is_default' => false
             ],
             [
                 'title' => 'Concluído',
-                'color' => 'bg-green-100 text-green-700 hover:bg-green-200',
-                'is_default' => false
+                'color' => 'green',
+                'color_code_tailwind' => 'bg-green-100 text-green-700 hover:bg-green-200',
+                'is_default' => false,
             ],
             [
                 'title' => 'Cancelado',
-                'color' => 'bg-red-100 text-red-700 hover:bg-red-200',
+                'color' => 'red',
+                'color_code_tailwind' => 'bg-red-100 text-red-700 hover:bg-red-200',
                 'is_default' => false
             ],
         ]);

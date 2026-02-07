@@ -14,7 +14,7 @@ class TaskStatusService
 
     public function index(): Collection
     {
-        return TaskStatus::orderBy('title')->get();
+        return TaskStatus::where('is_active', true)->orderBy('title')->get();
     }
 
     public function create(array $data): TaskStatus

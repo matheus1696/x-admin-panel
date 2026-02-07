@@ -14,7 +14,7 @@ class TaskStepStatusService
 
     public function index(): Collection
     {
-        return TaskStepStatus::orderBy('title')->get();
+        return TaskStepStatus::where('is_active', true)->orderBy('title')->get();
     }
 
     public function create(array $data): TaskStepStatus

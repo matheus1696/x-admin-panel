@@ -1,8 +1,12 @@
 # Estrutura Componentização do Formulário
 
 resources/views/components/form/
+├── error.blade.php
+├── input.blade.php
+├── label.blade.php
+├── select-livewire.blade.php
 ├── select.blade.php
-└── select-livewire.blade.php
+└── textarea.blade.php
 
 ## Componente Select Search
 

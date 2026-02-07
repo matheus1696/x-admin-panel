@@ -26,7 +26,7 @@
         })->toArray();
     }
 
-    $defaultTailwind = "w-full rounded-md border px-3 py-2 text-xs shadow-sm transition-all duration-200 flex items-center gap-2";
+    $defaultTailwind = "w-full rounded-md border px-3 py-2 text-sm shadow-sm transition-all duration-200 flex items-center gap-2";
 
     $variants = [
         'default' => [
@@ -180,7 +180,7 @@
                 type="text"
                 x-model="search"
                 placeholder="Buscar..."
-                class="w-full px-3 py-2 text-xs border rounded-md focus:ring-0 focus:border-green-700"
+                class="w-full px-3 py-2 text-sm border rounded-md focus:ring-0 focus:border-green-700"
             >
         </div>
 
@@ -189,7 +189,7 @@
             <div
                 @click="select(option)"
                 @mouseenter="highlighted = index"
-                class="px-3 py-2.5 text-xs cursor-pointer transition border-b border-gray-200"
+                class="px-3 py-2.5 text-sm cursor-pointer transition border-b border-gray-200"
                 :class="{
                     'bg-green-700 text-white': highlighted === index,
                     'bg-green-50 text-green-800 font-semibold': selectedValue == option.value && highlighted !== index
@@ -202,7 +202,7 @@
         <!-- Vazio -->
         <div
             x-show="filteredOptions.length === 0"
-            class="px-3 py-2 text-xs text-gray-500 italic text-center"
+            class="px-3 py-2 text-sm text-gray-500 italic text-center"
         >
             Nenhum resultado encontrado
         </div>
