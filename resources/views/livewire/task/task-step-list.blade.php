@@ -3,7 +3,7 @@
     <!-- Flash Message -->
     <x-alert.flash />
     
-    <div class="grid grid-cols-5 md:grid-cols-12 gap-2 px-5 py-1.5 items-center divide-x border-b hover:bg-green-200/50 transition-colors duration-150">
+    <div class="grid grid-cols-5 md:grid-cols-12 px-5 py-1.5 items-center divide-x border-b hover:bg-green-200/50 transition-colors duration-150">
         
         <!-- TÍTULO -->
         <div class="col-span-3 flex items-center justify-center">                        
@@ -24,34 +24,30 @@
         </div>
 
         <!-- ORGANIZACAO -->
-        <div class="col-span-2 hidden md:block">
-            <div>
-                <x-form.select-livewire wire:model.live="responsable_organization_id" :collection="$organizations" valueField="id" labelAcronym="acronym" labelField="title" :selected="$step->organization_id" variant="pills" size="xs" />
-            </div>
+        <div class="col-span-2 px-2 hidden md:block">
+            <x-form.select-livewire wire:model.live="responsable_organization_id" :collection="$organizations" valueField="id" labelAcronym="acronym" labelField="title" :selected="$step->organization_id" variant="pills" size="xs" />
         </div>
 
         <!-- RESPONSÁVEL -->
-        <div class="col-span-2">
-            <div>
-                <x-form.select-livewire wire:model.live="responsable_id" :collection="$users" valueField="id" labelField="name" :selected="$step->user_id" variant="pills" size="xs" />
-            </div>
+        <div class="col-span-2 px-2">
+            <x-form.select-livewire wire:model.live="responsable_id" :collection="$users" valueField="id" labelField="name" :selected="$step->user_id" variant="pills" size="xs" />
         </div>
 
         <div class="col-span-3 hidden md:grid grid-cols-2 items-center justify-center gap-2 divide-x">
             <!-- PRIORIDADE -->
-            <div>
+            <div class="px-2">
                 <x-form.select-livewire wire:model.live="list_priority_id" :collection="$taskPriorities" valueField="id" labelField="title" :selected="$step->task_priority_id" variant="pills" size="xs"  borderColor="{{ $step->taskPriority?->color }}" />
             </div>
 
             <!-- STATUS -->
-            <div>
+            <div class="px-2">
                 <x-form.select-livewire wire:model.live="list_task_step_status_id" :collection="$taskStepStatuses" valueField="id" labelField="title" :selected="$step->task_status_id" variant="pills" size="xs" borderColor="{{ $step->taskStepStatus?->color }}"/>
             </div>
         </div>
 
         <!-- DATAS -->
         <!-- Inicio -->
-        <div class="col-span-1 hidden md:block">
+        <div class="col-span-1 px-2 hidden md:block">
             <div class="flex flex-col items-center">
                 @if ($step->started_at)
                     <div class="text-xs text-gray-700 font-medium">
@@ -64,7 +60,7 @@
         </div>
 
         <!-- Prazo -->
-        <div class="col-span-1 hidden md:block">
+        <div class="col-span-1 px-2 hidden md:block">
             <div class="flex flex-col items-center">
                 @if ($step->deadline_at)
                     <div class="text-xs text-gray-700 font-medium">

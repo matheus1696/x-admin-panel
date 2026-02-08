@@ -1,14 +1,14 @@
-<div class="grid grid-cols-12 gap-2 items-center">
+<div class="grid grid-cols-4 md:grid-cols-12 gap-2 items-center">
     <!-- TÍTULO -->
     <div class="col-span-3">
         <x-form.input type="text" name="title" wire:model.defer="title" placeholder="Título da etapa" autofocus variant='pills' size="xs" />
     </div>
     
-    <div class="col-span-2">
+    <div class="col-span-2 hidden md:block">
         <x-form.select-livewire name="user_id" wire:model.defer="user_id" :collection="$users" value-field="id" label-field="name" variant='pills' size="xs" />
     </div>
 
-    <div class="col-span-5 grid grid-cols-3 gap-2">
+    <div class="col-span-5 hidden md:grid grid-cols-3 gap-2">
         <div class="col-span-1">
             <x-form.select-livewire name="task_category_id" wire:model.defer="task_step_category_id" :collection="$taskStepCategories" value-field="id" label-field="title" variant='pills' size="xs" />
         </div>
@@ -23,7 +23,7 @@
     </div>
     
     <!-- DATA -->
-    <div class="col-span-1">
+    <div class="col-span-1 hidden md:block">
         <x-form.input disabled variant='pills' size="xs" />
     </div>
 

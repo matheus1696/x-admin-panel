@@ -86,7 +86,7 @@
                                 Você ainda está usando a senha padrão do sistema. Por motivos de segurança, recomendamos que altere sua senha imediatamente.
                             </p>
                             <div class="w-full mt-4">
-                                <x-button href="{{ route('profile.password.edit') }}" text="Alterar Senha" icon="fa-solid fa-key" variant="yellow"/>
+                                <x-button href="{{ route('profile.password.edit') }}" text="Alterar Senha" icon="fa-solid fa-key" variant="yellow_solid" fullWidth="true"/>
                             </div>
                         </div>
                     </div>

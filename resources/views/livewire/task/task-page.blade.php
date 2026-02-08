@@ -53,7 +53,7 @@
         <!-- HEADER DA GRID -->
         <div class="grid grid-cols-5 md:grid-cols-12 gap-4 px-5 py-2 bg-green-50/80 border-b border-gray-200 text-xs font-semibold text-gray-600">
             <div class="col-span-3">Título</div>
-            <div class="col-span-2 text-center">Responsável</div>
+            <div class="col-span-2 text-center">Solicitante</div>
             <div class="col-span-5 hidden md:grid grid-cols-3">
                 <div class="text-center">Categoria</div>
                 <div class="text-center">Prioridade</div>

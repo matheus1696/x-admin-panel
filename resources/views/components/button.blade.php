@@ -40,7 +40,7 @@
         
         'gray_solid' => 'text-white bg-gradient-to-r from-gray-700 via-gray-700 to-gray-800 hover:from-gray-700 hover:via-gray-800 hover:to-gray-900 focus:ring-gray-600/30 shadow-md hover:shadow-lg border border-gray-700/20 rounded-lg active:scale-[0.98]',
         
-        'yellow_solid' => 'text-gray-900 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-600 hover:from-yellow-600 hover:via-amber-600 hover:to-yellow-700 focus:ring-yellow-600/30 shadow-md hover:shadow-lg border border-yellow-600/20 rounded-lg active:scale-[0.98]',
+        'yellow_solid' => 'text-white bg-gradient-to-r from-amber-400 via-amber-400 to-amber-500 hover:from-amber-500 hover:via-amber-500 hover:to-amber-600 focus:ring-yellow-600/30 shadow-md hover:shadow-lg border border-yellow-600/20 rounded-lg active:scale-[0.98]',
         
         'red_solid' => 'text-white bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-700 hover:via-rose-700 hover:to-red-700 focus:ring-red-600/30 shadow-md hover:shadow-lg border border-red-700/20 rounded-lg active:scale-[0.98]',
         

@@ -6,10 +6,10 @@
     <div x-data="{ openSteps: false, openCreateStep: false, openAsideTask: false }" class="border-y border-gray-300 last:border-b-0 hover:bg-green-50/25 transition-colors duration-150">
         
         <!-- LINHA DA TASK -->
-        <div class="grid  grid-cols-5 md:grid-cols-12 gap-2 px-5 py-2 items-center divide-x">
+        <div class="grid grid-cols-5 md:grid-cols-12 px-5 py-2 items-center divide-x">
             
             <!-- TÍTULO -->
-            <div class="col-span-3 flex items-center">                        
+            <div class="col-span-3 flex items-center justify-center pr-2"> 
                 <div class="flex-1 flex items-center gap-1">
                     <div class="w-4">
                         @if ($task->taskSteps->count() > 0)
@@ -29,7 +29,7 @@
                             activeItem = {{ $task->id }} "
                          />
                     </div> -
-                    <span class="flex-1 font-medium text-gray-700 line-clamp-1 text-xs">
+                    <span class="flex-1 font-medium text-gray-700 line-clamp-1 text-xs" title="{{ $task->title }}">
                         {{ $task->title }}
                     </span>
                 </div>
@@ -43,10 +43,8 @@
             </div>
 
             <!-- RESPONSÁVEL -->
-            <div class="col-span-2">
-                <div class="px-2">
-                    <x-form.select-livewire wire:model.live="responsable_id" :collection="$users" valueField="id" labelField="name" :selected="$task->user_id" variant="pills" size="xs" />
-                </div>
+            <div class="col-span-2 px-2">
+                <x-form.select-livewire wire:model.live="responsable_id" :collection="$users" valueField="id" labelField="name" :selected="$task->user_id" variant="pills" size="xs" />
             </div>
 
 

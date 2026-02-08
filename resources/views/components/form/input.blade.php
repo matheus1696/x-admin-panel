@@ -2,7 +2,7 @@
     'disabled' => false,
     'name' => null,
     'variant' => 'default', // default, outline, filled, minimal, glass, pills
-    'size' => 'md', // xs, sm, md, lg
+    'size' => 'sm', // xs, sm, md, lg
     'withIcon' => false,
     'icon' => null,
     'iconPosition' => 'left', // left, right
@@ -64,7 +64,7 @@
     // Sistema de cores
     $colorConfig = [
         'green' => [
-            'base' => 'border-gray-300 focus:border-green-500 focus:ring-green-500/30',
+            'base' => 'border-gray-300 focus:border-green-700 focus:ring-green-700/30',
             'error' => 'border-red-400 focus:border-red-500 focus:ring-red-500/30',
             'filled' => 'bg-green-50 border-green-200 focus:bg-white',
             'text' => 'text-green-700',
@@ -193,11 +193,4 @@
             <i class="fas fa-spinner fa-spin {{ $currentSize['icon'] }} {{ $currentColor['icon'] }}"></i>
         </div>
     @endif
-    
-    @error($name)
-        <div class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 animate-pulse">
-            <i class="fa-solid fa-exclamation-circle flex-shrink-0"></i>
-            <span>{{ $message }}</span>
-        </div>
-    @enderror
 </div>

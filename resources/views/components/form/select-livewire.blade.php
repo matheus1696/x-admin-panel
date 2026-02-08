@@ -485,20 +485,6 @@
                                 '{{ $currentColor['selected'] }}': isEqual(currentValue, option.value)
                             }">
                             
-                            <!-- Checkbox premium -->
-                            <div class="relative flex-shrink-0">
-                                <div class="w-4 h-4 {{ $variant === 'pills' ? 'rounded-full' : 'rounded' }} border border-gray-300 flex items-center justify-center transition-all duration-200"
-                                     :class="{
-                                        'bg-gradient-to-r from-{{ $borderColor }}-500 to-{{ $borderColor }}-600 border-transparent': (isEqual(currentValue, option.value)),
-                                        'border-{{ $borderColor }}-300 bg-white/80': index === highlighted && !isEqual(currentValue, option.value)
-                                     }">
-                                    <i 
-                                        class="fa-solid fa-check {{ $currentSize['iconSize'] }}  text-white transition-all duration-200"
-                                        :class="(isEqual(currentValue, option.value)) ? 'scale-100 opacity-100' : 'scale-0 opacity-0'">
-                                    </i>
-                                </div>
-                            </div>
-                            
                             <!-- Label com truncate elegante -->
                             <div class="flex-1 min-w-0">
                                 <span x-text="option.label" 

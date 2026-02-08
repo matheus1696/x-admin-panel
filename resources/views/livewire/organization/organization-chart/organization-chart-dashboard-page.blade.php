@@ -145,10 +145,13 @@
             icon="fa-solid fa-sitemap"
         >
             <x-slot name="button">
-                <div class="flex items-center gap-2">
-                    <x-button @click="zoomOut" icon="fa-solid fa-minus"/>
-                    <span x-text="zoomLevel + '%'" class="text-sm font-semibold"></span>
-                    <x-button @click="zoomIn" icon="fa-solid fa-plus"/>
+                <div class="flex flex-col items-center gap-2">
+                    <div class="flex items-center gap-2">
+                        
+                        <x-button @click="zoomOut" icon="fa-solid fa-minus"/>
+                        <span x-text="zoomLevel + '%'" class="text-sm font-semibold"></span>
+                        <x-button @click="zoomIn" icon="fa-solid fa-plus"/>
+                    </div>
                     <x-button @click="resetPosition" text="Centralizar"/>
                 </div>
             </x-slot>

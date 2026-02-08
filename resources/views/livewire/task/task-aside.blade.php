@@ -74,10 +74,10 @@
         <section class="p-6 border-b border-gray-100">
             <div class="grid grid-cols-1 gap-6">
                 <!-- Card Responsável -->
-                <div class="card-hover bg-gradient-to-br from-white to-blue-50 rounded-xl border border-blue-100 p-5 shadow-sm hover:shadow-md transition-all duration-300">
-                    <div class="flex items-start justify-between mb-4">
+                <div class="grid grid-cols-2 items-center justify-between gap-2 bg-gradient-to-br from-white to-blue-50 rounded-xl border border-blue-100 p-5 shadow-sm hover:shadow-md transition-all duration-300">
+                    <div class="flex items-start justify-between">
                         <div class="flex items-center gap-3">
-                            <div class="p-2 bg-blue-100 rounded-lg">
+                            <div class="px-4 py-2 bg-blue-100 rounded-lg">
                                 <i class="fas fa-user-tie text-blue-600 text-sm"></i>
                             </div>
                             <div>
@@ -90,29 +90,27 @@
                     </div>
                     
                     @if ($task->responsable)
-                        <div class="space-y-4">
-                            <!-- Avatar e Informações -->
-                            <div class="flex items-center gap-3">
-                                <div class="relative">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                                        {{ substr($task->responsable->name ?? '', 0, 1) }}
-                                    </div>
-                                    <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
-                                        <i class="fas fa-check text-white text-[8px]"></i>
-                                    </div>
+                        <!-- Avatar e Informações -->
+                        <div class="flex items-center gap-3">
+                            <div class="relative">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                    {{ substr($task->responsable->name ?? '', 0, 1) }}
                                 </div>
-                                <div class="min-w-0 flex-1">
-                                    <div class="font-semibold text-gray-900 truncate">
-                                        {{ $task->responsable->name ?? '' }}
-                                    </div>
-                                    <div class="text-xs text-gray-500 truncate">
-                                        {{ $task->responsable->occupation->title ?? 'Sem cargo' }}
-                                    </div>
+                                <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                                    <i class="fas fa-check text-white text-[8px]"></i>
+                                </div>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="font-semibold text-gray-900 line-clamp-1" title="{{ $task->responsable->name ?? '' }}">
+                                    {{ $task->responsable->name ?? '' }}
+                                </div>
+                                <div class="text-xs text-gray-500 line-clamp-1" title="{{ $task->responsable->occupation->title ?? 'Sem cargo' }}">
+                                    {{ $task->responsable->occupation->title ?? 'Sem cargo' }}
                                 </div>
                             </div>
                         </div>
                     @else
-                        <div class="text-center py-4">
+                        <div class="flex items-center gap-5 text-center">
                             <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 mb-3">
                                 <i class="fas fa-user-plus text-blue-400"></i>
                             </div>
@@ -156,7 +154,7 @@
                             wire:model.defer="description"
                             id="task-description-{{ $task->id }}"
                             placeholder="Descreva detalhadamente esta tarefa..."
-                            class="h-40"
+                            class="h-52"
                             @keydown.ctrl.enter="$wire.saveDescription()"
                             x-init="chars = $el.value.length"
                             @input="chars = $el.value.length"
@@ -171,10 +169,10 @@
                     <div class="flex justify-between items-center gap-2">
                             
                         <!-- Botão cancelar -->
-                        <x-button type="button" wire:click="cancelDescriptionEdit" icon="fas fa-times" text="Cancelar" variant="red" />
+                        <x-button type="button" wire:click="cancelDescriptionEdit" icon="fas fa-times" text="Cancelar" variant="red_solid" fullWidth="true" />
                         
                         <!-- Botão salvar com animação -->
-                        <x-button type="button" wire:click="saveDescription" icon="fas fa-check" text="Salvar" />
+                        <x-button type="button" wire:click="saveDescription" icon="fas fa-check" text="Salvar" fullWidth="true" />
                     </div>
                 </div>
             @else
@@ -185,11 +183,11 @@
                     wire:key="description-view-{{ $task->id }}"
                 >
                     @if(trim($task->description))
-                        <div class="relative prose prose-sm max-w-none p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 group-hover:border-green-300 transition-all duration-300 h-40 overflow-y-scroll">
+                        <div class="relative prose prose-sm max-w-none p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200 group-hover:border-green-300 transition-all duration-300 h-52 overflow-y-auto">
                             <div class="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{!! nl2br(e(trim($task->description))) !!}</div>
                             
                             <!-- Overlay de edição -->
-                            <div class="absolute inset-0 bg-gradient-to-t from-white/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl flex items-center justify-center h-40">
+                            <div class="absolute inset-0 bg-gradient-to-t from-white/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl flex items-center justify-center h-52">
                                 <span class="inline-flex items-center gap-2 px-4 py-2 bg-white text-green-700 text-xs font-medium rounded-lg shadow-lg border border-green-200">
                                     <i class="fas fa-edit"></i>
                                     Clique para editar descrição
@@ -198,7 +196,7 @@
                         </div>
                     @else
                         <!-- Placeholder interativo -->
-                        <div class="flex flex-col items-center justify-center h-full py-12 text-gray-400 group rounded-2xl border-2 border-dashed border-gray-300 hover:border-green-400 hover:bg-green-50/50 transition-all duration-300 min-h-[200px] cursor-pointer">
+                        <div class="flex flex-col items-center justify-center py-12 text-gray-400 group rounded-2xl border-2 border-dashed border-gray-300 hover:border-green-400 hover:bg-green-50/50 transition-all duration-300 h-52 cursor-pointer">
                             <div class="relative mb-4">
                                 <div class="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                     <i class="far fa-file-alt text-2xl text-green-500 group-hover:text-green-600"></i>
@@ -210,13 +208,9 @@
                             <p class="text-lg font-medium text-gray-600 group-hover:text-green-700 transition-colors mb-2">
                                 Adicionar descrição detalhada
                             </p>
-                            <p class="text-sm text-center text-gray-500 max-w-md mb-4">
+                            <p class="text-xs text-center text-gray-500 max-w-md mb-4">
                                 Descreva objetivos, requisitos, entregáveis e observações importantes desta tarefa
                             </p>
-                            <div class="flex items-center gap-2 text-xs text-gray-500">
-                                <kbd class="px-2 py-1 bg-gray-100 rounded">Dica</kbd>
-                                <span>Use bullet points e seja específico nos detalhes</span>
-                            </div>
                         </div>
                     @endif
                 </div>
