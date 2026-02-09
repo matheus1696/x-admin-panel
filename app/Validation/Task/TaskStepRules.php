@@ -2,6 +2,10 @@
 
 namespace App\Validation\Task;
 
+use App\Models\Task\Task;
+use App\Models\Task\TaskStep;
+use Carbon\Carbon;
+
 class TaskStepRules
 {
     public static function store(): array
@@ -53,6 +57,37 @@ class TaskStepRules
     {
         return [
             'list_status_id' => 'nullable|exists:task_step_statuses,id',
+        ];
+    } 
+
+    public static function startedAt(): array
+    {
+        return [
+            'started_at' => [
+                'nullable',
+                'date',
+                'after_or_equal:' . Carbon::now()->subYears(1)->format('Y-m-d'),
+                'before_or_equal:' . Carbon::now()->format('Y-m-d'),
+            ],
+        ];
+    }
+
+    public static function deadlineAt($id): array
+    {
+        $lastStepDeadline = TaskStep::where('task_id', $id)
+            ->whereNotNull('deadline_at')
+            ->value('deadline_at');
+
+        dd($id);
+
+        $rules = ['nullable', 'date'];
+
+        if ($lastStepDeadline) {
+            $rules[] = 'after_or_equal:' . Carbon::parse($lastStepDeadline)->format('Y-m-d');
+        }
+
+        return [
+            'deadline_at' => $rules,
         ];
     }
 }

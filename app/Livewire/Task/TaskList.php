@@ -27,6 +27,7 @@ class TaskList extends Component
     protected TaskStatusService $taskStatusService;
     protected TaskStepStatusService $taskStepStatusesService;
 
+    public $task;
     public int $taskId;
     public int $workflow_id;
 
@@ -34,14 +35,14 @@ class TaskList extends Component
     public $list_category_id;
     public $list_priority_id;
     public $list_status_id;
+    public $started_at;
+    public $deadline_at;
 
     public $title;
     public ?int $user_id = null;
     public ?int $task_category_id = null;
     public ?int $task_priority_id = null;
     public ?int $task_step_status_id = null;
-    public $deadline_at;
-
     public function boot( TaskService $taskService, TaskStatusService $taskStatusService, TaskStepStatusService $taskStepStatusesService )
     {
         $this->taskService = $taskService;
@@ -57,6 +58,9 @@ class TaskList extends Component
 
     public function mount()
     {
+        $this->task = $this->taskService->find($this->taskId);
+        $this->started_at = $this->task->started_at?->format('Y-m-d');
+        $this->deadline_at = $this->task->deadline_at?->format('Y-m-d');
         $this->setDefaults();
     }
 
@@ -107,6 +111,28 @@ class TaskList extends Component
         ]);
         
         $this->flashSuccess('Status atualizado.');
+    }
+
+    public function updatedStartedAt()
+    {
+        $data = $this->validate(TaskStepRules::startedAt());
+
+        Task::where('id', $this->taskId)->update([
+            'started_at' => $data['started_at'],
+        ]);
+        
+        $this->flashSuccess('Data de início atualizada.');
+    }
+
+    public function updatedDeadlineAt()
+    {
+        $data = $this->validate(TaskStepRules::deadlineAt($this->taskId));
+
+        Task::where('id', $this->taskId)->update([
+            'deadline_at' => $data['deadline_at'],
+        ]);
+        
+        $this->flashSuccess('Data de prazo atualizada.');
     }
 
     public function createStep()
@@ -174,7 +200,6 @@ class TaskList extends Component
     {
         
         return view('livewire.task.task-list',[
-            'task' => $this->taskService->find($this->taskId),
             'users' => User::orderBy('name')->get(),
             'organizations' => OrganizationChart::orderBy('hierarchy')->get(),
             'taskStatuses' => $this->taskStatusService->index(),

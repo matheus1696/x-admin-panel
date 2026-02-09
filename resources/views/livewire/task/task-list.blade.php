@@ -148,29 +148,24 @@
     <!-- Modal -->
     <x-modal :show="$showModal" wire:key="workflow-modal">
         @if ($modalKey === 'modal-copy-workflow-steps')
-            <x-slot name="header">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase">
-                    Copiar etapas de um fluxo
-                </h2>
-            </x-slot>
-
             <form wire:submit.prevent="copyWorkflowSteps" class="space-y-4">
+                <x-slot name="header">
+                    <h2 class="text-sm font-semibold text-gray-700 uppercase">
+                        Copiar etapas de um fluxo
+                    </h2>
+                </x-slot>
 
                 <div>
                     <x-form.label value="Fluxo de trabalho" />
-                    <x-form.select-livewire
-                        name="workflow_id"
-                        wire:model="workflow_id"
-                        :collection="$workflows"
-                        value-field="id"
-                        label-field="title"
-                    />
+                    <x-form.select-livewire name="workflow_id" wire:model="workflow_id" :collection="$workflows" value-field="id" label-field="title" />
                 </div>
 
-                <div class="flex justify-end gap-2">
-                    <x-button variant="red" text="Cancelar" wire:click="closeModal" />
-                    <x-button type="submit" text="Copiar etapas" />
-                </div>
+                <x-slot name="footer">
+                    <div class="flex justify-between gap-2">
+                        <x-button variant="red" text="Cancelar" wire:click="closeModal" variant="gray_outline" />
+                        <x-button type="submit" text="Copiar etapas" />
+                    </div>
+                </x-slot>
             </form>
         @endif
     </x-modal>

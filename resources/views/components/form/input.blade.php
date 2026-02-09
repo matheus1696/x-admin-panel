@@ -2,7 +2,7 @@
     'disabled' => false,
     'name' => null,
     'variant' => 'default', // default, outline, filled, minimal, glass, pills
-    'size' => 'sm', // xs, sm, md, lg
+    'size' => 'xs', // xs, sm, md, lg
     'withIcon' => false,
     'icon' => null,
     'iconPosition' => 'left', // left, right
@@ -16,7 +16,7 @@
     // Sistema de tamanhos
     $sizeConfig = [
         'xs' => [
-            'input' => 'text-xs px-2.5 py-1.5',
+            'input' => 'text-xs px-2.5 py-2',
             'icon' => 'text-xs',
             'iconPadding' => 'pl-8',
             'iconRightPadding' => 'pr-8',

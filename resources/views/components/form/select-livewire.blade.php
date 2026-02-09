@@ -13,7 +13,7 @@
     
     'disabled' => false,
     'variant' => 'default',
-    'size' => 'md', // xs, sm, md, lg
+    'size' => 'xs', // xs, sm, md, lg
     'withIcon' => false,
     'icon' => null,
     'borderColor' => 'green', // green, blue, purple, red, etc
@@ -47,9 +47,9 @@
     // Configurações de tamanho
     $sizeConfig = [
         'xs' => [
-            'trigger' => 'text-xs py-1.5 px-3',
-            'option' => 'text-xs py-1.5 px-3',
-            'search' => 'text-xs py-1.5 px-8',
+            'trigger' => 'text-xs py-2 px-3',
+            'option' => 'text-xs py-2 px-3',
+            'search' => 'text-xs py-2 px-8',
             'iconSize' => 'text-[9px]',
             'chevronSize' => 'text-[8px]',
         ],
