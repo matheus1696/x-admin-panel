@@ -4,14 +4,14 @@
     <div>
         <x-form.label value="Sigla" />
         <x-form.input wire:model.defer="acronym" placeholder="Sigla" required />
-        <x-form.error :messages="$errors->get('acronym')" />
+        <x-form.error for="acronym" />
     </div>
 
     {{-- Setor --}}
     <div>
         <x-form.label value="Setor" />
         <x-form.input wire:model.defer="title" placeholder="Nome do Setor" required />
-        <x-form.error :messages="$errors->get('title')" />
+        <x-form.error for="title" />
     </div>
 
     {{-- Setor Pai --}}
@@ -25,7 +25,7 @@
             label-acronym="acronym" 
             label-field="title" 
         />
-        <x-form.error :messages="$errors->get('hierarchy')" />
+        <x-form.error for="hierarchy" />
     </div>
 
     <div class="md:col-span-2 pt-2 border-t border-gray-200">
@@ -46,25 +46,25 @@
         <div>
             <x-form.label value="Foto do responsável" />
             <x-form.input type="file" wire:model="responsible_photo" accept=".jpg,.jpeg,.png"/>
-            <x-form.error :messages="$errors->get('responsible_photo')" />
+            <x-form.error for="responsible_photo" />
         </div>
     </div>
 
     <div>
         <x-form.label value="Nome do responsável" />
         <x-form.input wire:model.defer="responsible_name" placeholder="Nome do responsável" />
-        <x-form.error :messages="$errors->get('responsible_name')" />
+        <x-form.error for="responsible_name" />
     </div>
 
     <div>
         <x-form.label value="Contato" />
         <x-form.input wire:model.defer="responsible_contact" placeholder="Telefone ou ramal" />
-        <x-form.error :messages="$errors->get('responsible_contact')" />
+        <x-form.error for="responsible_contact" />
     </div>
 
     <div class="col-span-2">
         <x-form.label value="Email" />
         <x-form.input wire:model.defer="responsible_email" placeholder="Email do responsável" />
-        <x-form.error :messages="$errors->get('responsible_email')" />
+        <x-form.error for="responsible_email" />
     </div>
 </div>

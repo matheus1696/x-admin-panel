@@ -27,21 +27,21 @@
                     <div>
                         <x-form.label value="Senha Atual" for="current_password" />
                         <x-form.input type="password" name="current_password" id="current_password" placeholder="********" required />
-                        <x-form.error :messages="$errors->get('current_password')" />
+                        <x-form.error for="current_password" />
                     </div>
 
                     <!-- Nova Senha -->
                     <div>
                         <x-form.label value="Nova Senha" for="password" />
                         <x-form.input type="password" name="password" id="password" placeholder="********" required />
-                        <x-form.error :messages="$errors->get('password')" />
+                        <x-form.error for="password" />
                     </div>
 
                     <!-- Confirmação -->
                     <div>
                         <x-form.label value="Confirmar Nova Senha" for="password_confirmation" />
                         <x-form.input type="password" name="password_confirmation" id="password_confirmation" placeholder="********" required />
-                        <x-form.error :messages="$errors->get('password_confirmation')" />
+                        <x-form.error for="password_confirmation" />
                     </div>
 
                 </div>

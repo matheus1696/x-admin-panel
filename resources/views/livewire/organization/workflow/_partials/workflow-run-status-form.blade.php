@@ -3,7 +3,7 @@
     <div>
         <x-form.label value="Título" />
         <x-form.input wire:model.defer="title" placeholder="Em andamento" required />
-        <x-form.error :messages="$errors->get('title')" />
+        <x-form.error for="title" />
     </div>
 
     <div>
@@ -36,7 +36,7 @@
             value-field="value"
             label-field="label"
         />
-        <x-form.error :messages="$errors->get('color')" />
+        <x-form.error for="color" />
     </div>
 
 </div>

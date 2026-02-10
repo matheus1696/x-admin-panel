@@ -9,14 +9,14 @@
             placeholder="Nome do departamento"
             required
         />
-        <x-form.error :messages="$errors->get('title')" />
+        <x-form.error for="title" />
     </div>
 
     {{-- Contato --}}
     <div>
         <x-form.label value="Contato" for="contact" />
         <x-form.input type="text" wire:model.defer="contact" id="contact" value="{{ old('contact', $contact ?? '') }}" placeholder="(00) 00000-0000" data-mask="phone" maxlength="15"/>
-        <x-form.error :messages="$errors->get('contact')" />
+        <x-form.error for="contact" />
     </div>
 
     {{-- Ramal --}}
@@ -28,7 +28,7 @@
             placeholder="Ramal"
             maxlength="4"
         />
-        <x-form.error :messages="$errors->get('extension')" />
+        <x-form.error for="extension" />
     </div>
 
     {{-- Tipo de Contato --}}
@@ -45,7 +45,7 @@
             value-field="value"
             label-field="label"
         />
-        <x-form.error :messages="$errors->get('type_contact')" />
+        <x-form.error for="type_contact" />
     </div>
 
 </div>

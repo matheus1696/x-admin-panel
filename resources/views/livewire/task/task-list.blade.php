@@ -159,13 +159,11 @@
                     <x-form.label value="Fluxo de trabalho" />
                     <x-form.select-livewire name="workflow_id" wire:model="workflow_id" :collection="$workflows" value-field="id" label-field="title" />
                 </div>
-
-                <x-slot name="footer">
-                    <div class="flex justify-between gap-2">
-                        <x-button variant="red" text="Cancelar" wire:click="closeModal" variant="gray_outline" />
-                        <x-button type="submit" text="Copiar etapas" />
-                    </div>
-                </x-slot>
+                
+                <div class="flex justify-between gap-2">
+                    <x-button variant="red" text="Cancelar" wire:click="closeModal" variant="gray_outline" />
+                    <x-button type="submit" text="Copiar etapas" />
+                </div>
             </form>
         @endif
     </x-modal>
