@@ -31,13 +31,12 @@
         x-transition:leave="ease-in duration-300"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6"
+        class="fixed inset-0 z-[999] flex items-center justify-center p-4 md:p-6"
         :class="{ 'items-start md:items-center': true }"
-        style="background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.92) 100%); backdrop-filter: blur(8px);"
     >
         <!-- Overlay com gradiente sutil -->
         <div 
-            class="absolute inset-0 bg-gradient-to-br from-gray-900/95 via-gray-900/90 to-black/95"
+            class="absolute inset-0 bg-gradient-to-br from-gray-900/50 via-gray-900/50 to-black/50 backdrop-blur-sm"
             @click="handleClose()"
         ></div>
 
@@ -52,8 +51,7 @@
             x-transition:leave="ease-in duration-300"
             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
             x-transition:leave-end="opacity-0 scale-90 translate-y-4"
-            class="relative w-full {{ $maxWidth }} bg-gradient-to-br from-white via-gray-50 to-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200/50"
-            style="box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);"
+            class="relative w-full {{ $maxWidth }} bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200/50"
             @click.outside="handleClose()"
             @keydown.escape.window="handleClose()"
         >
@@ -79,7 +77,7 @@
 
             {{-- Body com scroll elegante --}}
             <div 
-                class="px-8 pt-6 pb-8 min-h-[calc(100vh-500px)] max-h-[calc(100vh-180px)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400"
+                class="px-8 mt-5 min-h-[calc(100vh-500px)] max-h-[calc(100vh-180px)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400"
                 style="scrollbar-width: thin;"
             >
                 <div class="space-y-6">

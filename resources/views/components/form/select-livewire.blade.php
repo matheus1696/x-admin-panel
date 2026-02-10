@@ -47,16 +47,16 @@
     // Configurações de tamanho
     $sizeConfig = [
         'xs' => [
-            'trigger' => 'text-xs py-2 px-3',
-            'option' => 'text-xs py-2 px-3',
-            'search' => 'text-xs py-2 px-8',
+            'trigger' => 'text-xs py-1.5 px-3',
+            'option' => 'text-xs py-1.5 px-3',
+            'search' => 'text-xs py-1.5 px-8',
             'iconSize' => 'text-[9px]',
             'chevronSize' => 'text-[8px]',
         ],
         'sm' => [
-            'trigger' => 'text-sm py-2 px-3',
-            'option' => 'text-sm py-2 px-3',
-            'search' => 'text-sm py-2 px-8',
+            'trigger' => 'text-xs py-2 px-3',
+            'option' => 'text-xs py-2 px-3',
+            'search' => 'text-xs py-2 px-8',
             'iconSize' => 'text-[10px]',
             'chevronSize' => 'text-[9px]',
         ],
@@ -192,6 +192,16 @@
                 'selected' => "{$currentColor['selected']} border",
             ],
             'dropdown' => 'rounded-xl border border-gray-200',
+            'option' => 'rounded-lg',
+        ],
+        
+        'inline' => [
+            'trigger' => [
+                'base' => "bg-transparent border-transparent",
+                'error' => "bg-transparent border {$currentColor['error']}",
+                'selected' => "border {$currentColor['selected']}",
+            ],
+            'dropdown' => 'rounded-lg border border-gray-200',
             'option' => 'rounded-lg',
         ],
         
@@ -414,7 +424,7 @@
             <!-- Label exibido -->
             <span 
                 class="flex-1 truncate font-medium" 
-                :class="selectedOption ? '{{ $currentColor['text'] }}' : 'text-gray-400'">
+                :class="selectedOption ? '{{ $currentColor['text'] }}' : 'text-gray-300'">
                 <span x-text="displayLabel"></span>
             </span>
             
@@ -423,7 +433,7 @@
                 <!-- Ícone dropdown animado -->
                 <div class="relative">
                     <i class="fa-solid fa-chevron-down {{ $currentSize['chevronSize'] }} text-gray-400 transition-all duration-300" 
-                       :class="open ? 'rotate-180 transform scale-110' : ''"></i>
+                       :class="open ? 'rotate-180' : ''"></i>
                 </div>
             </div>
         </div>
@@ -479,9 +489,9 @@
                             :aria-selected="isEqual(currentValue, option.value)"
                             @click="select(option)"
                             @mouseenter="highlighted = index"
-                            class="{{ $currentSize['option'] }} {{ $variantConfig['option'] }} cursor-pointer transition-all duration-200 flex items-center gap-3"
+                            class="{{ $currentSize['option'] }} {{ $variantConfig['option'] }} cursor-pointer transition-all duration-100 flex items-center gap-3"
                             :class="{
-                                '{{ $currentColor['highlight'] }} border shadow-sm scale-[1.02]': index === highlighted,
+                                '{{ $currentColor['highlight'] }} border shadow-sm': index === highlighted,
                                 '{{ $currentColor['selected'] }}': isEqual(currentValue, option.value)
                             }">
                             

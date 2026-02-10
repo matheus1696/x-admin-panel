@@ -43,6 +43,7 @@ class TaskList extends Component
     public ?int $task_category_id = null;
     public ?int $task_priority_id = null;
     public ?int $task_step_status_id = null;
+    
     public function boot( TaskService $taskService, TaskStatusService $taskStatusService, TaskStepStatusService $taskStepStatusesService )
     {
         $this->taskService = $taskService;
@@ -169,8 +170,6 @@ class TaskList extends Component
 
         $workflow = Workflow::findOrFail($this->workflow_id);
         $currentDeadline = now();
-
-        dd($workflow->workflowSteps);
 
         foreach ($workflow->workflowSteps as $key => $step) {
 

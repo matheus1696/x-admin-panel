@@ -7,7 +7,7 @@
     'icon' => null,
     'iconPosition' => 'left', // left, right
     'borderColor' => 'green', // green, blue, purple, red, yellow, gray, sky, indigo
-    'rounded' => 'md', // none, sm, md, lg, xl, 2xl, full
+    'rounded' => 'sm', // none, sm, md, lg, xl, 2xl, full
     'shadow' => true,
     'loading' => false,
 ])
@@ -16,7 +16,7 @@
     // Sistema de tamanhos
     $sizeConfig = [
         'xs' => [
-            'input' => 'text-xs px-2.5 py-2',
+            'input' => 'text-xs px-3 py-1.5',
             'icon' => 'text-xs',
             'iconPadding' => 'pl-8',
             'iconRightPadding' => 'pr-8',
@@ -28,7 +28,7 @@
             'iconRightPadding' => 'pr-9',
         ],
         'md' => [
-            'input' => 'text-sm px-3.5 py-2.5',
+            'input' => 'text-sm px-2.5 py-2.5',
             'icon' => 'text-sm',
             'iconPadding' => 'pl-10',
             'iconRightPadding' => 'pr-10',

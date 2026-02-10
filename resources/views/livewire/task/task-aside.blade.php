@@ -55,11 +55,7 @@
             </div>
 
             <!-- Botão Fechar com Animação -->
-            <button
-                @click="activeItem = null"
-                class="text-gray-400 hover:text-gray-600"
-                aria-label="Fechar painel de detalhes"
-            >
+            <button @click="activeItem = null" class="text-gray-400 hover:text-gray-600" aria-label="Fechar painel de detalhes" >
                 <!-- Ícone com rotação -->
                 <div class="hover:bg-gray-200 px-4 py-2 rounded-full text-center  transition-all duration-300 hover:rotate-90">
                     <i class="fas fa-times text-lg transition-transform duration-300 group-hover:rotate-90"></i>
@@ -68,59 +64,9 @@
         </div>
     </header>
 
-    <!-- CONTENT - Scroll suave com efeitos -->
+    <!-- CONTENT -->
     <div class="flex-1 overflow-y-auto" >
-        <!-- RESPONSÁVEIS - Cards interativos -->
-        <section class="p-6 border-b border-gray-100">
-            <div class="grid grid-cols-1 gap-6">
-                <!-- Card Responsável -->
-                <div class="grid grid-cols-2 items-center justify-between gap-2 bg-gradient-to-br from-white to-blue-50 rounded-xl border border-blue-100 p-5 shadow-sm hover:shadow-md transition-all duration-300">
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="px-4 py-2 bg-blue-100 rounded-lg">
-                                <i class="fas fa-user-tie text-blue-600 text-sm"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                    Solicitante
-                                </h3>
-                                <p class="text-xs text-gray-500 mt-1">Solicitante da Demanda</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    @if ($task->responsable)
-                        <!-- Avatar e Informações -->
-                        <div class="flex items-center gap-3">
-                            <div class="relative">
-                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                                    {{ substr($task->responsable->name ?? '', 0, 1) }}
-                                </div>
-                                <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
-                                    <i class="fas fa-check text-white text-[8px]"></i>
-                                </div>
-                            </div>
-                            <div class="min-w-0 flex-1">
-                                <div class="font-semibold text-gray-900 line-clamp-1" title="{{ $task->responsable->name ?? '' }}">
-                                    {{ $task->responsable->name ?? '' }}
-                                </div>
-                                <div class="text-xs text-gray-500 line-clamp-1" title="{{ $task->responsable->occupation->title ?? 'Sem cargo' }}">
-                                    {{ $task->responsable->occupation->title ?? 'Sem cargo' }}
-                                </div>
-                            </div>
-                        </div>
-                    @else
-                        <div class="flex items-center gap-5 text-center">
-                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 mb-3">
-                                <i class="fas fa-user-plus text-blue-400"></i>
-                            </div>
-                            <p class="text-sm text-gray-500 mb-3">Nenhum responsável atribuído</p>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </section>
-
+        
         <!-- DESCRIÇÃO - Editor avançado -->
         <section class="p-6 border-b border-gray-100" x-data="{ chars: {{ strlen(trim($task->description ?? '')) }} }">
             <div class="flex items-center justify-between mb-2">
@@ -216,8 +162,35 @@
                 </div>
             @endif
         </section>
+        
+        <!-- INFORMAÇÕES - Card Informações -->
+        <section class="p-6 border-b border-gray-100">
+            <div class="grid grid-cols-1 gap-6">
+                <div class="flex">
+                    <span>Solicitante: </span> <x-form.select-livewire wire:model.live="user_id" :collection="$users" valueField="id" labelField="name" :selected="$task->user_id" variant="inline" size="xs" />
+                </div>
+                <div class="flex">
+                    <span>Categoria</span>  <x-form.select-livewire wire:model.live="category_id" :collection="$taskCategories" valueField="id" labelField="title" :selected="$task->category_id" variant="inline" size="xs" />
+                </div>
+                <div class="flex">
+                    <span>Prioridade</span>  <x-form.select-livewire wire:model.live="priority_id" :collection="$taskPriorities" valueField="id" labelField="title" :selected="$task->priority_id" variant="inline" size="xs" />
+                </div>
+                <div class="flex">
+                    <span>Status</span> <x-form.select-livewire wire:model.live="status_id" :collection="$taskStatuses" valueField="id" labelField="title" :selected="$task->status_id" variant="inline" size="xs" />
+                </div>
+                <div class="flex">
+                    <span>Criado em</span> {{ $task->created_at->format('d/m/Y') }}
+                </div>
+                <div class="flex">
+                    <span>Início em</span> {{ $task->started_at?->format('d/m/Y') }}
+                </div>
+                <div class="flex">
+                    <span>Prazo</span> {{ $task->deadline_at?->format('d/m/Y') }}
+                </div>
+            </div>
+        </section>
 
-        <!-- PRAZOS E DATAS - Timeline vertical -->
+        <!-- HISTÓRICO DE CONVERSAS E ATIVIDADES - Timeline vertical -->
         <section class="p-6 border-b border-gray-100" x-data="{ showDatePicker: false }">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-3">
@@ -225,8 +198,8 @@
                         <i class="fas fa-calendar-alt text-amber-600"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm font-semibold text-gray-900">Prazos e Datas</h3>
-                        <p class="text-xs text-gray-500">Cronograma da tarefa</p>
+                        <h3 class="text-sm font-semibold text-gray-900">Atividades</h3>
+                        <p class="text-xs text-gray-500">Histórico de atividades da tarefa</p>
                     </div>
                 </div>
                 <button 
@@ -234,14 +207,19 @@
                     class="px-3 py-1.5 text-xs font-medium text-amber-700 bg-amber-100 hover:bg-amber-200 rounded-lg transition-colors duration-200 flex items-center gap-2"
                 >
                     <i class="fas fa-calendar-plus"></i>
-                    Agendar
+                    Histórico
                 </button>
             </div>
             
-            <!-- Timeline Vertical -->
             <div class="relative pl-8">
-                <!-- Linha vertical -->
-                <div class="absolute left-3 top-0 bottom-0 w-0.5 bg-gradient-to-b from-green-300 via-amber-300 to-red-300"></div>
+                <div class="flex">
+                    <div>
+                        <h4 class="size-5">{{ Auth::user()->name }}</h4>
+                    </div>
+                    <div>
+                        <x-form.textarea></x-form.textarea>
+                    </div>
+                </div>
                 
                 <!-- Item Timeline - Início -->
                 <div class="relative mb-6">

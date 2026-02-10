@@ -1,71 +1,73 @@
 <div>
-
     <!-- Flash Message -->
     <x-alert.flash />
 
-    {{-- Formulário --}}
-    <form wire:submit.prevent="{{ $workflowStepId ? 'update' : 'store' }}" class="pb-5 border-b mb-5">
-        <div class="grid grid-cols-12 gap-3 items-end">
+    <div  class="sticky top-0 z-20 bg-white">
+        {{-- Formulário --}}
+        <form wire:submit.prevent="{{ $workflowStepId ? 'update' : 'store' }}" class="pb-5 border-b mb-5">
+            <div class="grid grid-cols-12 gap-3 items-end">
 
-            <div class="col-span-12 md:col-span-9">
-                <x-form.label value="Nome da Etapa" />
-                <x-form.input wire:model.defer="title" name="title" placeholder="Digite a etapa do processo" autofocus/>
-                <x-form.error for="title" />
-            </div>
+                <div class="col-span-12 md:col-span-9">
+                    <x-form.label value="Nome da Etapa" />
+                    <x-form.input wire:model.defer="title" name="title" placeholder="Digite a etapa do processo" autofocus/>
+                    <x-form.error for="title" />
+                </div>
 
-            <div class="col-span-4 md:col-span-3">
-                <x-form.label value="Prazo (dias)" />
-                <x-form.input type="number" min="0" wire:model.defer="deadline_days" name="deadline_days" placeholder="Tempo em dias para conclusão" />
-                <x-form.error for="deadline_days" />
-            </div>
+                <div class="col-span-4 md:col-span-3">
+                    <x-form.label value="Prazo (dias)" />
+                    <x-form.input type="number" min="0" wire:model.defer="deadline_days" name="deadline_days" placeholder="Tempo em dias para conclusão" />
+                    <x-form.error for="deadline_days" />
+                </div>
 
-            <div class="col-span-4 md:col-span-4">
-                <x-form.label value="Setor" />
-                <x-form.select-livewire
-                    wire:model.defer="organization_id"
-                    name="organization_id"
-                    :collection="$organizations"
-                    value-field="id"
-                    label-acronym="acronym"
-                    label-field="title"
-                />
-                <x-form.error for="organization_id" />
-            </div>
+                <div class="col-span-6 md:col-span-6">
+                    <x-form.label value="Setor" />
+                    <x-form.select-livewire
+                        wire:model.defer="organization_id"
+                        name="organization_id"
+                        :collection="$organizations"
+                        value-field="id"
+                        label-acronym="acronym"
+                        label-field="title"
+                    />
+                    <x-form.error for="organization_id" />
+                </div>
 
-            <div class="col-span-4 md:col-span-4">
-                <x-form.label value="Obrigatória" />
-                <x-form.select-livewire
-                    wire:model.defer="required"
-                    name="required"
-                    :collection="collect([
-                        ['value' => true, 'label' => 'Sim'],
-                        ['value' => false, 'label' => 'Não'],
-                    ])"
-                    value-field="value"
-                    label-field="label"
-                />
-                <x-form.error for="required" />
-            </div>
+                <div class="col-span-2 md:col-span-2">
+                    <x-form.label value="Obrigatória" />
+                    <x-form.select-livewire
+                        wire:model.defer="required"
+                        name="required"
+                        :collection="collect([
+                            ['value' => true, 'label' => 'Sim'],
+                            ['value' => false, 'label' => 'Não'],
+                        ])"
+                        value-field="value"
+                        label-field="label"
+                    />
+                    <x-form.error for="required" />
+                </div>
 
-            <div class="col-span-4 md:col-span-4">
-                <x-form.label value="Paralelo?" />
-                <x-form.select-livewire
-                    wire:model.defer="allow_parallel"
-                    name="allow_parallel"
-                    :collection="collect([
-                        ['value' => true, 'label' => 'Sim'],
-                        ['value' => false, 'label' => 'Não'],
-                    ])"
-                    value-field="value"
-                    label-field="label"
-                />
-                <x-form.error for="allow_parallel" />
+                <div class="col-span-2 md:col-span-2">
+                    <x-form.label value="Paralelo?" />
+                    <x-form.select-livewire
+                        wire:model.defer="allow_parallel"
+                        name="allow_parallel"
+                        :collection="collect([
+                            ['value' => true, 'label' => 'Sim'],
+                            ['value' => false, 'label' => 'Não'],
+                        ])"
+                        value-field="value"
+                        label-field="label"
+                    />
+                    <x-form.error for="allow_parallel" />
+                </div>
+                
+                <div class="col-span-2">
+                    <x-button type="submit" text="{{ $workflowStepId ? 'Atualizar Etapa' : 'Adicionar Etapa' }}" variant="{{ $workflowStepId ? 'sky' : '' }}" fullWidth="true"/>
+                </div>
             </div>
-        </div>
-        <div class="flex justify-end mt-3">
-            <x-button type="submit" text="{{ $workflowStepId ? 'Atualizar Etapa' : 'Adicionar Etapa' }}" variant="{{ $workflowStepId ? 'sky' : '' }}"/>
-        </div>
-    </form>
+        </form>
+    </div>
 
     {{-- Lista de atividades --}}
     <x-page.table>
@@ -111,5 +113,4 @@
             @endforelse
         </x-slot>
     </x-page.table>
-
 </div>
