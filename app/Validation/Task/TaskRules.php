@@ -12,7 +12,6 @@ class TaskRules
             'task_category_id' => 'nullable|exists:task_categories,id',
             'task_priority_id' => 'nullable|exists:task_priorities,id',
             'task_status_id' => 'nullable|exists:task_statuses,id',
-            'deadline_at' => 'nullable|date',
         ];
     }
 
@@ -24,7 +23,6 @@ class TaskRules
             'task_category_id' => 'nullable|exists:task_categories,id',
             'task_priority_id' => 'nullable|exists:task_priorities,id',
             'task_status_id' => 'nullable|exists:task_statuses,id',
-            'deadline_at' => 'nullable|date',
         ];
     }
 

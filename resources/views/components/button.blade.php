@@ -36,7 +36,7 @@
     // Variantes seguindo padrão [cor]_[tipo]
     $variants = [
         // SOLID VARIANTS (com gradiente)
-        'green_solid' => 'text-white bg-gradient-to-r from-green-600 via-emerald-600 to-green-700 hover:from-green-700 hover:via-emerald-700 hover:to-green-700 focus:ring-green-600/30 shadow-md hover:shadow-lg border border-green-700/20 rounded-lg active:scale-[0.98]',
+        'green_solid' => 'text-white bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-md hover:shadow-lg transition-all duration-300 -translate-y-0.5 border border-green-600/20 rounded-lg active:scale-[0.98]',
         
         'gray_solid' => 'text-white bg-gradient-to-r from-gray-700 via-gray-700 to-gray-800 hover:from-gray-700 hover:via-gray-800 hover:to-gray-900 focus:ring-gray-600/30 shadow-md hover:shadow-lg border border-gray-700/20 rounded-lg active:scale-[0.98]',
         
@@ -53,17 +53,17 @@
         'purple_solid' => 'text-white bg-gradient-to-r from-purple-600 via-fuchsia-600 to-purple-700 hover:from-purple-700 hover:via-fuchsia-700 hover:to-purple-700 focus:ring-purple-600/30 shadow-md hover:shadow-lg border border-purple-700/20 rounded-lg active:scale-[0.98]',
         
         // OUTLINE VARIANTS (bordas)
-        'gray_outline' => 'text-gray-700 hover:text-gray-700 bg-white/80 backdrop-blur-sm border border-gray-300 hover:border-gray-400 hover:bg-gray-50/80 focus:ring-gray-400/20 shadow-sm hover:shadow rounded-lg active:scale-[0.98]',
+        'gray_outline' => 'bg-gradient-to-r from-gray-50 to-gray-100/80 text-gray-700 border-gray-200/50 hover:from-gray-100 hover:to-gray-200/80 shadow-md hover:shadow-lg transition-all duration-300 -translate-y-0.5 border border-gray-600/20 rounded-lg active:scale-[0.98]',
         
-        'green_outline' => 'text-green-700 hover:text-green-700 bg-white/80 backdrop-blur-sm border border-green-300 hover:border-green-400 hover:bg-green-50/50 focus:ring-green-400/20 shadow-sm hover:shadow rounded-lg active:scale-[0.98]',
+        'green_outline' => 'bg-gradient-to-r from-green-50 to-green-100/80 text-green-700 border-green-200/50 hover:from-green-100 hover:to-green-200/80 shadow-md hover:shadow-lg transition-all duration-300 -translate-y-0.5 border border-green-600/20 rounded-lg active:scale-[0.98]',
         
-        'blue_outline' => 'text-blue-700 hover:text-blue-700 bg-white/80 backdrop-blur-sm border border-blue-300 hover:border-blue-400 hover:bg-blue-50/50 focus:ring-blue-400/20 shadow-sm hover:shadow rounded-lg active:scale-[0.98]',
+        'blue_outline' => 'bg-gradient-to-r from-blue-50 to-blue-100/80 text-blue-700 border-blue-200/50 hover:from-blue-100 hover:to-blue-200/80 shadow-md hover:shadow-lg transition-all duration-300 -translate-y-0.5 border border-blue-600/20 rounded-lg active:scale-[0.98]',
         
-        'red_outline' => 'text-red-700 hover:text-red-700 bg-white/80 backdrop-blur-sm border border-red-300 hover:border-red-400 hover:bg-red-50/50 focus:ring-red-400/20 shadow-sm hover:shadow rounded-lg active:scale-[0.98]',
+        'red_outline' => 'bg-gradient-to-r from-red-50 to-red-100/80 text-red-700 border-red-200/50 hover:from-red-100 hover:to-red-200/80 shadow-md hover:shadow-lg transition-all duration-300 -translate-y-0.5 border border-red-600/20 rounded-lg active:scale-[0.98]',
         
-        'yellow_outline' => 'text-yellow-700 hover:text-yellow-700 bg-white/80 backdrop-blur-sm border border-yellow-300 hover:border-yellow-400 hover:bg-yellow-50/50 focus:ring-yellow-400/20 shadow-sm hover:shadow rounded-lg active:scale-[0.98]',
+        'yellow_outline' => 'bg-gradient-to-r from-amber-50 to-amber-100/80 text-amber-700 border-amber-200/50 hover:from-amber-100 hover:to-amber-200/80 shadow-md hover:shadow-lg transition-all duration-300 -translate-y-0.5 border border-amber-600/20 rounded-lg active:scale-[0.98]',
         
-        'purple_outline' => 'text-purple-700 hover:text-purple-700 bg-white/80 backdrop-blur-sm border border-purple-300 hover:border-purple-400 hover:bg-purple-50/50 focus:ring-purple-400/20 shadow-sm hover:shadow rounded-lg active:scale-[0.98]',
+        'purple_outline' => 'bg-gradient-to-r from-purple-50 to-purple-100/80 text-purple-700 border-purple-200/50 hover:from-purple-100 hover:to-purple-200/80 shadow-md hover:shadow-lg transition-all duration-300 -translate-y-0.5 border border-purple-600/20 rounded-lg active:scale-[0.98]',
         
         // TEXT VARIANTS (dentro do texto)
         'gray_text' => 'text-gray-700 hover:text-gray-900 bg-transparent hover:bg-gray-100/50 border-0 shadow-none px-1 py-0.5 rounded-md',

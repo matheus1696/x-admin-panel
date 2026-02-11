@@ -2,7 +2,6 @@
 
 namespace App\Validation\Task;
 
-use App\Models\Task\Task;
 use App\Models\Task\TaskStep;
 use Carbon\Carbon;
 
@@ -16,7 +15,6 @@ class TaskStepRules
             'task_category_id' => 'nullable|exists:task_categories,id',
             'task_priority_id' => 'nullable|exists:task_priorities,id',
             'task_step_status_id' => 'nullable|exists:task_step_statuses,id',
-            'deadline_at' => 'nullable|date',
         ];
     }
 
@@ -28,7 +26,13 @@ class TaskStepRules
             'task_category_id' => 'nullable|exists:task_categories,id',
             'task_priority_id' => 'nullable|exists:task_priorities,id',
             'task_step_status_id' => 'nullable|exists:task_step_statuses,id',
-            'deadline_at' => 'nullable|date',
+        ];
+    }
+
+    public static function description(): array
+    {
+        return [
+            'description' => 'nullable|string|max:1000',
         ];
     }
 
@@ -77,8 +81,6 @@ class TaskStepRules
         $lastStepDeadline = TaskStep::where('task_id', $id)
             ->whereNotNull('deadline_at')
             ->value('deadline_at');
-
-        dd($id);
 
         $rules = ['nullable', 'date'];
 

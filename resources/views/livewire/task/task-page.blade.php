@@ -1,4 +1,4 @@
-<div x-data="{ openCreateTask: false }" >
+<div>
 
     <!-- Flash Message -->
     <x-alert.flash />
@@ -6,45 +6,42 @@
     <!-- Header -->
     <x-page.header title="Cronograma de Atividades" subtitle="Visualize todas as atividades e os andamentos" icon="fa-solid fa-list-check" >
         <x-slot name="button">
-            <x-button text="Nova Tarefa" icon="fa-solid fa-plus" @click="openCreateTask = !openCreateTask" />
+            <x-button text="Nova Tarefa" icon="fa-solid fa-plus" wire:click="enableCreateTask()" />
         </x-slot>
     </x-page.header>
        
     <!-- Filtros -->
     <x-page.filter title="Filtros">
-        <x-slot name="showBasic">
+        {{-- Título da Tarefa --}}
+        <div class="col-span-12 md:col-span-8">
+            <x-form.label value="Título da Tarefa" />
+            <x-form.input wire:model.defer="filters.title" placeholder="Buscar por título..." />
+        </div>
 
-            {{-- Título da Tarefa --}}
-            <div class="col-span-12 md:col-span-8">
-                <x-form.label value="Título da Tarefa" />
-                <x-form.input wire:model.defer="filters.title" placeholder="Buscar por título..." />
-            </div>
+        {{-- Status --}}
+        <div class="col-span-6 md:col-span-2">
+            <x-form.label value="Status da Tarefa" />
+            <x-form.select-livewire 
+                wire:model.defer="filters.workflow_run_status_id" 
+                name="filters.workflow_run_status_id" 
+                :collection="$taskStatuses" 
+                value-field="id" 
+                label-field="title" 
+            />
+        </div>
 
-            {{-- Status --}}
-            <div class="col-span-6 md:col-span-2">
-                <x-form.label value="Status da Tarefa" />
-                <x-form.select-livewire 
-                    wire:model.defer="filters.workflow_run_status_id" 
-                    name="filters.workflow_run_status_id" 
-                    :collection="$taskStatuses" 
-                    value-field="id" 
-                    label-field="title" 
-                />
-            </div>
-
-            {{-- Itens por página --}}
-            <div class="col-span-6 md:col-span-2">
-                <x-form.label value="Itens por página" />
-                <x-form.select-livewire wire:model.defer="filters.perPage" name="filters.perPage"
-                    :options="[
-                        ['value' => 10, 'label' => '10'],
-                        ['value' => 25, 'label' => '25'],
-                        ['value' => 50, 'label' => '50'],
-                        ['value' => 100, 'label' => '100']
-                    ]"
-                />
-            </div>
-        </x-slot>
+        {{-- Itens por página --}}
+        <div class="col-span-6 md:col-span-2">
+            <x-form.label value="Itens por página" />
+            <x-form.select-livewire wire:model.defer="filters.perPage" name="filters.perPage"
+                :options="[
+                    ['value' => 10, 'label' => '10'],
+                    ['value' => 25, 'label' => '25'],
+                    ['value' => 50, 'label' => '50'],
+                    ['value' => 100, 'label' => '100']
+                ]"
+            />
+        </div>
     </x-page.filter>
 
     <!-- Tarefas -->
@@ -63,11 +60,13 @@
             <div class="col-span-1 text-center hidden md:block">Prazo</div>
         </div>
 
-        <div x-show="openCreateTask" x-collapse class="border-t bg-white px-4 py-3" >
-            <form wire:submit.prevent="store" class="space-y-4">
-                @include('livewire.task._partials.task-form')
-            </form>
-        </div>
+        @if ($isCreatingTask)
+            <div class="border-t bg-white px-4 py-3" >
+                <form wire:submit.prevent="store" class="space-y-4">
+                    @include('livewire.task._partials.task-form')
+                </form>
+            </div>
+        @endif
 
         <div x-data="{ openAsideTask: false, openAsideTaskStep: false, activeItem: null, activeTaskStepItem: null }">
             <div>

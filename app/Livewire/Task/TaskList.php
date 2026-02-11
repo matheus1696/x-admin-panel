@@ -35,8 +35,6 @@ class TaskList extends Component
     public $list_category_id;
     public $list_priority_id;
     public $list_status_id;
-    public $started_at;
-    public $deadline_at;
 
     public $title;
     public ?int $user_id = null;
@@ -60,14 +58,12 @@ class TaskList extends Component
     public function mount()
     {
         $this->task = $this->taskService->find($this->taskId);
-        $this->started_at = $this->task->started_at?->format('Y-m-d');
-        $this->deadline_at = $this->task->deadline_at?->format('Y-m-d');
         $this->setDefaults();
     }
 
     public function resetForm()
     {
-        $this->reset('title', 'user_id', 'task_category_id', 'task_priority_id', 'task_step_status_id', 'deadline_at');
+        $this->reset('title', 'user_id', 'task_category_id', 'task_priority_id', 'task_step_status_id');
     }
 
     public function updatedResponsableId()

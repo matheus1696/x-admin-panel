@@ -14,16 +14,11 @@ class TaskService
 
     public function index(array $filters): LengthAwarePaginator
     {
-        $query = Task::query();
+        $query = Task::query()->with(['user','taskCategory','taskPriority','taskStatus',]);
 
         // Filtra pelo título
         if ($filters['title']) {
             $query->where('title', 'like', '%' . $filters['title'] . '%');
-        }
-
-        // Filtra pelo status
-        if ($filters['workflow_run_status_id'] != 'all') {
-            $query->where('workflow_run_status_id', $filters['workflow_run_status_id']);
         }
 
         return $query->orderBy('code')->paginate($filters['perPage']);
@@ -31,6 +26,10 @@ class TaskService
 
     public function create(array $data): Task
     {
+        if ($data['task_status_id'] == 2) {            
+            $data['started_at'] = now();
+        }
+
         $task = Task::create($data);
         return $task;
     }

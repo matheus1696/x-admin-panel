@@ -38,21 +38,21 @@ class Task extends Model
         return $this->belongsTo(TaskStatus::class, 'task_status_id');
     }
 
-    public function taskSteps()
-    {
-        return $this->hasMany(TaskStep::class, 'task_id')->orderBy('code');
-    }
-
-    public function responsable(){
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
     public function taskCategory(){
         return $this->belongsTo(TaskCategory::class, 'task_category_id');
     }
 
     public function taskPriority(){
         return $this->belongsTo(TaskPriority::class, 'task_priority_id');
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function taskSteps()
+    {
+        return $this->hasMany(TaskStep::class, 'task_id')->orderBy('code');
     }
 
     public function taskStepsFinished()

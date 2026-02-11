@@ -6,10 +6,10 @@
     <div x-data="{ openSteps: false, openCreateStep: false, openAsideTask: false }" class="border-y border-gray-300 last:border-b-0 hover:bg-green-50/25 transition-colors duration-150">
         
         <!-- LINHA DA TASK -->
-        <div class="grid grid-cols-5 md:grid-cols-12 px-5 py-2 items-center divide-x">
+        <div class="grid grid-cols-5 md:grid-cols-12 px-5 py-2.5 items-center divide-x">
             
             <!-- TÍTULO -->
-            <div class="col-span-3 flex items-center justify-center pr-2"> 
+            <div class="col-span-3 flex items-center justify-center pr-1"> 
                 <div class="flex-1 flex items-center gap-1">
                     <div class="w-4">
                         @if ($task->taskSteps->count() > 0)
@@ -43,29 +43,35 @@
             </div>
 
             <!-- RESPONSÁVEL -->
-            <div class="col-span-2 px-2">
-                <x-form.select-livewire wire:model.live="responsable_id" :collection="$users" valueField="id" labelField="name" :selected="$task->user_id" variant="pills" size="xs" />
+            <div class="col-span-2 text-center text-xs">
+                {{ $task->user?->name ?? '—' }}
             </div>
 
-
-            <div class="col-span-5 hidden md:grid grid-cols-3 divide-x">
+            <div class="col-span-5 hidden md:grid grid-cols-3 divide-x">                
                 <!-- CATEGORIA -->
-                <div class="px-2">
-                    <x-form.select-livewire wire:model.live="list_category_id" :collection="$taskCategories" valueField="id" labelField="title" :selected="$task->task_category_id" variant="pills" size="xs" />
+                <div class="flex items-center justify-center">
+                    <span class="text-xs px-2 py-0.5">
+                        {{ $task->taskCategory?->title ?? '—' }}
+                    </span>
                 </div>
 
                 <!-- PRIORIDADE -->
-                <div class="px-2">
-                    <x-form.select-livewire wire:model.live="list_priority_id" :collection="$taskPriorities" valueField="id" labelField="title" :selected="$task->task_priority_id" variant="pills" size="xs" borderColor="{{ $task->taskPriority?->color }}" />
+                <div class="flex items-center justify-center">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-semibold rounded-full px-2 py-0.5 {!! $task->taskPriority?->color_code_tailwind !!} ">
+                        <i class="fas fa-exclamation-circle text-[10px]"></i>
+                        {{ $task->taskPriority?->title ?? '—' }}
+                    </span>
                 </div>
 
                 <!-- STATUS -->
-                <div class="px-2">
-                    <x-form.select-livewire wire:model.live="list_status_id" :collection="$taskStatuses" valueField="id" labelField="title" :selected="$task->task_status_id" variant="pills" size="xs" borderColor="{{ $task->taskStatus?->color }}" />
+                <div class="flex items-center justify-center">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-semibold rounded-full px-2 py-0.5 {!! $task->taskStatus?->color_code_tailwind !!} ">
+                        <i class="fas fa-play-circle text-[10px]"></i>
+                        {{ $task->taskStatus?->title ?? '—' }}
+                    </span>
                 </div>
             </div>
 
-            <!-- DATAS -->
             <!-- Iniciado em -->
             <div class="col-span-1 hidden md:block">
                 <div class="flex flex-col items-center">
@@ -83,7 +89,7 @@
             <div class="col-span-1 hidden md:block">
                 <div class="flex flex-col items-center">
                     @if ($task->deadline_at)
-                        <div class="text-xs text-gray-700 font-medium">
+                        <div class="text-xs font-medium {{ $task->deadline_at->isPast() ? 'text-red-500' : 'text-gray-700' }}" >
                             {{ $task->deadline_at->format('d/m/Y') }}
                         </div>
                     @else

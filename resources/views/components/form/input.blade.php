@@ -138,8 +138,8 @@
             'error' => "bg-red-50 border border-red-300",
         ],
         'minimal' => [
-            'base' => "bg-transparent border-0 border-b-2 border-gray-300 focus:border-{$borderColor}-500 focus:ring-0 px-0 focus:bg-transparent transition-colors duration-200",
-            'error' => "bg-transparent border-0 border-b-2 border-red-500 text-red-600 focus:ring-0 px-0",
+            'base' => "bg-transparent border-0 focus:border-{$borderColor}-500 focus:ring-0 px-0 focus:bg-white transition-colors duration-200",
+            'error' => "bg-transparent border-0 text-red-600 focus:ring-0 px-0",
         ],
         'glass' => [
             'base' => "bg-white/20 backdrop-blur-lg border border-white/30 {$currentColor['base']} hover:bg-white/30 hover:backdrop-blur-xl transition-all duration-300",
