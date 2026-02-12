@@ -1,10 +1,50 @@
 # X-AdminPanel: Painel Administrativo Moderno
 
-O **X-AdminPanel** é um painel administrativo moderno construído com Laravel, Livewire e Tailwind CSS. Desenvolvido para acelerar a criação de sistemas administrativos com componentes reutilizáveis.
+O **X-AdminPanel** é um sistema administrativo moderno, modular e escalável, desenvolvido para estruturar organizações, automatizar fluxos de trabalho e gerenciar atividades operacionais com segurança, rastreabilidade e performance.
 
-**🚧 Status Atual:** Sistema em desenvolvimento - Módulo de Painel de Chamadas disponível
+🚧 **Projeto em desenvolvimento ativo** — Versão estável com arquitetura consolidada e módulos funcionais prontos para uso e expansão.
 
 O objetivo é oferecer uma solução segura, intuitiva e eficiente para o gerenciamento de informações médicas, garantindo maior agilidade no atendimento, organização no histórico clínico e uma experiência transformadora no cuidado com os pacientes.
+
+---
+
+## 🧩 Módulos Implementados
+
+O sistema é organizado por **módulos funcionais independentes**, cada um com sua estrutura de rotas, views, componentes Livewire e lógica de negócio:
+
+### 🏢 **Organização**
+- Visualização do organograma corporativo
+- Gerenciamento administrativo da hierarquia
+- Estruturação por setores e níveis hierárquicos
+
+### 🔄 **Workflow**
+- Definição e estruturação de processos organizacionais
+- Criação de etapas e associação com setores
+- Integração direta com atividades e tarefas
+
+### 📋 **Gestão de Atividades (Tasks)**
+- Criação e acompanhamento de tarefas
+- Status e categorias administrativas
+- Definição de responsáveis
+- Integração nativa com módulo de Workflow
+- Estrutura preparada para expansão futura
+
+### 👥 **Administração**
+- Gestão completa de usuários
+- Controle de permissões e acessos
+
+### ⚙️ **Configurações do Sistema**
+- Cadastro de estabelecimentos
+- Ocupações (CBO)
+- Regiões (País, Estado, Cidade)
+- Blocos financeiros
+
+### 🛡️ **Auditoria**
+- Registro centralizado de logs
+- Visualização administrativa com filtros
+- Rastreabilidade completa de ações
+
+---
 
 ## ⚡ Funcionalidades Atuais
 
@@ -12,16 +52,16 @@ O objetivo é oferecer uma solução segura, intuitiva e eficiente para o gerenc
 - **📱 Layout Responsivo:** Sidebar inteligente (colapsável no desktop, overlay no mobile)
 - **🔐 Sistema de Autenticação:** Login, registro, recuperação de senha e verificação de email
 - **⚡ Componentes Livewire:** Reactividade sem complicação
-- **🎯 Navegação Inteligente:** Dropdowns com comportamento accordion
 - **🎯 👤 Perfil de Usuário:** Menu lateral com informações e ações
 
 ## Tecnologias Utilizadas
 
-- **Backend:** Laravel (PHP)
+- **Backend:** Laravel (PHP 8.2+)
 - **Frontend:** Blade / Livewire
+- **Interatividade:** AlpineJS
 - **Icons:** Font Awesome 6
 - **Banco de Dados:** PostgreSQL
-- **Controle de Versão:** Git & GitHub
+- **Controle de Versão:** Git
 
 ## Instalação e Uso
 
