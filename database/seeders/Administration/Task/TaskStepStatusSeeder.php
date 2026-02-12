@@ -14,31 +14,43 @@ class TaskStepStatusSeeder extends Seeder
                 'title' => 'Pendente',
                 'color' => 'gray',
                 'color_code_tailwind' => 'bg-gray-100 text-gray-600 hover:bg-gray-200',
-                'is_default' => true
+                'is_default' => true,
+                'is_active' => true,
             ],
             [
                 'title' => 'Aguardando Dependência',
                 'color' => 'purple',
                 'color_code_tailwind' => 'bg-purple-100 text-purple-700 hover:bg-purple-200',
-                'is_default' => false
+                'is_default' => false,
+                'is_active' => true,
             ],
             [
                 'title' => 'Em execução',
                 'color' => 'blue',
                 'color_code_tailwind' => 'bg-blue-100 text-blue-600 hover:bg-blue-200',
-                'is_default' => false
+                'is_default' => false,
+                'is_active' => true,
             ],
             [
                 'title' => 'Bloqueada',
                 'color' => 'red',
                 'color_code_tailwind' => 'bg-red-100 text-red-700 hover:bg-red-200',
-                'is_default' => false
+                'is_default' => false,
+                'is_active' => true,
+            ],
+            [
+                'title' => 'Cancelada',
+                'color' => 'red',
+                'color_code_tailwind' => 'bg-red-100 text-red-700 hover:bg-red-200',
+                'is_default' => false,
+                'is_active' => true,
             ],
             [
                 'title' => 'Concluída',
                 'color' => 'green',
                 'color_code_tailwind' => 'bg-green-100 text-green-700 hover:bg-green-200',
-                'is_default' => false
+                'is_default' => false,
+                'is_active' => false,
             ],
         ]);
     }

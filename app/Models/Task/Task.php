@@ -33,6 +33,11 @@ class Task extends Model
         'deadline_at' => 'datetime',
     ];
 
+    public function taskActivities()
+    {
+        return $this->hasMany(TaskActivity::class)->orderBy('created_at','desc')->get();
+    }
+
     public function taskStatus()
     {
         return $this->belongsTo(TaskStatus::class, 'task_status_id');

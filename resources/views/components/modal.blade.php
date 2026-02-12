@@ -14,10 +14,7 @@
                 }
             }
         }"
-        x-init="
-            // Bloquear scroll do body
-            document.body.style.overflow = 'hidden';
-            
+        x-init="            
             // Fechar ao pressionar ESC
             $watch('show', value => {
                 if (!value) {

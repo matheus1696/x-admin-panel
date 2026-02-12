@@ -92,4 +92,11 @@ class TaskStepRules
             'deadline_at' => $rules,
         ];
     }
+
+    public static function storeComment(): array
+    {
+        return [
+            'comment' => 'required|string|max:2000'
+        ];
+    }
 }

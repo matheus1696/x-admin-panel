@@ -30,7 +30,7 @@
     <!-- AÇÃO -->
     <div class="col-span-1 flex justify-center gap-2">
         <x-button type="submit" icon="fa-solid fa-check" variant="green_outline" />
-        <x-button type="button" icon="fa-solid fa-close" variant="red_outline" @click="openCreateStep = false" />
+        <x-button type="button" icon="fa-solid fa-close" variant="red_outline" wire:click="cancelCreateTaskStep()" />
     </div>
 
 </div>
