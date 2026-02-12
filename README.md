@@ -48,11 +48,14 @@ O sistema é organizado por **módulos funcionais independentes**, cada um com s
 
 ## ⚡ Funcionalidades Atuais
 
-- **🎨 Design Moderno:** CInterface limpa com gradientes e animações suaves
-- **📱 Layout Responsivo:** Sidebar inteligente (colapsável no desktop, overlay no mobile)
-- **🔐 Sistema de Autenticação:** Login, registro, recuperação de senha e verificação de email
-- **⚡ Componentes Livewire:** Reactividade sem complicação
-- **🎯 👤 Perfil de Usuário:** Menu lateral com informações e ações
+**🏢 Organograma** – Visualização e gestão hierárquica  
+**🔄 Workflow** – Processos, etapas e integração com tarefas  
+**📋 Tasks** – Criação, status, responsáveis e categorias  
+**👥 Administração** – Usuários e permissões por namespace  
+**⚙️ Configurações** – Estabelecimentos, CBO, regiões, blocos  
+**🛡️ Auditoria** – Logs completos e rastreabilidade  
+**🎨 UX/UI** – Design responsivo, sidebar inteligente, Livewire reativo  
+**🔐 Auth** – Login, registro, verificação e recuperação
 
 ## Tecnologias Utilizadas
 
