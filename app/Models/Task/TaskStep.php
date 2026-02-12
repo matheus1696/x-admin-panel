@@ -36,27 +36,33 @@ class TaskStep extends Model
         'deadline_at' => 'datetime',
     ];
 
-    public function task(){
-        return $this->belongsTo(Task::class, 'task_id');
+    public function stepActivities()
+    {
+        return $this->hasMany(TaskStepActivity::class)->orderBy('created_at','desc')->get();
     }
 
-    public function taskStepStatus(){
-        return $this->belongsTo(TaskStepStatus::class, 'task_status_id');
+    public function task(){
+        return $this->belongsTo(Task::class, 'task_id');
     }
 
     public function taskPriority(){
         return $this->belongsTo(TaskPriority::class, 'task_priority_id');
     }
 
-    public function taskCategory(){
+    public function taskStepStatus(){
+        return $this->belongsTo(TaskStepStatus::class, 'task_status_id');
+    }
+
+    public function taskStepCategory(){
         return $this->belongsTo(TaskStepCategory::class, 'task_category_id');
     }
 
-    public function responsable(){
+    public function user(){
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function responsable_organization(){
+    public function organization()
+    {
         return $this->belongsTo(OrganizationChart::class, 'organization_id');
     }
 

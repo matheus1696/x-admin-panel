@@ -171,7 +171,7 @@
                     </div>
                 </div>
                 
-                @if ($task->finished_at)
+                @if (!$task->finished_at)
                     <!-- Formulário de Criação da Etapa -->
                     @if ($isCreatingTaskStep && $taskId == $task->id)
                         <div class="border-t bg-white px-4 py-3" >
@@ -216,12 +216,12 @@
 
                             <!-- Setor -->
                             <div class="col-span-2 text-center text-xs">
-                                {{ $task->organization?->title ?? '—' }}
+                                {{ $step->organization?->title ?? '—' }}
                             </div>
 
                             <!-- Responsável -->
                             <div class="col-span-2 text-center text-xs">
-                                {{ $task->user?->name ?? '—' }}
+                                {{ $step->user?->name ?? '—' }}
                             </div>
 
                             <!-- Informação -->
@@ -296,10 +296,8 @@
                 x-transition:leave="transition-opacity ease-in duration-200"
                 x-transition:leave-start="opacity-100"
                 x-transition:leave-end="opacity-0"
-                @click="openAsideTask = false"
                 wire:click="closedAsideTask()"
-                @click="openAsideTaskStep = false"
-                wire:click="closedAsideTaskStep()"
+                @click="openAsideTask = false"
                 class="fixed inset-0 bg-black bg-opacity-70 z-30"
                 aria-hidden="true"
             ></div>

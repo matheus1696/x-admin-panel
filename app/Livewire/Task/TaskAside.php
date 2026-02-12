@@ -22,7 +22,6 @@ class TaskAside extends Component
 
     protected TaskService $taskService;
     protected TaskStatusService $taskStatusService;
-    protected TaskStepStatusService $taskStepStatusesService;
 
     public $taskId;
     public $task;
@@ -31,8 +30,6 @@ class TaskAside extends Component
     public Collection $taskStatuses;
     public Collection $taskCategories;
     public Collection $taskPriorities;
-    public Collection $taskStepCategories;
-    public Collection $taskStepStatuses;
         
     public $description = '';
     public $responsable_id;
@@ -46,13 +43,13 @@ class TaskAside extends Component
     public $savingDescription = false;    
     public $isEditingDeadline = false;
     public $savingDeadline = false;
+    
     public $isLoading = true;
     
-    public function boot( TaskService $taskService, TaskStatusService $taskStatusService, TaskStepStatusService $taskStepStatusesService,  )
+    public function boot( TaskService $taskService, TaskStatusService $taskStatusService )
     {
         $this->taskService = $taskService;
         $this->taskStatusService = $taskStatusService;
-        $this->taskStepStatusesService = $taskStepStatusesService;
     }
 
     public function mount($taskId)
@@ -63,11 +60,9 @@ class TaskAside extends Component
 
         // Listas estáticas
         $this->users = User::orderBy('name')->get();
-        $this->taskStatuses = $this->taskStatusService->index();
-        $this->taskCategories = TaskCategory::orderBy('title')->get();
         $this->taskPriorities = TaskPriority::orderBy('level')->get();
-        $this->taskStepCategories = TaskStepCategory::orderBy('title')->get();
-        $this->taskStepStatuses = $this->taskStepStatusesService->index();
+        $this->taskCategories = TaskCategory::orderBy('title')->get();
+        $this->taskStatuses = $this->taskStatusService->index();
     }
 
     public function loadTask()

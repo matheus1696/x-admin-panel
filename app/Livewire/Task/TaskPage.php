@@ -13,7 +13,6 @@ use App\Models\Task\Task;
 use App\Models\Task\TaskStep;
 use App\Services\Administration\Task\TaskStatusService;
 use App\Services\Administration\Task\TaskStepStatusService;
-use App\Services\Task\TaskActivityService;
 use App\Services\Task\TaskService;
 use App\Validation\Task\TaskRules;
 use App\Validation\Task\TaskStepRules;
@@ -143,6 +142,7 @@ class TaskPage extends Component
         {
             $data = $this->validate(TaskStepRules::store());
             $data['task_id'] = $id;
+            $data['task_status_id'] = $data['task_step_status_id'];
 
             TaskStep::create($data);
 
@@ -170,6 +170,7 @@ class TaskPage extends Component
 
             $workflow = Workflow::findOrFail($this->workflow_id);
             $currentDeadline = now();
+            $this->setDefaults();
 
             foreach ($workflow->workflowSteps as $key => $step) {
 
@@ -202,20 +203,15 @@ class TaskPage extends Component
             $this->selectedTaskId = $id;
         }
         
-        public function closedAsideTask()
-        {
-            $this->selectedTaskId = null;
-        }
-    //Fim
-
-    // Início Informações Aside das Tarefas
         public function openAsideTaskStep($id)
         {
             $this->selectedTaskStepId = $id;
         }
         
-        public function closedAsideTaskStep()
+        public function closedAsideTask()
         {
+            $this->resetPage();
+            $this->selectedTaskId = null;
             $this->selectedTaskStepId = null;
         }
     //Fim

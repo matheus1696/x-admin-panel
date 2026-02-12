@@ -173,8 +173,6 @@
                                     wire:model.defer="description"
                                     id="task-description-{{ $task->id }}"
                                     placeholder="Descreva detalhadamente esta tarefa..."
-                                    class="h-48 !bg-white/90 !border-gray-200/80 !rounded-xl !shadow-sm focus:!border-emerald-300 focus:!ring-2 focus:!ring-emerald-200/50 transition-all duration-300"
-                                    @keydown.ctrl.enter="$wire.saveDescription()"
                                     x-init="chars = $el.value.length"
                                     @input="chars = $el.value.length"
                                 ></x-form.textarea>
@@ -503,7 +501,7 @@
 
                         @if ($task->taskSteps->count() < 1 || $task->taskStepsFinished->count() == $task->taskSteps->count())
                             @if (!$task->finished_at)
-                                <x-button icon="fas fa-check" text="Marca como concluído" variant="green_outline" wire:click="taskFinished()" @click="openAsideTask = false" />
+                                <x-button icon="fas fa-check" text="Marca como concluído" variant="green_outline" wire:click="taskFinished()" />
                             @endif
                         @endif
                     </div>

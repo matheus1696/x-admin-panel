@@ -12,7 +12,6 @@ class TaskStepRules
         return [
             'title' => 'required|min:4',
             'user_id' => 'nullable|exists:users,id',
-            'task_category_id' => 'nullable|exists:task_categories,id',
             'task_priority_id' => 'nullable|exists:task_priorities,id',
             'task_step_status_id' => 'nullable|exists:task_step_statuses,id',
         ];
@@ -33,6 +32,13 @@ class TaskStepRules
     {
         return [
             'description' => 'nullable|string|max:1000',
+        ];
+    }
+
+    public static function organizationResponsable(): array
+    {
+        return [
+            'organization_responsable_id' => 'nullable|exists:organization_charts,id',
         ];
     }
 
@@ -76,20 +82,10 @@ class TaskStepRules
         ];
     }
 
-    public static function deadlineAt($id): array
+    public static function deadlineAt(): array
     {
-        $lastStepDeadline = TaskStep::where('task_id', $id)
-            ->whereNotNull('deadline_at')
-            ->value('deadline_at');
-
-        $rules = ['nullable', 'date'];
-
-        if ($lastStepDeadline) {
-            $rules[] = 'after_or_equal:' . Carbon::parse($lastStepDeadline)->format('Y-m-d');
-        }
-
         return [
-            'deadline_at' => $rules,
+            'deadline_at' => 'date',
         ];
     }
 
