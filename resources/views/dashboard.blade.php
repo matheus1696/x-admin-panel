@@ -1,98 +1,299 @@
 <x-app-layout>
-
-    <div class="py-6 space-y-6">
-        <!-- Card de Boas-vindas -->
-        <div class="bg-gradient-to-r from-green-800 via-green-700 to-green-600 text-white rounded-2xl shadow-xl overflow-hidden">
-            <div class="p-8">
-                <div class="flex flex-col lg:flex-row items-start">
-                    <div class="flex-1 flex items-center gap-3 mb-3">
-                        <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                            <i class="fa-solid fa-user text-xl"></i>
+    <div class="py-8 space-y-8 mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Card de Boas-vindas Premium (mantido) -->
+        <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-600 via-green-600 to-emerald-700 text-white shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
+            
+            <!-- Efeitos decorativos -->
+            <div class="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/10"></div>
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-white/50 via-white/20 to-white/50"></div>
+            
+            <!-- Padrão de fundo sutil -->
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute -top-24 -right-24 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-emerald-300 rounded-full blur-3xl"></div>
+            </div>
+            
+            <!-- Conteúdo principal -->
+            <div class="relative p-8">
+                <div class="flex flex-col lg:flex-row items-start justify-between gap-6">
+                    <div class="flex-1 flex items-center gap-4">
+                        <!-- Ícone com glow -->
+                        <div class="relative">
+                            <div class="absolute inset-0 bg-white/30 rounded-xl blur-lg opacity-50 group-hover:opacity-70 transition-opacity duration-500"></div>
+                            <div class="relative w-16 h-16 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:-rotate-3 transition-all duration-500">
+                                <i class="fa-solid fa-user text-2xl"></i>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="text-2xl font-bold">Olá, {{ Auth::user()->name }}!</h3>
-                            <p class="text-green-100 text-sm mt-1">
-                                Bem-vindo de volta ao <strong>{{ config('app.name') }}</strong>
+                        
+                        <div class="space-y-1">
+                            <h1 class="text-3xl font-bold tracking-tight">
+                                Olá, <span class="bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">{{ Auth::user()->name }}</span>!
+                            </h1>
+                            <p class="text-emerald-100 text-sm flex items-center gap-2">
+                                <i class="fas fa-circle-check text-xs animate-pulse"></i>
+                                Bem-vindo de volta ao <span class="font-semibold">{{ config('app.name') }}</span>
                             </p>
                         </div>
                     </div>
                     
-                    <div class="flex lg:flex-col lg:items-end gap-4 lg:gap-2 text-green-100 text-sm">
-                        <div class="flex items-center gap-2">
+                    <!-- Data e Hora Premium -->
+                    <div class="flex lg:flex-col lg:items-end gap-4 lg:gap-2 text-emerald-100 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+                        <div class="flex items-center gap-2 text-sm">
+                            <div class="w-1 h-4 bg-white/50 rounded-full"></div>
                             <i class="fa-solid fa-calendar-check"></i>
-                            <span>Hoje é {{ now()->format('d/m/Y') }}</span>
+                            <span class="font-medium">{{ now()->format('d/m/Y') }}</span>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 text-sm">
+                            <div class="w-1 h-4 bg-white/50 rounded-full"></div>
                             <i class="fa-solid fa-clock"></i>
-                            <span>{{ now()->format('H:i') }} • {{ now()->format('T') }}</span>
+                            <span class="font-medium">{{ now()->format('H:i') }}</span>
+                            <span class="text-emerald-200 text-xs">({{ now()->format('T') }})</span>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            <div class="lg:col-span-2 xl:col-span-3">
-                <!-- Ações Rápidas -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3 ml-2">
-                        <i class="fa-solid fa-bolt text-green-600"></i>
-                        Ações Rápidas
-                    </h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-4">
-                        <a href="#" class="p-4 bg-gray-50 hover:bg-orange-50 rounded-xl border border-gray-200 hover:border-orange-300 transition-all duration-200 group text-center">
-                            <i class="fa-solid fa-ticket text-orange-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
-                            <p class="text-sm font-medium text-gray-700">Abrir Chamado</p>
-                        </a>
-                        <a href="{{ route('profile.edit') }}" class="p-4 bg-gray-50 hover:bg-green-50 rounded-xl border border-gray-200 hover:border-green-300 transition-all duration-200 group text-center">
-                            <i class="fa-solid fa-user text-green-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
-                            <p class="text-sm font-medium text-gray-700">Perfil</p>
-                        </a>
-                        <a href="{{ route('public.contacts.index') }}" class="p-4 bg-gray-50 hover:bg-green-50 rounded-xl border border-gray-200 hover:border-green-300 transition-all duration-200 group text-center">
-                            <i class="fa-solid fa-phone text-green-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
-                            <p class="text-sm font-medium text-gray-700">Lista Telefônica</p>
-                        </a>
-                        <a href="{{ route('chart.index') }}" class="p-4 bg-gray-50 hover:bg-green-50 rounded-xl border border-gray-200 hover:border-green-300 transition-all duration-200 group text-center">
-                            <i class="fa-solid fa-sitemap text-green-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
-                            <p class="text-sm font-medium text-gray-700">Organograma</p>
-                        </a>
-                        <a href="{{ route('profile.password.edit') }}" class="p-4 bg-gray-50 hover:bg-yellow-50 rounded-xl border border-gray-200 hover:border-yellow-300 transition-all duration-200 group text-center">
-                            <i class="fa-solid fa-key text-yellow-500 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
-                            <p class="text-sm font-medium text-gray-700">Alterar Senha</p>
-                        </a>
                     </div>
                 </div>
             </div>
             
-            <!-- Notificações -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3 ml-2">
-                    <i class="fa-solid fa-bell text-green-600"></i>
-                    Notificações
-                </h3>
-                @if(Auth::user()->password_default)
-                    <!-- Aviso de Senha Padrão -->
-                    <div class="bg-gradient-to-r from-yellow-50 to-yellow-100 border border-yellow-200 rounded-2xl shadow-sm p-4">
-                        <div class="flex items-center gap-2 mb-2">
-                            <div class="size-8 rounded-xl bg-yellow-500 flex items-center justify-center flex-shrink-0">
-                                <i class="fa-solid fa-triangle-exclamation text-white text-xs"></i>
+            <!-- Barra de progresso decorativa -->
+            <div class="relative h-1 w-full bg-white/10 overflow-hidden">
+                <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-white/60 via-white/80 to-white/60 w-1/3 rounded-full animate-shimmer"></div>
+            </div>
+        </div>
+
+        <!-- Grid Principal -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            
+            <!-- Coluna Principal (Ações Rápidas) -->
+            <div class="lg:col-span-2 xl:col-span-3 space-y-6">
+                
+                <!-- Card de Ações Rápidas (estrutura manual) -->
+                <div class="bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+                    
+                    <!-- Header do Card -->
+                    <div class="relative px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-1 h-6 bg-gradient-to-b from-emerald-500 to-green-500 rounded-full"></div>
+                                <h3 class="text-base font-bold text-gray-900 uppercase tracking-wider">
+                                    Ações Rápidas
+                                </h3>
+                                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-medium border border-emerald-200">
+                                    5 atalhos
+                                </span>
                             </div>
-                            <div>
-                                <h3 class="font-semibold text-yellow-800">Atenção à Segurança</h3>
+                            <i class="fas fa-bolt text-emerald-500 text-sm"></i>
+                        </div>
+                    </div>
+
+                    <!-- Body do Card -->
+                    <div class="p-6">
+                        <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
+                            <!-- Abrir Chamado -->
+                            <a href="#" variant="gray_outline" class="!p-0 !border-0 !bg-transparent hover:!bg-transparent group/action">
+                                <div class="w-full p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200/80 hover:border-orange-300/80 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                                    <div class="flex flex-col items-center text-center">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-orange-50 to-orange-100/80 rounded-xl flex items-center justify-center mb-3 group-hover/action:scale-110 group-hover/action:-rotate-3 transition-all duration-300">
+                                            <i class="fa-solid fa-ticket text-orange-600 text-xl"></i>
+                                        </div>
+                                        <p class="text-sm font-medium text-gray-700 group-hover/action:text-orange-700 transition-colors">Abrir Chamado</p>
+                                    </div>
+                                </div>
+                            </a>
+
+                            <!-- Perfil -->
+                            <a href="{{ route('profile.edit') }}" variant="gray_outline" class="!p-0 !border-0 !bg-transparent hover:!bg-transparent group/action">
+                                <div class="w-full p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200/80 hover:border-emerald-300/80 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                                    <div class="flex flex-col items-center text-center">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-emerald-50 to-emerald-100/80 rounded-xl flex items-center justify-center mb-3 group-hover/action:scale-110 group-hover/action:-rotate-3 transition-all duration-300">
+                                            <i class="fa-solid fa-user text-emerald-600 text-xl"></i>
+                                        </div>
+                                        <p class="text-sm font-medium text-gray-700 group-hover/action:text-emerald-700 transition-colors">Perfil</p>
+                                    </div>
+                                </div>
+                            </a>
+
+                            <!-- Lista Telefônica -->
+                            <a href="{{ route('public.contacts.index') }}" variant="gray_outline" class="!p-0 !border-0 !bg-transparent hover:!bg-transparent group/action">
+                                <div class="w-full p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200/80 hover:border-emerald-300/80 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                                    <div class="flex flex-col items-center text-center">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-emerald-50 to-emerald-100/80 rounded-xl flex items-center justify-center mb-3 group-hover/action:scale-110 group-hover/action:-rotate-3 transition-all duration-300">
+                                            <i class="fa-solid fa-phone text-emerald-600 text-xl"></i>
+                                        </div>
+                                        <p class="text-sm font-medium text-gray-700 group-hover/action:text-emerald-700 transition-colors">Lista Telefônica</p>
+                                    </div>
+                                </div>
+                            </a>
+
+                            <!-- Organograma -->
+                            <a href="{{ route('chart.index') }}" variant="gray_outline" class="!p-0 !border-0 !bg-transparent hover:!bg-transparent group/action">
+                                <div class="w-full p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200/80 hover:border-emerald-300/80 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                                    <div class="flex flex-col items-center text-center">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-emerald-50 to-emerald-100/80 rounded-xl flex items-center justify-center mb-3 group-hover/action:scale-110 group-hover/action:-rotate-3 transition-all duration-300">
+                                            <i class="fa-solid fa-sitemap text-emerald-600 text-xl"></i>
+                                        </div>
+                                        <p class="text-sm font-medium text-gray-700 group-hover/action:text-emerald-700 transition-colors">Organograma</p>
+                                    </div>
+                                </div>
+                            </a>
+
+                            <!-- Alterar Senha -->
+                            <a href="{{ route('profile.password.edit') }}" variant="gray_outline" class="">
+                                <div class="w-full p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200/80 hover:border-yellow-300/80 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                                    <div class="flex flex-col items-center text-center">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-yellow-50 to-yellow-100/80 rounded-xl flex items-center justify-center mb-3 group-hover/action:scale-110 group-hover/action:-rotate-3 transition-all duration-300">
+                                            <i class="fa-solid fa-key text-yellow-600 text-xl"></i>
+                                        </div>
+                                        <p class="text-sm font-medium text-gray-700 group-hover/action:text-yellow-700 transition-colors">Alterar Senha</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Espaço para futuros widgets -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Placeholder Atividades -->
+                    <div class="bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl shadow-lg overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
+                            <div class="flex items-center gap-3">
+                                <div class="w-1 h-5 bg-gradient-to-b from-gray-400 to-gray-500 rounded-full"></div>
+                                <h4 class="text-sm font-semibold text-gray-700">Atividades Recentes</h4>
                             </div>
                         </div>
-                        <div>
-                            <p class="text-yellow-700 text-xs leading-relaxed">
-                                Você ainda está usando a senha padrão do sistema. Por motivos de segurança, recomendamos que altere sua senha imediatamente.
-                            </p>
-                            <div class="w-full mt-4">
-                                <x-button href="{{ route('profile.password.edit') }}" text="Alterar Senha" icon="fa-solid fa-key" variant="yellow_solid" fullWidth="true"/>
+                        <div class="p-6 space-y-3">
+                            <div class="h-8 bg-gray-100 rounded-lg animate-pulse"></div>
+                            <div class="h-8 bg-gray-100 rounded-lg animate-pulse"></div>
+                            <div class="h-8 bg-gray-100 rounded-lg animate-pulse"></div>
+                        </div>
+                    </div>
+
+                    <!-- Placeholder Estatísticas -->
+                    <div class="bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl shadow-lg overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
+                            <div class="flex items-center gap-3">
+                                <div class="w-1 h-5 bg-gradient-to-b from-gray-400 to-gray-500 rounded-full"></div>
+                                <h4 class="text-sm font-semibold text-gray-700">Estatísticas</h4>
+                            </div>
+                        </div>
+                        <div class="p-6 space-y-3">
+                            <div class="h-8 bg-gray-100 rounded-lg animate-pulse"></div>
+                            <div class="h-8 bg-gray-100 rounded-lg animate-pulse"></div>
+                            <div class="h-8 bg-gray-100 rounded-lg animate-pulse"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sidebar (Notificações) -->
+            <div class="space-y-6">
+                
+                <!-- Card de Notificações -->
+                <div class="bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl shadow-lg overflow-hidden">
+                    
+                    <!-- Header -->
+                    <div class="relative px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-1 h-6 bg-gradient-to-b from-emerald-500 to-green-500 rounded-full"></div>
+                                <h3 class="text-base font-bold text-gray-900 uppercase tracking-wider">
+                                    Notificações
+                                </h3>
+                            </div>
+                            <div class="relative">
+                                <i class="fas fa-bell text-emerald-500 text-sm"></i>
+                                @if(Auth::user()->password_default)
+                                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+                                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                                @endif
                             </div>
                         </div>
                     </div>
-                @endif
+                    
+                    <!-- Body -->
+                    <div class="p-3">
+                        @if(Auth::user()->password_default)
+                            <!-- Aviso de Senha Padrão -->
+                            <div class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-yellow-50 to-yellow-100/80 border border-yellow-200/80 shadow-sm hover:shadow-md transition-all duration-300">
+                                
+                                <!-- Efeito decorativo -->
+                                <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-yellow-500 to-amber-500"></div>
+                                
+                                <div class="p-5">
+                                    <div class="space-y-3">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-10 h-10 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
+                                                <i class="fa-solid fa-triangle-exclamation text-white text-sm"></i>
+                                            </div>
+                                            
+                                            <div class="flex-1">
+                                                <h4 class="text-sm font-bold text-yellow-800">Atenção à Segurança</h4>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex-1 space-y-3">
+                                            
+                                            <p class="text-xs text-yellow-700 leading-relaxed">
+                                                Você ainda está usando a senha padrão do sistema. Por motivos de segurança, recomendamos que altere sua senha imediatamente.
+                                            </p>
+                                            
+                                            <x-button href="{{ route('profile.password.edit') }}" 
+                                                      text="Alterar Senha Agora" 
+                                                      icon="fa-solid fa-key" 
+                                                      variant="yellow_solid" 
+                                                      fullWidth="true"
+                                                      class="!py-2.5 !text-xs" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            <!-- Sem notificações -->
+                            <div class="flex flex-col items-center justify-center py-8 text-center">
+                                <div class="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mb-3">
+                                    <i class="fa-regular fa-bell-slash text-gray-400 text-2xl"></i>
+                                </div>
+                                <p class="text-sm font-medium text-gray-700">Tudo tranquilo!</p>
+                                <p class="text-xs text-gray-500 mt-1">Nenhuma notificação no momento</p>
+                            </div>
+                        @endif
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div class="px-6 py-3 border-t border-gray-200/80 bg-gradient-to-r from-gray-50/50 to-white/50">
+                        <x-button href="#" variant="gray_text" class="w-full !text-gray-500 hover:!text-emerald-600 !text-xs flex items-center justify-center gap-1">
+                            <i class="fas fa-history text-[10px]"></i>
+                            Ver histórico de notificações
+                            <i class="fas fa-chevron-right text-[8px]"></i>
+                        </x-button>
+                    </div>
+                </div>
+
+                <!-- Card de Informações do Sistema -->
+                <div class="bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl shadow-lg overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
+                        <div class="flex items-center gap-3">
+                            <div class="w-1 h-5 bg-gradient-to-b from-emerald-500 to-green-500 rounded-full"></div>
+                            <h4 class="text-sm font-semibold text-gray-700">Sistema</h4>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6 space-y-3 text-xs">
+                        <div class="flex justify-between items-center py-1.5 border-b border-gray-100">
+                            <span class="text-gray-500">Versão:</span>
+                            <span class="font-medium text-gray-900 bg-gray-100/80 px-2 py-0.5 rounded-full">1.0.0</span>
+                        </div>
+                        <div class="flex justify-between items-center py-1.5 border-b border-gray-100">
+                            <span class="text-gray-500">Último acesso:</span>
+                            <span class="font-medium text-gray-900">{{ Auth::user()->last_login_at?->diffForHumans() ?? 'Primeiro acesso' }}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-1.5">
+                            <span class="text-gray-500">Ambiente:</span>
+                            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-[8px] font-medium">{{ app()->environment() }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        
         </div>
     </div>
 </x-app-layout>

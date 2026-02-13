@@ -54,7 +54,7 @@
     @else
         <div x-data="taskAside({{ $task->id }})" class="h-full flex flex-col bg-gradient-to-br from-white via-green-50/30 to-white" x-ref="asideContainer" >
             <!-- HEADER -->
-            <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-xl backdrop-saturate-150 border-b border-white/40 shadow-lg">
+            <header class="sticky top-0 z-30 bg-white/80 border-b border-white/40 shadow-lg">
                 <div class="px-6 py-5">
                     <div class="flex items-start justify-between gap-4">
 
@@ -491,17 +491,20 @@
             </div>
 
             <!-- FOOTER - Ações Premium -->
-            <footer class="sticky bottom-0 bg-white/95 backdrop-blur-xl backdrop-saturate-150 border-t border-green-700/50 shadow-lg">
+            <footer class="sticky bottom-0 bg-white/95 border-t border-green-700/50 shadow-lg">
                 <div class="px-6 py-4">
                     <div class="flex items-center justify-end gap-3">
                         
                         <div class="flex items-center gap-2">
-                            <x-button @click="activeItem = null" icon="fas fa-times" text="Fechar" variant="gray_outline" @click="openAsideTask = false" />
+                            <x-button @click="openAsideTask = false" 
+                                    variant="gray_outline"
+                                    icon="fas fa-times" 
+                                    text="Fechar"  />
                         </div>
 
                         @if ($task->taskSteps->count() < 1 || $task->taskStepsFinished->count() == $task->taskSteps->count())
                             @if (!$task->finished_at)
-                                <x-button icon="fas fa-check" text="Marca como concluído" variant="green_outline" wire:click="taskFinished()" />
+                                <x-button icon="fas fa-check" text="Marca como concluído" wire:click="taskFinished()" />
                             @endif
                         @endif
                     </div>

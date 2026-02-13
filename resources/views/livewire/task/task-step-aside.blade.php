@@ -542,23 +542,17 @@
                     <div class="flex items-center justify-end gap-3">
                         
                         <div class="flex items-center gap-2">
-                            <x-button @click="openAsideTaskStep = false" 
+                            <x-button @click="openAsideTask = false" 
+                                variant="gray_outline"
                                     icon="fas fa-times" 
-                                    text="Fechar" 
-                                    variant="gray_outline" />
+                                    text="Fechar"  />
                         </div>
 
                         @if (!$step->finished_at)
                             <x-button icon="fas fa-check-circle" 
                                     text="Marcar como Concluída" 
                                     variant="green_outline"
-                                    wire:click="stepFinished()"
-                                    class="!bg-gradient-to-r !from-emerald-600 !to-green-600 hover:!from-emerald-700 hover:!to-green-700 !text-white !border-0" />
-                        @else
-                            <span class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium bg-green-100 text-green-800 rounded-full border border-green-200">
-                                <i class="fas fa-check-circle"></i>
-                                Concluída em {{ $step->finished_at?->format('d/m/Y') }}
-                            </span>
+                                    wire:click="stepFinished()" />
                         @endif
                     </div>
                 </div>
