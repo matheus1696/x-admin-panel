@@ -78,44 +78,42 @@
                                 </span>
 
                                 <!-- Badge ID -->
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full 
-                                        bg-white/70 backdrop-blur-sm border border-gray-200/80 text-gray-600 shadow-sm">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full bg-white/70 backdrop-blur-sm border border-gray-200/80 text-gray-600 shadow-sm">
                                     <i class="fas fa-hashtag text-[10px]"></i>
-                                    {{ $task->id }}
+                                    {{ $task->code }}
+                                </span>
+
+                                <!-- Badge Category -->
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full bg-white/70 backdrop-blur-sm border border-gray-200/80 text-gray-600 shadow-sm">
+                                    <i class="fas fa-tag text-green-700"></i>
+                                    {{ $task->taskCategory->title ?? 'Sem categoria' }}
+                                </span>
+
+                                <!-- Badge Category -->
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full bg-white/70 backdrop-blur-sm border border-gray-200/80 text-gray-600 shadow-sm">
+                                    <span class="relative flex h-2 w-2">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-green-700"></span>
+                                    </span>
+                                    <span class="font-medium">Criado</span>
+                                    <span class="text-gray-900">{{ $task->created_at->format('d/m/Y') }}</span>
+                                    <span class="text-gray-400">{{ $task->created_at->format('H:i') }}</span>
                                 </span>
                             </div>
 
                             <!-- Título -->
                             <div class="space-y-1.5">
-                                <h1 class="text-2xl font-bold tracking-tight">
+                                <h1 class="text-2xl font-bold tracking-tight line-clamp-1">
                                     <span class="bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-700 bg-clip-text text-transparent">
                                         {{ $task->code }}
                                     </span>
                                     <span class="text-gray-300 font-light mx-2">/</span>
                                     <span class="text-gray-800 font-semibold">{{ $task->title }}</span>
                                 </h1>
-                                
-                                <!-- Categoria como subtítulo -->
-                                <p class="text-xs text-gray-400 flex items-center gap-1.5">
-                                    <i class="fas fa-tag text-emerald-400"></i>
-                                    {{ $task->taskCategory->title ?? 'Sem categoria' }}
-                                </p>
                             </div>
 
                             <!-- Timeline -->
-                            <div class="flex items-center gap-4 text-xs">
-                                <div class="flex items-center gap-2 text-gray-500 bg-white/60 px-3 py-1.5 rounded-full border border-gray-100 shadow-sm">
-                                    <span class="relative flex h-2 w-2">
-                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                                    </span>
-                                    <span class="font-medium">Criado</span>
-                                    <span class="text-gray-900">{{ $task->created_at->format('d/m/Y') }}</span>
-                                    <span class="text-gray-400">{{ $task->created_at->format('H:i') }}</span>
-                                </div>
-                                
-                                <span class="text-gray-200 select-none">•</span>
-                                
+                            <div class="flex items-center gap-2 text-xs">
                                 <div class="flex items-center gap-2 text-gray-500 bg-white/40 px-3 py-1.5 rounded-full">
                                     <i class="far fa-clock text-emerald-400"></i>
                                     <span class="font-medium">Atualizado</span>
@@ -502,9 +500,11 @@
                                     text="Fechar"  />
                         </div>
 
-                        @if ($task->taskSteps->count() < 1 || $task->taskStepsFinished->count() == $task->taskSteps->count())
-                            @if (!$task->finished_at)
-                                <x-button icon="fas fa-check" text="Marca como concluído" wire:click="taskFinished()" />
+                        @if ($task->started_at)
+                            @if ($task->taskSteps->count() < 1 || $task->taskStepsFinished->count() == $task->taskSteps->count())
+                                @if (!$task->finished_at)
+                                    <x-button icon="fas fa-check" text="Marca como concluído" wire:click="taskFinished()" />
+                                @endif
                             @endif
                         @endif
                     </div>

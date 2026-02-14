@@ -8,6 +8,7 @@ use App\Models\Administration\Task\TaskCategory;
 use App\Models\Administration\Task\TaskPriority;
 use App\Models\Administration\Task\TaskStepCategory;
 use App\Models\Administration\User\User;
+use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Organization\Workflow\Workflow;
 use App\Models\Task\Task;
 use App\Models\Task\TaskStep;
@@ -37,6 +38,7 @@ class TaskPage extends Component
     ];
 
     public Collection $users;
+    public Collection $organizations;
     public Collection $taskCategories;
     public Collection $taskPriorities;
     public Collection $taskStatuses;
@@ -48,6 +50,7 @@ class TaskPage extends Component
 
     public ?string $title = null;
     public ?int $user_id = null;
+    public ?int $organization_id = null;
     public ?int $task_category_id = null;
     public ?int $task_priority_id = null;
     public ?int $task_status_id = null;
@@ -76,6 +79,7 @@ class TaskPage extends Component
     public function mount()
     {
         $this->users = User::orderBy('name')->get();
+        $this->organizations = OrganizationChart::orderBy('order')->get();
         $this->taskCategories = TaskCategory::orderBy('title')->get();
         $this->taskPriorities = TaskPriority::orderBy('level')->get();
         $this->taskStatuses = $this->taskStatusService->index();

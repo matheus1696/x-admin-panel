@@ -5,14 +5,14 @@
     </div>
     
     <div class="col-span-2 hidden md:block">
+        <x-form.select-livewire name="organization_id" wire:model.defer="organization_id" :collection="$organizations" value-field="id" label-field="title" variant='pills' size="xs" />
+    </div>
+    
+    <div class="col-span-2 hidden md:block">
         <x-form.select-livewire name="user_id" wire:model.defer="user_id" :collection="$users" value-field="id" label-field="name" variant='pills' size="xs" />
     </div>
 
-    <div class="col-span-5 hidden md:grid grid-cols-3 gap-2">
-        <div class="col-span-1">
-            <x-form.select-livewire name="task_category_id" wire:model.defer="task_step_category_id" :collection="$taskStepCategories" value-field="id" label-field="title" variant='pills' size="xs" />
-        </div>
-        
+    <div class="col-span-3 hidden md:grid grid-cols-2 gap-2">        
         <div class="col-span-1">
             <x-form.select-livewire name="task_priority_id" wire:model.defer="task_priority_id" :collection="$taskPriorities" value-field="id" label-field="title" variant='pills' size="xs" />
         </div>
@@ -21,14 +21,9 @@
             <x-form.select-livewire name="task_step_status_id" wire:model.defer="task_step_status_id" :collection="$taskStepStatuses" value-field="id" label-field="title" variant='pills' size="xs" />
         </div>
     </div>
-    
-    <!-- DATA -->
-    <div class="col-span-1 hidden md:block">
-        <x-form.input disabled variant='pills' size="xs" />
-    </div>
 
     <!-- AÇÃO -->
-    <div class="col-span-1 flex justify-center gap-2">
+    <div class="col-span-1 lg:col-span-2 flex justify-center gap-2">
         <x-button type="submit" icon="fa-solid fa-check" variant="green_outline" />
         <x-button type="button" icon="fa-solid fa-close" variant="red_outline" wire:click="cancelCreateTaskStep()" />
     </div>

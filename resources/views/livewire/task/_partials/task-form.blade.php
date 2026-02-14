@@ -1,7 +1,7 @@
 <div class="grid grid-cols-4 md:grid-cols-12 gap-2 items-center">
     <!-- TÍTULO -->
     <div class="col-span-3">
-        <x-form.input type="text" name="title" wire:model.defer="title" placeholder="Título da Atividade" variant='pills' size="xs" autofocus />
+        <x-form.input type="text" name="title" wire:model.defer="title" placeholder="Título da Atividade *" variant='pills' size="xs" autofocus />
     </div>
     
     <div class="col-span-2 hidden md:block">
@@ -21,14 +21,9 @@
             <x-form.select-livewire name="task_status_id" wire:model.defer="task_status_id" :collection="$taskStatuses" value-field="id" label-field="title" variant='pills' size="xs" />
         </div>
     </div>
-    
-    <!-- DATA -->
-    <div class="col-span-1 hidden md:block">
-        <x-form.input disabled variant='pills' size="xs" />
-    </div>
 
     <!-- AÇÃO -->
-    <div class="col-span-1 flex justify-center gap-2">
+    <div class="col-span-1 lg:col-span-2 flex justify-center gap-2">
         <x-button type="submit" icon="fa-solid fa-check" variant="green_outline" />
         <x-button type="button" icon="fa-solid fa-close" variant="red_outline" wire:click="cancelCreateTask()" />
     </div>

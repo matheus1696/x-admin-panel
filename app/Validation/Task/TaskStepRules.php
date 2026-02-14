@@ -12,6 +12,7 @@ class TaskStepRules
         return [
             'title' => 'required|min:4',
             'user_id' => 'nullable|exists:users,id',
+            'organization_id' => 'nullable|exists:organization_charts,id',
             'task_priority_id' => 'nullable|exists:task_priorities,id',
             'task_step_status_id' => 'nullable|exists:task_step_statuses,id',
         ];

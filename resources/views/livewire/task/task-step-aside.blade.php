@@ -78,11 +78,15 @@
                                     {{ $step->code }}
                                 </span>
 
-                                <!-- Badge vinculado à tarefa -->
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full 
-                                        bg-gradient-to-br from-emerald-50 to-green-50/80 border border-emerald-200/80 text-emerald-700 shadow-sm">
-                                    <i class="fas fa-link text-[10px]"></i>
-                                    {{ $step->task->code ?? 'Tarefa' }}
+                                <!-- Badge Criado -->
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full bg-white/70 backdrop-blur-sm border border-gray-200/80 text-gray-600 shadow-sm">
+                                    <span class="relative flex h-2 w-2">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                                    </span>
+                                    <span class="font-medium">Criado</span>
+                                    <span class="text-gray-900">{{ $step->created_at->format('d/m/Y') }}</span>
+                                    <span class="text-gray-400">{{ $step->created_at->format('H:i') }}</span>
                                 </span>
                             </div>
 
@@ -98,19 +102,7 @@
                             </div>
 
                             <!-- Timeline -->
-                            <div class="flex items-center gap-4 text-xs">
-                                <div class="flex items-center gap-2 text-gray-500 bg-white/60 px-3 py-1.5 rounded-full border border-gray-100 shadow-sm">
-                                    <span class="relative flex h-2 w-2">
-                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-                                    </span>
-                                    <span class="font-medium">Criado</span>
-                                    <span class="text-gray-900">{{ $step->created_at->format('d/m/Y') }}</span>
-                                    <span class="text-gray-400">{{ $step->created_at->format('H:i') }}</span>
-                                </div>
-                                
-                                <span class="text-gray-200 select-none">•</span>
-                                
+                            <div class="flex items-center gap-4 text-xs">                                
                                 <div class="flex items-center gap-2 text-gray-500 bg-white/40 px-3 py-1.5 rounded-full">
                                     <i class="far fa-clock text-amber-400"></i>
                                     <span class="font-medium">Atualizado</span>
@@ -249,7 +241,7 @@
                                 Setor Responsável
                             </span>
                             @if (!$step->finished_at)
-                                <div class="flex-1">
+                                <div class="flex-1 overflow-hidden">
                                     <x-form.select-livewire wire:model.live="organization_responsable_id" 
                                             :collection="$organizations" 
                                             valueField="id" labelField="title" 
@@ -548,7 +540,7 @@
                                     text="Fechar"  />
                         </div>
 
-                        @if (!$step->finished_at)
+                        @if (!$step->finished_at && $step->started_at)
                             <x-button icon="fas fa-check-circle" 
                                     text="Marcar como Concluída" 
                                     variant="green_outline"
