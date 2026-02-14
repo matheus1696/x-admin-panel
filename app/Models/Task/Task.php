@@ -14,6 +14,8 @@ class Task extends Model
     use HasUuid;
 
     protected $fillable = [
+        'task_hub_id',
+        'uuid',
         'code',
         'title',
         'description',
@@ -32,6 +34,10 @@ class Task extends Model
         'finished_at' => 'datetime',
         'deadline_at' => 'datetime',
     ];
+
+    public function taskHub(){
+        return $this->belongsTo(TaskHub::class, 'task_hub_id');
+    }
 
     public function taskActivities()
     {
@@ -69,7 +75,7 @@ class Task extends Model
     {
         static::created(function ($task) {
             $task->update([
-                'code' => 'TK' . str_pad($task->id, 5, '0', STR_PAD_LEFT),
+                'code' => $task->taskHub->acronym . str_pad($task->id, 5, '0', STR_PAD_LEFT),
             ]);
         });
     }

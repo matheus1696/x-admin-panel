@@ -17,6 +17,7 @@ use App\Livewire\Organization\OrganizationChart\OrganizationChartConfigPage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartDashboardPage;
 use App\Livewire\Organization\Workflow\WorkflowProcessesPage;
 use App\Livewire\Public\Contact\ContactPage;
+use App\Livewire\Task\TaskHubPage;
 use App\Livewire\Task\TaskPage;
 use Illuminate\Support\Facades\Route;
 
@@ -50,7 +51,8 @@ Route::middleware('auth')->group(function () {
     | Tarefas
     |--------------------------------------------------------------------------
     */
-    Route::get('/tarefas', TaskPage::class)->name('tasks.index');
+    Route::get('/tarefas', TaskHubPage::class)->name('tasks.index');
+    Route::get('/tarefas/{uuid}', TaskPage::class)->name('tasks.show');
 
     /*
     |--------------------------------------------------------------------------

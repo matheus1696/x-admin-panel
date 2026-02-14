@@ -4,6 +4,7 @@ namespace App\Services\Task;
 
 use App\Models\Task\Task;
 use App\Models\Task\TaskActivity;
+use App\Models\Task\TaskHub;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,24 +22,33 @@ class TaskService
         ])->findOrFail($id);
     }
 
-    public function index(array $filters): LengthAwarePaginator
+    public function index(string $id, array $filters): LengthAwarePaginator
     {
-        $query = Task::query()->with(['user','taskCategory','taskPriority','taskStatus',]);
+        $taskHub = TaskHub::where('uuid', $id)->first();
+
+        $query = Task::query();
+
+        $query->where('task_hub_id', $taskHub->id);
 
         // Filtra pelo título
         if ($filters['title']) {
             $query->where('title', 'like', '%' . $filters['title'] . '%');
         }
 
+        $query->with(['user','taskCategory','taskPriority','taskStatus',]);
+
         return $query->orderBy('code')->paginate($filters['perPage']);
     }
 
-    public function create(array $data): void
+    public function create(string $id, array $data): void
     {
+        $taskHub = TaskHub::where('uuid', $id)->first();
+
         if ($data['task_status_id'] == 2) {            
             $data['started_at'] = now();
         }
 
+        $data['task_hub_id'] = $taskHub->id;
         $data['created_user_id'] = Auth::user()->id;
         $task = Task::create($data);
 

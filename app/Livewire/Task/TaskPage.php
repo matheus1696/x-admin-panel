@@ -46,6 +46,7 @@ class TaskPage extends Component
     public Collection $taskStepStatuses;
     public Collection $workflows;
 
+    public $taskHubId;
     public $taskId;
 
     public ?string $title = null;
@@ -76,8 +77,9 @@ class TaskPage extends Component
         $this->task_step_status_id = collect($this->taskStepStatuses)->firstWhere('is_default', true)?->id;
     }
 
-    public function mount()
+    public function mount($uuid)
     {
+        $this->taskHubId = $uuid;
         $this->users = User::orderBy('name')->get();
         $this->organizations = OrganizationChart::orderBy('order')->get();
         $this->taskCategories = TaskCategory::orderBy('title')->get();
@@ -117,7 +119,7 @@ class TaskPage extends Component
         {
             $data = $this->validate(TaskRules::store());
 
-            $this->taskService->create($data);
+            $this->taskService->create($this->taskHubId, $data);
 
             $this->isCreatingTask = false;
             $this->resetForm();
@@ -221,9 +223,9 @@ class TaskPage extends Component
     //Fim
 
     public function render()
-    { 
+    {
         return view('livewire.task.task-page',[
-            'tasks' => $this->taskService->index($this->filters),
+            'tasks' => $this->taskService->index($this->taskHubId, $this->filters),
         ]);
     }
 }
