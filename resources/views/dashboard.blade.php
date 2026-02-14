@@ -1,8 +1,8 @@
 <x-app-layout>
-    <div class="py-8 space-y-8 mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-8 lg:py-2 space-y-8 mx-auto px-4 lg:px-6">
         
         <!-- Card de Boas-vindas Premium (mantido) -->
-        <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-600 via-green-600 to-emerald-700 text-white shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
+        <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-600 via-green-700 to-green-800 text-white shadow-xl hover:shadow-2xl transition-all duration-500">
             
             <!-- Efeitos decorativos -->
             <div class="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/10"></div>
@@ -16,7 +16,7 @@
             
             <!-- Conteúdo principal -->
             <div class="relative p-8">
-                <div class="flex flex-col lg:flex-row items-start justify-between gap-6">
+                <div class="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-6">
                     <div class="flex-1 flex items-center gap-4">
                         <!-- Ícone com glow -->
                         <div class="relative">
@@ -28,7 +28,7 @@
                         
                         <div class="space-y-1">
                             <h1 class="text-3xl font-bold tracking-tight">
-                                Olá, <span class="bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">{{ Auth::user()->name }}</span>!
+                                Olá, <span class="text-white">{{ Auth::user()->name }}</span>!
                             </h1>
                             <p class="text-emerald-100 text-sm flex items-center gap-2">
                                 <i class="fas fa-circle-check text-xs animate-pulse"></i>
@@ -38,25 +38,34 @@
                     </div>
                     
                     <!-- Data e Hora Premium -->
-                    <div class="flex lg:flex-col lg:items-end gap-4 lg:gap-2 text-emerald-100 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+                    <div class="hidden lg:flex lg:flex-col lg:items-end gap-4 lg:gap-2 text-emerald-100 lg:px-4 lg:pt-2"
+                         x-data="{ date: '', time: '', 
+                            init() {
+                                this.update()
+                                setInterval(() => this.update(), 1000)
+                            },
+                            update() {
+                                const now = new Date()
+
+                                this.date = now.toLocaleDateString('pt-BR')
+                                this.time = now.toLocaleTimeString('pt-BR', {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })
+                            }
+                        }"
+                    >
                         <div class="flex items-center gap-2 text-sm">
-                            <div class="w-1 h-4 bg-white/50 rounded-full"></div>
                             <i class="fa-solid fa-calendar-check"></i>
-                            <span class="font-medium">{{ now()->format('d/m/Y') }}</span>
+                            <span class="font-medium" x-text="date"></span>
                         </div>
+
                         <div class="flex items-center gap-2 text-sm">
-                            <div class="w-1 h-4 bg-white/50 rounded-full"></div>
                             <i class="fa-solid fa-clock"></i>
-                            <span class="font-medium">{{ now()->format('H:i') }}</span>
-                            <span class="text-emerald-200 text-xs">({{ now()->format('T') }})</span>
+                            <span class="font-medium" x-text="time"></span>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Barra de progresso decorativa -->
-            <div class="relative h-1 w-full bg-white/10 overflow-hidden">
-                <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-white/60 via-white/80 to-white/60 w-1/3 rounded-full animate-shimmer"></div>
             </div>
         </div>
 
@@ -281,15 +290,21 @@
                     <div class="p-6 space-y-3 text-xs">
                         <div class="flex justify-between items-center py-1.5 border-b border-gray-100">
                             <span class="text-gray-500">Versão:</span>
-                            <span class="font-medium text-gray-900 bg-gray-100/80 px-2 py-0.5 rounded-full">1.0.0</span>
+                            <span class="font-medium text-gray-900 bg-gray-100/80 px-2 py-0.5 rounded-full">{{ config('app.version') }}</span>
                         </div>
                         <div class="flex justify-between items-center py-1.5 border-b border-gray-100">
                             <span class="text-gray-500">Último acesso:</span>
-                            <span class="font-medium text-gray-900">{{ Auth::user()->last_login_at?->diffForHumans() ?? 'Primeiro acesso' }}</span>
+                            <span class="font-medium text-gray-900">{{ Auth::user()->last_login_at?->format('d/m/Y') ?? 'Primeiro acesso' }}</span>
                         </div>
                         <div class="flex justify-between items-center py-1.5">
                             <span class="text-gray-500">Ambiente:</span>
-                            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-[8px] font-medium">{{ app()->environment() }}</span>
+                            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-[8px] font-medium">
+                                @if (config('app.debug'))
+                                    Desenvolvimento
+                                @else
+                                    Produção
+                                @endif
+                            </span>
                         </div>
                     </div>
                 </div>

@@ -36,6 +36,12 @@ class User extends Authenticatable
         'is_active',
         'gender_id',
         'occupation_id',
+        'last_login_at',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'last_login_at' => 'datetime',
     ];
 
     /**

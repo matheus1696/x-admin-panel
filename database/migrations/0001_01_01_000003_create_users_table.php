@@ -29,6 +29,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->foreignId('gender_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('occupation_id')->nullable()->constrained()->onDelete('set null');
+            $table->timestamp('last_login_at')->nullable();;
             $table->rememberToken();
             $table->timestamps();
         });
