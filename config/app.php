@@ -124,4 +124,18 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | SEO Configuration
+    |--------------------------------------------------------------------------
+    |
+    | These values are used for SEO optimization across the application,
+    | including meta tags, Open Graph data, and social media sharing.
+    |
+    */
+
+    'description' => env('APP_DESCRIPTION', 'Sua descrição padrão aqui - Um lugar incrível para descobertas e negócios'),
+    'keywords' => env('APP_KEYWORDS', 'laravel, aplicação web, php, framework, seu-negócio'),
+    'author' => env('APP_AUTHOR', 'Nome da Sua Empresa'),
+
 ];
