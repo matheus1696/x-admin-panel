@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Público
+| Rotas Públicas
 |--------------------------------------------------------------------------
 */
 Route::get('/', fn () => redirect()->route('login'));
@@ -31,10 +31,17 @@ Route::get('/contatos', ContactPage::class)->name('public.contacts.index');
 
 /*
 |--------------------------------------------------------------------------
+| Rotas de Autenticação (já incluídas pelo Breeze/Jetstream)
+|--------------------------------------------------------------------------
+*/
+require __DIR__.'/auth.php';
+
+/*
+|--------------------------------------------------------------------------
 | Autenticado
 |--------------------------------------------------------------------------
 */
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
 
     /* Dashboard */
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -154,5 +161,3 @@ Route::middleware('auth')->group(function () {
             Route::get('/logs', [LogController::class, 'index'])->name('logs.view');
         });
 });
-
-require __DIR__.'/auth.php';

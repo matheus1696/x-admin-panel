@@ -54,6 +54,20 @@
             <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
         </noscript>
 
+        <!-- Fontawesome otimizado (carregamento assíncrono) -->
+        <script>
+            (function() {
+                var kit = document.createElement('script');
+                kit.src = 'https://kit.fontawesome.com/04fdd6b99f.js';
+                kit.crossOrigin = 'anonymous';
+                kit.async = true;
+                document.head.appendChild(kit);
+            })();
+        </script>
+        <noscript>
+            <script src="https://kit.fontawesome.com/04fdd6b99f.js" crossorigin="anonymous"></script>
+        </noscript>
+
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         

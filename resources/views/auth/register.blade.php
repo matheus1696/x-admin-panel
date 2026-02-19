@@ -1,75 +1,133 @@
 <x-guest-layout>
-    <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-800 via-green-700 to-green-600 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-emerald-700 to-emerald-800 py-12 px-4 sm:px-6 lg:px-8">
         
         <!-- Logo -->
-        @include('auth._partials.auth-logo')
-        
-        <div class="max-w-md w-full space-y-6 bg-white rounded-2xl shadow-2xl p-8">
+        <div>
+            @include('auth._partials.auth-logo')
+        </div>
+
+        <div class="max-w-md w-full space-y-6 bg-white rounded-2xl shadow-xl p-8">
             <!-- Header -->
-            <div class="text-center">
-                <h2 class="text-2xl font-bold text-gray-900">{{ __("Create your account") }}</h2>
-                <p class="mt-2 text-sm text-gray-600">
-                    {{ __("Already registered?") }}
-                    <a href="{{ route('login') }}" class="font-medium text-green-600 hover:text-green-500">
-                        {{ __("Sign in to your account") }}
+            <div class="text-center space-y-1">
+                <h2 class="text-2xl font-semibold text-slate-800">{{ __('Criar sua conta') }}</h2>
+                <p class="text-sm text-slate-500">
+                    {{ __('Já tem uma conta?') }}
+                    <a href="{{ route('login') }}" class="text-emerald-600 hover:text-emerald-700 font-medium ml-1 transition-colors">
+                        {{ __('Fazer login') }}
                     </a>
                 </p>
             </div>
 
-            <form method="POST" action="{{ route('register') }}" class="mt-6 space-y-4">
+            <form method="POST" action="{{ route('register') }}" class="mt-6 space-y-5">
                 @csrf
 
                 <!-- Name -->
                 <div>
-                    <x-form.label for="name" :value="__('Name')" />
-                    <x-form.input name="name" type="text" :value="old('name')" required autofocus autocomplete="name" placeholder="{{ __('Your Name') }}" />
-                    <x-form.error for="name"/>
+                    <x-form.label for="name" :value="__('Nome completo')" class="text-sm font-medium text-slate-700" />
+                    <x-form.input 
+                        name="name" 
+                        type="text" 
+                        :value="old('name')" 
+                        required 
+                        autofocus 
+                        autocomplete="name" 
+                        placeholder="Seu nome completo"
+                    />
+                    <x-form.error for="name" class="mt-1 text-sm" />
                 </div>
 
                 <!-- Email Address -->
                 <div>
-                    <x-form.label for="email" :value="__('Email')" />
-                    <x-form.input name="email" type="email" :value="old('email')" required autocomplete="email" placeholder="{{ __('Email Address') }}" />
-                    <x-form.error for="email"/>
+                    <x-form.label for="email" :value="__('E-mail')" class="text-sm font-medium text-slate-700" />
+                    <x-form.input 
+                        name="email" 
+                        type="email" 
+                        :value="old('email')" 
+                        required 
+                        autocomplete="email" 
+                        placeholder="seu@email.com"
+                    />
+                    <x-form.error for="email" class="mt-1 text-sm" />
                 </div>
 
                 <!-- Password -->
-                <div>
-                    <x-form.label for="password" :value="__('Password')" />
-                    <x-form.input name="password" type="password" required placeholder="{{ __('Password') }}" />
-                    <x-form.error for="password"/>
+                <div x-data="{ show: false }">
+                    <x-form.label for="password" :value="__('Senha')" class="text-sm font-medium text-slate-700" />
+                    <div class="flex items-center gap-2 bg-slate-200 rounded-lg pr-3">
+                        <x-form.input 
+                            name="password" 
+                            x-bind:type="show ? 'text' : 'password'" 
+                            required 
+                            placeholder="********"
+                        />
+                        <button type="button" x-on:click="show = !show" class="text-slate-400 hover:text-emerald-600 transition-colors">
+                            <i x-show="!show" class="fas fa-eye text-sm"></i>
+                            <i x-show="show" class="fas fa-eye-slash text-sm"></i>
+                        </button>
+                    </div>
+                    <x-form.error for="password" class="mt-1 text-sm" />
                 </div>
 
                 <!-- Confirm Password -->
-                <div>
-                    <x-form.label for="password_confirmation" :value="__('Confirm Password')" />
-                    <x-form.input name="password_confirmation" type="password" required placeholder="{{ __('Confirm Password') }}" />
-                    <x-form.error for="password_confirmation"/>
+                <div x-data="{ show: false }">
+                    <x-form.label for="password_confirmation" :value="__('Confirmar senha')" class="text-sm font-medium text-slate-700" />
+                    <div class="flex items-center gap-2 bg-slate-200 rounded-lg pr-3">
+                        <x-form.input 
+                            name="password_confirmation" 
+                            x-bind:type="show ? 'text' : 'password'" 
+                            required 
+                            placeholder="********"
+                        />
+                        <button type="button" x-on:click="show = !show" class="text-slate-400 hover:text-emerald-600 transition-colors">
+                            <i x-show="!show" class="fas fa-eye text-sm"></i>
+                            <i x-show="show" class="fas fa-eye-slash text-sm"></i>
+                        </button>
+                    </div>
+                    <x-form.error for="password_confirmation" class="mt-1 text-sm" />
                 </div>
 
-                <!-- Terms & Privacy (Opcional) -->
-                <div class="flex items-center justify-center h-5">
-                    <div>
-                        <input id="terms" name="terms" type="checkbox" class="focus:ring-green-500 text-green-600 border-gray-300 rounded" required>
+                <!-- Terms & Privacy -->
+                <div class="flex items-start">
+                    <div class="flex items-center h-5">
+                        <input 
+                            id="terms" 
+                            name="terms" 
+                            type="checkbox" 
+                            class="rounded border-slate-300 text-emerald-600 shadow-sm focus:ring-emerald-500/20 transition-colors"
+                            required
+                        >
                     </div>
-                    <div class="ml-3 text-[11px]">
-                        <label for="terms" class="font-medium text-gray-700">
-                            {{ __("I agree to the") }}
-                            <a href="#" class="text-green-600 hover:text-green-500">{{ __("Terms of Service") }}</a>
-                            {{ __("and") }}
-                            <a href="#" class="text-green-600 hover:text-green-500">{{ __("Privacy Policy") }}</a>
+                    <div class="ml-3">
+                        <label for="terms" class="text-xs text-slate-600">
+                            {{ __('Eu concordo com os') }}
+                            <a href="#" class="text-emerald-600 hover:text-emerald-700 font-medium mx-1 transition-colors">
+                                {{ __('Termos de Serviço') }}
+                            </a>
+                            {{ __('e') }}
+                            <a href="#" class="text-emerald-600 hover:text-emerald-700 font-medium mx-1 transition-colors">
+                                {{ __('Política de Privacidade') }}
+                            </a>
                         </label>
                     </div>
                 </div>
 
                 <!-- Submit Button -->
                 <div class="pt-2">
-                    <x-button.btn-submit value="{{ __('Create Account') }}" />
+                    <x-button 
+                        type="submit" 
+                        text="{{ __('Criar minha conta') }}" 
+                        fullWidth="true" 
+                        size="sm"
+                        variant="green_solid"
+                        preventSubmit="true"
+                    />
                 </div>
             </form>
         </div>
 
         <!-- Footer -->
-        @include('auth._partials.footer-card')
+        <div>
+            @include('auth._partials.footer-card')
+        </div>
     </div>
 </x-guest-layout>

@@ -2,15 +2,18 @@
     'href' => null,
     'type' => 'button',
     'variant' => 'green_solid',
-    'icon' => null, // Ícone opcional (mantido do original)
+    'icon' => null,
     'text' => null,
-    'loading' => false, // Apenas estado visual
+    'loading' => false, // Agora controlado pelo próprio componente
     'disabled' => false,
     'fullWidth' => false,
-    'size' => 'xs', // xs, sm, md, lg
+    'size' => 'xs',
     'pill' => false,
     'shadow' => true,
     'withIconRight' => false,
+    'loadingText' => 'Enviando ...',
+    'spinner' => 'ri-loader-4-line animate-spin',
+    'preventSubmit' => false, // Nova prop para controlar o comportamento
 ])
 
 @php
@@ -19,24 +22,24 @@
     
     // Tamanhos
     $sizes = [
-        'xs' => 'text-xs px-3 py-1.5 gap-1.5',
-        'sm' => 'text-sm px-3.5 py-2 gap-2',
-        'md' => 'text-sm px-4 py-2.5 gap-2',
-        'lg' => 'text-base px-5 py-3 gap-2.5',
+        'xs' => 'text-[13px] px-3 py-1 gap-1.5',
+        'sm' => 'text-[13px] px-3.5 py-1.5 gap-2',
+        'md' => 'text-sm px-4 py-2 gap-2',
+        'lg' => 'text-base px-5 py-2.5 gap-2.5',
     ];
     
     // Tamanhos para text variants (menor padding)
     $textSizes = [
-        'xs' => 'text-xs px-1 py-0.5',
-        'sm' => 'text-sm px-1 py-0.5',
-        'md' => 'text-sm px-1 py-1',
+        'xs' => 'text-xs px-0.5 py-1',
+        'sm' => 'text-sm px-0.5 py-0.5',
+        'md' => 'text-sm px-0.5 py-1',
         'lg' => 'text-base px-1.5 py-1',
     ];
     
     // Variantes seguindo padrão [cor]_[tipo]
     $variants = [
         // SOLID VARIANTS (com gradiente)
-        'green_solid' => 'text-white bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-md hover:shadow-lg transition-all duration-300 -translate-y-0.5 border border-green-600/20 rounded-lg active:scale-[0.98]',
+        'green_solid' => 'text-white bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 shadow-md hover:shadow-lg transition-all duration-300 -translate-y-0.5 border border-emerald-600/20 rounded-lg active:scale-[0.98]',
         
         'gray_solid' => 'text-white bg-gradient-to-r from-gray-700 via-gray-700 to-gray-800 hover:from-gray-700 hover:via-gray-800 hover:to-gray-900 focus:ring-gray-600/30 shadow-md hover:shadow-lg border border-gray-700/20 rounded-lg active:scale-[0.98]',
         
@@ -112,30 +115,80 @@
     
     // Classes finais
     $classes = $baseClasses . ' ' . $sizeClass . ' ' . $variantClass . ' ' . $widthClass . ' ' . $pillClass . ' ' . $shadowClass;
+
+    $isLink = !is_null($href);
 @endphp
 
-@if ($href)
+@if ($isLink)
+    {{-- Link mode (sem comportamento de loading) --}}
     <a 
         href="{{ $href }}" 
         {{ $attributes->merge(['class' => $classes]) }}
-        @if($disabled) aria-disabled="true" @endif
+        @if($disabled) aria-disabled="true" tabindex="-1" @endif
     >
         @if ($icon && !$withIconRight)
             <i class="{{ $icon }}"></i>
         @endif
-        @if ($text || $slot->isNotEmpty())
-            <span @if ($icon) @endif>{{ $text ?? $slot }}</span>
-        @endif
+        <span>{{ $text ?? $slot }}</span>
         @if ($icon && $withIconRight)
             <i class="{{ $icon }}"></i>
         @endif
     </a>
+@elseif($preventSubmit)
+    {{-- Button mode com Alpine autocontido --}}
+    <div x-data="{ 
+            loading: {{ $loading ? 'true' : 'false' }},
+            preventSubmit: {{ $preventSubmit ? 'true' : 'false' }},
+            submit() {
+                if (this.preventSubmit && this.loading) return;
+                
+                if (this.preventSubmit) {
+                    this.loading = true;
+                }
+                
+                // Encontra o formulário mais próximo
+                const form = this.$el.closest('form');
+                if (form) {
+                    form.submit();
+                }
+            }
+        }"
+        x-init="
+            // Captura Enter se estiver dentro de um form
+            if ($el.closest('form')) {
+                $el.closest('form').addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
+                        e.preventDefault();
+                        submit();
+                    }
+                });
+            }
+        ">
+        <button type="{{ $type }}" x-bind:disabled="loading || {{ $disabled ? 'true' : 'false' }}" x-on:click="submit()" {{ $attributes->merge(['class' => $classes]) }} @if($disabled && !$loading) disabled @endif >
+            {{-- Conteúdo dinâmico com Alpine --}}
+            <template x-if="!loading">
+                <span class="inline-flex items-center gap-2">
+                    @if ($icon && !$withIconRight)
+                        <i class="{{ $icon }}"></i>
+                    @endif
+                    <span>{{ $text ?? $slot }}</span>
+                    @if ($icon && $withIconRight)
+                        <i class="{{ $icon }}"></i>
+                    @endif
+                </span>
+            </template>
+            
+            <template x-if="loading">
+                <span class="inline-flex items-center gap-2">
+                    <i class="{{ $spinner }}"></i>
+                    <span>{{ $loadingText }}</span>
+                </span>
+            </template>
+        </button>
+    </div>
 @else
-    <button 
-        type="{{ $type }}" 
-        {{ $attributes->merge(['class' => $classes]) }}
-        @disabled($disabled || $loading)
-    >
+    {{-- Button mode (sem comportamento de loading) --}}
+    <button type="{{ $type }}" {{ $attributes->merge(['class' => $classes]) }} @disabled($disabled || $loading)>
         @if ($icon && !$withIconRight)
             <i class="{{ $icon }}"></i>
         @endif
@@ -146,4 +199,4 @@
             <i class="{{ $icon }}"></i>
         @endif
     </button>
-@endif
+@endif 

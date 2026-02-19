@@ -1,43 +1,74 @@
 <x-guest-layout>
-    <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-800 via-green-700 to-green-600 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-emerald-700 to-emerald-800 py-12 px-4 sm:px-6 lg:px-8">
         
         <!-- Logo -->
-        @include('auth._partials.auth-logo')
-        
-        <div class="max-w-md w-full space-y-6 bg-white rounded-2xl shadow-2xl p-8">
+        <div>
+            @include('auth._partials.auth-logo')
+        </div>
+
+        <div class="max-w-md w-full space-y-6 bg-white rounded-2xl shadow-xl p-8">
             <!-- Header -->
-            <div class="text-center">
-                <h2 class="text-2xl font-bold text-gray-900">{{ __("Confirm your password") }}</h2>
-                <p class="mt-3 text-sm text-gray-600">
-                    {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
+            <div class="text-center space-y-2">
+                <h2 class="text-2xl font-semibold text-slate-800">{{ __('Confirmar senha') }}</h2>
+                <p class="text-sm text-slate-500 leading-relaxed">
+                    {{ __('Esta é uma área segura. Por favor, confirme sua senha antes de continuar.') }}
                 </p>
             </div>
 
-            <form method="POST" action="{{ route('password.confirm') }}" class="mt-6 space-y-6">
+            <form method="POST" action="{{ route('password.confirm') }}" class="mt-6 space-y-5">
                 @csrf
 
-                <!-- Password -->
-                <div>
-                    <x-form.label for="password" :value="__('Password')" />
-                    <x-form.input name="password" type="password" required autocomplete="current-password" placeholder="Digite sua senha atual" />
-                    <x-form.error for="password"/>
+                <!-- Password com toggle (igual ao login) -->
+                <div x-data="{ show: false }">
+                    <x-form.label for="password" :value="__('Sua senha')" class="text-sm font-medium text-slate-700" />
+                    <div class="flex items-center gap-2 bg-slate-200 rounded-lg pr-3">
+                        <x-form.input 
+                            name="password" 
+                            x-bind:type="show ? 'text' : 'password'" 
+                            required 
+                            autocomplete="current-password" 
+                            placeholder="********"
+                        />
+                        <button type="button" x-on:click="show = !show" class="text-slate-400 hover:text-emerald-600 transition-colors">
+                            <i x-show="!show" class="fas fa-eye text-sm"></i>
+                            <i x-show="show" class="fas fa-eye-slash text-sm"></i>
+                        </button>
+                    </div>
+                    <x-form.error for="password" class="mt-1 text-sm" />
                 </div>
 
                 <!-- Submit Button -->
                 <div class="pt-4">
-                    <x-button.btn-submit value="{{ __('Confirm') }}" />
+                    <x-button 
+                        type="submit" 
+                        text="{{ __('Confirmar senha') }}" 
+                        fullWidth="true" 
+                        size="sm"
+                        variant="green_solid"
+                        icon="fas fa-shield-alt"
+                        preventSubmit="true"
+                    />
                 </div>
 
-                <!-- Help Text -->
+                <!-- Link para voltar (opcional) -->
                 <div class="text-center">
-                    <p class="text-xs text-gray-500">
-                        {{ __("For your security, please confirm your password to continue.") }}
-                    </p>
+                    <a href="{{ route('dashboard') }}" class="text-xs text-emerald-600 hover:text-emerald-700 font-medium transition-colors inline-flex items-center gap-1 group">
+                        <i class="fas fa-arrow-left text-xs group-hover:-translate-x-1 transition-transform"></i>
+                        {{ __('Voltar para o dashboard') }}
+                    </a>
+                </div>
+
+                <!-- Security Badge (igual ao login) -->
+                <div class="flex items-center justify-center gap-2 text-xs text-slate-400 pt-2">
+                    <i class="fas fa-lock text-emerald-500/70 text-xs"></i>
+                    <span class="font-light">{{ __('Área segura - Confirmação necessária') }}</span>
                 </div>
             </form>
         </div>
 
         <!-- Footer -->
-        @include('auth._partials.footer-card')
+        <div>
+            @include('auth._partials.footer-card')
+        </div>
     </div>
 </x-guest-layout>

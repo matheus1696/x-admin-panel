@@ -1,19 +1,21 @@
 <x-guest-layout>
-    <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-800 via-green-700 to-green-600 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-emerald-600 to-emerald-800 py-12 px-4 sm:px-6 lg:px-8">
         
         <!-- Logo -->
-        @include('auth._partials.auth-logo')
-        
-        <div class="max-w-md w-full space-y-6 bg-white rounded-2xl shadow-2xl p-8">
+        <div>
+            @include('auth._partials.auth-logo')
+        </div>
+
+        <div class="max-w-md w-full space-y-6 bg-white rounded-2xl shadow-xl p-8">
             <!-- Header -->
-            <div class="text-center">
-                <h2 class="text-2xl font-bold text-gray-900">{{ __("Reset your password") }}</h2>
-                <p class="mt-3 text-sm text-gray-600">
-                    {{ __("Create a new password for your account.") }}
+            <div class="text-center space-y-2">
+                <h2 class="text-2xl font-semibold text-slate-800">{{ __('Criar nova senha') }}</h2>
+                <p class="text-sm text-slate-500 leading-relaxed">
+                    {{ __('Crie uma nova senha para sua conta.') }}
                 </p>
             </div>
 
-            <form method="POST" action="{{ route('password.store') }}" class="mt-6 space-y-6">
+            <form method="POST" action="{{ route('password.store') }}" class="mt-6 space-y-5">
                 @csrf
 
                 <!-- Password Reset Token -->
@@ -21,58 +23,96 @@
 
                 <!-- Email Address -->
                 <div>
-                    <x-form.label for="email" :value="__('Email')" />
-                    <x-form.input name="email" type="email" :value="old('email', $request->email)" required autofocus autocomplete="email" placeholder="Seu endereço de email" 
+                    <x-form.label for="email" :value="__('E-mail')" class="text-sm font-medium text-slate-700" />
+                    <x-form.input 
+                        name="email" 
+                        type="email" 
+                        :value="old('email', $request->email)" 
+                        required 
+                        autofocus 
+                        autocomplete="email" 
+                        placeholder="seu@email.com"
+                        class="bg-slate-50"
+                        readonly
                     />
-                    <x-form.error for="email" />
+                    <x-form.error for="email" class="mt-1 text-sm" />
                 </div>
 
-                <!-- Password -->
-                <div>
-                    <x-form.label for="password" :value="__('New Password')" />
-                    <x-form.input 
-                        name="password" 
-                        type="password" 
-                        required 
-                        autocomplete="new-password" 
-                        placeholder="Digite sua nova senha" 
-                    />
-                    <x-form.error for="password" />
+                <!-- New Password -->
+                <div x-data="{ show: false }">
+                    <x-form.label for="password" :value="__('Nova senha')" class="text-sm font-medium text-slate-700" />
+                    <div class="flex items-center gap-2 bg-slate-200 rounded-lg pr-3">
+                        <x-form.input 
+                            name="password" 
+                            x-bind:type="show ? 'text' : 'password'" 
+                            required 
+                            autocomplete="new-password" 
+                            placeholder="********"
+                        />
+                        <button type="button" x-on:click="show = !show" class="text-slate-400 hover:text-emerald-600 transition-colors">
+                            <i x-show="!show" class="fas fa-eye text-sm"></i>
+                            <i x-show="show" class="fas fa-eye-slash text-sm"></i>
+                        </button>
+                    </div>
+                    <x-form.error for="password" class="mt-1 text-sm" />
                     
                     <!-- Password Strength Hint -->
-                    <p class="mt-1 text-xs text-gray-500">
-                        {{ __("Use 8+ characters with a mix of letters, numbers & symbols.") }}
+                    <p class="mt-2 text-xs text-slate-500 flex items-center gap-1">
+                        <i class="fas fa-info-circle text-emerald-500"></i>
+                        {{ __("Mínimo 8 caracteres com letras, números e símbolos.") }}
                     </p>
                 </div>
 
-                <!-- Confirm Password -->
-                <div>
-                    <x-form.label for="password_confirmation" :value="__('Confirm New Password')" />
-                    <x-form.input 
-                        name="password_confirmation" 
-                        type="password" 
-                        required 
-                        autocomplete="new-password" 
-                        placeholder="Confirme sua nova senha" 
-                    />
-                    <x-form.error for="password_confirmation" />
+                <!-- Confirm New Password -->
+                <div x-data="{ show: false }">
+                    <x-form.label for="password_confirmation" :value="__('Confirmar nova senha')" class="text-sm font-medium text-slate-700" />
+                    <div class="flex items-center gap-2 bg-slate-200 rounded-lg pr-3">
+                        <x-form.input 
+                            name="password_confirmation" 
+                            x-bind:type="show ? 'text' : 'password'" 
+                            required 
+                            autocomplete="new-password" 
+                            placeholder="********"
+                        />
+                        <button type="button" x-on:click="show = !show" class="text-slate-400 hover:text-emerald-600 transition-colors">
+                            <i x-show="!show" class="fas fa-eye text-sm"></i>
+                            <i x-show="show" class="fas fa-eye-slash text-sm"></i>
+                        </button>
+                    </div>
+                    <x-form.error for="password_confirmation" class="mt-1 text-sm" />
                 </div>
 
                 <!-- Submit Button -->
                 <div class="pt-4">
-                    <x-button.btn-submit value="{{ __('Reset Password') }}" />
+                    <x-button 
+                        type="submit" 
+                        text="{{ __('Redefinir senha') }}" 
+                        fullWidth="true" 
+                        size="sm"
+                        variant="green_solid"
+                        icon="fas fa-key"
+                    />
                 </div>
 
                 <!-- Back to Login -->
                 <div class="text-center">
-                    <a href="{{ route('login') }}" class="text-sm text-green-600 hover:text-green-500 font-medium">
-                        {{ __('Back to login') }}
+                    <a href="{{ route('login') }}" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium transition-colors inline-flex items-center gap-1 group">
+                        <i class="fas fa-arrow-left text-xs group-hover:-translate-x-1 transition-transform"></i>
+                        {{ __('Voltar ao login') }}
                     </a>
+                </div>
+
+                <!-- Security Hint -->
+                <div class="flex items-center justify-center gap-2 text-xs text-slate-400 pt-2">
+                    <i class="fas fa-shield-alt text-emerald-500/70 text-xs"></i>
+                    <span class="font-light">{{ __('Escolha uma senha forte e única') }}</span>
                 </div>
             </form>
         </div>
 
         <!-- Footer -->
-        @include('auth._partials.footer-card')
+        <div>
+            @include('auth._partials.footer-card')
+        </div>
     </div>
 </x-guest-layout>

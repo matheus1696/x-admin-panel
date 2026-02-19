@@ -7,7 +7,7 @@
     'icon' => null,
     'iconPosition' => 'left', // left, right
     'borderColor' => 'green', // green, blue, purple, red, yellow, gray, sky, indigo
-    'rounded' => 'sm', // none, sm, md, lg, xl, 2xl, full
+    'rounded' => 'lg', // none, sm, md, lg, xl, 2xl, full
     'shadow' => true,
     'loading' => false,
 ])
@@ -16,8 +16,8 @@
     // Sistema de tamanhos
     $sizeConfig = [
         'xs' => [
-            'input' => 'text-xs px-3 py-1.5',
-            'icon' => 'text-xs',
+            'input' => 'text-[13px] px-3 py-1',
+            'icon' => 'text-[13px]',
             'iconPadding' => 'pl-8',
             'iconRightPadding' => 'pr-8',
         ],
@@ -64,11 +64,11 @@
     // Sistema de cores
     $colorConfig = [
         'green' => [
-            'base' => 'border-gray-300 focus:border-green-700 focus:ring-green-700/30',
+            'base' => 'border-gray-300 focus:border-emerald-700 focus:ring-emerald-700/30',
             'error' => 'border-red-400 focus:border-red-500 focus:ring-red-500/30',
-            'filled' => 'bg-green-50 border-green-200 focus:bg-white',
-            'text' => 'text-green-700',
-            'icon' => 'text-green-600',
+            'filled' => 'bg-emerald-50 border-emerald-200 focus:bg-white',
+            'text' => 'text-emerald-700',
+            'icon' => 'text-emerald-600',
         ],
         'blue' => [
             'base' => 'border-gray-300 focus:border-blue-500 focus:ring-blue-500/30',
