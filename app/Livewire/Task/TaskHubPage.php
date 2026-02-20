@@ -13,6 +13,7 @@ class TaskHubPage extends Component
 {
     use Modal, WithFlashMessage;
 
+    public string $taskHubId;
     public string $title = '';
     public string $acronym = '';
     public ?string $description = null;

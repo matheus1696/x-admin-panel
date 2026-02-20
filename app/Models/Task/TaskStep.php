@@ -73,5 +73,14 @@ class TaskStep extends Model
                 'code' => $step->task->taskHub->acronym . str_pad($step->id, 5, '0', STR_PAD_LEFT),
             ]);
         });
+
+        static::created(function ($step) {
+            // Conta quantas tarefas existem neste taskHub (incluindo a atual)
+            $taskStepCount = $step->task->taskSteps()->count();
+            
+            $step->update([
+                'code' => $step->task->taskHub->acronym . str_pad($taskStepCount, 5, '0', STR_PAD_LEFT),
+            ]);
+        });
     }
 }

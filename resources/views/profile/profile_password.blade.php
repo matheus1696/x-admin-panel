@@ -48,7 +48,7 @@
 
                 <!-- Actions -->
                 <div class="flex items-center justify-end mt-6">
-                    <x-button.btn-submit value="Alterar Senha"/>
+                    <x-button type="submit" text="Alterar Senha" fullWidth="true"/>
                 </div>
             </form>
         </x-page.card>

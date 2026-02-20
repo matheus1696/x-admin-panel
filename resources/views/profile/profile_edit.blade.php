@@ -76,7 +76,7 @@
 
                 <!-- Actions -->
                 <div class="flex items-center justify-end mt-6">
-                    <x-button.btn-submit value="Salvar Alterações"/>
+                    <x-button type="submit" text="Salvar Alterações" fullWidth="true"/>
                 </div>
             </form>
         </x-page.card>

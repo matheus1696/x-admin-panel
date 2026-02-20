@@ -154,7 +154,7 @@
     $currentVariant = $variantConfig[$variant] ?? $variantConfig['default'];
     
     // Classes base
-    $baseClasses = 'w-full focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-600 disabled:text-gray-800';
+    $baseClasses = 'w-full focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:text-gray-900';
     
     // Classes dinâmicas
     $sizeClass = $currentSize['input'];

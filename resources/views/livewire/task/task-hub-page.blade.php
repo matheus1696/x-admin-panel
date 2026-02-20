@@ -85,7 +85,7 @@
                             name="acronym"
                             wire:model.defer="acronym"
                             placeholder="EX: PROJ"
-                            maxlength="10"
+                            maxlength="5"
                             required
                         />
                         <x-form.error for="acronym" />

@@ -24,6 +24,7 @@ return new class extends Migration
             $table->foreignId('task_category_id')->nullable()->constrained('task_step_categories');
             $table->foreignId('task_priority_id')->nullable()->constrained('task_priorities');
             $table->foreignId('task_status_id')->nullable()->constrained('task_step_statuses');
+            $table->foreignId('created_user_id')->nullable()->constrained('users');
 
             $table->timestamp('started_at')->nullable(); //Quando Iniciou a etapa
             $table->timestamp('finished_at')->nullable(); //Quando Finalizou a etapa
