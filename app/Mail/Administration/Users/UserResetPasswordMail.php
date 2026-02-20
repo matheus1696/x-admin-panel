@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail\Admin\Manage;
+namespace App\Mail\Administration\Users;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class UserCreateMail extends Mailable
+class UserResetPasswordMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -32,17 +32,17 @@ class UserCreateMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Bem-vindo ao Sistema - Seu usuário foi criado!',
+            subject: 'Sua senha foi redefinida',
         );
     }
 
     /**
-     * Define o conteúdo do e-mail (markdown).
+     * Define o conteúdo do e-mail (view).
      */
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.admin.manage.users.user_created',
+            markdown: 'emails.administration.users.user_reset_password',
             with: [
                 'user' => $this->user,
                 'password' => $this->password,

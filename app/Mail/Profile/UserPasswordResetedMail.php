@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class UserPasswordResetedMail extends Mailable
+class UserPasswordResetedMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -36,12 +36,12 @@ class UserPasswordResetedMail extends Mailable
     }
 
     /**
-     * Define o conteúdo do e-mail (markdown).
+     * Define o conteúdo do e-mail (view).
      */
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.profile.user_password_reseted',
+            view: 'emails.profile.user_password_reseted',
             with: [
                 'user' => $this->user,
             ]

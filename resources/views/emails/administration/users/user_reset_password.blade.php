@@ -26,7 +26,50 @@
                         <td style="padding:32px 40px;">
                             <p style="font-size:15px; color:#374151; margin:0 0 16px;">
                                 Olá <strong>{{ $user->name }}</strong>,
-                            </p>
+                            </p><x-email.layout
+    title="Senha redefinida - {{ config('app.name') }}"
+    header="Senha redefinida com sucesso!"
+>
+
+<p style="font-size:15px;color:#374151;margin:0 0 16px;">
+Olá <strong>{{ $user->name }}</strong>,
+</p>
+
+<p style="font-size:14px;color:#4b5563;line-height:1.6;margin:0 0 20px;">
+Sua senha foi redefinida por um administrador do sistema
+<strong>{{ config('app.name') }}</strong>.
+Abaixo estão suas novas credenciais de acesso:
+</p>
+
+{{-- Credenciais --}}
+<table width="100%" cellpadding="0" cellspacing="0"
+style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:16px;">
+<tr>
+<td style="font-size:14px;color:#1f2937;padding:4px 0;">
+<strong>Email:</strong> {{ $user->email }}
+</td>
+</tr>
+<tr>
+<td style="font-size:14px;color:#1f2937;padding:4px 0;">
+<strong>Nova senha:</strong> {{ $password }}
+</td>
+</tr>
+</table>
+
+{{-- Botão --}}
+<div style="text-align:center;margin:30px 0;">
+<a href="{{ url('/') }}"
+style="background:#167038;color:#ffffff;text-decoration:none;font-size:14px;font-weight:600;padding:14px 28px;border-radius:8px;display:inline-block;"
+role="button">
+Fazer Login
+</a>
+</div>
+
+<p style="font-size:13px;color:#6b7280;line-height:1.5;">
+Por segurança, recomendamos alterar sua senha após o primeiro login.
+</p>
+
+</x-email.layout>
 
                             <p style="font-size:14px; color:#4b5563; line-height:1.6; margin:0 0 20px;">
                                 Sua senha foi redefinida por um administrador do sistema <strong>{{ config('app.name') }}</strong>.
