@@ -24,7 +24,7 @@
         <meta name="twitter:url" content="{{ url()->current() }}">
         <meta name="twitter:title" content="@yield('title', config('app.name', 'Laravel'))">
         <meta name="twitter:description" content="@yield('meta_description', config('app.description', 'Descrição padrão do seu site'))">
-        <meta name="twitter:image" content="@yield('meta_image', asset('assets/img/twitter-image.jpg'))">
+        <meta name="twitter:image" content="@yield('meta_image', asset('asset/img/favicon_infosaude.png'))">
         
         <!-- Canonical URL -->
         <link rel="canonical" href="{{ url()->current() }}">
@@ -32,11 +32,10 @@
         <title>@yield('title', config('app.name', 'Laravel'))</title>
 
         <!-- Favicon -->
-        <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/favicon.ico') }}">
-        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/img/apple-touch-icon.png') }}">
-        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/img/favicon-32x32.png') }}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/img/favicon-16x16.png') }}">
-        <link rel="manifest" href="{{ asset('assets/img/site.webmanifest') }}">
+        <link rel="icon" type="image/x-icon" href="{{ asset('asset/img/favicon_infosaude.ico') }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('asset/img/favicon_infosaude.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('asset/img/favicon_infosaude.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('asset/img/favicon_infosaude.png') }}">
 
         <!-- Preconnect e DNS Prefetch -->
         <link rel="preconnect" href="https://fonts.googleapis.com">

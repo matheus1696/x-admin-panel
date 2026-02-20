@@ -50,21 +50,6 @@
                     <x-form.error for="password" class="mt-1 text-sm" />
                 </div>
 
-                <!-- Remember Me -->
-                <div class="flex items-center">
-                    <label for="remember_me" class="inline-flex items-center gap-2 cursor-pointer group">
-                        <input 
-                            id="remember_me" 
-                            type="checkbox" 
-                            class="rounded border-slate-300 text-emerald-600 shadow-sm focus:ring-emerald-500/20 transition-colors"
-                            name="remember"
-                        >
-                        <span class="text-sm text-slate-600 group-hover:text-slate-800 transition-colors">
-                            {{ __('Manter-me conectado') }}
-                        </span>
-                    </label>
-                </div>
-
                 <!-- Submit Button (seu component) -->
                 <div class="pt-2">
                     <x-button 
