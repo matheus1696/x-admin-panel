@@ -1,5 +1,5 @@
 @props([
-    'icon' => 'fa-solid fa-circle-question',
+    'icon' => 'fas fa-circle-question',
     'title' => 'Título',
     'active' => false,
     'href' => '#',
@@ -8,25 +8,29 @@
 <div class="relative mx-2">
     <a
         href="{{ $href }}"
-        class="w-full flex items-center justify-between px-4 py-2 rounded-xl text-xs font-semibold
-            transition-all duration-200 ease-out
-            {{ $active
-                ? 'bg-green-700 text-white shadow-md'
-                : 'text-gray-700 hover:bg-green-50 hover:text-green-700 hover:translate-x-1'
-            }}"
+        class="w-full flex items-center justify-between px-4 py-2 rounded-lg text-xs font-medium
+               transition-all duration-200 ease-out group
+               {{ $active
+                   ? 'bg-gradient-to-r from-emerald-700 to-emerald-800 text-white shadow-md'
+                   : 'text-gray-600 hover:bg-emerald-50 hover:text-emerald-800 hover:translate-x-1'
+               }}"
+        {{ $attributes }}
     >
-        <div class="flex items-center gap-2">
-            <i class="{{ $icon }} w-5 text-center text-sm {{ $active ? 'text-white' : 'text-green-700' }}"></i>
+        <div class="flex items-center gap-3">
+            <i class="{{ $icon }} text-sm w-5 text-center {{ $active ? 'text-white' : 'text-emerald-700' }}"></i>
 
-            <span :class="sidebarExpanded ? 'md:opacity-100' : 'md:opacity-0'" class="transition-all duration-200 whitespace-nowrap">
+            <span x-show="sidebarExpanded || openAside" 
+                  x-transition:enter="transition ease-out duration-300"
+                  x-transition:enter-start="opacity-0 -translate-x-2"
+                  x-transition:enter-end="opacity-100 translate-x-0"
+                  class="whitespace-nowrap font-medium">
                 {{ $title }}
             </span>
         </div>
 
         @if($active)
-            <span
-                :class="sidebarExpanded ? 'opacity-100 ml-auto w-2 h-2 bg-white rounded-full animate-pulse' : 'hidden opacity-0'"
-            ></span>
+            <span x-show="sidebarExpanded"
+                  class="w-1.5 h-1.5 bg-white rounded-full animate-pulse shadow-lg"></span>
         @endif
     </a>
 </div>

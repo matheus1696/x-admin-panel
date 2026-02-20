@@ -13,7 +13,7 @@
     
     'disabled' => false,
     'variant' => 'default',
-    'size' => 'xs', // xs, sm, md, lg
+    'size' => 'sm', // xs, sm, md, lg
     'withIcon' => false,
     'icon' => null,
     'borderColor' => 'green', // green, blue, purple, red, etc
@@ -47,9 +47,9 @@
     // Configurações de tamanho
     $sizeConfig = [
         'xs' => [
-            'trigger' => 'text-xs py-1.5 px-3',
-            'option' => 'text-xs py-1.5 px-3',
-            'search' => 'text-xs py-1.5 px-8',
+            'trigger' => 'text-[13px] py-1 px-3',
+            'option' => 'text-[13px] py-1 px-3',
+            'search' => 'text-[13px] py-1 px-8',
             'iconSize' => 'text-[9px]',
             'chevronSize' => 'text-[8px]',
         ],
@@ -100,14 +100,15 @@
     // Cores das bordas
     $borderColors = [
         'green' => [
-            'base' => 'border-gray-200 focus:border-green-500 focus:ring-green-500/30',
-            'error' => 'border-red-400 focus:border-red-500 focus:ring-red-500/30',
-            'selected' => 'bg-green-50 border-green-200',
-            'hover' => 'hover:bg-green-50 hover:border-green-300',
-            'highlight' => 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-300',
-            'text' => 'text-green-700',
-            'icon' => 'text-green-600',
-            'pill' => 'bg-green-100 text-green-800 border-green-300',
+            'base' => 'border-gray-200 focus:border-emerald-700 focus:ring-emerald-700/30',
+            'error' => 'border-red-400 focus:border-red-700 focus:ring-red-700/30',
+            'selected' => 'bg-emerald-50 border-emerald-200',
+            'hover' => 'hover:bg-emerald-50 hover:border-emerald-300',
+            'highlight' => 'bg-gradient-to-r from-emerald-50 to-emerald-50 border-emerald-300',
+            'text' => 'text-emerald-700',
+            'icon' => 'text-emerald-700',
+            'pill' => 'bg-emerald-200 text-emerald-800 border-emerald-300',
+            'search' => 'focus:ring-transparent border-2 border-gray-200 focus:border-emerald-700/80'
         ],
         'blue' => [
             'base' => 'border-gray-200 focus:border-blue-500 focus:ring-blue-500/30',
@@ -465,7 +466,7 @@
                     x-model="search" 
                     type="text" 
                     placeholder="Digite para buscar..."
-                    class="w-full {{ $currentSize['search'] }} text-gray-700 border border-gray-200 rounded-lg bg-white/80 focus:ring-2 focus:ring-{{ $borderColor }}-500/30 focus:border-{{ $borderColor }}-500 outline-none transition-all duration-200"
+                    class="w-full {{ $currentSize['search'] }} {{ $currentColor['search'] }} text-gray-700 border border-gray-200 rounded-lg bg-white/80 outline-none transition-all duration-200"
                     role="searchbox"
                     @keydown.arrow-down.prevent="moveNext()"
                     @keydown.arrow-up.prevent="movePrev()"

@@ -67,9 +67,7 @@
                 <tr>
                     <x-page.table-td :value="$state->title" />
                     <x-page.table-td class="text-center">
-                        <div class="text-xs font-medium rounded-full py-0.5 px-1 {{ $state->is_active ? 'bg-green-300 text-green-700' : 'bg-red-300 text-red-700' }}">
-                            {{ $state->is_active ? 'Ativo' : 'Desativado' }}
-                        </div>
+                        <x-page.table-status :condition="$state->is_active" />
                     </x-page.table-td>
                 </tr>
             @endforeach

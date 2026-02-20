@@ -82,210 +82,240 @@
         <!-- Styles adicionais -->
         @stack('styles')
     </head>
-    <body class="font-sans antialiased" x-data="{ open: false, profile: false, sidebarExpanded: false }">
+    <body class="font-sans antialiased h-full" x-data="{ openAside: false, openProfile: false, sidebarExpanded: false, isMobile: window.innerWidth < 1024 }" x-init=" window.addEventListener('resize', () => isMobile = window.innerWidth < 1024);" :class="{ 'overflow-hidden': openAside || openProfile }">
 
-        <div class="flex">
+        <div class="flex h-screen">
             <!-- Sidebar Desktop -->
-            <aside class="hidden lg:flex flex-col bg-white shadow-xl z-30 transition-all duration-500 ease-in-out overflow-hidden"
-                   :class="sidebarExpanded ? 'w-80' : 'w-20'"
-                   @mouseenter="sidebarExpanded = true"
-                   @mouseleave="sidebarExpanded = false">
+            <aside class="hidden lg:flex flex-col bg-white shadow-xl z-10 transition-all duration-500 ease-in-out overflow-hidden relative" :class="sidebarExpanded ? 'w-80' : 'w-20'" @mouseenter="sidebarExpanded = true" @mouseleave="sidebarExpanded = false">
                 
-                <!-- Logo Compacta -->
-                <div class="h-16 flex items-center justify-center gap-2 border-b border-green-200/50 bg-gradient-to-l from-green-600 via-green-700 to-green-800 uppercase font-semibold text-white">
-                    <x-application-logo class="w-8 h-8"/>
+                <!-- Logo Compacta com efeito melhorado -->
+                <div class="h-16 flex items-center justify-center gap-2 border-b border-emerald-200/50 bg-gradient-to-l from-emerald-700 via-emerald-800 to-emerald-800 uppercase font-semibold text-white relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -translate-x-full animate-shimmer"></div>
+                    <x-application-logo class="w-8 h-8 relative z-10"/>
                     <span 
-                        x-show="sidebarExpanded" 
-                        x-transition:enter="transition ease-out duration-1000"
-                        x-transition:enter-start="opacity-0 -translate-y-2"
-                        x-transition:enter-end="opacity-100 translate-y-0"
-                        x-transition:leave="transition ease-in duration-50"
+                        x-show="sidebarExpanded"
+                        x-transition:enter="transition ease-out duration-[2s]"
+                        x-transition:enter-start="opacity-0 scale-[0]"
+                        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-0"
                         x-transition:leave-start="opacity-100 translate-y-0"
-                        x-transition:leave-end="opacity-0 -translate-y-2"
-                        class="text-lg"
+                        x-transition:leave-end="opacity-0"
+                        class="text-lg relative z-10"
                     >
                         {{ config('app.name') }}
                     </span>
                 </div>
 
-                <!-- Navigation Desktop -->
-                <nav class="flex-1 py-3 space-y-1.5 overflow-hidden pb-2" :class="sidebarExpanded ? 'px-2' : 'px-1'" x-data="{ activeDropdown: null }">
-                    <!-- Dashboard -->
+                <!-- Navigation Desktop com scroll customizado -->
+                <nav class="flex-1 py-3 space-y-1.5 overflow-y-auto pb-2" :class="sidebarExpanded ? 'px-2' : 'px-1'">
                     @include('layouts.navigation')
                 </nav>
 
-                <!-- Footer Desktop -->
-                <div class="p-3 border-t border-green-100/50 bg-white/80 text-center">
-                    <p class="text-[10px] text-gray-500 whitespace-nowrap transition-all duration-300 ease-in-out"
-                       :class="sidebarExpanded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4 overflow-hidden'">
-                        {{ config('app.name') }} v{{ config('app.version', '1.0.0') }}
-                    </p>
+                <!-- Footer Aside -->
+                @include('layouts._partials.footer-aside')
+            </aside>
+
+            <!-- Sidebar Mobile com overlay melhorado -->
+            <template x-teleport="body">
+                <div x-show="openAside" x-cloak>
+                    <!-- Backdrop -->
+                    <div x-show="openAside" 
+                         x-transition:enter="transition ease-out duration-300"
+                         x-transition:enter-start="opacity-0"
+                         x-transition:enter-end="opacity-100"
+                         x-transition:leave="transition ease-in duration-200"
+                         x-transition:leave-start="opacity-100"
+                         x-transition:leave-end="opacity-0"
+                         class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+                         @click="openAside = false">
+                    </div>
                     
+                    <!-- Sidebar -->
+                    <aside x-show="openAside" 
+                           x-transition:enter="transition ease-out duration-300" 
+                           x-transition:enter-start="-translate-x-full opacity-0"
+                           x-transition:enter-end="translate-x-0 opacity-100"
+                           x-transition:leave="transition ease-in duration-200"
+                           x-transition:leave-start="translate-x-0 opacity-100"
+                           x-transition:leave-end="-translate-x-full opacity-0" 
+                           class="fixed inset-y-0 left-0 w-80 bg-gradient-to-b from-emerald-50 to-white z-50 shadow-2xl overflow-y-auto border-r border-emerald-200/50">
+                        
+                        <!-- Topo com animação -->
+                        <div class="h-16 flex items-center justify-between px-6 bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-800 border-b border-emerald-700/30">
+                            <div class="flex-1 flex items-center gap-2 uppercase font-semibold text-white">
+                                <x-application-logo class="w-8 h-8"/>
+                                <span class="text-lg">{{ config('app.name') }}</span>
+                            </div>
+
+                            <div @click="openAside = false">
+                                @include('layouts._partials.button-closed-aside')
+                            </div>
+                        </div>
+
+                        <!-- Navigation Mobile -->
+                        <nav class="py-1.5 px-2 space-y-1.5 overflow-y-auto pb-20">
+                            @include('layouts.navigation')
+                        </nav>
+
+                        <!-- Footer Aside -->
+                        @include('layouts._partials.footer-aside')      
+                    </aside>
                 </div>
-            </aside>
-
-            <!-- Sidebar Mobile -->
-            <aside x-show="open" x-cloak 
-                x-transition:enter="transition ease-out duration-300" 
-                x-transition:enter-start="-translate-x-full opacity-0"
-                x-transition:enter-end="translate-x-0 opacity-100"
-                x-transition:leave="transition ease-in duration-200"
-                x-transition:leave-start="translate-x-0 opacity-100"
-                x-transition:leave-end="-translate-x-full opacity-0" 
-                class="fixed inset-y-0 left-0 w-80 bg-gradient-to-b from-green-50 to-white z-50 shadow-2xl overflow-y-auto border-r border-green-200/50 lg:hidden">
-
-                <!-- Topo -->
-                <div class="h-16 flex items-center justify-between px-6 bg-gradient-to-r from-green-600 via-green-700 to-green-800 border-b border-green-600/30">
-                    <div class="flex-1 flex items-center gap-2 uppercase font-semibold text-white">
-                        <x-application-logo class="w-8 h-8"/>
-                        <span class="text-lg">{{ config('app.name') }}</span>
-                    </div>
-
-                    <button @click="open = false" class="rounded-lg p-2.5 transition-all duration-200 hover:scale-110 active:scale-95">
-                        <i class="fa-solid fa-xmark text-white text-lg"></i>
-                    </button>
-                </div>
-
-                <!-- Navigation Mobile -->
-                <nav class="py-1.5 px-2 space-y-1.5 overflow-hidden pb-2" x-data="{ activeDropdown: null }">
-                    @include('layouts.navigation')
-                </nav>
-
-                <!-- Footer Mobile -->
-                <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-green-100/50 bg-white/80">
-                    <div class="text-center">
-                        <p class="text-xs text-gray-600">
-                            {{ config('app.name') }} {{ config('app.version', '1.0.0') }}
-                        </p>
-                        <p class="text-[10px] text-gray-500 mt-1">
-                            © {{ date('Y') }} Todos os direitos reservados
-                        </p>
-                    </div>
-                </div>
-            </aside>
+            </template>
 
             @auth
-                <!-- Profile Aside -->
-                <aside x-show="profile" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" class="fixed inset-y-0 right-0 w-80 bg-white z-50 shadow-lg overflow-y-auto">
-                    
-                    <div class="max-w-xs mx-auto overflow-hidden">
-                        <!-- Header com avatar -->
-                        <div class="relative bg-gradient-to-r from-green-600 to-green-800 h-16 flex items-center justify-end px-4">
-                            <button @click="profile = !profile" 
-                                    class="p-2 rounded-full transition-all duration-200 hover:scale-110">
-                                <i class="fa-solid fa-times text-white text-lg"></i>
-                            </button>
-                            
-                            <!-- Avatar no centro -->
-                            <div class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 
-                                        size-16 flex justify-center items-center rounded-full 
-                                        bg-gradient-to-br from-green-500 to-green-700 text-white 
-                                        shadow-xl border-2 border-white text-2xl uppercase font-semibold">
-                                {{ Str::substr(Auth::user()->name, 0, 2) }}
-                            </div>
+                <!-- Profile Aside melhorado -->
+                <template x-teleport="body">
+                    <div x-show="openProfile" x-cloak>
+                        <!-- Backdrop -->
+                        <div x-show="openProfile" 
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100"
+                             x-transition:leave="transition ease-in duration-200"
+                             x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0"
+                             class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+                             @click="openProfile = false">
                         </div>
+                        
+                        <!-- Profile Panel -->
+                        <aside x-show="openProfile" 
+                               x-transition:enter="transition ease-out duration-300" 
+                               x-transition:enter-start="translate-x-full opacity-0"
+                               x-transition:enter-end="translate-x-0 opacity-100"
+                               x-transition:leave="transition ease-in duration-200"
+                               x-transition:leave-start="translate-x-0 opacity-100"
+                               x-transition:leave-end="translate-x-full opacity-0" 
+                               class="fixed inset-y-0 right-0 w-80 bg-white z-50 shadow-lg overflow-y-auto">
+                            
+                            <div class="max-w-xs mx-auto overflow-hidden">
+                                <!-- Header com avatar e gradiente -->
+                                <div class="relative bg-gradient-to-r from-emerald-700 to-emerald-800 h-20">
+                                    <div @click="openProfile = false">
+                                        @include('layouts._partials.button-closed-aside')
+                                    </div>
+                                    
+                                    <!-- Avatar com borda animada -->
+                                    <div class="absolute -bottom-10 left-1/2 transform -translate-x-1/2">
+                                        <div class="relative group">
+                                            <div class="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-300 to-emerald-700 animate-pulse blur"></div>
+                                            <div class="relative size-20 flex justify-center items-center rounded-full 
+                                                        bg-gradient-to-br from-emerald-700 to-emerald-800 text-white 
+                                                        shadow-xl border-4 border-white text-3xl uppercase font-semibold
+                                                        group-hover:scale-105 transition-transform duration-300">
+                                                {{ Str::substr(Auth::user()->name, 0, 2) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                        <!-- Informações do usuário -->
-                        <div class="mt-10 pb-6 text-center px-6 space-y-1.5 border-b-2 border-gray-100">
-                            <p class="mb-3 font-bold text-gray-900 text-lg truncate">{{ Auth::user()->name }}</p>
-                            <div class="flex flex-col justify-center items-center gap-2 text-xs text-gray-500">
-                                <div class="flex items-center gap-1">
-                                    <i class="fa-solid fa-user text-green-700"></i>
-                                    <span class="truncate">{{ Auth::user()->name }}</span>
+                                <!-- Informações do usuário com ícones -->
+                                <div class="mt-14 pb-6 text-center px-6 space-y-3 border-b-2 border-gray-100">
+                                    <p class="font-bold text-gray-900 text-lg truncate">{{ Auth::user()->name }}</p>
+                                    <div class="flex flex-col justify-center items-center gap-2 text-xs">
+                                        <div class="flex items-center gap-2 bg-emerald-50 px-3 py-1.5 rounded-full w-full">
+                                            <i class="fa-solid fa-envelope text-emerald-700 w-4"></i>
+                                            <span class="text-gray-600 truncate">{{ Auth::user()->email }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 bg-emerald-50 px-3 py-1.5 rounded-full w-full">
+                                            <i class="fa-solid fa-building text-emerald-700 w-4"></i>
+                                            <span class="text-gray-600 truncate">{{ Auth::user()->Unit->name ?? 'N/A' }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 bg-emerald-50 px-3 py-1.5 rounded-full w-full">
+                                            <i class="fa-solid fa-users text-emerald-700 w-4"></i>
+                                            <span class="text-gray-600 truncate">{{ Auth::user()->Queue->name ?? 'N/A' }}</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="flex items-center gap-1">
-                                    <i class="fa-solid fa-building text-green-700"></i>
-                                    <span class="truncate">{{ Auth::user()->Unit->name ?? 'N/A' }}</span>
-                                </div>
-                                <div class="flex items-center gap-1">
-                                    <i class="fa-solid fa-users text-green-700"></i>
-                                    <span class="truncate">{{ Auth::user()->Queue->name ?? 'N/A' }}</span>
+
+                                <!-- Links de perfil com ícones -->
+                                <div class="space-y-1 px-4 py-4">
+                                    @if (Route::has('profile.edit'))
+                                        <a href="{{ route('profile.edit') }}" 
+                                           class="flex items-center gap-3 w-full py-3 px-4 rounded-xl transition-all duration-200 
+                                                  hover:bg-emerald-50 text-gray-700 hover:text-emerald-700 group">
+                                            <i class="fa-solid fa-user w-5 text-emerald-700 group-hover:scale-110 transition-transform"></i>
+                                            <span class="font-medium">Meus Dados</span>
+                                        </a>
+                                    @endif
+                                    
+                                    @if (Route::has('profile.password.edit'))
+                                        <a href="{{ route('profile.password.edit') }}" 
+                                           class="flex items-center gap-3 w-full py-3 px-4 rounded-xl transition-all duration-200 
+                                                  hover:bg-emerald-50 text-gray-700 hover:text-emerald-700 group">
+                                            <i class="fa-solid fa-lock w-5 text-emerald-700 group-hover:scale-110 transition-transform"></i>
+                                            <span class="font-medium">Alterar Senha</span>
+                                        </a>
+                                    @endif
+                                    
+                                    <!-- Botão de sair -->
+                                    <form method="POST" action="{{ route('logout') }}" class="pt-2 border-t border-gray-100">
+                                        @csrf
+                                        <button type="submit" 
+                                                class="flex items-center gap-3 w-full py-3 px-4 rounded-xl transition-all duration-200
+                                                       hover:bg-red-50 text-gray-700 hover:text-red-700 group">
+                                            <i class="fa-solid fa-right-from-bracket w-5 text-red-500 group-hover:scale-110 transition-transform"></i>
+                                            <span class="font-medium">Sair da conta</span>
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Links de perfil -->
-                        <div class="space-y-2 px-4 py-4">
-                            @if (Route::has('profile.edit'))
-                                <a href="{{ route('profile.edit') }}" 
-                                class="flex items-center gap-3 w-full py-3 px-4 rounded-xl transition-all duration-200 hover:bg-green-100 text-green-700 font-medium hover:translate-x-1">
-                                    <i class="fa-solid fa-user w-5"></i>
-                                    <span>Meus Dados</span>
-                                </a>
-                            @endif
-                            
-                            @if (Route::has('profile.password.edit'))
-                                <a href="{{ route('profile.password.edit') }}" 
-                                class="flex items-center gap-3 w-full py-3 px-4 rounded-xl transition-all duration-200 hover:bg-green-100 text-green-700 font-medium hover:translate-x-1">
-                                    <i class="fa-solid fa-lock w-5"></i>
-                                    <span>Alterar Senha</span>
-                                </a>
-                            @endif
-                            
-                            <!-- Botão de sair -->
-                            <form method="POST" action="{{ route('logout') }}" class="pt-2 border-t border-gray-100">
-                                @csrf
-                                <button type="submit" 
-                                        class="flex items-center gap-3 w-full py-3 px-4 rounded-xl transition-all duration-200
-                                            hover:bg-red-50 hover:text-red-700 text-gray-700 font-semibold
-                                            hover:translate-x-1">
-                                    <i class="fa-solid fa-right-from-bracket text-red-500 w-5"></i>
-                                    <span>Sair</span>
-                                </button>
-                            </form>
-                        </div>
+                        </aside>
                     </div>
-                </aside>
+                </template>
             @endauth
 
-            <div x-show="profile || open" x-cloak x-transition.opacity class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40" @click="profile = false; open = false;"></div>
-
-            <!-- Conteúdo -->
-            <div class="flex-1 flex flex-col min-h-screen">
-                <!-- Header -->
-                <header class="w-full flex items-center justify-between px-4 sm:px-6 lg:px-8 h-16 bg-gradient-to-r from-green-600 via-green-700 to-green-800">
-                    <!-- Left Section: Menu Hamburger + Logo -->
-                    <div class="w-full flex items-center gap-3 sm:gap-4">
-                        <!-- Menu Hamburger (mobile) -->
-                        <button @click="open = true" class="lg:hidden py-2 px-3 rounded-lg transition-all duration-200 hover:bg-green-800">
+            <!-- Conteúdo Principal -->
+            <div class="flex-1 flex flex-col min-h-screen overflow-x-hidden">
+                <!-- Header fixo -->
+                <header class="w-full flex items-center justify-between py-3 px-4 lg:px-8 h-16 bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-800 shadow-lg sticky top-0 z-10">
+                    <!-- Left Section -->
+                    <div>
+                        <!-- Menu Hamburger -->
+                        <button @click="openAside = true" 
+                                class="lg:hidden p-2 rounded-lg transition-all duration-200 hover:bg-emerald-800 active:scale-95">
                             <i class="fa-solid fa-bars text-white text-xl"></i>
                         </button>
-
-                        <!-- Logo Mobile -->
-                        <div class="lg:hidden flex-1 flex items-center justify-center gap-1">
-                            <div class="flex items-center gap-2">
-                                <x-application-logo class="w-8 h-8"/>
-                            </div>
-                        </div>
                     </div>
 
                     @auth
-                        <!-- Right Section: User Actions -->
+                        <!-- Right Section -->
                         <div class="flex items-center gap-2 sm:gap-4">
+                            <!-- Notificações (placeholder) -->
+                            <button class="relative p-2 rounded-lg transition-all duration-200 hover:bg-emerald-800 active:scale-95">
+                                <i class="fa-regular fa-bell text-white text-lg"></i>
+                                <span class="absolute top-1 right-1 size-2 bg-red-500 rounded-full border border-white"></span>
+                            </button>
+                            
                             <!-- User Avatar -->
                             <div class="relative">
-                                <button @click="profile = !profile" 
+                                <button @click="openProfile = !openProfile" 
                                         class="size-10 rounded-full font-semibold uppercase transition-all duration-200
-                                            bg-gradient-to-br from-green-600 to-green-800 text-white shadow-lg
-                                            hover:from-green-700 hover:to-green-900 hover:scale-105 active:scale-95
-                                            border border-white">
+                                               bg-gradient-to-br from-emerald-700 to-emerald-800 text-white shadow-lg
+                                               hover:from-emerald-700 hover:to-emerald-900 hover:scale-105 active:scale-95
+                                               border-2 border-white/50 hover:border-white">
                                     {{ Str::substr(Auth::user()->name, 0, 2) }}
                                 </button>
                                 
-                                <!-- Online Status Indicator -->
-                                <div class="absolute -bottom-0.5 -right-0.5 size-3 bg-green-500 rounded-full border-2 border-white"></div>
+                                <!-- Online Status com tooltip -->
+                                <div class="absolute -bottom-0.5 -right-0.5">
+                                    <div class="size-3 bg-emerald-500 rounded-full border-2 border-white"></div>
+                                    <span class="absolute top-full mt-1 right-0 text-[10px] bg-gray-800 text-white px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap transition-opacity">Online</span>
+                                </div>
                             </div>
                         </div>
                     @endauth
                 </header>
 
-                <!-- Conteúdo Principal -->
-                <div class="flex-1 bg-gray-50" style="min-height: calc(100vh - 4rem);">
-                    <main class="px-4 lg:px-8 lg:py-6 mx-auto w-full">
+                <!-- Conteúdo Principal com padding ajustado -->
+                <main class="flex-1 bg-gray-50 py-4 px-4 lg:px-8">
+                    <div class="mx-auto max-w-7xl">
                         {{ $slot }}
-                    </main>
-                </div>
+                    </div>
+                </main>
 
+                <!-- Alertas -->
                 <x-alert.flash />
             </div>
         </div>

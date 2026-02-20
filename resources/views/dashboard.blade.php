@@ -2,7 +2,7 @@
     <div class="py-8 lg:py-2 space-y-8 mx-auto px-4 lg:px-6">
         
         <!-- Card de Boas-vindas Premium (mantido) -->
-        <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-600 via-green-700 to-green-800 text-white shadow-xl hover:shadow-2xl transition-all duration-500">
+        <div class="group relative overflow-hidden rounded-2xl bg-emerald-800 text-white shadow-xl hover:shadow-2xl transition-all duration-500">
             
             <!-- Efeitos decorativos -->
             <div class="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/10"></div>
@@ -82,15 +82,15 @@
                     <div class="relative px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <div class="w-1 h-6 bg-gradient-to-b from-emerald-500 to-green-500 rounded-full"></div>
+                                <div class="w-1 h-6 bg-gradient-to-b from-emerald-800 to-emerald-800 rounded-full"></div>
                                 <h3 class="text-base font-bold text-gray-900 uppercase tracking-wider">
                                     Ações Rápidas
                                 </h3>
-                                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-medium border border-emerald-200">
+                                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-medium border border-emerald-200">
                                     5 atalhos
                                 </span>
                             </div>
-                            <i class="fas fa-bolt text-emerald-500 text-sm"></i>
+                            <i class="fas fa-bolt text-emerald-800 text-sm"></i>
                         </div>
                     </div>
 
@@ -114,9 +114,9 @@
                                 <div class="w-full p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200/80 hover:border-emerald-300/80 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                                     <div class="flex flex-col items-center text-center">
                                         <div class="w-12 h-12 bg-gradient-to-br from-emerald-50 to-emerald-100/80 rounded-xl flex items-center justify-center mb-3 group-hover/action:scale-110 group-hover/action:-rotate-3 transition-all duration-300">
-                                            <i class="fa-solid fa-user text-emerald-600 text-xl"></i>
+                                            <i class="fa-solid fa-user text-emerald-700 text-xl"></i>
                                         </div>
-                                        <p class="text-sm font-medium text-gray-700 group-hover/action:text-emerald-700 transition-colors">Perfil</p>
+                                        <p class="text-sm font-medium text-gray-700 group-hover/action:text-emerald-800 transition-colors">Perfil</p>
                                     </div>
                                 </div>
                             </a>
@@ -126,9 +126,9 @@
                                 <div class="w-full p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200/80 hover:border-emerald-300/80 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                                     <div class="flex flex-col items-center text-center">
                                         <div class="w-12 h-12 bg-gradient-to-br from-emerald-50 to-emerald-100/80 rounded-xl flex items-center justify-center mb-3 group-hover/action:scale-110 group-hover/action:-rotate-3 transition-all duration-300">
-                                            <i class="fa-solid fa-phone text-emerald-600 text-xl"></i>
+                                            <i class="fa-solid fa-phone text-emerald-700 text-xl"></i>
                                         </div>
-                                        <p class="text-sm font-medium text-gray-700 group-hover/action:text-emerald-700 transition-colors">Lista Telefônica</p>
+                                        <p class="text-sm font-medium text-gray-700 group-hover/action:text-emerald-800 transition-colors">Lista Telefônica</p>
                                     </div>
                                 </div>
                             </a>
@@ -138,9 +138,9 @@
                                 <div class="w-full p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200/80 hover:border-emerald-300/80 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                                     <div class="flex flex-col items-center text-center">
                                         <div class="w-12 h-12 bg-gradient-to-br from-emerald-50 to-emerald-100/80 rounded-xl flex items-center justify-center mb-3 group-hover/action:scale-110 group-hover/action:-rotate-3 transition-all duration-300">
-                                            <i class="fa-solid fa-sitemap text-emerald-600 text-xl"></i>
+                                            <i class="fa-solid fa-sitemap text-emerald-700 text-xl"></i>
                                         </div>
-                                        <p class="text-sm font-medium text-gray-700 group-hover/action:text-emerald-700 transition-colors">Organograma</p>
+                                        <p class="text-sm font-medium text-gray-700 group-hover/action:text-emerald-800 transition-colors">Organograma</p>
                                     </div>
                                 </div>
                             </a>
@@ -204,13 +204,13 @@
                     <div class="relative px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <div class="w-1 h-6 bg-gradient-to-b from-emerald-500 to-green-500 rounded-full"></div>
+                                <div class="w-1 h-6 bg-gradient-to-b from-emerald-800 to-emerald-800 rounded-full"></div>
                                 <h3 class="text-base font-bold text-gray-900 uppercase tracking-wider">
                                     Notificações
                                 </h3>
                             </div>
                             <div class="relative">
-                                <i class="fas fa-bell text-emerald-500 text-sm"></i>
+                                <i class="fas fa-bell text-emerald-800 text-sm"></i>
                                 @if(Auth::user()->password_default)
                                     <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
                                     <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
@@ -270,7 +270,7 @@
                     
                     <!-- Footer -->
                     <div class="px-6 py-3 border-t border-gray-200/80 bg-gradient-to-r from-gray-50/50 to-white/50">
-                        <x-button href="#" variant="gray_text" class="w-full !text-gray-500 hover:!text-emerald-600 !text-xs flex items-center justify-center gap-1">
+                        <x-button href="#" variant="gray_text" class="w-full !text-gray-500 hover:!text-emerald-700 !text-xs flex items-center justify-center gap-1">
                             <i class="fas fa-history text-[10px]"></i>
                             Ver histórico de notificações
                             <i class="fas fa-chevron-right text-[8px]"></i>
@@ -282,7 +282,7 @@
                 <div class="bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl shadow-lg overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
                         <div class="flex items-center gap-3">
-                            <div class="w-1 h-5 bg-gradient-to-b from-emerald-500 to-green-500 rounded-full"></div>
+                            <div class="w-1 h-5 bg-gradient-to-b from-emerald-800 to-emerald-800 rounded-full"></div>
                             <h4 class="text-sm font-semibold text-gray-700">Sistema</h4>
                         </div>
                     </div>
@@ -298,7 +298,7 @@
                         </div>
                         <div class="flex justify-between items-center py-1.5">
                             <span class="text-gray-500">Ambiente:</span>
-                            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-[8px] font-medium">
+                            <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-[8px] font-medium">
                                 @if (config('app.debug'))
                                     Desenvolvimento
                                 @else

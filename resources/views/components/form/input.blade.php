@@ -16,8 +16,8 @@
     // Sistema de tamanhos
     $sizeConfig = [
         'xs' => [
-            'input' => 'text-[13px] px-3 py-1',
-            'icon' => 'text-[13px]',
+            'input' => 'text-[12px] px-3 py-1',
+            'icon' => 'text-[12px]',
             'iconPadding' => 'pl-8',
             'iconRightPadding' => 'pr-8',
         ],

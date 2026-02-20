@@ -1,9 +1,8 @@
 <div>
-
     {{-- Título --}}
     <x-page.header title="Contatos Internos" subtitle="Contatos da Secretaria de Saúde de Caruaru" icon="fa-solid fa-address-book">
         <x-slot name="button">
-            <div class="w-52 md:w-96 flex items-center rounded-lg shadow bg-green-700 border border-green-700">
+            <div class="w-80 flex items-center rounded-lg shadow bg-emerald-700 border border-emerald-700">
                 <div class="px-3"> <i class="fa-solid fa-magnifying-glass text-white text-xs"></i> </div>
                 <x-form.input wire:model.live.debounce.500ms="searchEstablishment" placeholder="Pesquise pela unidade, setor ou contato"/>
             </div>
@@ -11,15 +10,15 @@
     </x-page.header>
 
     {{-- Grid de Unidades --}}
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-6">
+    <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
 
         @foreach ($viewDepartments as $viewDepartment)
             @if ($viewDepartment->contact != null)
-                <div class="group relative overflow-hidden rounded-2xl border border-green-500/20 bg-gradient-to-br from-green-700 via-green-800 to-green-900 shadow-md hover:shadow-xl transition-all duration-300">
+                <div class="group relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-700 via-emerald-800 to-emerald-900 shadow-md hover:shadow-xl transition-all duration-300">
 
                     {{-- Glow --}}
                     <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition">
-                        <div class="absolute -inset-1 bg-gradient-to-r from-green-400/20 to-green-400/20 blur-xl"></div>
+                        <div class="absolute -inset-1 bg-gradient-to-r from-emerald-400/20 to-emerald-400/20 blur-xl"></div>
                     </div>
 
                     {{-- Conteúdo --}}
@@ -31,16 +30,16 @@
                                 {{ $viewDepartment->establishment->title }} 
                             </h2>
 
-                            <p class="mt-1 text-xs text-green-100 line-clamp-1 truncate">
+                            <p class="mt-1 text-xs text-emerald-100 line-clamp-1 truncate">
                                 {{ $viewDepartment->establishment->address }},
                                 {{ $viewDepartment->establishment->number }} – {{ $viewDepartment->establishment->district }}
                             </p>
 
-                            <p class="mt-1 text-xs text-green-100 line-clamp-1 truncate">                            
+                            <p class="mt-1 text-xs text-emerald-100 line-clamp-1 truncate">                            
                                 @if ($viewDepartment->establishment->mainDepartment)
                                     {{ $viewDepartment->establishment->mainDepartment?->contact }}
                                 @else
-                                    <span class="text-xs italic text-green-100">
+                                    <span class="text-xs italic text-emerald-100">
                                         Contato principal não informado
                                     </span>
                                 @endif                            
@@ -61,7 +60,7 @@
 
                         {{-- Ação --}}
                         <div class="mt-4">
-                            <button wire:click="openDepartments({{ $viewDepartment->establishment->id }})" class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 hover:bg-green-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200">
+                            <button wire:click="openDepartments({{ $viewDepartment->establishment->id }})" class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 hover:bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200">
                                 <i class="fa-solid fa-layer-group text-xs"></i> Ver setores
                             </button>
                         </div>
@@ -121,5 +120,4 @@
             </div>
         @endif
     </x-modal>
-
 </div>

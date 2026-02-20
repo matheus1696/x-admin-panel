@@ -78,7 +78,9 @@
                 <tr>
                     <x-page.table-td :value="$establishment->code" />
                     <x-page.table-td class="truncate" :value="$establishment->title" title="{{ $establishment->title }}"/>
-                    <x-page.table-status :condition="$establishment->is_active" />
+                    <x-page.table-td>
+                        <x-page.table-status :condition="$establishment->is_active" />
+                    </x-page.table-td>
                     <x-page.table-td>
                         <div class="flex items-center justify-center gap-2">
                                 <x-button.btn-table title="Detalhe do Estabelecimento">

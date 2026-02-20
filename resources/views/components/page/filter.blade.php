@@ -16,7 +16,7 @@
     <!-- Filtros Avançados -->
     @if($showAdvanced && $showBasic)
         <div x-show="openAccordion" x-collapse x-transition>
-            <div class="rounded-xl border border-dashed border-gray-300 bg-green-50 p-4" :class="{ 'mt-4': openAccordion }">
+            <div class="rounded-xl border border-dashed border-gray-300 bg-emerald-50 p-4" :class="{ 'mt-4': openAccordion }">
                 <div class="grid grid-cols-2 md:grid-cols-12 gap-4">
                     {{ $showBasic }}
                     {{ $showAdvanced }}

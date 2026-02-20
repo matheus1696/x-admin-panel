@@ -22,7 +22,7 @@
     
     // Tamanhos
     $sizes = [
-        'xs' => 'text-[13px] px-3 py-1 gap-1.5',
+        'xs' => 'text-[12px] px-3 py-1 gap-1.5',
         'sm' => 'text-[13px] px-3.5 py-1.5 gap-2',
         'md' => 'text-sm px-4 py-2 gap-2',
         'lg' => 'text-base px-5 py-2.5 gap-2.5',
@@ -39,7 +39,7 @@
     // Variantes seguindo padrão [cor]_[tipo]
     $variants = [
         // SOLID VARIANTS (com gradiente)
-        'green_solid' => 'text-white bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 shadow-md hover:shadow-lg transition-all duration-300 -translate-y-0.5 border border-emerald-600/20 rounded-lg active:scale-[0.98]',
+        'green_solid' => 'text-white bg-gradient-to-r from-emerald-700 to-emerald-800 hover:from-emerald-800 hover:to-emerald-900 shadow-md hover:shadow-lg transition-all duration-300 -translate-y-0.5 border border-emerald-600/20 rounded-lg active:scale-[0.98]',
         
         'gray_solid' => 'text-white bg-gradient-to-r from-gray-700 via-gray-700 to-gray-800 hover:from-gray-700 hover:via-gray-800 hover:to-gray-900 focus:ring-gray-600/30 shadow-md hover:shadow-lg border border-gray-700/20 rounded-lg active:scale-[0.98]',
         
@@ -56,17 +56,17 @@
         'purple_solid' => 'text-white bg-gradient-to-r from-purple-600 via-fuchsia-600 to-purple-700 hover:from-purple-700 hover:via-fuchsia-700 hover:to-purple-700 focus:ring-purple-600/30 shadow-md hover:shadow-lg border border-purple-700/20 rounded-lg active:scale-[0.98]',
         
         // OUTLINE VARIANTS (bordas)
-        'gray_outline' => 'bg-gradient-to-r from-gray-50 to-gray-100/80 text-gray-700 border-gray-200/50 hover:from-gray-100 hover:to-gray-200/80 shadow-md hover:shadow-lg transition-all duration-300 -translate-y-0.5 border border-gray-600/20 rounded-lg active:scale-[0.98]',
+        'gray_outline' => 'py-2 bg-gradient-to-r from-gray-50 to-gray-100/80 text-gray-700 border-gray-200/50 hover:from-gray-100 hover:to-gray-200/80 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-600/20 rounded-lg active:scale-[0.98]',
         
-        'green_outline' => 'bg-gradient-to-r from-green-50 to-green-100/80 text-green-700 border-green-200/50 hover:from-green-100 hover:to-green-200/80 shadow-md hover:shadow-lg transition-all duration-300 -translate-y-0.5 border border-green-600/20 rounded-lg active:scale-[0.98]',
+        'green_outline' => 'py-2 bg-gradient-to-r from-green-50 to-green-100/80 text-green-700 border-green-200/50 hover:from-green-100 hover:to-green-200/80 shadow-md hover:shadow-lg transition-all duration-300 border border-green-600/20 rounded-lg active:scale-[0.98]',
         
-        'blue_outline' => 'bg-gradient-to-r from-blue-50 to-blue-100/80 text-blue-700 border-blue-200/50 hover:from-blue-100 hover:to-blue-200/80 shadow-md hover:shadow-lg transition-all duration-300 -translate-y-0.5 border border-blue-600/20 rounded-lg active:scale-[0.98]',
+        'blue_outline' => 'py-2 bg-gradient-to-r from-blue-50 to-blue-100/80 text-blue-700 border-blue-200/50 hover:from-blue-100 hover:to-blue-200/80 shadow-md hover:shadow-lg transition-all duration-300 border border-blue-600/20 rounded-lg active:scale-[0.98]',
         
-        'red_outline' => 'bg-gradient-to-r from-red-50 to-red-100/80 text-red-700 border-red-200/50 hover:from-red-100 hover:to-red-200/80 shadow-md hover:shadow-lg transition-all duration-300 -translate-y-0.5 border border-red-600/20 rounded-lg active:scale-[0.98]',
+        'red_outline' => 'py-2 bg-gradient-to-r from-red-50 to-red-100/80 text-red-700 border-red-200/50 hover:from-red-100 hover:to-red-200/80 shadow-md hover:shadow-lg transition-all duration-300 border border-red-600/20 rounded-lg active:scale-[0.98]',
         
-        'yellow_outline' => 'bg-gradient-to-r from-amber-50 to-amber-100/80 text-amber-700 border-amber-200/50 hover:from-amber-100 hover:to-amber-200/80 shadow-md hover:shadow-lg transition-all duration-300 -translate-y-0.5 border border-amber-600/20 rounded-lg active:scale-[0.98]',
+        'yellow_outline' => 'py-2 bg-gradient-to-r from-amber-50 to-amber-100/80 text-amber-700 border-amber-200/50 hover:from-amber-100 hover:to-amber-200/80 shadow-md hover:shadow-lg transition-all duration-300 border border-amber-600/20 rounded-lg active:scale-[0.98]',
         
-        'purple_outline' => 'bg-gradient-to-r from-purple-50 to-purple-100/80 text-purple-700 border-purple-200/50 hover:from-purple-100 hover:to-purple-200/80 shadow-md hover:shadow-lg transition-all duration-300 -translate-y-0.5 border border-purple-600/20 rounded-lg active:scale-[0.98]',
+        'purple_outline' => 'py-2 bg-gradient-to-r from-purple-50 to-purple-100/80 text-purple-700 border-purple-200/50 hover:from-purple-100 hover:to-purple-200/80 shadow-md hover:shadow-lg transition-all duration-300 border border-purple-600/20 rounded-lg active:scale-[0.98]',
         
         // TEXT VARIANTS (dentro do texto)
         'gray_text' => 'text-gray-700 hover:text-gray-900 bg-transparent hover:bg-gray-100/50 border-0 shadow-none px-1 py-0.5 rounded-md',
