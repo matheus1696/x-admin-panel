@@ -12,28 +12,21 @@
 <div class="relative">
     
     <!-- Tabela Container com Scroll Suave -->
-    <div class="relative overflow-x-auto overflow-y-auto rounded-xl border {{ $bordered ? 'border-gray-300' : 'border-gray-200' }} shadow-lg hover:shadow-xl transition-shadow duration-300 max-h-[calc(100vh-300px)] custom-scrollbar">
+    <div class="relative overflow-x-auto rounded-xl border {{ $bordered ? 'border-gray-300' : 'border-gray-200' }} shadow-lg hover:shadow-xl transition-shadow duration-300">
         
         <table class="w-full text-[13px] table-auto relative">
             
             <!-- Cabeçalho Sticky com Design Premium -->
-            <thead class="sticky top-0 z-10 bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-800 text-xs text-white uppercase tracking-wider shadow-lg">
+            <thead class="sticky top-0 z-10 bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-800 text-[12px] text-white uppercase tracking-wider shadow-lg">
                 <tr>
                     {{ $thead ?? '' }}
                 </tr>
-                
-                <!-- Filtros Rápidos (opcional) -->
-                @if(isset($filters))
-                    <tr class="bg-white border-t border-emerald-200/50">
-                        {{ $filters }}
-                    </tr>
-                @endif
             </thead>
             
             <!-- Corpo da Tabela - COM STRIPED E HOVER -->
             <tbody class="divide-y divide-gray-100 bg-white 
                 @if($striped) [&>tr:nth-child(even)]:bg-gray-100/75 @endif
-                @if($hover) [&>tr:hover]:bg-emerald-100/75 [&>tr:hover]:transition-colors [&>tr:hover]:duration-200 @endif
+                @if($hover) [&>tr:hover]:bg-emerald-50/75 [&>tr:hover]:transition-colors [&>tr:hover]:duration-200 @endif
             ">
                 @if(isset($tbody) && $tbody->isNotEmpty())
                     {{ $tbody }}

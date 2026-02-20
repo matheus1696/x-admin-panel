@@ -138,7 +138,7 @@
     </script>
 
     <!-- Header -->
-    <div class="mb-8">
+    <div>
         <x-page.header
             title="Organograma"
             subtitle="Organograma da Secretaria de Saúde de Caruaru"
@@ -146,13 +146,12 @@
         >
             <x-slot name="button">
                 <div class="flex flex-col items-center gap-2">
-                    <div class="flex items-center gap-2">
-                        
-                        <x-button @click="zoomOut" icon="fa-solid fa-minus"/>
+                    <div class="flex items-center gap-2">                        
+                        <x-button @click="zoomOut" icon="fa-solid fa-minus" class="py-2"/>
                         <span x-text="zoomLevel + '%'" class="text-sm font-semibold"></span>
-                        <x-button @click="zoomIn" icon="fa-solid fa-plus"/>
+                        <x-button @click="zoomIn" icon="fa-solid fa-plus" class="py-2"/>
                     </div>
-                    <x-button @click="resetPosition" text="Centralizar"/>
+                    <x-button @click="resetPosition" text="Centralizar" fullWidth="true"/>
                 </div>
             </x-slot>
         </x-page.header>
@@ -162,15 +161,14 @@
     <div class="mx-auto bg-green-700/10 rounded-xl shadow border border-green-700">
         <div
             x-ref="container"
-            class="relative overflow-hidden"
-            style="height: 700px; cursor: grab; touch-action: none;"
+            class="h-[calc(100vh-200px)] relative overflow-hidden"
+            style="cursor: grab; touch-action: none;"
             @pointerdown="onPointerDown($event)"
             @pointermove="onPointerMove($event)"
             @pointerup="onPointerUp($event)"
             @pointercancel="onPointerUp($event)"
             @pointerleave="onPointerUp($event)"
         >
-
             <!-- Hint Mobile -->
             <div class="absolute bottom-4 left-4 z-10 bg-white/90 rounded-lg px-3 py-2 text-xs shadow sm:hidden">
                 Arraste com 1 dedo • Zoom com 2 dedos

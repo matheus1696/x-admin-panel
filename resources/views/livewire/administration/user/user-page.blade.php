@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<div>
     
     <!-- Flash Message -->
     <x-alert.flash />
@@ -10,61 +10,55 @@
     </x-page.header>
     
     <x-page.filter title="Filtros de Usuários">
-        {{-- Filtros Básicos --}}
-        <x-slot name="showBasic">
-            <div class="md:col-span-4">
-                <x-form.label value="Nome" />
-                <x-form.input type="text" placeholder="Buscar por nome..." wire:model.live.debounce.500ms.debounce.500ms="filters.name"/>
-            </div>
+        <div class="md:col-span-6">
+            <x-form.label value="Nome" />
+            <x-form.input type="text" placeholder="Buscar por nome..." wire:model.live.debounce.500ms.debounce.500ms="filters.name"/>
+        </div>
 
-            <div class="md:col-span-4">
-                <x-form.label value="Email" />
-                <x-form.input type="email" placeholder="Buscar por e-mail..." wire:model.live.debounce.500ms.debounce.500ms="filters.email"/>
-            </div>
+        <div class="md:col-span-6">
+            <x-form.label value="Email" />
+            <x-form.input type="email" placeholder="Buscar por e-mail..." wire:model.live.debounce.500ms.debounce.500ms="filters.email"/>
+        </div>
 
-            <div class="md:col-span-2">
-                <x-form.label value="Status" />
-                <x-form.select-livewire wire:model.live.debounce.500ms="filters.status" name="status" default="Selecione o status"
-                    :options="[
-                        ['value' => 'all', 'label' => 'Todos'],
-                        ['value' => true, 'label' => 'Ativo'],
-                        ['value' => false, 'label' => 'Inativo'],
-                    ]"
-                />
-            </div>
+        <div class="md:col-span-4">
+            <x-form.label value="Status" />
+            <x-form.select-livewire wire:model.live.debounce.500ms="filters.status" name="status" default="Selecione o status"
+                :options="[
+                    ['value' => 'all', 'label' => 'Todos'],
+                    ['value' => true, 'label' => 'Ativo'],
+                    ['value' => false, 'label' => 'Inativo'],
+                ]"
+            />
+        </div>
 
-            <div class="md:col-span-2">
-                <x-form.label value="Itens por página" />
-                <x-form.select-livewire 
-                    wire:model.live.debounce.500ms="filters.perPage"
-                    name="filters.perPage"
-                    :options="[
-                        ['value' => 10, 'label' => '10'],
-                        ['value' => 25, 'label' => '25'],
-                        ['value' => 50, 'label' => '50'],
-                        ['value' => 100, 'label' => '100']
-                    ]"
-                    default="Selecione a quantidade de itens"
-                />
-            </div>
-        </x-slot>
-
-        {{-- Filtros Avançados --}}
-        <x-slot name="showAdvanced">
-            <div class="md:col-span-2">
-                <x-form.label value="Ordenar por" />                
-                <x-form.select-livewire 
-                    wire:model.live.debounce.500ms="filters.sort"
-                    name="sort"
-                    :options="[
-                        ['value' => 'name_asc', 'label' => 'Nome (A–Z)'],
-                        ['value' => 'name_desc', 'label' => 'Nome (Z–A)'],
-                        ['value' => 'email_asc', 'label' => 'Email (A–Z)'],
-                        ['value' => 'email_desc', 'label' => 'Email (Z–A)'],
-                    ]"
-                />
-            </div>
-        </x-slot>
+        <div class="md:col-span-4">
+            <x-form.label value="Itens por página" />
+            <x-form.select-livewire 
+                wire:model.live.debounce.500ms="filters.perPage"
+                name="filters.perPage"
+                :options="[
+                    ['value' => 10, 'label' => '10'],
+                    ['value' => 25, 'label' => '25'],
+                    ['value' => 50, 'label' => '50'],
+                    ['value' => 100, 'label' => '100']
+                ]"
+                default="Selecione a quantidade de itens"
+            />
+        </div>
+    
+        <div class="md:col-span-4">
+            <x-form.label value="Ordenar por" />                
+            <x-form.select-livewire 
+                wire:model.live.debounce.500ms="filters.sort"
+                name="sort"
+                :options="[
+                    ['value' => 'name_asc', 'label' => 'Nome (A–Z)'],
+                    ['value' => 'name_desc', 'label' => 'Nome (Z–A)'],
+                    ['value' => 'email_asc', 'label' => 'Email (A–Z)'],
+                    ['value' => 'email_desc', 'label' => 'Email (Z–A)'],
+                ]"
+            />
+        </div>
     </x-page.filter>
 
     <!-- Table -->
@@ -100,16 +94,10 @@
                     <x-page.table-td>
                         @if ($user->id !== auth()->id())
                             <div class="flex items-center justify-center gap-2">
-                                <x-button.btn-table wire:click="status({{ $user->id }})" title="Alterar Status">
-                                    <i class="fa-solid fa-toggle-on"></i>
-                                </x-button.btn-table>
-                                <x-button.btn-table wire:click="edit({{ $user->id }})" title="Editar Usuário">
-                                    <i class="fa-solid fa-pen"></i>
-                                </x-button.btn-table>
+                                <x-button wire:click="status({{ $user->id }})" icon="fa-solid fa-toggle-on" title="Alterar Status" variant="green_text"/>
+                                <x-button wire:click="edit({{ $user->id }})" icon="fa-solid fa-pen" title="Editar Usuário" variant="green_text" />
                                 @can('user.permissions')
-                                    <x-button.btn-table wire:click="permission({{ $user->id }})" title="Editar Permissões do Usuário">
-                                        <i class="fa-solid fa-key"></i>
-                                    </x-button.btn-table>
+                                    <x-button wire:click="permission({{ $user->id }})" icon="fa-solid fa-key" title="Editar Permissões do Usuário" variant="green_text" />
                                 @endcan
                             </div>
                         @endif

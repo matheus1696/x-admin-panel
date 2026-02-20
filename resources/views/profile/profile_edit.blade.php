@@ -1,6 +1,6 @@
 <x-app-layout>
 
-    <div class="w-full md:w-1/2 mx-auto space-y-6 mt-6">
+    <div class="w-full md:w-1/2 mx-auto">
 
         <x-page.header icon="fa-solid fa-user" title="Meu Perfil" subtitle="Atualize seus dados pessoais" />
 
@@ -48,14 +48,14 @@
                     <!-- Matricula -->
                     <div class="md:col-span-2">
                         <x-form.label value="Matrícula" for="matriculation" />
-                        <x-form.input type="text" name="matriculation" id="matriculation" value="{{ old('matriculation', Auth::user()->matriculation) }}" placeholder="00.000-00" maxlength="9" required data-mask="matriculation" />
+                        <x-form.input type="text" name="matriculation" id="matriculation" value="{{ old('matriculation', Auth::user()->matriculation) }}" placeholder="00.000-00" maxlength="9" data-mask="matriculation" />
                         <x-form.error for="matriculation" />
                     </div>
 
                     <!-- CPF -->
                     <div class="md:col-span-2">
                         <x-form.label value="CPF" for="cpf" />
-                        <x-form.input type="text" name="cpf" id="cpf" value="{{ old('cpf', Auth::user()->cpf) }}" placeholder="000.000.000-00" required data-mask="cpf" maxlength="14"/>
+                        <x-form.input type="text" name="cpf" id="cpf" value="{{ old('cpf', Auth::user()->cpf) }}" placeholder="000.000.000-00" data-mask="cpf" maxlength="14"/>
                         <x-form.error for="cpf" />
                     </div>
 

@@ -83,15 +83,9 @@
                     </x-page.table-td>
                     <x-page.table-td>
                         <div class="flex items-center justify-center gap-2">
-                                <x-button.btn-table title="Detalhe do Estabelecimento">
-                                    <a href="{{ route('configuration.manage.establishments.show', $establishment->code) }}">
-                                        <i class="fa-solid fa-eye"></i>
-                                    </a>
-                                </x-button.btn-table>
-                                <x-button.btn-table wire:click="status({{ $establishment->id }})" title="Alterar Status">
-                                    <i class="fa-solid fa-toggle-on"></i>
-                                </x-button.btn-table>
-                            </div>
+                            <x-button href="{{ route('configuration.manage.establishments.show', $establishment->code) }}" icon="fa-solid fa-eye" title="Detalhe do Estabelecimento" variant="green_text" />
+                            <x-button wire:click="status({{ $establishment->id }})" icon="fa-solid fa-toggle-on" title="Alterar Status"  variant="green_text" />
+                        </div>
                     </x-page.table-td>
                 </tr>
             @endforeach

@@ -126,8 +126,8 @@
     // Sistema de variantes
     $variantConfig = [
         'default' => [
-            'base' => "bg-white/80 backdrop-blur-sm {$currentColor['base']} shadow-sm hover:shadow focus:shadow-md transition-all duration-200",
-            'error' => "bg-white/80 backdrop-blur-sm {$currentColor['error']} shadow-sm",
+            'base' => "bg-white backdrop-blur-sm {$currentColor['base']} shadow-sm hover:shadow focus:shadow-md transition-all duration-200",
+            'error' => "bg-white backdrop-blur-sm {$currentColor['error']} shadow-sm",
         ],
         'outline' => [
             'base' => "bg-transparent border {$currentColor['base']} hover:bg-white/50 hover:shadow-sm transition-all duration-200",

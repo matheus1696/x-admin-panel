@@ -12,33 +12,29 @@
 
     <!-- Filter -->
     <x-page.filter title="Filtros">
-        <x-slot name="showBasic">
+        {{-- Sigla do Setor --}}
+        <div class="col-span-12 md:col-span-2">
+            <x-form.label value="Sigla" />
+            <x-form.input wire:model.live.debounce.500ms="filters.acronym" placeholder="Buscar por sigla..." />
+        </div>
 
-            {{-- Sigla do Setor --}}
-            <div class="col-span-12 md:col-span-2">
-                <x-form.label value="Sigla" />
-                <x-form.input wire:model.live.debounce.500ms="filters.acronym" placeholder="Buscar por sigla..." />
-            </div>
+        {{-- Setor --}}
+        <div class="col-span-12 md:col-span-7">
+            <x-form.label value="Setor" />
+            <x-form.input wire:model.live.debounce.500ms="filters.filter" placeholder="Buscar por setor..." />
+        </div>
 
-            {{-- Setor --}}
-            <div class="col-span-12 md:col-span-8">
-                <x-form.label value="Setor" />
-                <x-form.input wire:model.live.debounce.500ms="filters.filter" placeholder="Buscar por setor..." />
-            </div>
-
-            {{-- Status --}}
-            <div class="col-span-6 md:col-span-2">
-                <x-form.label value="Status" />
-                <x-form.select-livewire wire:model.live="filters.status" name="filters.status"
-                    :options="[
-                        ['value' => 'all', 'label' => 'Todos'],
-                        ['value' => 'true', 'label' => 'Ativo'],
-                        ['value' => 'false', 'label' => 'Desativado'],
-                    ]"
-                />
-            </div>
-
-        </x-slot>
+        {{-- Status --}}
+        <div class="col-span-6 md:col-span-3">
+            <x-form.label value="Status" />
+            <x-form.select-livewire wire:model.live="filters.status" name="filters.status"
+                :options="[
+                    ['value' => 'all', 'label' => 'Todos'],
+                    ['value' => 'true', 'label' => 'Ativo'],
+                    ['value' => 'false', 'label' => 'Desativado'],
+                ]"
+            />
+        </div>
     </x-page.filter>
 
     <!-- Table -->
@@ -71,12 +67,8 @@
 
                     <x-page.table-td>
                         <div class="flex items-center justify-center gap-2">
-                            <x-button.btn-table wire:click="status({{ $organizationChart->id }})" title="Alterar Status">
-                                <i class="fa-solid fa-toggle-on"></i>
-                            </x-button.btn-table>
-                            <x-button.btn-table wire:click="edit({{ $organizationChart->id }})" title="Editar Tipo de Tarefa">
-                                <i class="fa-solid fa-pen"></i>
-                            </x-button.btn-table>
+                            <x-button wire:click="status({{ $organizationChart->id }})" icon="fa-solid fa-toggle-on" title="Alterar Status" variant="green_text" />
+                            <x-button wire:click="edit({{ $organizationChart->id }})" icon="fa-solid fa-pen" title="Editar Tipo de Tarefa" variant="green_text" />
                         </div>
                     </x-page.table-td>
                 </tr>

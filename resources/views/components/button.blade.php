@@ -6,7 +6,7 @@
     'text' => null,
     'loading' => false, // Agora controlado pelo próprio componente
     'disabled' => false,
-    'fullWidth' => false,
+    'fullWidth' => true,
     'size' => 'xs',
     'pill' => false,
     'shadow' => true,

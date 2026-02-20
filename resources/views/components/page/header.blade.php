@@ -5,6 +5,7 @@
     'subtitle' => 'Subtítulo da Página',
     'button' => null,
     'badge' => null,
+    'accordionOpen' => false,
 ])
 
 @php
@@ -68,11 +69,10 @@
     $config = $colorConfig[$color] ?? $colorConfig['green'];
 @endphp
 
-
 <div class="group relative transition-all duration-500 mb-2">
             
     <!-- Conteúdo principal -->
-    <div class="relative flex flex-col md:flex-row items-center justify-between gap-4 px-2 py-5 bg-white/50 transition-all duration-300">
+    <div class="relative flex items-center justify-between gap-4 px-1 pb-5 pt-2 transition-all duration-300">
         <div class="flex items-center gap-4">
             <!-- Ícone com glow e animação -->
             <div class="relative">

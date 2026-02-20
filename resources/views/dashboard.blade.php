@@ -228,7 +228,7 @@
                                 <!-- Efeito decorativo -->
                                 <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-yellow-500 to-amber-500"></div>
                                 
-                                <div class="p-5">
+                                <div class="px-4 py-2">
                                     <div class="space-y-3">
                                         <div class="flex items-center gap-4">
                                             <div class="w-10 h-10 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -250,8 +250,7 @@
                                                       text="Alterar Senha Agora" 
                                                       icon="fa-solid fa-key" 
                                                       variant="yellow_solid" 
-                                                      fullWidth="true"
-                                                      class="!py-2.5 !text-xs" />
+                                                      fullWidth="true" />
                                         </div>
                                     </div>
                                 </div>

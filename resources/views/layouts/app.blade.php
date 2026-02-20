@@ -274,7 +274,7 @@
                     <div>
                         <!-- Menu Hamburger -->
                         <button @click="openAside = true" 
-                                class="lg:hidden p-2 rounded-lg transition-all duration-200 hover:bg-emerald-800 active:scale-95">
+                                class="lg:hidden py-2 px-3 rounded-lg transition-all duration-200 hover:bg-emerald-800 active:scale-95">
                             <i class="fa-solid fa-bars text-white text-xl"></i>
                         </button>
                     </div>

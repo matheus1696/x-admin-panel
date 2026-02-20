@@ -12,40 +12,36 @@
        
     <!-- Filter -->
     <x-page.filter title="Filtros">
-        <x-slot name="showBasic">
+        {{-- Fluxo de Trabalho --}}
+        <div class="col-span-12 md:col-span-6">
+            <x-form.label value="Fluxo de Trabalho" />
+            <x-form.input wire:model.live.debounce.500ms="filters.title" placeholder="Buscar por fluxo de trabalho..." />
+        </div>
 
-            {{-- Fluxo de Trabalho --}}
-            <div class="col-span-12 md:col-span-8">
-                <x-form.label value="Fluxo de Trabalho" />
-                <x-form.input wire:model.live.debounce.500ms="filters.title" placeholder="Buscar por fluxo de trabalho..." />
-            </div>
+        {{-- Status --}}
+        <div class="col-span-6 md:col-span-3">
+            <x-form.label value="Status" />
+            <x-form.select-livewire wire:model.live="filters.status" name="filters.status"
+                :options="[
+                    ['value' => 'all', 'label' => 'Todos'],
+                    ['value' => 'true', 'label' => 'Ativo'],
+                    ['value' => 'false', 'label' => 'Desativado'],
+                ]"
+            />
+        </div>
 
-            {{-- Status --}}
-            <div class="col-span-6 md:col-span-2">
-                <x-form.label value="Status" />
-                <x-form.select-livewire wire:model.live="filters.status" name="filters.status"
-                    :options="[
-                        ['value' => 'all', 'label' => 'Todos'],
-                        ['value' => 'true', 'label' => 'Ativo'],
-                        ['value' => 'false', 'label' => 'Desativado'],
-                    ]"
-                />
-            </div>
-
-            {{-- Itens por página --}}
-            <div class="col-span-6 md:col-span-2">
-                <x-form.label value="Itens por página" />
-                <x-form.select-livewire wire:model.live="filters.perPage" name="filters.perPage"
-                    :options="[
-                        ['value' => 10, 'label' => '10'],
-                        ['value' => 25, 'label' => '25'],
-                        ['value' => 50, 'label' => '50'],
-                        ['value' => 100, 'label' => '100']
-                    ]"
-                />
-            </div>
-
-        </x-slot>
+        {{-- Itens por página --}}
+        <div class="col-span-6 md:col-span-3">
+            <x-form.label value="Itens por página" />
+            <x-form.select-livewire wire:model.live="filters.perPage" name="filters.perPage"
+                :options="[
+                    ['value' => 10, 'label' => '10'],
+                    ['value' => 25, 'label' => '25'],
+                    ['value' => 50, 'label' => '50'],
+                    ['value' => 100, 'label' => '100']
+                ]"
+            />
+        </div>
     </x-page.filter>
 
     <!-- Table -->
@@ -75,15 +71,9 @@
 
                     <x-page.table-td>
                         <div class="flex items-center justify-center gap-2">
-                            <x-button.btn-table wire:click="status({{ $workflow->id }})" title="Alterar Status">
-                                <i class="fa-solid fa-toggle-on"></i>
-                            </x-button.btn-table>
-                            <x-button.btn-table wire:click="edit({{ $workflow->id }})" title="Editar Tipo de Tarefa">
-                                <i class="fa-solid fa-pen"></i>
-                            </x-button.btn-table>
-                            <x-button.btn-table wire:click="workflowStep({{ $workflow->id }})" title="Editar Tipo de Tarefa">
-                                <i class="fa-solid fa-eye"></i>
-                            </x-button.btn-table>
+                            <x-button wire:click="status({{ $workflow->id }})" icon="fa-solid fa-toggle-on" title="Alterar Status" variant="green_text"/>
+                            <x-button wire:click="edit({{ $workflow->id }})" icon="fa-solid fa-pen" title="Editar Tipo de Tarefa" variant="green_text"/>
+                            <x-button wire:click="workflowStep({{ $workflow->id }})" icon="fa-solid fa-eye" title="Editar Tipo de Tarefa" variant="green_text"/>
                         </div>
                     </x-page.table-td>
                 </tr>

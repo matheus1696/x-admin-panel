@@ -36,9 +36,7 @@
 
                         <x-page.table-td class="text-center">
                             <div class="flex justify-center gap-2">
-                                <x-button.btn-table wire:click="editRunStatus({{ $taskStatus->id }})" title="Editar Status" >
-                                    <i class="fa-solid fa-pen"></i>
-                                </x-button.btn-table>
+                                <x-button wire:click="editRunStatus({{ $taskStatus->id }})" icon="fa-solid fa-pen" title="Editar Status" variant="green_text"/>
                             </div>
                         </x-page.table-td>
                     </tr>
@@ -78,9 +76,7 @@
 
                         <x-page.table-td class="text-center">
                             <div class="flex justify-center gap-2">
-                                <x-button.btn-table wire:click="editRunStepStatus({{ $taskStepStatus->id }})" title="Editar Status" >
-                                    <i class="fa-solid fa-pen"></i>
-                                </x-button.btn-table>
+                                <x-button wire:click="editRunStepStatus({{ $taskStepStatus->id }})" icon="fa-solid fa-pen" title="Editar Status" variant="green_text" />
                             </div>
                         </x-page.table-td>
                     </tr>
