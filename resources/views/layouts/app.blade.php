@@ -24,7 +24,7 @@
         <meta name="twitter:url" content="{{ url()->current() }}">
         <meta name="twitter:title" content="@yield('title', config('app.name', 'Laravel'))">
         <meta name="twitter:description" content="@yield('meta_description', config('app.description', 'Descrição padrão do seu site'))">
-        <meta name="twitter:image" content="@yield('meta_image', asset('asset/img/favicon_infosaude.png'))">
+        <meta name="twitter:image" content="@yield('meta_image', asset('asset/img/favicon-infosaude-150-150.png'))">
         
         <!-- Canonical URL -->
         <link rel="canonical" href="{{ url()->current() }}">
@@ -32,10 +32,10 @@
         <title>@yield('title', config('app.name', 'Laravel'))</title>
 
         <!-- Favicon -->
-        <link rel="icon" type="image/x-icon" href="{{ asset('asset/img/favicon_infosaude.ico') }}">
-        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('asset/img/favicon_infosaude.png') }}">
-        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('asset/img/favicon_infosaude.png') }}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('asset/img/favicon_infosaude.png') }}">
+        <link rel="icon" type="image/x-icon" href="{{ asset('asset/img/favicon-infosaude.ico') }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('asset/img/favicon-infosaude-150-150.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('asset/img/favicon-infosaude-150-150.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('asset/img/favicon-infosaude-150-150.png') }}">
 
         <!-- Preconnect e DNS Prefetch -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -309,7 +309,7 @@
 
                 <!-- Conteúdo Principal com padding ajustado -->
                 <main class="flex-1 bg-gray-50 py-4 px-4 lg:px-8">
-                    <div class="mx-auto max-w-7xl">
+                    <div class="mx-auto">
                         {{ $slot }}
                     </div>
                 </main>

@@ -1,1 +1,1 @@
-<img src="{{ asset('asset/img/logo.png') }}" alt="Logo X-AdminPanel" class="h-7">
+<img src="{{ asset('asset/img/logo-70x70.png') }}" alt="Logo {{ config('app.name') }}" class="h-7">
