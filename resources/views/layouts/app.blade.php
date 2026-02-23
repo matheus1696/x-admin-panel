@@ -90,7 +90,7 @@
                 <!-- Logo Compacta com efeito melhorado -->
                 <div class="h-16 flex items-center justify-center gap-2 border-b border-emerald-200/50 bg-gradient-to-l from-emerald-700 via-emerald-800 to-emerald-800 uppercase font-semibold text-white relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -translate-x-full animate-shimmer"></div>
-                    <x-application-logo class="w-8 h-8 relative z-10"/>
+                    <x-application-logo class="h-7 relative z-10"/>
                     <span 
                         x-show="sidebarExpanded"
                         x-transition:enter="transition ease-out duration-[2s]"
@@ -142,7 +142,7 @@
                         <!-- Topo com animação -->
                         <div class="h-16 flex items-center justify-between px-6 bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-800 border-b border-emerald-700/30">
                             <div class="flex-1 flex items-center gap-2 uppercase font-semibold text-white">
-                                <x-application-logo class="w-8 h-8"/>
+                                <x-application-logo class="h-7"/>
                                 <span class="text-lg">{{ config('app.name') }}</span>
                             </div>
 
