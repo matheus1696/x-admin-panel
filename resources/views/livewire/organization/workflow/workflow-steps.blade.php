@@ -89,8 +89,12 @@
                     <x-page.table-td>{{ $workflowStep->title }}</x-page.table-td>
                     <x-page.table-td>{{ $workflowStep->organization?->acronym }}</x-page.table-td>
                     <x-page.table-td class="text-center">{{ $workflowStep->deadline_days }}</x-page.table-td>
-                    <x-page.table-status :condition="$workflowStep->required" />
-                    <x-page.table-status :condition="$workflowStep->allow_parallel" />
+                    <x-page.table-td class="text-center">
+                        <x-page.table-status :condition="$workflowStep->required" />
+                    </x-page.table-td>
+                    <x-page.table-td class="text-center">
+                        <x-page.table-status :condition="$workflowStep->allow_parallel" />
+                    </x-page.table-td>
                     <x-page.table-td class="text-center">
                         <div class="flex items-center justify-center gap-2">
                             <x-button wire:click="edit({{ $workflowStep->id }})" icon="fa-solid fa-pen" title="Editar Atividade" variant="green_text" />
