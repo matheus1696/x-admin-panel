@@ -93,13 +93,9 @@
                     <x-page.table-status :condition="$workflowStep->allow_parallel" />
                     <x-page.table-td class="text-center">
                         <div class="flex items-center justify-center gap-2">
-                            <x-button.btn-table wire:click="edit({{ $workflowStep->id }})" title="Editar Atividade">
-                                <i class="fa-solid fa-pen"></i>
-                            </x-button.btn-table>
+                            <x-button wire:click="edit({{ $workflowStep->id }})" icon="fa-solid fa-pen" title="Editar Atividade" variant="green_text" />
                             @if ( $workflowStep->step_order != 1)
-                                <x-button.btn-table wire:click="orderUp({{ $workflowStep->id }})" title="Subir Atividade">
-                                    <i class="fa-solid fa-arrow-up"></i>
-                                </x-button.btn-table>
+                                <x-button wire:click="orderUp({{ $workflowStep->id }})" icon="fa-solid fa-arrow-up" title="Subir Atividade" variant="green_text" />
                             @endif
                         </div>                        
                     </x-page.table-td>
