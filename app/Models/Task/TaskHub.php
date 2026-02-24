@@ -25,6 +25,11 @@ class TaskHub extends Model
         return $this->hasMany(Task::class, 'task_hub_id');
     }
 
+    public function taskStep()
+    {
+        return $this->hasMany(TaskStep::class, 'task_hub_id');
+    }
+
     public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');

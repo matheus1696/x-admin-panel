@@ -15,6 +15,7 @@ class TaskStep extends Model
     use HasUuid;
 
     protected $fillable = [
+        'task_hub_id',
         'task_id',
         'code',
         'title',
@@ -35,6 +36,10 @@ class TaskStep extends Model
         'finished_at' => 'datetime',
         'deadline_at' => 'datetime',
     ];
+
+    public function taskHub(){
+        return $this->belongsTo(TaskHub::class, 'task_hub_id');
+    }
 
     public function stepActivities()
     {
@@ -69,17 +74,11 @@ class TaskStep extends Model
     protected static function booted()
     {
         static::created(function ($step) {
-            $step->update([
-                'code' => $step->task->taskHub->acronym . str_pad($step->id, 5, '0', STR_PAD_LEFT),
-            ]);
-        });
-
-        static::created(function ($step) {
             // Conta quantas tarefas existem neste taskHub (incluindo a atual)
-            $taskStepCount = $step->task->taskSteps()->count();
+            $taskStepCount = $step->taskHub->tasks()->count();
             
             $step->update([
-                'code' => $step->task->taskHub->acronym . str_pad($taskStepCount, 5, '0', STR_PAD_LEFT),
+                'code' => $step->taskHub->acronym . str_pad($taskStepCount, 5, '0', STR_PAD_LEFT),
             ]);
         });
     }

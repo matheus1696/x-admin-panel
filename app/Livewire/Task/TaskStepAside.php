@@ -252,7 +252,7 @@ class TaskStepAside extends Component
         $this->flashSuccess('Prazo atualizado.');
     }
 
-    public function storeComment()
+    public function storeStepComment()
     {
         $data = $this->validate(TaskStepRules::storeComment());
 

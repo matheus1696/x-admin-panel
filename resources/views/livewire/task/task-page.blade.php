@@ -4,49 +4,11 @@
     <x-alert.flash />
 
     <!-- Header Padronizado -->
-    <x-page.header 
-        title="Cronograma de Atividades" 
-        subtitle="Visualize todas as atividades e os andamentos" 
-        icon="fas fa-list-check"
-    >
+    <x-page.header title="Cronograma de Atividades" subtitle="Visualize todas as atividades e os andamentos" icon="fas fa-list-check">
         <x-slot name="button">
             <x-button text="Nova Tarefa" icon="fas fa-plus" wire:click="enableCreateTask()" />
         </x-slot>
     </x-page.header>
-       
-    <!-- Filtros Padronizados -->
-    <x-page.filter title="Filtros">
-        {{-- Título da Tarefa --}}
-        <div class="col-span-12 md:col-span-8">
-            <x-form.label value="Título da Tarefa" />
-            <x-form.input wire:model.defer="filters.title" placeholder="Buscar por título..." />
-        </div>
-
-        {{-- Status --}}
-        <div class="col-span-6 md:col-span-2">
-            <x-form.label value="Status da Tarefa" />
-            <x-form.select-livewire 
-                wire:model.defer="filters.workflow_run_status_id" 
-                name="filters.workflow_run_status_id" 
-                :collection="$taskStatuses" 
-                value-field="id" 
-                label-field="title" 
-            />
-        </div>
-
-        {{-- Itens por página --}}
-        <div class="col-span-6 md:col-span-2">
-            <x-form.label value="Itens por página" />
-            <x-form.select-livewire wire:model.defer="filters.perPage" name="filters.perPage"
-                :options="[
-                    ['value' => 10, 'label' => '10'],
-                    ['value' => 25, 'label' => '25'],
-                    ['value' => 50, 'label' => '50'],
-                    ['value' => 100, 'label' => '100']
-                ]"
-            />
-        </div>
-    </x-page.filter>
 
     <!-- Card Principal -->
     <div x-data="{ openAsideTask: false }">
@@ -54,7 +16,7 @@
         <!-- Cabeçalho da Tabela -->
         <div class="relative overflow-hidden border border-gray-200 rounded-t-xl">
             <div class="grid grid-cols-5 md:grid-cols-12 gap-4 px-6 py-3 bg-gradient-to-r from-emerald-700 to-emerald-800 text-xs font-semibold text-white uppercase tracking-wider">
-                <div class="col-span-3 md:col-span-4 flex items-center gap-2">
+                <div class="col-span-4 md:col-span-4 flex items-center gap-2">
                     <div class="w-1 h-4 bg-white/50 rounded-full"></div>
                     <span>Título</span>
                 </div>

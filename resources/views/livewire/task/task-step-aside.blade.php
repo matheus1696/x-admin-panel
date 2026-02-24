@@ -183,12 +183,12 @@
                             wire:key="description-view-{{ $step->id }}">
                             
                             @if(trim($step->description))
-                                <div class="relative bg-gradient-to-br from-gray-50/80 to-white rounded-2xl border border-gray-200/80 group-hover:border-emerald-200/80 transition-all duration-500 h-48 overflow-y-auto shadow-sm group-hover:shadow-md">
-                                    <div class="p-2 text-sm text-gray-700 leading-relaxed whitespace-pre-wrap [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300/50 [&::-webkit-scrollbar-thumb]:rounded-full h-full overflow-y-auto">{!! nl2br(e(trim($step->description))) !!}</div>
+                                <div class="relative bg-gradient-to-br from-gray-50/80 to-white rounded-2xl border border-gray-200/80 group-hover:border-amber-200/80 transition-all duration-500 h-48 overflow-y-auto shadow-sm group-hover:shadow-md">
+                                    <div class="p-2 text-xs text-gray-700 leading-relaxed whitespace-pre-wrap [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300/50 [&::-webkit-scrollbar-thumb]:rounded-full h-full overflow-y-auto">{!! nl2br(e(trim($step->description))) !!}</div>
                                     
                                     @if (!$step->finished_at)
                                         <!-- Overlay Edição -->
-                                        <div class="absolute inset-0 bg-gradient-to-t from-white/90 via-white/50 to-transparent backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-500 rounded-2xl flex items-end justify-center pb-6">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-white/90 via-white/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 rounded-2xl flex items-end justify-center pb-6">
                                             <span class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-amber-700 text-xs font-medium rounded-full shadow-lg border border-amber-200 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
                                                 <i class="fas fa-pen-fancy"></i>
                                                 Editar descrição
@@ -241,12 +241,12 @@
                                 Setor Responsável
                             </span>
                             @if (!$step->finished_at)
-                                <div class="flex-1 overflow-hidden">
+                                <div class="flex-1">
                                     <x-form.select-livewire wire:model.live="organization_responsable_id" 
                                             :collection="$organizations" 
                                             valueField="id" labelField="title" 
                                             :selected="$step->organization_id" 
-                                            variant="inline" size="xs" />
+                                            variant="inline" />
                                 </div>
                             @else
                                 <span class="text-xs font-semibold text-gray-900 bg-gray-100/80 px-3 py-1.5 rounded-lg">
@@ -267,7 +267,7 @@
                                             :collection="$users" 
                                             valueField="id" labelField="name" 
                                             :selected="$step->user_id" 
-                                            variant="inline" size="xs" />
+                                            variant="inline" />
                                 </div>
                             @else
                                 <span class="text-xs font-semibold text-gray-900 bg-gray-100/80 px-3 py-1.5 rounded-lg">
@@ -446,8 +446,8 @@
                                     </div>
                                 </div>
                                 <div class="flex-1">
-                                    <form wire:submit.prevent="storeComment()">
-                                        <x-form.textarea name="comment" wire:model.defer="comment" placeholder="Escreva um comentário sobre esta etapa..." rows="3" />
+                                    <form wire:submit.prevent="storeStepComment()">
+                                        <x-form.textarea wire:model.defer="comment" placeholder="Escreva um comentário sobre esta etapa..." />
                                         <div class="flex items-center justify-end mt-2">
                                             <x-button type="submit" icon="fas fa-paper-plane" text="Comentar" />
                                         </div>

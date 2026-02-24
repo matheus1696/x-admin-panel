@@ -27,14 +27,18 @@
         <x-slot name="tbody">
             @forelse ($taskHubs as $taskHub)
                 <tr>
-                    <x-page.table-td class="text-center font-mono" :value="$taskHub->acronym" />
+                    <x-page.table-td class="text-center font-mono">
+                        <a href="{{ route('tasks.show', $taskHub->uuid) }}">{{ $taskHub->acronym }}</a>
+                    </x-page.table-td>
                     <x-page.table-td>
-                        <div class="flex flex-col">
-                            <span class="font-medium text-gray-900">{{ $taskHub->title }}</span>
-                            @if($taskHub->description)
-                                <span class="text-xs text-gray-500">{{ $taskHub->description }}</span>
-                            @endif
-                        </div>
+                        <a href="{{ route('tasks.show', $taskHub->uuid) }}">
+                            <div class="flex flex-col">
+                                <span class="font-medium text-gray-900">{{ $taskHub->title }}</span>
+                                @if($taskHub->description)
+                                    <span class="text-xs text-gray-500">{{ $taskHub->description }}</span>
+                                @endif
+                            </div>
+                        </a>
                     </x-page.table-td>
                     <x-page.table-td class="text-center">
                         <x-button 
@@ -58,7 +62,6 @@
                                 text="Criar Primeiro Ambiente"
                                 icon="fas fa-plus"
                                 wire:click="create"
-                                size="sm"
                             />
                         </div>
                     </x-page.table-td>
