@@ -188,7 +188,7 @@
                         <!-- Formulário de Criação da Etapa -->
                         @if (!$task->finished_at && $isCreatingTaskStep && $taskId == $task->id)
                             <div class="border-b border-gray-200 bg-amber-50/30 px-4 py-3">
-                                <form wire:submit.prevent="storeStep({{$task->id}})" class="space-y-3">
+                                <form wire:submit.prevent="storeStep({{$task->id}}, {{$task->task_hub_id}})" class="space-y-3">
                                     @include('livewire.task._partials.task-step-form')
                                 </form>
                             </div>

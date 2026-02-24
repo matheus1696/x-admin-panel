@@ -144,10 +144,11 @@ class TaskPage extends Component
             $this->isCreatingTaskStep = false;
         }
         
-        public function storeStep($id)
+        public function storeStep($id, $task_hub)
         {
             $data = $this->validate(TaskStepRules::store());
             $data['task_id'] = $id;
+            $data['task_hub_id'] = $task_hub;
             $data['task_status_id'] = $data['task_step_status_id'];
 
             TaskStep::create($data);

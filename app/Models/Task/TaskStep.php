@@ -41,13 +41,13 @@ class TaskStep extends Model
         return $this->belongsTo(TaskHub::class, 'task_hub_id');
     }
 
+    public function task(){
+        return $this->belongsTo(Task::class, 'task_id');
+    }
+
     public function stepActivities()
     {
         return $this->hasMany(TaskStepActivity::class)->orderBy('created_at','desc')->get();
-    }
-
-    public function task(){
-        return $this->belongsTo(Task::class, 'task_id');
     }
 
     public function taskPriority(){
@@ -75,7 +75,7 @@ class TaskStep extends Model
     {
         static::created(function ($step) {
             // Conta quantas tarefas existem neste taskHub (incluindo a atual)
-            $taskStepCount = $step->taskHub->tasks()->count();
+            $taskStepCount = $step->taskHub->taskSteps()->count();
             
             $step->update([
                 'code' => $step->taskHub->acronym . str_pad($taskStepCount, 5, '0', STR_PAD_LEFT),

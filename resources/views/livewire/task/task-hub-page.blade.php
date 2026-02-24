@@ -20,6 +20,7 @@
             <tr>
                 <x-page.table-th class="w-28 text-center" value="Sigla" />
                 <x-page.table-th value="Ambiente" />
+                <x-page.table-th class="w-28 text-center"  value="Ambiente" />
                 <x-page.table-th class="w-28 text-center" value="Ações" />
             </tr>
         </x-slot>

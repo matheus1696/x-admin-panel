@@ -5,6 +5,7 @@ namespace App\Livewire\Task;
 use App\Livewire\Traits\Modal;
 use App\Livewire\Traits\WithFlashMessage;
 use App\Models\Task\TaskHub;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 
@@ -21,6 +22,7 @@ class TaskHubPage extends Component
     /* CREATE */
     public function create(): void
     {
+        $this->reset();
         $this->openModal('modal-task-hub');
     }
 
@@ -36,7 +38,7 @@ class TaskHubPage extends Component
             'title' => $validated['title'],
             'acronym' => strtoupper($validated['acronym']),
             'description' => $validated['description'] ?? null,
-            'owner_id' => auth()->id(),
+            'owner_id' => Auth::user()->id,
         ]);
         
         $this->flashSuccess('Usuário adicionado com sucesso.');
