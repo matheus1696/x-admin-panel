@@ -1,5 +1,4 @@
 <div x-data="organograma()" @wheel.prevent="handleWheelZoom($event)" class="relative w-full">
-
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('organograma', () => ({
@@ -133,32 +132,11 @@
         });
     </script>
 
-    <!-- Header -->
-    <div>
-        <x-page.header
-            title="Organograma"
-            subtitle="Organograma da Secretaria de Saúde de Caruaru"
-            icon="fa-solid fa-sitemap"
-        >
-            <x-slot name="button">
-                <div class="flex flex-col items-center gap-2">
-                    <div class="flex items-center gap-2">
-                    <x-button href="{{ route('chart.full.index') }}" icon="fa-solid fa-expand" class="py-2" target="no_blank"/>              
-                        <x-button @click="zoomOut" icon="fa-solid fa-minus" class="py-2"/>
-                        <span x-text="zoomLevel + '%'" class="text-sm font-semibold"></span>
-                        <x-button @click="zoomIn" icon="fa-solid fa-plus" class="py-2"/>
-                    </div>
-                    <x-button @click="resetPosition" text="Centralizar" fullWidth="true"/>
-                </div>
-            </x-slot>
-        </x-page.header>
-    </div>
-
     <!-- Organograma -->
     <div class="mx-auto bg-emerald-700/5 rounded-xl shadow border border-emerald-700">
         <div
             x-ref="container"
-            class="h-[calc(100vh-200px)] relative overflow-hidden"
+            class="h-[calc(100vh-2px)] relative overflow-hidden"
             style="cursor: grab; touch-action: none;"
             @pointerdown="onPointerDown($event)"
             @pointermove="onPointerMove($event)"
@@ -172,8 +150,16 @@
             </div>
 
             <!-- Hint Desktop -->
-            <div class="absolute bottom-4 left-4 z-10 bg-white/90 rounded-lg px-3 py-2 text-xs shadow hidden sm:block">
-                Arraste com o mouse • Scroll para zoom
+            <div class="absolute top-4 right-4 z-10 bg-white/90 rounded-lg px-3 py-2 text-xs shadow hidden sm:block">                
+                <div class="flex flex-col items-center gap-2">
+                    <div class="flex items-center gap-2">             
+                        <x-button @click="zoomOut" icon="fa-solid fa-minus" class="py-2"/>
+                        <span x-text="zoomLevel + '%'" class="text-sm font-semibold"></span>
+                        <x-button @click="zoomIn" icon="fa-solid fa-plus" class="py-2"/>
+                    </div>
+                    <x-button @click="resetPosition" text="Centralizar" fullWidth="true"/>
+                </div>
+                <div class="pt-2">Arraste com o mouse • Scroll para zoom</div>
             </div>
             
             <!-- Conteúdo -->

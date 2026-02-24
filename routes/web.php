@@ -14,6 +14,7 @@ use App\Livewire\Configuration\Region\RegionCityPage;
 use App\Livewire\Configuration\Region\RegionCountryPage;
 use App\Livewire\Configuration\Region\RegionStatePage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartConfigPage;
+use App\Livewire\Organization\OrganizationChart\OrganizationChartDashboardFullPage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartDashboardPage;
 use App\Livewire\Organization\Workflow\WorkflowProcessesPage;
 use App\Livewire\Public\Contact\ContactPage;
@@ -52,6 +53,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::get('/organograma', OrganizationChartDashboardPage::class)->name('chart.index');
+    Route::get('/organograma/full', OrganizationChartDashboardFullPage::class)->name('chart.full.index');
 
     /*
     |--------------------------------------------------------------------------
