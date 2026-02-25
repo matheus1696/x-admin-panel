@@ -19,8 +19,8 @@
         <x-slot name="thead">
             <tr>
                 <x-page.table-th class="w-28 text-center" value="Sigla" />
-                <x-page.table-th value="Ambiente" />
-                <x-page.table-th class="w-28 text-center"  value="Ambiente" />
+                <x-page.table-th class="text-center" value="Ambiente" />
+                <x-page.table-th class="w-28 text-center" value="Usuários" />
                 <x-page.table-th class="w-28 text-center" value="Ações" />
             </tr>
         </x-slot>
@@ -41,13 +41,13 @@
                             </div>
                         </a>
                     </x-page.table-td>
+                    <x-page.table-td>
+                        @foreach ($taskHub->members->take(3) as $member)
+                            {{ $member->user->name }}
+                        @endforeach
+                    </x-page.table-td>
                     <x-page.table-td class="text-center">
-                        <x-button 
-                            href="{{ route('tasks.show', $taskHub->uuid) }}" 
-                            icon="fas fa-arrow-right"
-                            variant="green_text"
-                            size="sm"
-                            title="Acessar ambiente"
+                        <x-button href="{{ route('tasks.show', $taskHub->uuid) }}" icon="fas fa-arrow-right" variant="green_text" title="Acessar ambiente"
                         />
                     </x-page.table-td>
                 </tr>
