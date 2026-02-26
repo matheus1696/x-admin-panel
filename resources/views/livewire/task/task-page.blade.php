@@ -4,16 +4,97 @@
     <x-alert.flash />
 
     <!-- Header Padronizado -->
-    <x-page.header title="Cronograma de Atividades" subtitle="Visualize todas as atividades e os andamentos" icon="fas fa-list-check">
+        <x-page.header title="Cronograma de Atividades" subtitle="Visualize todas as atividades e os andamentos" icon="fas fa-list-check">
         <x-slot name="button">
             <x-button text="Nova Tarefa" icon="fas fa-plus" wire:click="enableCreateTask()" />
-            <x-button text="Compartilhar" icon="fa-solid fa-share-nodes" wire:click="enableSharedTaskHub()" variant="gray_solid" />
         </x-slot>
     </x-page.header>
 
     <!-- Card Principal -->
-    <div x-data="{ openAsideTask: false }">
-        
+    <div x-data="{ openAsideTask: false, tab: 'dashboard' }">
+        <div class="bg-white border border-gray-200 rounded-xl p-2 mb-4">
+            <div class="flex items-center gap-2">
+                <button
+                    type="button"
+                    class="px-4 py-2 text-xs font-medium rounded-lg transition-colors"
+                    :class="tab === 'dashboard' ? 'bg-emerald-600 text-white' : 'text-gray-600 hover:bg-gray-100'"
+                    @click="tab = 'dashboard'">
+                    Dashboard
+                </button>
+                <button
+                    type="button"
+                    class="px-4 py-2 text-xs font-medium rounded-lg transition-colors"
+                    :class="tab === 'list' ? 'bg-emerald-600 text-white' : 'text-gray-600 hover:bg-gray-100'"
+                    @click="tab = 'list'">
+                    Lista
+                </button>
+            </div>
+        </div>
+
+        <div x-show="tab === 'dashboard'" x-cloak class="space-y-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="rounded-xl border border-gray-200 p-4 bg-white">
+                    <p class="text-[11px] text-gray-500 uppercase tracking-wide">Total de tarefas</p>
+                    <p class="text-2xl font-semibold text-gray-900 mt-1">{{ $dashboard['total'] }}</p>
+                </div>
+                <div class="rounded-xl border border-gray-200 p-4 bg-white">
+                    <p class="text-[11px] text-gray-500 uppercase tracking-wide">Em andamento</p>
+                    <p class="text-2xl font-semibold text-blue-600 mt-1">{{ $dashboard['in_progress'] }}</p>
+                </div>
+                <div class="rounded-xl border border-gray-200 p-4 bg-white">
+                    <p class="text-[11px] text-gray-500 uppercase tracking-wide">Concluídas</p>
+                    <p class="text-2xl font-semibold text-emerald-600 mt-1">{{ $dashboard['completed'] }}</p>
+                </div>
+                <div class="rounded-xl border border-gray-200 p-4 bg-white">
+                    <p class="text-[11px] text-gray-500 uppercase tracking-wide">Atrasadas</p>
+                    <p class="text-2xl font-semibold text-red-600 mt-1">{{ $dashboard['overdue'] }}</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div class="rounded-xl border border-gray-200 p-4 bg-white">
+                    <p class="text-xs font-semibold text-gray-700 mb-3">Tarefas por responsável</p>
+                    @php($maxResponsible = collect($dashboard['tasks_by_responsible'])->max('total') ?: 1)
+                    <div class="space-y-2">
+                        @forelse ($dashboard['tasks_by_responsible'] as $row)
+                            <div>
+                                <div class="flex items-center justify-between text-xs text-gray-600 mb-1">
+                                    <span class="truncate">{{ $row['label'] }}</span>
+                                    <span class="font-medium text-gray-800">{{ $row['total'] }}</span>
+                                </div>
+                                <div class="h-2 rounded-full bg-gray-100 overflow-hidden">
+                                    <div class="h-2 bg-emerald-500 rounded-full" style="width: {{ ($row['total'] / $maxResponsible) * 100 }}%"></div>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-xs text-gray-400">Sem dados</p>
+                        @endforelse
+                    </div>
+                </div>
+
+                <div class="rounded-xl border border-gray-200 p-4 bg-white">
+                    <p class="text-xs font-semibold text-gray-700 mb-3">Tarefas por etapa</p>
+                    @php($maxStepStatus = collect($dashboard['tasks_by_step_status'])->max('total') ?: 1)
+                    <div class="space-y-2">
+                        @forelse ($dashboard['tasks_by_step_status'] as $row)
+                            <div>
+                                <div class="flex items-center justify-between text-xs text-gray-600 mb-1">
+                                    <span class="truncate">{{ $row['label'] }}</span>
+                                    <span class="font-medium text-gray-800">{{ $row['total'] }}</span>
+                                </div>
+                                <div class="h-2 rounded-full bg-gray-100 overflow-hidden">
+                                    <div class="h-2 bg-blue-500 rounded-full" style="width: {{ ($row['total'] / $maxStepStatus) * 100 }}%"></div>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-xs text-gray-400">Sem dados</p>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="tab === 'list'" x-cloak>
         <!-- Cabeçalho da Tabela -->
         <div class="relative overflow-hidden border border-gray-200 rounded-t-xl">
             <div class="grid grid-cols-5 md:grid-cols-12 gap-4 px-6 py-3 bg-gradient-to-r from-emerald-700 to-emerald-800 text-xs font-semibold text-white uppercase tracking-wider">
@@ -307,6 +388,7 @@
                 {{ $tasks->links('components.pagination') }}
             </div>
         @endif
+        </div>
 
         <!-- Aside -->
         <div>
@@ -368,55 +450,6 @@
             </form>
         @endif
 
-        @if ($modalKey === 'modal-shared-task-hub')
-            <x-slot name="header">
-                Compartilhar Ambiente
-            </x-slot>
-
-            <form wire:submit.prevent="storeSharedTaskHub" class="space-y-4 border-b border-gray-200/80 pb-1.5">
-                <div>
-                    <x-form.label value="Lista de Usuário" />
-                    <x-form.select-livewire name="workflow_id" wire:model="workflow_id" :collection="$users" value-field="id" label-field="name" />
-                </div>
-                
-                <div class="flex justify-end">
-                    <x-button type="submit" text="Adicionar Usuário" />
-                </div>
-            </form>
-
-            <div class="pt-1.5">
-                {{-- Lista de atividades --}}
-                <x-page.table>
-                    <x-slot name="thead">
-                        <tr>
-                            <x-page.table-th class="text-center">Ordem</x-page.table-th>
-                            <x-page.table-th>Atividade</x-page.table-th>
-                            <x-page.table-th class="text-center">Setor</x-page.table-th>
-                            <x-page.table-th class="text-center">Prazo</x-page.table-th>
-                            <x-page.table-th class="text-center">Obrigatório</x-page.table-th>
-                            <x-page.table-th class="text-center">Paralelo?</x-page.table-th>
-                            <x-page.table-th class="text-center">Ações</x-page.table-th>
-                        </tr>
-                    </x-slot>
-                    <x-slot name="tbody">
-                        @forelse ($task->taskHub->members() as $member)
-                            <tr class="hover:bg-gray-50">
-                                <x-page.table-td class="text-center">{{ $workflowStep->step_order }}</x-page.table-td>
-                                <x-page.table-td>{{ $workflowStep->title }}</x-page.table-td>
-                                <x-page.table-td>{{ $workflowStep->organization?->acronym }}</x-page.table-td>
-                                <x-page.table-td class="text-center">{{ $workflowStep->deadline_days }}</x-page.table-td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="px-4 py-4 text-center text-gray-500">
-                                    Sem atividades adicionadas.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </x-slot>
-                </x-page.table>
-            </div>
-        @endif
     </x-modal>
 
 </div>

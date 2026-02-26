@@ -141,30 +141,7 @@ class TaskPage extends Component
         }
     // Fim
 
-    // Início Formulário de Compartilhamento de Ambiente
-        public function enableSharedTaskHub()
-        {
-            $this->resetForm();
-            $this->openModal('modal-shared-task-hub');
-        }
-        
-        public function cancelSharedTaskHub()
-        {
-            $this->resetForm();
-            $this->openModal('modal-shared-task-hub');
-        }
-
-        public function storeSharedTaskHub()
-        {
-            $data = $this->validate(TaskRules::store());
-
-            $this->taskService->create($this->taskHubId, $data);
-
-            $this->isCreatingTask = false;
-            $this->resetForm();
-            $this->flashSuccess('Tarefa criada com sucesso.');
-        }
-    // Fim
+    // Início Formulário de Compartilhamento de Ambiente (removido)
 
     // Início Formulário de Criação de Etapas
         public function enableCreateTaskStep($id)
@@ -215,10 +192,15 @@ class TaskPage extends Component
             }
 
             $workflow = Workflow::findOrFail($this->workflow_id);
+            if ($workflow->workflowSteps->isEmpty()) {
+                $this->flashError('Este fluxo não possui etapas.');
+                return;
+            }
             $currentDeadline = now();
             $this->setDefaults();
 
             $task = Task::find($this->taskId);
+            $lastDeadline = null;
 
             foreach ($workflow->workflowSteps as $key => $step) {
 
@@ -235,11 +217,15 @@ class TaskPage extends Component
                     'task_status_id'   => $this->task_step_status_id,
                     'task_priority_id'   => $this->task_priority_id,
                 ]);
+
+                $lastDeadline = $taskStep->deadline_at;
             }
 
-            $taskUpdate = Task::find($this->taskId);
-            $taskUpdate->deadline_at = $taskStep->deadline_at;
-            $taskUpdate->save();
+            if ($lastDeadline) {
+                $taskUpdate = Task::find($this->taskId);
+                $taskUpdate->deadline_at = $lastDeadline;
+                $taskUpdate->save();
+            }
 
             $this->flashSuccess('Etapas copiadas com sucesso.');
             $this->closeModal();
@@ -269,6 +255,7 @@ class TaskPage extends Component
     {
         return view('livewire.task.task-page',[
             'tasks' => $this->taskService->index($this->taskHubId, $this->filters),
+            'dashboard' => $this->taskService->dashboard($this->taskHubId),
         ]);
     }
 }
