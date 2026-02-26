@@ -11,6 +11,7 @@ use App\Models\Administration\User\User;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Organization\Workflow\Workflow;
 use App\Models\Task\Task;
+use App\Models\Task\TaskHub;
 use App\Models\Task\TaskStep;
 use App\Services\Administration\Task\TaskStatusService;
 use App\Services\Administration\Task\TaskStepStatusService;
@@ -18,6 +19,7 @@ use App\Services\Task\TaskService;
 use App\Validation\Task\TaskRules;
 use App\Validation\Task\TaskStepRules;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -79,7 +81,19 @@ class TaskPage extends Component
 
     public function mount($uuid)
     {
-        $this->taskHubId = $uuid;
+        $userId = Auth::user()->id;
+
+        $taskHub = TaskHub::query()
+            ->where('uuid', $uuid)
+            ->where(function ($query) use ($userId): void {
+                $query->where('owner_id', $userId)
+                    ->orWhereHas('members', function ($memberQuery) use ($userId): void {
+                        $memberQuery->where('user_id', $userId);
+                    });
+            })
+            ->firstOrFail();
+
+        $this->taskHubId = $taskHub->uuid;
         $this->users = User::orderBy('name')->get();
         $this->organizations = OrganizationChart::orderBy('order')->get();
         $this->taskCategories = TaskCategory::orderBy('title')->get();

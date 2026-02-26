@@ -62,8 +62,17 @@
                         </div>
                     </x-page.table-td>
                     <x-page.table-td class="text-center">
-                        <x-button href="{{ route('tasks.show', $taskHub->uuid) }}" icon="fas fa-arrow-right" variant="green_text" title="Acessar ambiente"
-                        />
+                        <div class="flex items-center justify-center gap-2">
+                            <x-button href="{{ route('tasks.show', $taskHub->uuid) }}" icon="fas fa-arrow-right" variant="green_text" title="Acessar ambiente" />
+                            @if ($taskHub->owner_id === auth()->id())
+                                <x-button
+                                    icon="fas fa-user-plus"
+                                    variant="gray_text"
+                                    title="Compartilhar ambiente"
+                                    wire:click="openShareModal({{ $taskHub->id }})"
+                                />
+                            @endif
+                        </div>
                     </x-page.table-td>
                 </tr>
             @empty
@@ -151,6 +160,71 @@
                     />
                 </div>
             </form>
+        @endif
+
+        @if ($modalKey === 'modal-task-hub-share')
+            @php($shareHub = $taskHubs->firstWhere('id', $shareTaskHubId))
+
+            <x-slot name="header">
+                {{ $shareHub ? 'Compartilhar: ' . $shareHub->title : 'Compartilhar Ambiente' }}
+            </x-slot>
+
+            <div class="space-y-4">
+                <form wire:submit.prevent="addMember" class="space-y-3">
+                    <div>
+                        <x-form.label value="Adicionar usuÃ¡rio" />
+                        <x-form.select-livewire
+                            name="member_user_id"
+                            wire:model="member_user_id"
+                            :collection="$users"
+                            labelField="name"
+                            placeholder="Selecione um usuÃ¡rio"
+                        />
+                        <x-form.error for="member_user_id" />
+                    </div>
+
+                    <div class="flex justify-end gap-2">
+                        <x-button text="Cancelar" variant="gray_outline" wire:click="closeModal" />
+                        <x-button type="submit" text="Compartilhar" icon="fas fa-user-plus" />
+                    </div>
+                </form>
+
+                @if ($shareHub)
+                    <div class="border-t border-gray-100 pt-4">
+                        <p class="text-xs text-gray-500 mb-2">UsuÃ¡rios compartilhados</p>
+                        <div class="space-y-2">
+                            @forelse ($shareHub->members as $member)
+                                <div class="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2">
+                                    <div class="flex items-center gap-2">
+                                        @if ($member->user->avatar)
+                                            <img src="{{ asset('storage/' . $member->user->avatar) }}" alt="{{ $member->user->name }}" class="size-7 rounded-full object-cover" loading="lazy">
+                                        @else
+                                            <div class="size-7 rounded-full bg-emerald-600 text-white text-[9px] font-medium flex items-center justify-center uppercase">
+                                                {{ Str::substr($member->user->name, 0, 2) }}
+                                            </div>
+                                        @endif
+                                        <div class="flex flex-col">
+                                            <span class="text-xs font-medium text-gray-700">{{ $member->user->name }}</span>
+                                            <span class="text-[11px] text-gray-400">{{ $member->user->email }}</span>
+                                        </div>
+                                    </div>
+
+                                    @if ($shareHub->owner_id === auth()->id() && $member->user_id !== $shareHub->owner_id)
+                                        <x-button
+                                            variant="red_text"
+                                            icon="fas fa-user-minus"
+                                            title="Remover"
+                                            wire:click="removeMember({{ $member->id }})"
+                                        />
+                                    @endif
+                                </div>
+                            @empty
+                                <p class="text-xs text-gray-400">Nenhum usuÃ¡rio compartilhado.</p>
+                            @endforelse
+                        </div>
+                    </div>
+                @endif
+            </div>
         @endif
     </x-modal>
 
