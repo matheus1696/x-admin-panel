@@ -8,6 +8,7 @@ use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasUuidRouteKey;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RegionState extends Model
 {
@@ -19,15 +20,14 @@ class RegionState extends Model
         'acronym',
         'code_uf',
         'code_ddd',
-        'state',
+        'title',
         'filter',
         'is_active',
-        'code_ddd',
         'country_id',
     ];
 
-    public function RegionCountry(){
-        return $this->belongsTo(RegionCountry::class,'country_id','id');
+    public function regionCountry(): BelongsTo
+    {
+        return $this->belongsTo(RegionCountry::class, 'country_id');
     }
 }
-

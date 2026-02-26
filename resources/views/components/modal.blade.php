@@ -54,12 +54,10 @@
             x-transition:leave="ease-in duration-200"
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-90"
-            class="relative w-full {{ $maxWidth }} bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200"
+            class="relative w-full {{ $maxWidth }} bg-white rounded-2xl shadow-2xl border border-gray-200"
             @click.outside="handleClose()"
             @keydown.escape.window="handleClose()"
         >
-            <!-- Barra superior decorativa (sutil) -->
-            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-emerald-600"></div>
 
             {{-- Header --}}
             @isset($header)
@@ -86,7 +84,7 @@
             @endisset
 
             {{-- Body --}}
-            <div class="px-6 py-5 min-h-60 max-h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar">
+            <div class="px-6 py-5 max-h-[calc(100vh-200px)]">
                 {{ $slot }}
             </div>
 

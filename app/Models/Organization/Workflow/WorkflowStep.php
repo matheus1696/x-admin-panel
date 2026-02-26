@@ -8,10 +8,11 @@ use App\Models\Traits\HasTitleFilter;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasUuidRouteKey;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WorkflowStep extends Model
 {
-    use HasActive, HasTitleFilter, HasUuid, HasUuidRouteKey;
+    use HasTitleFilter, HasUuid, HasUuidRouteKey;
     
     protected $fillable = [
         'workflow_id',
@@ -32,18 +33,12 @@ class WorkflowStep extends Model
         'step_order' => 'integer',
     ];
 
-    /**
-     * Process workflow
-     */
-    public function workflow()
+    public function workflow(): BelongsTo
     {
         return $this->belongsTo(Workflow::class);
     }
 
-    /**
-     * Process workflow
-     */
-    public function organization()
+    public function organization(): BelongsTo
     {
         return $this->belongsTo(OrganizationChart::class, 'organization_id');
     }

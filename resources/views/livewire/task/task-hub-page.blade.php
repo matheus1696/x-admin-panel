@@ -42,9 +42,24 @@
                         </a>
                     </x-page.table-td>
                     <x-page.table-td>
-                        @foreach ($taskHub->members->take(3) as $member)
-                            {{ $member->user->name }}
-                        @endforeach
+                        <div class="flex -space-x-2 transition-all duration-200">
+                            @foreach ($taskHub->members->take(3) as $member)
+                                @if($member->user->avatar)
+                                    <img src="{{ asset('storage/' . $member->user->avatar) }}" alt="{{ $member->user->name }}" class="size-8 rounded-full border-2 border-white shadow-sm object-cover object-center hover:scale-110 transition-transform duration-200" title="{{ $member->user->name }}" loading="lazy">
+                                @else
+                                    <div class="size-7 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white text-[9px] font-medium border-2 border-white shadow-sm hover:scale-110 transition-transform duration-200 uppercase" title="{{ $member->user->name }}">
+                                        {{ Str::substr($member->user->name, 0, 2) }}
+                                    </div>
+                                @endif
+                            @endforeach
+
+                            @if($taskHub->members->count() > 3)
+                                <div class="size-8 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-xs font-medium text-gray-600 hover:bg-gray-200 transition-colors duration-200"
+                                    title="{{ $taskHub->members->count() - 3 }} membros restantes">
+                                    +{{ $taskHub->members->count() - 3 }}
+                                </div>
+                            @endif
+                        </div>
                     </x-page.table-td>
                     <x-page.table-td class="text-center">
                         <x-button href="{{ route('tasks.show', $taskHub->uuid) }}" icon="fas fa-arrow-right" variant="green_text" title="Acessar ambiente"

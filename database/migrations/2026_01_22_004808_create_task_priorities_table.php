@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('task_categories');
+        Schema::dropIfExists('task_priorities');
     }
 };

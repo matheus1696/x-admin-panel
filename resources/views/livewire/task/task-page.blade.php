@@ -7,6 +7,7 @@
     <x-page.header title="Cronograma de Atividades" subtitle="Visualize todas as atividades e os andamentos" icon="fas fa-list-check">
         <x-slot name="button">
             <x-button text="Nova Tarefa" icon="fas fa-plus" wire:click="enableCreateTask()" />
+            <x-button text="Compartilhar" icon="fa-solid fa-share-nodes" wire:click="enableSharedTaskHub()" variant="gray_solid" />
         </x-slot>
     </x-page.header>
 
@@ -16,11 +17,11 @@
         <!-- Cabeçalho da Tabela -->
         <div class="relative overflow-hidden border border-gray-200 rounded-t-xl">
             <div class="grid grid-cols-5 md:grid-cols-12 gap-4 px-6 py-3 bg-gradient-to-r from-emerald-700 to-emerald-800 text-xs font-semibold text-white uppercase tracking-wider">
-                <div class="col-span-4 md:col-span-4 flex items-center gap-2">
+                <div class="col-span-5 md:col-span-4 flex items-center gap-2">
                     <div class="w-1 h-4 bg-white/50 rounded-full"></div>
                     <span>Título</span>
                 </div>
-                <div class="col-span-2 text-center">
+                <div class="col-span-2 hidden md:block text-center">
                     <span class="flex items-center justify-center gap-1.5">
                         <i class="fas fa-user-circle text-white/80 text-xs"></i>
                         Solicitante
@@ -51,7 +52,7 @@
                 <div x-data="{ openSteps: false }" class="group/task transition-all duration-200 {{ $task->finished_at ? 'bg-emerald-50/30' : 'hover:bg-emerald-50/20' }}">
                     
                     <!-- Linha da Tarefa -->
-                    <div class="grid grid-cols-5 md:grid-cols-12 px-3 py-3 items-center relative">
+                    <div class="grid grid-cols-5 md:grid-cols-12 px-2 py-2.5 items-center relative">
                         
                         <!-- Indicador de tarefa finalizada -->
                         @if($task->finished_at)
@@ -59,9 +60,9 @@
                         @endif
 
                         <!-- Título e Código -->
-                        <div class="col-span-3 md:col-span-4 flex items-center pr-2"> 
-                            <div class="flex items-center gap-1 flex-1">
-                                <div class="w-5">
+                        <div class="col-span-5 md:col-span-4 flex items-center pr-1"> 
+                            <div class="flex-1 flex items-center gap-1 line-clamp-1">
+                                <div class="w-3">
                                     @if ($task->taskSteps->count() > 0)
                                         <button @click="openSteps = !openSteps" class="w-5 h-5 flex items-center justify-center">
                                             <i class="fas fa-chevron-right text-xs text-gray-500 transition-transform duration-200"
@@ -79,7 +80,7 @@
                                     <i class="fas fa-external-link-alt text-[8px] text-gray-400"></i>
                                 </button>
                                 
-                                <span class="text-gray-300 mx-0.5">•</span>
+                                <div class="text-gray-300 mx-0.5">•</div>
                                 
                                 <!-- Título -->
                                 <span class="flex-1 text-xs text-gray-700 truncate" title="{{ $task->title }}">
@@ -107,7 +108,7 @@
                         </div>
 
                         <!-- Responsável -->
-                        <div class="col-span-2 px-2 text-center">
+                        <div class="col-span-2 hidden md:block px-2 text-center">
                             <span class="text-xs text-gray-600 truncate block">
                                 {{ $task->user?->name ?? '—' }}
                             </span>
@@ -365,6 +366,56 @@
                     <x-button type="submit" text="Copiar etapas" />
                 </div>
             </form>
+        @endif
+
+        @if ($modalKey === 'modal-shared-task-hub')
+            <x-slot name="header">
+                Compartilhar Ambiente
+            </x-slot>
+
+            <form wire:submit.prevent="storeSharedTaskHub" class="space-y-4 border-b border-gray-200/80 pb-1.5">
+                <div>
+                    <x-form.label value="Lista de Usuário" />
+                    <x-form.select-livewire name="workflow_id" wire:model="workflow_id" :collection="$users" value-field="id" label-field="name" />
+                </div>
+                
+                <div class="flex justify-end">
+                    <x-button type="submit" text="Adicionar Usuário" />
+                </div>
+            </form>
+
+            <div class="pt-1.5">
+                {{-- Lista de atividades --}}
+                <x-page.table>
+                    <x-slot name="thead">
+                        <tr>
+                            <x-page.table-th class="text-center">Ordem</x-page.table-th>
+                            <x-page.table-th>Atividade</x-page.table-th>
+                            <x-page.table-th class="text-center">Setor</x-page.table-th>
+                            <x-page.table-th class="text-center">Prazo</x-page.table-th>
+                            <x-page.table-th class="text-center">Obrigatório</x-page.table-th>
+                            <x-page.table-th class="text-center">Paralelo?</x-page.table-th>
+                            <x-page.table-th class="text-center">Ações</x-page.table-th>
+                        </tr>
+                    </x-slot>
+                    <x-slot name="tbody">
+                        @forelse ($task->taskHub->members() as $member)
+                            <tr class="hover:bg-gray-50">
+                                <x-page.table-td class="text-center">{{ $workflowStep->step_order }}</x-page.table-td>
+                                <x-page.table-td>{{ $workflowStep->title }}</x-page.table-td>
+                                <x-page.table-td>{{ $workflowStep->organization?->acronym }}</x-page.table-td>
+                                <x-page.table-td class="text-center">{{ $workflowStep->deadline_days }}</x-page.table-td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-4 py-4 text-center text-gray-500">
+                                    Sem atividades adicionadas.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </x-slot>
+                </x-page.table>
+            </div>
         @endif
     </x-modal>
 

@@ -1,6 +1,6 @@
 <div class="grid grid-cols-4 md:grid-cols-12 gap-2 items-center">
     <!-- TÍTULO -->
-    <div class="col-span-4">
+    <div class="col-span-3 md:col-span-4">
         <x-form.input type="text" name="title" wire:model.defer="title" placeholder="Título da Atividade *" variant='pills' autofocus />
     </div>
     

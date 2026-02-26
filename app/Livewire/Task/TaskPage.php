@@ -127,6 +127,31 @@ class TaskPage extends Component
         }
     // Fim
 
+    // Início Formulário de Compartilhamento de Ambiente
+        public function enableSharedTaskHub()
+        {
+            $this->resetForm();
+            $this->openModal('modal-shared-task-hub');
+        }
+        
+        public function cancelSharedTaskHub()
+        {
+            $this->resetForm();
+            $this->openModal('modal-shared-task-hub');
+        }
+
+        public function storeSharedTaskHub()
+        {
+            $data = $this->validate(TaskRules::store());
+
+            $this->taskService->create($this->taskHubId, $data);
+
+            $this->isCreatingTask = false;
+            $this->resetForm();
+            $this->flashSuccess('Tarefa criada com sucesso.');
+        }
+    // Fim
+
     // Início Formulário de Criação de Etapas
         public function enableCreateTaskStep($id)
         {
@@ -179,6 +204,8 @@ class TaskPage extends Component
             $currentDeadline = now();
             $this->setDefaults();
 
+            $task = Task::find($this->taskId);
+
             foreach ($workflow->workflowSteps as $key => $step) {
 
                 if ($step->deadline_days) {
@@ -186,7 +213,8 @@ class TaskPage extends Component
                 }
 
                 $taskStep = TaskStep::create([
-                    'task_id'     => $this->taskId,
+                    'task_id'     => $task->id,
+                    'task_hub_id' => $task->task_hub_id,
                     'title'       => $step->title,
                     'organization_id' => $step->organization_id,
                     'deadline_at' => $step->deadline_days ? $currentDeadline : null,

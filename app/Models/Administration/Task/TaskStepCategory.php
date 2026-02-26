@@ -4,6 +4,7 @@ namespace App\Models\Administration\Task;
 
 use App\Models\Task\TaskStep;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TaskStepCategory extends Model
 {
@@ -14,12 +15,12 @@ class TaskStepCategory extends Model
         'is_active',
     ];
 
-    public function taskStep()
+    public function taskStep(): HasMany
     {
         return $this->hasMany(TaskStep::class);
     }
 
-    public static function default()
+    public static function default(): ?static
     {
         return static::where('is_default', true)->first();
     }

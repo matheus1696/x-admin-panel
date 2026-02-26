@@ -108,7 +108,9 @@
             'text' => 'text-gray-700',
             'icon' => 'text-emerald-700',
             'pill' => 'bg-emerald-200 text-emerald-800 border-emerald-300',
-            'search' => 'focus:ring-transparent border-2 border-gray-200 focus:border-emerald-700/80'
+            'search' => 'focus:ring-transparent border-2 border-gray-200 focus:border-emerald-700/80',
+            'ring' => 'ring-emerald-500/30',
+            'glassSelected' => 'bg-emerald-50/30 border border-emerald-300/50',
         ],
         'blue' => [
             'base' => 'border-gray-200 focus:border-blue-500 focus:ring-blue-500/30',
@@ -119,6 +121,9 @@
             'text' => 'text-gray-700',
             'icon' => 'text-blue-600',
             'pill' => 'bg-blue-100 text-blue-800 border-blue-300',
+            'search' => 'focus:ring-transparent border-2 border-gray-200 focus:border-blue-600/80',
+            'ring' => 'ring-blue-500/30',
+            'glassSelected' => 'bg-blue-50/30 border border-blue-300/50',
         ],
         'purple' => [
             'base' => 'border-gray-200 focus:border-purple-500 focus:ring-purple-500/30',
@@ -129,6 +134,9 @@
             'text' => 'text-gray-700',
             'icon' => 'text-purple-600',
             'pill' => 'bg-purple-100 text-purple-800 border-purple-300',
+            'search' => 'focus:ring-transparent border-2 border-gray-200 focus:border-purple-600/80',
+            'ring' => 'ring-purple-500/30',
+            'glassSelected' => 'bg-purple-50/30 border border-purple-300/50',
         ],
         'red' => [
             'base' => 'border-gray-200 focus:border-red-500 focus:ring-red-500/30',
@@ -139,6 +147,9 @@
             'text' => 'text-gray-700',
             'icon' => 'text-red-600',
             'pill' => 'bg-red-100 text-red-800 border-red-300',
+            'search' => 'focus:ring-transparent border-2 border-gray-200 focus:border-red-600/80',
+            'ring' => 'ring-red-500/30',
+            'glassSelected' => 'bg-red-50/30 border border-red-300/50',
         ],
         'yellow' => [
             'base' => 'border-gray-200 focus:border-yellow-500 focus:ring-yellow-500/30',
@@ -149,6 +160,9 @@
             'text' => 'text-yellow-700',
             'icon' => 'text-yellow-600',
             'pill' => 'bg-yellow-100 text-yellow-800 border-yellow-300',
+            'search' => 'focus:ring-transparent border-2 border-gray-200 focus:border-yellow-600/80',
+            'ring' => 'ring-yellow-500/30',
+            'glassSelected' => 'bg-yellow-50/30 border border-yellow-300/50',
         ],
         'gray' => [
             'base' => 'border-gray-200 focus:border-gray-500 focus:ring-gray-500/30',
@@ -159,6 +173,9 @@
             'text' => 'text-gray-700',
             'icon' => 'text-gray-600',
             'pill' => 'bg-gray-100 text-gray-800 border-gray-300',
+            'search' => 'focus:ring-transparent border-2 border-gray-200 focus:border-gray-600/80',
+            'ring' => 'ring-gray-500/30',
+            'glassSelected' => 'bg-gray-50/30 border border-gray-300/50',
         ],
         'sky' => [
             'base' => 'border-gray-200 focus:border-sky-500 focus:ring-sky-500/30',
@@ -169,6 +186,9 @@
             'text' => 'text-sky-700',
             'icon' => 'text-sky-600',
             'pill' => 'bg-sky-100 text-sky-800 border-sky-300',
+            'search' => 'focus:ring-transparent border-2 border-gray-200 focus:border-sky-600/80',
+            'ring' => 'ring-sky-500/30',
+            'glassSelected' => 'bg-sky-50/30 border border-sky-300/50',
         ],
         'indigo' => [
             'base' => 'border-gray-200 focus:border-indigo-500 focus:ring-indigo-500/30',
@@ -179,6 +199,9 @@
             'text' => 'text-indigo-700',
             'icon' => 'text-indigo-600',
             'pill' => 'bg-indigo-100 text-indigo-800 border-indigo-300',
+            'search' => 'focus:ring-transparent border-2 border-gray-200 focus:border-indigo-600/80',
+            'ring' => 'ring-indigo-500/30',
+            'glassSelected' => 'bg-indigo-50/30 border border-indigo-300/50',
         ],
     ];
     
@@ -250,7 +273,7 @@
             'trigger' => [
                 'base' => "bg-white/20 backdrop-blur-lg border border-white/30 {$currentColor['base']} hover:bg-white/30 hover:backdrop-blur-xl transition-all duration-300",
                 'error' => "bg-red-50/20 backdrop-blur-lg border border-red-300/30",
-                'selected' => "{$currentColor['selected']}/30 border border-{$borderColor}-300/50",
+                'selected' => $currentColor['glassSelected'],
             ],
             'dropdown' => 'rounded-lg border border-white/20 bg-white/30 backdrop-blur-xl',
             'option' => 'rounded-lg',
@@ -411,7 +434,7 @@
         class="{{ $currentSize['trigger'] }} {{ $errors->has($name) && !$disabled ? $triggerClasses['error'] : $triggerClasses['base'] }}"
         :class="[
             disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
-            open ? 'ring-2 ' + ($errors->has($name) ? 'ring-red-500/30' : 'ring-{{ $borderColor }}-500/30') : '',
+            open ? 'ring-2 ' + ($errors->has($name) ? 'ring-red-500/30' : '{{ $currentColor['ring'] }}') : '',
             selectedOption ? $triggerClasses['selected'] : ''
         ]">
         <div class="flex justify-between items-center gap-2">

@@ -7,6 +7,7 @@ use App\Models\Traits\HasTitleFilter;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasUuidRouteKey;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Workflow extends Model
 {
@@ -21,11 +22,12 @@ class Workflow extends Model
     ];
 
     protected $casts = [
-        'status' => 'boolean',
+        'is_active' => 'boolean',
         'total_estimated_days' => 'integer',
     ];
 
-    public function workflowSteps(){
+    public function workflowSteps(): HasMany
+    {
         return $this->hasMany(WorkflowStep::class)->orderBy('step_order');
     }
 }

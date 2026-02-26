@@ -16,10 +16,9 @@ class RegionCountry extends Model
     protected $table = 'region_countries';
 
     protected $fillable = [
-        'code',
         'acronym_2',
         'acronym_3',        
-        'country',
+        'title',
         'filter',
         'country_ing',
         'filter_country_ing',
