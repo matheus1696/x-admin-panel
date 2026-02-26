@@ -67,7 +67,7 @@
                             @if ($taskHub->owner_id === auth()->id())
                                 <x-button
                                     icon="fas fa-user-plus"
-                                    variant="gray_text"
+                                    variant="green_text"
                                     title="Compartilhar ambiente"
                                     wire:click="openShareModal({{ $taskHub->id }})"
                                 />
@@ -77,7 +77,7 @@
                 </tr>
             @empty
                 <tr>
-                    <x-page.table-td colspan="3" class="text-center py-8">
+                    <x-page.table-td colspan="4" class="text-center py-8">
                         <div class="flex flex-col items-center justify-center">
                             <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mb-3">
                                 <i class="fas fa-layer-group text-emerald-600 text-lg"></i>
@@ -191,7 +191,7 @@
 
                 @if ($shareHub)
                     <div class="border-t border-gray-100 pt-4">
-                        <p class="text-xs text-gray-500 mb-2">UsuÃ¡rios compartilhados</p>
+                        <p class="text-xs text-gray-500 mb-2">Usuários compartilhados</p>
                         <div class="space-y-2">
                             @forelse ($shareHub->members as $member)
                                 <div class="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2">
@@ -219,7 +219,7 @@
                                     @endif
                                 </div>
                             @empty
-                                <p class="text-xs text-gray-400">Nenhum usuÃ¡rio compartilhado.</p>
+                                <p class="text-xs text-gray-400">Nenhum usuário compartilhado.</p>
                             @endforelse
                         </div>
                     </div>

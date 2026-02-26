@@ -25,10 +25,11 @@ class Task extends Model
         'task_category_id',
         'task_priority_id',
         'task_status_id',
+        'kanban_order',
         'started_at',
         'deadline_at',
         'finished_at',
-        'created_user_id'
+        'created_user_id',
     ];
 
     protected $casts = [
@@ -81,11 +82,10 @@ class Task extends Model
     {
         static::created(function ($task) {
             $taskCount = $task->taskHub->tasks()->count();
-            
+
             $task->update([
-                'code' => $task->taskHub->acronym . str_pad($taskCount, 5, '0', STR_PAD_LEFT),
+                'code' => $task->taskHub->acronym.str_pad($taskCount, 5, '0', STR_PAD_LEFT),
             ]);
         });
     }
-    
 }

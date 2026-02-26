@@ -459,43 +459,14 @@
 
                     <!-- Timeline Atividades -->
                     <div class="grid grid-cols-1 gap-4 mt-6">
-                        @forelse ($step->stepActivities() as $stepActivity)
-                            @if ($stepActivity->type == 'comment')                                
+                        @forelse ($step->stepActivities as $stepActivity)
+                            @if ($stepActivity->type === 'comment')
                                 <div class="relative pl-8 border-l-2 border-emerald-200/60 last:border-l-0">
                                     <div class="absolute left-[-9px] top-0 w-4 h-4 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-full border-2 border-white shadow-md"></div>
-                                    
                                     <div class="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-gray-100/80 shadow-sm hover:shadow-md transition-all">
                                         <div class="flex items-center justify-between mb-2">
                                             <div class="flex items-center gap-2">
-                                                <span class="text-xs font-semibold text-gray-900">{{ $stepActivity->user->name}}</span>
-                                                <span class="text-[10px] text-gray-400">•</span>
-                                                <span class="text-[10px] text-gray-500">{{ $stepActivity->created_at->format('d/m/Y')}}</span>
-                                            </div>
-                                            <span class="px-2 py-1 bg-gray-100/80 text-[10px] font-medium text-gray-600 rounded-full border border-gray-200">
-                                                Comentário
-                                            </span>
-                                        </div>
-                                        <p class="text-xs text-gray-600">
-                                            {{ $stepActivity->description}}
-                                        </p>
-                                    </div>
-                                </div>
-                            @else 
-                                <div class="text-center">
-                                    <span class="px-2 py-1 bg-gray-100/80 text-[10px] font-medium text-gray-600 rounded-full border border-gray-200">
-                                        Aviso • {{ $stepActivity->created_at->format('d/m/Y')}} • {{ $stepActivity->description}}
-                                    </span>                                
-                                </div>   
-                            @endif
-                        
-                            @if ($stepActivity->type == 'comment')                                
-                                <div class="relative pl-8 border-l-2 border-emerald-200/60 last:border-l-0">
-                                    <div class="absolute left-[-9px] top-0 w-4 h-4 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-full border-2 border-white shadow-md"></div>
-                                    
-                                    <div class="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-gray-100/80 shadow-sm hover:shadow-md transition-all">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <div class="flex items-center gap-2">
-                                                <span class="text-xs font-semibold text-gray-900">{{ $stepActivity->user->name ?? 'Sistema' }}</span>
+                                                <span class="text-xs font-semibold text-gray-900">{{ $stepActivity->user?->name ?? 'Sistema' }}</span>
                                                 <span class="text-[10px] text-gray-400">•</span>
                                                 <span class="text-[10px] text-gray-500">{{ $stepActivity->created_at->format('d/m/Y') }}</span>
                                             </div>
@@ -508,12 +479,12 @@
                                         </p>
                                     </div>
                                 </div>
-                            @else 
+                            @else
                                 <div class="text-center">
                                     <span class="px-2 py-1 bg-gray-100/80 text-[10px] font-medium text-gray-600 rounded-full border border-gray-200">
-                                        Aviso • {{ $stepActivity->created_at->format('d/m/Y') }} • {{ $stepActivity->description }}
-                                    </span>                                
-                                </div>   
+                                        Ação • {{ $stepActivity->created_at->format('d/m/Y') }} • {{ $stepActivity->description }}
+                                    </span>
+                                </div>
                             @endif
                         @empty
                             <div class="text-center py-8">

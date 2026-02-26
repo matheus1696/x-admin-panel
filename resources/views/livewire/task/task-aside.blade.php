@@ -1,4 +1,4 @@
-<div wire:init="loadTask" class="relative h-full">
+<div class="relative h-full">
 
     <!-- Flash Message -->
     <x-alert.flash />

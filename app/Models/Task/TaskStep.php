@@ -27,10 +27,11 @@ class TaskStep extends Model
         'task_category_id',
         'task_priority_id',
         'task_status_id',
+        'kanban_order',
         'started_at',
         'deadline_at',
         'finished_at',
-        'created_user_id'
+        'created_user_id',
     ];
 
     protected $casts = [
@@ -83,9 +84,9 @@ class TaskStep extends Model
     {
         static::created(function ($step) {
             $taskStepCount = $step->taskHub->taskSteps()->count();
-            
+
             $step->update([
-                'code' => $step->taskHub->acronym . str_pad($taskStepCount, 5, '0', STR_PAD_LEFT),
+                'code' => $step->taskHub->acronym.str_pad($taskStepCount, 5, '0', STR_PAD_LEFT),
             ]);
         });
     }
