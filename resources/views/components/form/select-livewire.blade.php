@@ -432,11 +432,8 @@
         :aria-expanded="open" 
         @click="toggle()"
         class="{{ $currentSize['trigger'] }} {{ $errors->has($name) && !$disabled ? $triggerClasses['error'] : $triggerClasses['base'] }}"
-        :class="[
-            disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
-            open ? 'ring-2 ' + ($errors->has($name) ? 'ring-red-500/30' : '{{ $currentColor['ring'] }}') : '',
-            selectedOption ? $triggerClasses['selected'] : ''
-        ]">
+        
+    >
         <div class="flex justify-between items-center gap-2">
             <!-- Ícone opcional -->
             @if($withIcon && $icon)

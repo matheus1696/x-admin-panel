@@ -1,8 +1,8 @@
-# SYSTEM_MAP — X-AdminPanel
+# SYSTEM_MAP - X-AdminPanel
 
 Senior engineer onboarding map for the current codebase. This is a structural guide: what lives where, how features flow, and the domain boundaries we protect.
 
-## Product Intent (Non‑Negotiable)
+## Product Intent (Non-Negotiable)
 - X-AdminPanel is an organizational visualization platform, not a generic CRUD admin.
 - Primary value is hierarchy clarity and strategic structural understanding.
 - Few Clicks Principle: minimize navigation depth and steps without reducing clarity.
@@ -11,7 +11,14 @@ Senior engineer onboarding map for the current codebase. This is a structural gu
 - Laravel 12 app with Livewire v3 + Blade UI.
 - Thin controllers, business logic in Services, UI state in Livewire.
 - Spatie Permissions for roles/abilities.
-- Postgres is the expected DB per README, but the driver is configurable; a local SQLite file exists for dev.
+- Database driver is configurable; README expects Postgres. A local SQLite file exists for dev.
+
+## Core Stack Guidelines
+- Backend: Laravel 12 (PHP 8.2+)
+- Frontend: Blade + Livewire v3
+- Interatividade: Alpine.js
+- Permissoes: Spatie Laravel Permission
+- Banco de dados: configuravel (README assume Postgres; SQLite local para dev)
 
 ## Module Map (Routes -> Livewire/Controllers)
 Public
@@ -33,12 +40,18 @@ Authenticated (`auth`, `verified`)
 - Administration:
   - `/administracao/usuarios` -> `App\Livewire\Administration\User\UserPage`
   - `/administracao/tasks/status` -> `App\Livewire\Administration\Task\TaskStatusPage`
-  - `/administracao/tasks/categorias` -> `App\Livewire\Administration\Task\TaskStatusPage`
+  - `/administracao/tasks/categorias` -> `App\Livewire\Administration\Task\TaskStatusPage` (same page)
 - System Configuration:
-  - Establishments: `/configuracao/estabelecimentos/*` -> `EstablishmentList`, `EstablishmentShow`, `EstablishmentTypePage`
+  - Establishments:
+    - `/configuracao/estabelecimentos/lista` -> `EstablishmentList`
+    - `/configuracao/estabelecimentos/unidade/{code}` -> `EstablishmentShow`
+    - `/configuracao/estabelecimentos/tipos` -> `EstablishmentTypePage`
   - Occupations: `/configuracao/ocupacoes` -> `OccupationPage`
   - Financial Blocks: `/configuracao/financeiro/blocos` -> `FinancialBlockPage`
-  - Regions: `/configuracao/regioes/*` -> `RegionCountryPage`, `RegionStatePage`, `RegionCityPage`
+  - Regions:
+    - `/configuracao/regioes/paises` -> `RegionCountryPage`
+    - `/configuracao/regioes/estados` -> `RegionStatePage`
+    - `/configuracao/regioes/cidades` -> `RegionCityPage`
 - Organization:
   - `/organizacao/configuracao` -> `OrganizationChartConfigPage`
   - `/organizacao/workflow` -> `WorkflowProcessesPage`
@@ -77,18 +90,23 @@ UI:
 ## Tasks (Operational Execution)
 Models:
 - `TaskHub` = container for tasks and steps.
+- `TaskHubMember` = user membership/share for a hub.
 - `Task` = main task entity.
 - `TaskStep` = sub-step, can be linked to `OrganizationChart`.
-- Activity tables track audit trail of tasks and steps.
+- Activity tables: `TaskActivity`, `TaskStepActivity`.
 
 Service:
-- `App\Services\Task\TaskService` for task listing, create, update, comments.
+- `App\Services\Task\TaskService` for task listing, create, update, comments, kanban moves.
 - Codes are auto-generated on create based on hub acronym.
 
 UI:
-- `App\Livewire\Task\TaskHubPage`
-- `App\Livewire\Task\TaskPage`
+- `App\Livewire\Task\TaskHubPage` (hub list and creation)
+- `App\Livewire\Task\TaskPage` (tasks, kanban, steps, members)
 - `resources/views/livewire/task/*`
+
+Membership behavior:
+- Hub membership is managed in TaskPage (Membros tab).
+- TaskHubPage lists hubs owned by or shared with the user.
 
 ## Administration & Configuration
 Administration

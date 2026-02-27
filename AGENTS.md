@@ -1,4 +1,4 @@
-# X-AdminPanel — AI Architecture & Evolution Contract
+# X-AdminPanel - AI Architecture & Evolution Contract
 
 ## 1. System Identity
 
@@ -29,17 +29,32 @@ If hierarchy integrity is compromised, the solution must be rejected.
 
 ---
 
+# 1.1 Language & Encoding
+
+Layout (UI) uses PT-BR with UTF-8 encoding.
+Backend code, class names, and technical conventions remain in English and follow Laravel defaults.
+
+---
+
+# 1.2 Core Stack Guidelines
+
+- Backend: Laravel 12 (PHP 8.2+)
+- Frontend: Blade + Livewire v3
+- Interatividade: Livewire 3 + AlpineJS
+
+---
+
 # 2. Architectural Foundation
 
 ## 2.1 Architectural Hierarchy (Laravel)
 
-Services  
-↑  
-Controllers  
-↑  
-Livewire  
-↑  
-Blade  
+Services
+^
+Controllers
+^
+Livewire
+^
+Blade
 
 Rules:
 
@@ -55,7 +70,7 @@ If business rules appear outside Services, refactor.
 
 ---
 
-# 3. Core Modules
+# 3. Core Modules (Implemented)
 
 ## 3.1 Organogram (Strategic Core)
 
@@ -76,21 +91,7 @@ Hierarchy logic must live in Services.
 
 ---
 
-## 3.2 Wallfull
-
-Extension of Organogram for macro visualization.
-
-Must:
-- Reuse Organogram Services
-- Never duplicate hierarchy logic
-- Optimize rendering only
-
-Rendering optimization is allowed.
-Logic duplication is forbidden.
-
----
-
-## 3.3 Dashboard
+## 3.2 Dashboard
 
 Role:
 System orchestrator.
@@ -105,14 +106,27 @@ Must not:
 
 ---
 
-## 3.4 Notifications
+## 3.3 Workflow
 
-Purpose:
-Governance and traceable communication.
+Organizational process engine linked to OrganizationChart.
 
 Must:
-- Be event-driven
-- Avoid embedding business logic
+- Use WorkflowService / WorkflowStepService
+- Keep step ordering and deadlines consistent
+- Avoid embedding workflow rules in UI
+
+---
+
+## 3.4 Tasks (Operational Execution)
+
+TaskHub is the container for tasks and steps.
+TaskPage is the operational UI for execution.
+Membership/share management is handled inside TaskPage (Membros tab).
+
+Must:
+- Use TaskService for task creation, kanban moves, and activity logging
+- Preserve hub ownership and membership rules
+- Keep audit trail consistent
 
 ---
 
@@ -200,7 +214,7 @@ Before implementing:
 
 1. Clearly define the problem.
 2. Identify affected architectural layer.
-3. Propose 2–3 strategies.
+3. Propose 2-3 strategies.
 4. Compare tradeoffs.
 5. Recommend safest path.
 
