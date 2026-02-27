@@ -2,15 +2,17 @@
 
 namespace App\Models\Task;
 
+use App\Models\Administration\User\User;
 use App\Models\Traits\HasTitleFilter;
 use App\Models\Traits\HasUuid;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TaskHub extends Model
 {
     use HasUuid, HasTitleFilter;
-    //
+
     protected $fillable = [
         'uuid',
         'acronym',
@@ -20,22 +22,22 @@ class TaskHub extends Model
         'owner_id',
     ];
 
-    public function tasks()
+    public function tasks(): HasMany
     {
         return $this->hasMany(Task::class, 'task_hub_id');
     }
 
-    public function taskSteps()
+    public function taskSteps(): HasMany
     {
         return $this->hasMany(TaskStep::class, 'task_hub_id');
     }
 
-    public function owner()
+    public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    public function members()
+    public function members(): HasMany
     {
         return $this->hasMany(TaskHubMember::class);
     }

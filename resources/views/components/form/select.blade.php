@@ -341,7 +341,7 @@
                 </div>
             @endif
             
-            <span class="truncat" :class="selectedOption ? '{{ $currentColor['text'] }}' : 'text-gray-400'">
+            <span class="truncate" :class="selectedOption ? '{{ $currentColor['text'] }}' : 'text-gray-400'">
                 <span x-text="displayLabel"></span>
             </span>
         </div>

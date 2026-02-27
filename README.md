@@ -1,131 +1,96 @@
-# X-AdminPanel: Painel Administrativo Moderno
+# X-AdminPanel - Organizational Intelligence Platform
 
-O **X-AdminPanel** é um sistema administrativo moderno, modular e escalável, desenvolvido para estruturar organizações, automatizar fluxos de trabalho e gerenciar atividades operacionais com segurança, rastreabilidade e performance.
+O **X-AdminPanel** e uma plataforma de visualizacao organizacional focada em clareza hierarquica, entendimento estrutural e governanca administrativa.
 
-🚧 **Projeto em desenvolvimento ativo** — Versão estável com arquitetura consolidada e módulos funcionais prontos para uso e expansão.
-
-O objetivo é oferecer uma solução segura, intuitiva e eficiente para o gerenciamento de informações médicas, garantindo maior agilidade no atendimento, organização no histórico clínico e uma experiência transformadora no cuidado com os pacientes.
+Nao e um CRUD generico. O valor principal esta em:
+- clareza de hierarquia
+- visualizacao consistente das relacoes
+- poucas etapas para executar tarefas relevantes
 
 ---
 
-## 🧩 Módulos Implementados
+## Modulos Implementados
 
-O sistema é organizado por **módulos funcionais independentes**, cada um com sua estrutura de rotas, views, componentes Livewire e lógica de negócio:
+### Organizacao (Organograma)
+- Visualizacao do organograma corporativo
+- Gestao administrativa da hierarquia
+- Estruturacao por setores e niveis hierarquicos
 
-### 🏢 **Organização**
-- Visualização do organograma corporativo
-- Gerenciamento administrativo da hierarquia
-- Estruturação por setores e níveis hierárquicos
+### Workflow
+- Definicao de processos organizacionais
+- Etapas com ordenacao e prazos
+- Integracao direta com tarefas
 
-### 🔄 **Workflow**
-- Definição e estruturação de processos organizacionais
-- Criação de etapas e associação com setores
-- Integração direta com atividades e tarefas
+### Tarefas (Tasks)
+- Ambientes (TaskHub) como container de tarefas e etapas
+- Kanban e dashboard operacional
+- Status, categorias e prioridades administrativas
+- Rastreabilidade por atividades
 
-### 📋 **Gestão de Atividades (Tasks)**
-- Criação e acompanhamento de tarefas
-- Status e categorias administrativas
-- Definição de responsáveis
-- Integração nativa com módulo de Workflow
-- Estrutura preparada para expansão futura
+### Administracao
+- Gestao de usuarios
+- Permissoes e acessos (Spatie)
 
-### 👥 **Administração**
-- Gestão completa de usuários
-- Controle de permissões e acessos
-
-### ⚙️ **Configurações do Sistema**
-- Cadastro de estabelecimentos
-- Ocupações (CBO)
-- Regiões (País, Estado, Cidade)
+### Configuracoes do Sistema
+- Estabelecimentos e departamentos
+- Ocupacoes (CBO)
+- Regioes (pais, estado, cidade)
 - Blocos financeiros
 
-### 🛡️ **Auditoria**
-- Registro centralizado de logs
-- Visualização administrativa com filtros
-- Rastreabilidade completa de ações
+### Auditoria
+- Logs administrativos
+- Rastreabilidade de acoes
 
 ---
 
-## ⚡ Funcionalidades Atuais
+## Tecnologias
 
-**🏢 Organograma** – Visualização e gestão hierárquica  
-**🔄 Workflow** – Processos, etapas e integração com tarefas  
-**📋 Tasks** – Criação, status, responsáveis e categorias  
-**👥 Administração** – Usuários e permissões por namespace  
-**⚙️ Configurações** – Estabelecimentos, CBO, regiões, blocos  
-**🛡️ Auditoria** – Logs completos e rastreabilidade  
-**🎨 UX/UI** – Design responsivo, sidebar inteligente, Livewire reativo  
-**🔐 Auth** – Login, registro, verificação e recuperação
+- Backend: Laravel 12 (PHP 8.2+)
+- Frontend: Blade + Livewire v3
+- Interatividade: Alpine.js
+- Permissoes: Spatie Laravel Permission
+- Banco de dados: configuravel (README assume Postgres; SQLite local para dev)
 
-## Tecnologias Utilizadas
+---
 
-- **Backend:** Laravel (PHP 8.2+)
-- **Frontend:** Blade / Livewire
-- **Interatividade:** AlpineJS
-- **Icons:** Font Awesome 6
-- **Banco de Dados:** PostgreSQL
-- **Controle de Versão:** Git
+## Instalacao
 
-## Instalação e Uso
+Pre-requisitos: PHP 8.2+, Composer, Node.js, banco de dados configurado.
 
-**Pré-requisitos:** PHP 8.2+, Composer, PostgreSQL, Node.js
+1. Instale dependencias e prepare o ambiente:
 
-1. **Clone o repositório:**
+```bash
+composer run setup
+```
 
-    ```bash
-    git clone https://github.com/matheus1696/x-admin-panel.git
-    ```
+2. Inicie o ambiente de desenvolvimento:
 
-    ```bash
-    cd x-admin-panel
-    ```
+```bash
+composer run dev
+```
 
-2. **Instale as dependências:**
+3. Testes:
 
-    ```bash
-    composer install
-    ```
+```bash
+composer run test
+```
 
-    ```bash
-    npm install
-    ```
+---
 
-3. **Configure o ambiente:**
+## Estrutura e Fluxo
 
-    ```bash
-    cp .env.example .env
-    ```
+- Rotas: `routes/web.php`
+- UI: `app/Livewire/**` e `resources/views/livewire/**`
+- Regras: `app/Services/**` e `app/Validation/**`
+- Modelos: `app/Models/**`
 
-    ```bash
-    php artisan key:generate
-    ```
+Regras de arquitetura e visao do sistema:
+- `AGENTS.md`
+- `docs/SYSTEM_MAP.md`
 
-4. **Configure o banco de dados no arquivo `.env`** e execute as migrations:
+---
 
-    ```bash
-    php artisan migrate --seed
-    ```
+## Autoria
 
-5. **Inicie o servidor:**
-
-    ```bash
-    php artisan serve
-    ```
-
-    ```bash
-    npm run dev
-    ```
-
-## Acesso ao Sistema
-
-- **Usuário Padrão:** `admin@example.com`  
-- **Senha:** `password`
-
-## Bibliotecas Utilizadas no Projeto
-
-- **Reactividade:** [Livewire](https://laravel-livewire.com/)
-
-## Autores
-
-**Projeto desenvolvido por Webxperts**  
-**Matheus André Bezerra Mota** – Analista de Sistemas e Infraestrutura
+Projeto desenvolvido por Webxperts
+Matheus Andre Bezerra Mota

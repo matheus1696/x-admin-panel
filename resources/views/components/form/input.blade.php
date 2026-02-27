@@ -138,7 +138,7 @@
             'error' => "bg-red-50 border border-red-300",
         ],
         'minimal' => [
-            'base' => "bg-transparent border-0 focus:border-{$borderColor}-500 focus:ring-0 px-0 focus:bg-white transition-colors duration-200",
+            'base' => "bg-transparent border-0 {$currentColor['base']} focus:ring-0 px-0 focus:bg-white transition-colors duration-200",
             'error' => "bg-transparent border-0 text-red-600 focus:ring-0 px-0",
         ],
         'glass' => [

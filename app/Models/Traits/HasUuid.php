@@ -6,12 +6,12 @@ use Illuminate\Support\Str;
 
 trait HasUuid
 {
-    public function __construct(array $attributes = [])
+    protected static function bootHasUuid(): void
     {
-        parent::__construct($attributes);
-
-        if (empty($this->uuid)) {
-            $this->uuid = (string) Str::uuid();
-        }
+        static::creating(function (self $model): void {
+            if (empty($model->uuid)) {
+                $model->uuid = (string) Str::uuid();
+            }
+        });
     }
 }

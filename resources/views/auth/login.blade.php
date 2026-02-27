@@ -24,7 +24,7 @@
                 <!-- Email Address -->
                 <div>
                     <x-form.label for="email" :value="__('E-mail')" class="text-sm font-medium text-slate-700" />
-                    <x-form.input name="email" type="email" value="admin@example.com" required autofocus autocomplete="email" placeholder="seu@email.com"/>
+                    <x-form.input name="email" type="email" :value="old('email', config('app.debug') ? 'admin@example.com' : '')" required autofocus autocomplete="email" placeholder="seu@email.com"/>
                     <x-form.error for="email" class="mt-1 text-sm" />
                 </div>
 

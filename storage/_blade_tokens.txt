@@ -1,0 +1,114 @@
+            @php
+            @endphp
+            @php
+            @endphp
+                                @php
+                                @endphp
+                                @foreach ($taskTop as $item)
+                                    @php
+                                    @endphp
+                                    @if ($percent > 0)
+                                        @php
+                                        @endphp
+                                    @endif
+                                @endforeach
+                            @forelse ($taskTop as $item)
+                            @endforelse
+                                @php
+                                @endphp
+                                @foreach ($stepTop as $item)
+                                    @php
+                                    @endphp
+                                    @if ($percent > 0)
+                                        @php
+                                        @endphp
+                                    @endif
+                                @endforeach
+                            @forelse ($stepTop as $item)
+                            @endforelse
+            @php
+            @endphp
+                        @forelse ($taskAssigneeTop as $item)
+                            @php
+                            @endphp
+                        @endforelse
+                        @forelse ($stepAssigneeTop as $item)
+                            @php
+                            @endphp
+                        @endforelse
+            @php
+            @endphp
+                    @forelse ($overdueTasks as $task)
+                    @endforelse
+                @forelse ($tasks as $task)
+                            @if ($task->finished_at)
+                            @endif
+                                        @if ($task->taskSteps->count() > 0)
+                                        @endif
+                                @if (!$task->finished_at)
+                                        @if ($task->taskSteps->count() < 1)
+                                        @endif
+                                @endif
+                                    @if ($task->taskPriority)
+                                    @else
+                                    @endif
+                                    @if ($task->taskStatus)
+                                    @else
+                                    @endif
+                                @if ($task->deadline_at)
+                                @else
+                                @endif
+                            @if (!$task->finished_at && $isCreatingTaskStep && $taskId == $task->id)
+                            @endif
+                                @foreach ($task->taskSteps as $step)
+                                    @if ($task->finished_at && $step->finished_at)
+                                    @endif
+                                                @if ($step->taskPriority)
+                                                @else
+                                                @endif
+                                                @if ($step->taskStepStatus)
+                                                @else
+                                                @endif
+                                            @if ($step->deadline_at)
+                                            @else
+                                            @endif
+                                @endforeach
+                @endforelse
+            @if ($tasks->hasPages())
+            @endif
+            @php($statusBg = [
+                @foreach ($kanbanColumns as $column)
+                            @forelse ($column['tasks'] as $task)
+                            @endforelse
+                @endforeach
+                @php($stepStatusBg = [
+                @foreach ($kanbanStepColumns as $column)
+                            @forelse ($column['steps'] as $step)
+                            @endforelse
+                @endforeach
+                    @if ($taskHub->owner_id === auth()->id())
+                    @else
+                    @endif
+                        @forelse ($taskHub->members as $member)
+                                    @if ($member->user->avatar)
+                                    @else
+                                    @endif
+                                @if ($taskHub->owner_id === auth()->id() && $member->user_id !== $taskHub->owner_id)
+                                @endif
+                        @endforelse
+                @if ($selectedTaskId)
+                @endif
+                @if ($selectedTaskStepId)
+                @endif
+        @if ($modalKey === 'modal-copy-workflow-steps')
+        @endif
+        @if ($modalKey === 'modal-task-create')
+        @endif
+        @if ($modalKey === 'modal-kanban-reason')
+                @if ($pendingKanbanReasonType === 'completion')
+                @endif
+        @endif
+        @if ($modalKey === 'modal-kanban-step-reason')
+                @if ($pendingKanbanStepReasonType === 'completion')
+                @endif
+        @endif

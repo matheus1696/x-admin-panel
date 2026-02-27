@@ -9,6 +9,8 @@ use App\Models\Administration\User\User;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TaskStep extends Model
 {
@@ -25,10 +27,11 @@ class TaskStep extends Model
         'task_category_id',
         'task_priority_id',
         'task_status_id',
+        'kanban_order',
         'started_at',
         'deadline_at',
         'finished_at',
-        'created_user_id'
+        'created_user_id',
     ];
 
     protected $casts = [
@@ -37,36 +40,42 @@ class TaskStep extends Model
         'deadline_at' => 'datetime',
     ];
 
-    public function taskHub(){
+    public function taskHub(): BelongsTo
+    {
         return $this->belongsTo(TaskHub::class, 'task_hub_id');
     }
 
-    public function task(){
+    public function task(): BelongsTo
+    {
         return $this->belongsTo(Task::class, 'task_id');
     }
 
-    public function stepActivities()
+    public function stepActivities(): HasMany
     {
-        return $this->hasMany(TaskStepActivity::class)->orderBy('created_at','desc')->get();
+        return $this->hasMany(TaskStepActivity::class)->orderBy('created_at', 'desc');
     }
 
-    public function taskPriority(){
+    public function taskPriority(): BelongsTo
+    {
         return $this->belongsTo(TaskPriority::class, 'task_priority_id');
     }
 
-    public function taskStepStatus(){
+    public function taskStepStatus(): BelongsTo
+    {
         return $this->belongsTo(TaskStepStatus::class, 'task_status_id');
     }
 
-    public function taskStepCategory(){
+    public function taskStepCategory(): BelongsTo
+    {
         return $this->belongsTo(TaskStepCategory::class, 'task_category_id');
     }
 
-    public function user(){
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function organization()
+    public function organization(): BelongsTo
     {
         return $this->belongsTo(OrganizationChart::class, 'organization_id');
     }
@@ -74,11 +83,10 @@ class TaskStep extends Model
     protected static function booted()
     {
         static::created(function ($step) {
-            // Conta quantas tarefas existem neste taskHub (incluindo a atual)
             $taskStepCount = $step->taskHub->taskSteps()->count();
-            
+
             $step->update([
-                'code' => $step->taskHub->acronym . str_pad($taskStepCount, 5, '0', STR_PAD_LEFT),
+                'code' => $step->taskHub->acronym.str_pad($taskStepCount, 5, '0', STR_PAD_LEFT),
             ]);
         });
     }

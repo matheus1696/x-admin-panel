@@ -59,7 +59,7 @@
             <!-- Endereço -->
             <div class="sm:col-span-2">
                 <p class="text-xs text-gray-500">Endereço</p>
-                <p class="font-medium text-gray-900">{{ $establishment->address }},{{ $establishment->number ?? 's/n' }}, {{ $establishment->district ?? '-' }}, {{ $establishment->RegionCity->title ?? '-' }} / {{ $establishment->RegionCity->RegionState->acronym ?? '-' }}</p>
+                <p class="font-medium text-gray-900">{{ $establishment->address }},{{ $establishment->number ?? 's/n' }}, {{ $establishment->district ?? '-' }}, {{ $establishment->regionCity->title ?? '-' }} / {{ $establishment->regionCity->regionState->acronym ?? '-' }}</p>
             </div>
 
             <!-- Coordenadas -->

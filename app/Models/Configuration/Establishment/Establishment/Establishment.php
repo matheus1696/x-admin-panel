@@ -10,6 +10,9 @@ use App\Models\Traits\HasTitleFilter;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasUuidRouteKey;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Establishment extends Model
 {
@@ -32,24 +35,27 @@ class Establishment extends Model
         'is_active',
     ];
 
-    public function RegionCity(){
-        return $this->belongsTo(RegionCity::class,'city_id','id');
+    public function regionCity(): BelongsTo
+    {
+        return $this->belongsTo(RegionCity::class, 'city_id');
     }
 
-    public function TypeEstablishment(){
-        return $this->belongsTo(EstablishmentType::class,'type_establishment_id','id');
+    public function typeEstablishment(): BelongsTo
+    {
+        return $this->belongsTo(EstablishmentType::class, 'type_establishment_id');
     }
 
-    public function FinancialBlock(){
-        return $this->belongsTo(FinancialBlock::class,'financial_block_id','id');
+    public function financialBlock(): BelongsTo
+    {
+        return $this->belongsTo(FinancialBlock::class, 'financial_block_id');
     }
 
-    public function departments()
+    public function departments(): HasMany
     {
         return $this->hasMany(Department::class, 'establishment_id');
     }
 
-    public function mainDepartment()
+    public function mainDepartment(): HasOne
     {
         return $this->hasOne(Department::class, 'establishment_id')
             ->where('type_contact', 'Main');

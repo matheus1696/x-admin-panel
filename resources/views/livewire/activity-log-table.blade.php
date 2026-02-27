@@ -67,7 +67,7 @@
                     <x-page.table-td class="truncate" :value="$log->created_at->format('d/m/Y H:i:s')" title="{{ $log->created_at->format('d/m/Y H:i:s') }}"/>
                     <x-page.table-td class="truncate hidden lg:table-cell" :value="$log->ip_address" />
                     <x-page.table-td class="truncate hidden lg:table-cell" :value="$log->method" />
-                    <x-page.table-td class="truncate" :value="$log->User->name ?? ''" title="{{ $log->User->name ?? '' }}"/>
+                    <x-page.table-td class="truncate" :value="$log->user->name ?? ''" title="{{ $log->user->name ?? '' }}"/>
                     <x-page.table-td class="truncate" :value="$log->description ?? ''" title="{{ $log->description ?? '' }}"/>
                 </tr>
             @endforeach

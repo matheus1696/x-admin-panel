@@ -8,6 +8,7 @@ use App\Models\Configuration\Occupation\Occupation;
 use App\Models\Traits\HasUuid;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -41,11 +42,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'last_login_at',
     ];
 
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'last_login_at' => 'datetime',
-    ];
-
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -65,16 +61,18 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return [
             'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
 
-    public function occupation(){
+    public function occupation(): BelongsTo
+    {
         return $this->belongsTo(Occupation::class, 'occupation_id');
     }
 
     //Criação do Filter Name
-    public function setNameAttribute($value)
+    public function setNameAttribute(string $value): void
     {
         $this->attributes['name'] = $value;
         $this->attributes['name_filter'] = Str::ascii(strtolower($value));

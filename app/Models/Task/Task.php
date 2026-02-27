@@ -8,6 +8,8 @@ use App\Models\Administration\Task\TaskStatus;
 use App\Models\Administration\User\User;
 use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Task extends Model
 {
@@ -23,10 +25,11 @@ class Task extends Model
         'task_category_id',
         'task_priority_id',
         'task_status_id',
+        'kanban_order',
         'started_at',
         'deadline_at',
         'finished_at',
-        'created_user_id'
+        'created_user_id',
     ];
 
     protected $casts = [
@@ -35,38 +38,42 @@ class Task extends Model
         'deadline_at' => 'datetime',
     ];
 
-    public function taskHub(){
+    public function taskHub(): BelongsTo
+    {
         return $this->belongsTo(TaskHub::class, 'task_hub_id');
     }
 
-    public function taskActivities()
+    public function taskActivities(): HasMany
     {
-        return $this->hasMany(TaskActivity::class)->orderBy('created_at','desc')->get();
+        return $this->hasMany(TaskActivity::class)->orderBy('created_at', 'desc');
     }
 
-    public function taskStatus()
+    public function taskStatus(): BelongsTo
     {
         return $this->belongsTo(TaskStatus::class, 'task_status_id');
     }
 
-    public function taskCategory(){
+    public function taskCategory(): BelongsTo
+    {
         return $this->belongsTo(TaskCategory::class, 'task_category_id');
     }
 
-    public function taskPriority(){
+    public function taskPriority(): BelongsTo
+    {
         return $this->belongsTo(TaskPriority::class, 'task_priority_id');
     }
 
-    public function user(){
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function taskSteps()
+    public function taskSteps(): HasMany
     {
         return $this->hasMany(TaskStep::class, 'task_id')->orderBy('code');
     }
 
-    public function taskStepsFinished()
+    public function taskStepsFinished(): HasMany
     {
         return $this->hasMany(TaskStep::class, 'task_id')->where('finished_at', '!=', null)->orderBy('code');
     }
@@ -74,13 +81,11 @@ class Task extends Model
     protected static function booted()
     {
         static::created(function ($task) {
-            // Conta quantas tarefas existem neste taskHub (incluindo a atual)
             $taskCount = $task->taskHub->tasks()->count();
-            
+
             $task->update([
-                'code' => $task->taskHub->acronym . str_pad($taskCount, 5, '0', STR_PAD_LEFT),
+                'code' => $task->taskHub->acronym.str_pad($taskCount, 5, '0', STR_PAD_LEFT),
             ]);
         });
     }
-    
 }

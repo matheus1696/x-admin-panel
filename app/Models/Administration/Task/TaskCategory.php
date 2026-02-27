@@ -4,6 +4,7 @@ namespace App\Models\Administration\Task;
 
 use App\Models\Task\Task;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TaskCategory extends Model
 {
@@ -14,12 +15,12 @@ class TaskCategory extends Model
         'is_active',
     ];
 
-    public function task()
+    public function task(): HasMany
     {
         return $this->hasMany(Task::class);
     }
 
-    public static function default()
+    public static function default(): ?static
     {
         return static::where('is_default', true)->first();
     }

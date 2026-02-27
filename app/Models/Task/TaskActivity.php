@@ -4,6 +4,7 @@ namespace App\Models\Task;
 
 use App\Models\Administration\User\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TaskActivity extends Model
 {
@@ -19,12 +20,12 @@ class TaskActivity extends Model
         'meta' => 'array',
     ];
 
-    public function task()
+    public function task(): BelongsTo
     {
         return $this->belongsTo(Task::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

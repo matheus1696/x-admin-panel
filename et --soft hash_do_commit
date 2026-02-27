@@ -1,0 +1,175 @@
+[33m412bde3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m X-AdminPanel v1.0.26 - Revisão e refatoração do backend para melhoria estrutural
+[33m3644c8d[m X-AdminPanel v1.0.26 - Revisão e refatoração do backend para melhoria estrutural
+[33m74b6774[m X-AdminPanel v1.0.26 - Revisão e refatoração do backend para melhoria estrutural
+[33mccd43ba[m X-AdminPanel v1.0.26 - Ajuste da logo e refinamento visual no layout
+[33m27406ea[m X-AdminPanel v1.0.26 - Revisão e refatoração do backend para melhoria estrutural
+[33md614e73[m X-AdminPanel v1.0.26 - Revisão e refatoração do backend para melhoria estrutural
+[33mb50e06e[m X-AdminPanel v1.0.26 - Revisão e refatoração do backend para melhoria estrutural
+[33m1193a59[m X-AdminPanel v1.0.26 - Ajuste da logo e refinamento visual no layout
+[33m4c7f4a2[m X-AdminPanel v1.0.26 - Ajuste da logo e refinamento visual no layout
+[33mbf6a24d[m X-AdminPanel v1.0.26 - Ajuste da logo e refinamento visual no layout
+[33m1faad54[m X-AdminPanel v1.0.26 - Reestruturação do layout do organograma para melhor visualização
+[33m63f2197[m X-AdminPanel v1.0.26 - Ajuste da logo e refinamento visual no layout
+[33m64db949[m X-AdminPanel v1.0.26 - Ajuste da logo e refinamento visual no layout
+[33m2e00535[m X-AdminPanel v1.0.26 - Correção do favicon
+[33md37b203[m X-AdminPanel v1.0.26 - Padronização do layout de emails de notificação
+[33m7e512eb[m X-AdminPanel v1.0.26 - Padronização do layout de emails de notificação
+[33m4bd895c[m X-AdminPanel v1.0.26 - Padronização do layout de emails de notificação
+[33m05409bd[m X-AdminPanel v1.0.26 - Padronização completa do design system: cores, componentes de navegação, modais, alerts, tabelas e responsividade
+[33m59b8f90[m X-AdminPanel v1.0.26 - Padronização completa do design system: cores, componentes de navegação, modais, alerts, tabelas e responsividade
+[33m11fc12b[m X-AdminPanel v1.0.26 - Atualização do layout e design system: unificação de cores, componentes de navegação, modais, alerts, tabelas, sidebar e responsividade
+[33m472d968[m X-AdminPanel v1.0.26 - Atualização do layout e design system: unificação de cores, componentes de navegação, modais, alerts, tabelas, sidebar e responsividade
+[33mf5fc1f0[m X-AdminPanel v1.0.26 - Overhaul completo do sistema de autenticação com telas padronizadas, design system unificado, melhorias de UX e segurança
+[33m7b3102d[m X-AdminPanel v1.0.25 - Padronização de SEO nos layouts guest e app
+[33mefb95e0[m X-AdminPanel v1.0.24 - Implementação do módulo de ambientes para gerenciamento de projetos, tarefas e usuários vinculados
+[33m9234aff[m X-AdminPanel v1.0.23 - Revisão estrutural e ajustes no módulo de gerenciamento de tarefas
+[33m43b462d[m X-AdminPanel v1.0.22 - Dashboard com identificação do usuário, registro de último login (last_login_at) e indicação de ambiente
+[33m581c6d7[m X-AdminPanel v1.0.21 - Conclusão do módulo de Tasks, integração final com workflow e estabilização arquitetural
+[33m3bc2f80[m X-AdminPanel - Atualização do README refletindo versão v1.0.21 e módulos consolidados
+[33m35ac3b3[m X-AdminPanel - Atualização do README refletindo versão v1.0.21 e módulos consolidados
+[33m067100c[m X-AdminPanel - Atualização do README refletindo versão v1.0.21 e módulos consolidados
+[33m70e0b33[m release: X-AdminPanel v1.0.21 - conclusão do módulo de Tasks, integração final com workflow, correções de permissões e consolidação arquitetural
+[33mce84703[m X-AdminPanel V1.0.20 - Refatoração de tarefas, correção de deadlines e cópia de etapas do workflow
+[33m64933f5[m X-AdminPanel v1.0.21 - Atualização de atributo do componente do formulário
+[33m42b2c0c[m X-AdminPanel v1.0.21 - Atualização de atributo do componente do formulário
+[33m6c87800[m X-AdminPanel v1.0.21 - Atualização de atributo do componente do formulário
+[33md9ffa8e[m X-AdminPanel v1.0.21 - Atualiza versão do sistema e padroniza versionamento
+[33m74365a5[m X-AdminPanel V1.0.20 - Refatoração de tarefas, correção de deadlines e cópia de etapas do workflow
+[33m7551162[m X-AdminPanel V1.0.20 - Refatoração de tarefas, correção de deadlines e cópia de etapas do workflow
+[33m6fac370[m X-AdminPanel v1.0.21 - Atualiza versão do sistema e padroniza versionamento
+[33m6130588[m X-AdminPanel v1.0.21 - Refino de layout, ajustes de componentes e correções de bugs
+[33m416c109[m X-AdminPanel v1.0.21 - Atualiza versão do sistema e padroniza versionamento
+[33m877d562[m X-AdminPanel v1.0.21 - Atualiza versão do sistema e padroniza versionamento
+[33m83456a9[m X-AdminPanel v1.0.21 - Refino de layout, ajustes de componentes e correções de bugs
+[33m3aa2d3f[m X-AdminPanel v1.0.21 - Refino de layout, ajustes de componentes e correções de bugs
+[33mbbe078d[m X-AdminPanel v1.0.21 - Atualiza versão do sistema e padroniza versionamento
+[33m9642831[m X-AdminPanel v1.0.21 - Refino de layout, ajustes de componentes e correções de bugs
+[33ma37983e[m X-AdminPanel v1.0.21 - Refino de layout, ajustes de componentes e correções de bugs
+[33m39aa7b9[m X-AdminPanel V1.0.21 - estabiliza componente select, adiciona busca e acessibilidade via teclado
+[33mc4e9471[m X-AdminPanel V1.0.21 - estabiliza componente select, adiciona busca e acessibilidade via teclado
+[33m354c59f[m v1.0.21: improve custom select accessibility, focus management and keyboard navigation
+[33mb255005[m X-AdminPanel v1.0.21 - Correções nas páginas de configurações e inclusão do campo setor no fluxo de trabalho e etapas
+[33mb772f3c[m X-AdminPanel v1.0.21 - Correções nas páginas de configurações e inclusão do campo setor no fluxo de trabalho e etapas
+[33m3dbde42[m X-AdminPanel v1.0.21 - Refatoração do select em AlpineJS, melhorias no layout de tarefas, edição de responsável e correções de bugs
+[33mdad6611[m X-AdminPanel v1.0.21 - Ajuste de botões e padronização do header dos componentes
+[33m71c44f6[m X-AdminPanel V1.0.20 - Refatoração de tarefas, correção de deadlines e cópia de etapas do workflow
+[33m55e381a[m X-AdminPanel v1.0.21
+[33m7902508[m X-AdminPanel v1.0.21 - Ajustes e otimização no campo de busca dos contatos internos
+[33mccb1292[m X-AdminPanel V1.0.20 - Implementada visualização da etapa atual das tarefas no WorkflowRun
+[33m6934cbe[m X-AdminPanel V1.0.20 - Implementada visualização da etapa atual das tarefas no WorkflowRun
+[33m9003415[m X-AdminPanel V1.0.20 - Implementada visualização da etapa atual das tarefas no WorkflowRun
+[33m5114015[m X-AdminPanel v1.0.20 - Estrutura inicial do monitoramento de workflows (WorkflowRun)
+[33m940bac7[m X-AdminPanel v1.0.20 - Estrutura inicial do monitoramento de workflows (WorkflowRun)
+[33mb899e39[m X-AdminPanel v1.0.19 - Ajustes no cadastro e ordenação de etapas do workflow
+[33mc676d01[m X-AdminPanel v1.0.18 - Ajustes em controllers: nomes, posições e melhorias no código
+[33m2d67f05[m X-AdminPanel v1.0.18 - Ajustes em controllers: nomes, posições e melhorias no código
+[33mb3796f4[m X-AdminPanel v1.0.18 - Ajustes em controllers: nomes, posições e melhorias no código
+[33mbf850d1[m X-AdminPanel v1.0.17 - Refatoração das permissões e organização das rotas por módulo
+[33me97bf9d[m X-AdminPanel v1.0.15 - Finalização do módulo público de contatos externos em Livewire
+[33m3863f07[m X-AdminPanel v1.0.15 - Finalização do módulo público de contatos externos em Livewire
+[33m9ab1708[m X-AdminPanel v1.0.15 - Finalização do módulo público de contatos externos em Livewire
+[33m7f0c1fa[m X-AdminPanel v1.0.14 - CRUD de departamentos com formulário, validações no Livewire e constraints de unicidade
+[33mbf85cb4[m X-AdminPanel v1.0.14 - Department CRUD form, Livewire rules and unique constraints
+[33m9d27af8[m X-AdminPanel v1.0.13 - Establishment CRUD, Livewire forms, validation rules and UI components
+[33mc87fee7[m X-AdminPanel v1.0.13 - reestruturação do módulo Establishment com subpastas para List, Show e Type
+[33m3e9b0c1[m X-AdminPanel v1.0.13 - ajuste dashboard
+[33me243398[m X-AdminPanel v1.0.13 - ajuste dashboard
+[33m2ef780f[m X-AdminPanel v1.0.13 - ajuste dashboard
+[33m72197f7[m X-AdminPanel v1.0.13 - centraliza e ajusta exibição da foto do responsável no organograma
+[33me9bba72[m X-AdminPanel v1.0.13 - centraliza e ajusta exibição da foto do responsável no organograma
+[33m1580f7e[m X-AdminPanel v1.0.13 - centraliza e ajusta exibição da foto do responsável no organograma
+[33mb83af7a[m X-AdminPanel v1.0.13 - reestruturação do módulo Establishment com subpastas para List, Show e Type
+[33m8e7df52[m X-AdminPanel v1.0.13 - reestruturação do módulo Establishment com subpastas para List, Show e Type
+[33mbba9a94[m X-AdminPanel v1.0.13 - reestruturação do módulo Establishment com subpastas para List, Show e Type
+[33m633966f[m X-AdminPanel v1.0.11 - módulo de Ocupações (OccupationPage) finalizado na configuração administrativa
+[33m785be7a[m X-AdminPanel v1.0.10 - módulos de regiões finalizados (City, State, Country) na configuração administrativa
+[33m240d85a[m X-AdminPanel v1.0.8 - estrutura de Livewire para cadastros administrativos e EstablishmentType finalizado
+[33m3d95b8e[m X-AdminPanel v1.0.9 - FinancialBlockPage finalizado e estrutura de Livewire de configuração administrativa atualizada
+[33m7abafcc[m X-AdminPanel v1.0.8 - estrutura de Livewire para cadastros administrativos e EstablishmentType finalizado
+[33m2fe220a[m Organograma: adicionar foto, responsável, contato e email; criar partial do form; preview de foto em create/edit
+[33m659d05a[m Organograma: adicionar foto, responsável, contato e email; criar partial do form; preview de foto em create/edit
+[33md46f610[m Atualiza organograma: adiciona foto, responsável, contato e email, com fallback padrão e layout moderno
+[33m4c376e9[m X-AdminPanel v1.0.7 - refatoração do módulo de gerenciamento de usuários com Livewire
+[33m9abd716[m X-AdminPanel v1.0.6 - Correção de texto da versão no aside
+[33ma7500ba[m X-AdminPanel v1.0.6 - melhoria de usabilidade mobile no organograma
+[33m0788ce1[m Refatora cadastro de setores do organograma com reorganização de pastas, Livewire, Requests, Services e melhorias no layout
+[33m07f7c79[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33m80fe9e5[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33mc53e689[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33m973e005[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33m68abbaa[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33m7200cdf[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33m103ebdb[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33mf8ddca2[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33me50f210[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33m8069787[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33mb578b23[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33m34ff949[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33me98bb28[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33mfc872fa[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33m86c0dc9[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33m467fa73[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33m6bac93b[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33m4c3c9b7[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33mb702922[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33mb7b9c6b[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33maa58c0a[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33mfa1940d[m X-AdminPanel v1.0.6 - correção de bug barra de navegacao transparent
+[33mea336d8[m X-AdminPanel v1.0.6 - reorganização do organograma e estrutura organizacional
+[33mc0c18d1[m X-AdminPanel v1.0.5 - refatoração do workflow com processos e etapas
+[33m67ce4e9[m X-AdminPanel v1.0.4 - inclusão do módulo de organograma e reorganização da navegação
+[33mdfc968f[m X-AdminPanel v1.0.4 - Layout Organization
+[33mbc00f5a[m X-AdminPanel v1.0.4 - Layout Organization
+[33m66195e6[m X-AdminPanel v1.0.4 - inclusion of the organizational chart module
+[33mb85f9dc[m X-AdminPanel v1.0.4 - Layout Organization
+[33m08141ef[m X-AdminPanel v1.0.4 - inclusion of the organizational chart module
+[33m929b99d[m X-AdminPanel v1.0.4 - Refactored workflow module
+[33m46f961e[m X-AdminPanel v1.0.4 - Workflow_stages table column changed
+[33md4bec3d[m X-AdminPanel v1.0.4 - Layout Organization
+[33me43db2f[m TaskMonitor v1.0.0 - Add Task Activities modal with Livewire CRUD, inline edit, and success flash
+[33m45f1fc4[m TaskMonitor v1.0.0 - Add Task Activities modal with Livewire CRUD, inline edit, and success flash
+[33m1ef5e2e[m TaskMonitor v1.0.0 - Add Task Activities modal with Livewire CRUD, inline edit, and success flash
+[33m77eff54[m X-AdminPanel v1.0.4 - Layout Organization
+[33m3abe77b[m TaskMonitor v1.0.0 - Add Task Types management: Livewire page, create/edit modal, table, flash messages, and UI improvements
+[33m108edce[m X-AdminPanel v1.0.4 - Layout Organization
+[33m1b9e780[m X-AdminPanel v1.0.4 - Establishment show layout refinement and departments Livewire table
+[33me553ec8[m X-AdminPanel v1.0.4 - Layout Organization
+[33m0e566f1[m X-AdminPanel v1.0.4 - improvements to dashboard, tables, CPF validation, permissions and system logs
+[33m924068e[m X-AdminPanel v1.0.4 - improvements to dashboard, tables, CPF validation, permissions and system logs
+[33mc7a97d7[m X-AdminPanel v1.0.4 - Layout Organization
+[33mb9334cc[m X-AdminPanel v1.0.4 - Layout Organization
+[33m9fb44ab[m X-AdminPanel v1.0.4 - Layout Organization
+[33m5e3e36c[m X-AdminPanel v1.0.4 - Layout Organization
+[33mdb3ac4e[m X-AdminPanel v1.0.4 - Layout Organization
+[33m8dd9871[m X-Admin-Panel V1.0.6
+[33m3f0cdf4[m X-AdminPanel v1.0.6 - Configuration Layout Permissions Users
+[33m4d60d3c[m X-AdminPanel v1.0.3 - Auth Layout Adjustment
+[33m226868f[m X-AdminPanel v1.0.4 - Layout Organization
+[33mfe313b0[m X-AdminPanel v1.0.4 - Layout Organization Profile
+[33mac1bc85[m X-AdminPanel v1.0.4 - Layout Organization Profile
+[33ma7edc34[m X-AdminPanel v1.0.4 - Layout Organization
+[33m0e1b720[m X-AdminPanel v1.0.4 - Layout Organization
+[33me9c0abc[m X-AdminPanel v1.0.4 - Layout Organization Profile
+[33m5824afe[m X-AdminPanel v1.0.4 - Layout Organization
+[33m9808393[m X-AdminPanel v1.0.4 - Layout Organization Dashboard
+[33mc98eeb2[m X-AdminPanel v1.0.4 - Layout Organization Dashboard
+[33m061193e[m X-AdminPanel v1.0.4 - Layout Organization
+[33m6d57e99[m X-AdminPanel v1.0.4 - Layout Organization
+[33mb1e7214[m X-AdminPanel v1.0.6 - Configuration Layout
+[33m4a55fac[m X-AdminPanel v1.0.4 - Layout Organization
+[33m2d80fad[m X-AdminPanel v1.1.0 - Surveillance Notification SINAN Form
+[33ma20db83[m X-AdminPanel v1.0.3 - Auth Layout Adjustment
+[33mb538bcb[m X-AdminPanel v1.0.6 - Layout Adjustment
+[33m13db922[m X-AdminPanel v1.0.6 - Layout Adjustment
+[33m2eb82f7[m X-AdminPanel v1.0.6 - Layout Adjustment
+[33m1aa77eb[m X-AdminPanel v1.0.6 - Configuration Layout
+[33mfd2cb22[m X-AdminPanel v1.0.6 - Configuration Layout
+[33m801c248[m X-AdminPanel v1.0.5 - Select Search Component
+[33m722b7f7[m X-AdminPanel v1.0.5 - Select Search Component
+[33m6116358[m X-AdminPanel v1.0.5 - Select Search Component
+[33m6544ad0[m X-AdminPanel v1.0.5 - Select Search Component
+[33me640f28[m X-AdminPanel v1.0.4 - Activity Log Module
+[33m63c8618[m X-AdminPanel v1.0.4 - Activity Log Module
+[33m0f3440a[m X-AdminPanel v1.0.3 - User Management Module
+[33m66fddde[m X-AdminPanel v1.0.3 - User Management Module
+[33m7384135[m X-AdminPanel v1.0.3 - User Management Module

@@ -7,6 +7,7 @@ use App\Models\Traits\HasTitleFilter;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasUuidRouteKey;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class OrganizationChart extends Model
 {
@@ -15,7 +16,6 @@ class OrganizationChart extends Model
     protected $fillable = [
         'acronym',
         'title',
-        'parent_id',
         'order',
         'hierarchy',
         'number_hierarchy',
@@ -26,7 +26,7 @@ class OrganizationChart extends Model
         'responsible_email',
     ];
 
-    public function children()
+    public function children(): HasMany
     {
         return $this->hasMany(OrganizationChart::class, 'hierarchy')
             ->where('is_active', true)

@@ -72,8 +72,8 @@
 <div class="group relative transition-all duration-500 mb-2">
             
     <!-- Conteúdo principal -->
-    <div class="relative flex items-center justify-between gap-4 px-1 pb-5 pt-2 transition-all duration-300">
-        <div class="flex items-center gap-4">
+    <div class="relative grid grid-cols-1 md:grid-cols-12 items-center justify-between gap-4 px-1 pb-5 pt-2 transition-all duration-300">
+        <div class="col-span-1 md:col-span-9 flex items-center gap-4">
             <!-- Ícone com glow e animação -->
             <div class="relative">
                 <!-- Glow effect -->
@@ -95,7 +95,7 @@
             <!-- Título e subtítulo -->
             <div class="space-y-1">
                 <div class="flex items-center gap-2">
-                    <h1 class="text-xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent line-clamp-1">
                         {{ $title }}
                     </h1>
                     
@@ -114,7 +114,7 @@
         
         <!-- Botão de ação com animação -->
         @if($button)
-            <div class="relative group/btn">
+            <div class="col-span-1 md:col-span-3 flex items-center justify-end gap-1.5">
                 {{ $button }}
             </div>
         @endif

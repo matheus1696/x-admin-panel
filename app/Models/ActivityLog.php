@@ -19,21 +19,21 @@ class ActivityLog extends Model
         'description',
     ];
 
-    public function User() : BelongsTo {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
     
-    //UUID
-    protected static function booted()
+    protected static function booted(): void
     {
-        static::creating(function ($log) {
+        static::creating(function (self $log): void {
             if (!$log->uuid) {
                 $log->uuid = (string) Str::uuid();
             }
         });
     }
 
-    public function getRouteKeyName()
+    public function getRouteKeyName(): string
     {
         return 'uuid';
     }

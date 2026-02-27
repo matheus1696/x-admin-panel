@@ -18,7 +18,7 @@ class EstablishmentTypesSeeder extends Seeder
             ['id'=>73, 'title'=>'Pronto Atendimento'],
             ['id'=>68, 'title'=>'Central de Gestao em Saúde'],
             ['id'=>1,  'title'=>'Posto de Saúde', 'is_active'=>false],
-            ['id'=>-1, 'title'=>'Outros', 'is_active'=>false],
+            ['id'=>999, 'title'=>'Outros', 'is_active'=>false],
             ['id'=>15, 'title'=>'Unidade Mista', 'is_active'=>false],
             ['id'=>32, 'title'=>'Unidade Móvel Fluvial', 'is_active'=>false],
             ['id'=>36, 'title'=>'Clinica/Centro de Especialidade'],

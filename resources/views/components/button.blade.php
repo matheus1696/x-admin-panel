@@ -6,7 +6,7 @@
     'text' => null,
     'loading' => false, // Agora controlado pelo próprio componente
     'disabled' => false,
-    'fullWidth' => true,
+    'fullWidth' => false,
     'size' => 'xs',
     'pill' => false,
     'shadow' => true,
@@ -39,34 +39,34 @@
     // Variantes seguindo padrão [cor]_[tipo]
     $variants = [
         // SOLID VARIANTS (com gradiente)
-        'green_solid' => 'text-white bg-gradient-to-r from-emerald-700 to-emerald-800 hover:from-emerald-800 hover:to-emerald-900 shadow-md hover:shadow-lg transition-all duration-300 -translate-y-0.5 border border-emerald-600/20 rounded-lg active:scale-[0.98]',
+        'green_solid' => 'text-white bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-800 hover:to-emerald-900 shadow-md transition-all duration-300 -translate-y-0.5 border border-emerald-600/20 rounded-lg active:scale-[0.98]',
         
-        'gray_solid' => 'text-white bg-gradient-to-r from-gray-700 via-gray-700 to-gray-800 hover:from-gray-700 hover:via-gray-800 hover:to-gray-900 focus:ring-gray-600/30 shadow-md hover:shadow-lg border border-gray-700/20 rounded-lg active:scale-[0.98]',
+        'gray_solid' => 'text-white bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 shadow-md transition-all duration-300 -translate-y-0.5 border border-gray-600/20 rounded-lg active:scale-[0.98]',
         
-        'yellow_solid' => 'text-white bg-gradient-to-r from-amber-400 via-amber-400 to-amber-500 hover:from-amber-500 hover:via-amber-500 hover:to-amber-600 focus:ring-yellow-600/30 shadow-md hover:shadow-lg border border-yellow-600/20 rounded-lg active:scale-[0.98]',
+        'yellow_solid' => 'text-white bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-500 shadow-md transition-all duration-300 -translate-y-0.5 border border-yellow-600/20 rounded-lg active:scale-[0.98]',
         
-        'red_solid' => 'text-white bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-700 hover:via-rose-700 hover:to-red-700 focus:ring-red-600/30 shadow-md hover:shadow-lg border border-red-700/20 rounded-lg active:scale-[0.98]',
+        'red_solid' => 'text-white bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-700 hover:via-rose-700 hover:to-red-700 focus:ring-red-600/30 shadow-md border border-red-700/20 rounded-lg active:scale-[0.98]',
         
-        'blue_solid' => 'text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:via-indigo-700 hover:to-blue-700 focus:ring-blue-600/30 shadow-md hover:shadow-lg border border-blue-700/20 rounded-lg active:scale-[0.98]',
+        'blue_solid' => 'text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:via-indigo-700 hover:to-blue-700 focus:ring-blue-600/30 shadow-md border border-blue-700/20 rounded-lg active:scale-[0.98]',
         
-        'sky_solid' => 'text-white bg-gradient-to-r from-sky-600 via-cyan-600 to-sky-700 hover:from-sky-700 hover:via-cyan-700 hover:to-sky-700 focus:ring-sky-600/30 shadow-md hover:shadow-lg border border-sky-700/20 rounded-lg active:scale-[0.98]',
+        'sky_solid' => 'text-white bg-gradient-to-r from-sky-600 via-cyan-600 to-sky-700 hover:from-sky-700 hover:via-cyan-700 hover:to-sky-700 focus:ring-sky-600/30 shadow-md border border-sky-700/20 rounded-lg active:scale-[0.98]',
         
-        'indigo_solid' => 'text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 hover:from-indigo-700 hover:via-purple-700 hover:to-indigo-700 focus:ring-indigo-600/30 shadow-md hover:shadow-lg border border-indigo-700/20 rounded-lg active:scale-[0.98]',
+        'indigo_solid' => 'text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 hover:from-indigo-700 hover:via-purple-700 hover:to-indigo-700 focus:ring-indigo-600/30 shadow-md border border-indigo-700/20 rounded-lg active:scale-[0.98]',
         
-        'purple_solid' => 'text-white bg-gradient-to-r from-purple-600 via-fuchsia-600 to-purple-700 hover:from-purple-700 hover:via-fuchsia-700 hover:to-purple-700 focus:ring-purple-600/30 shadow-md hover:shadow-lg border border-purple-700/20 rounded-lg active:scale-[0.98]',
+        'purple_solid' => 'text-white bg-gradient-to-r from-purple-600 via-fuchsia-600 to-purple-700 hover:from-purple-700 hover:via-fuchsia-700 hover:to-purple-700 focus:ring-purple-600/30 shadow-md border border-purple-700/20 rounded-lg active:scale-[0.98]',
         
         // OUTLINE VARIANTS (bordas)
-        'gray_outline' => 'bg-gradient-to-r from-gray-50 to-gray-100/80 text-gray-700 border-gray-200/50 hover:from-gray-100 hover:to-gray-200/80 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-600/20 rounded-lg active:scale-[0.98]',
+        'gray_outline' => 'bg-gradient-to-r from-gray-50 to-gray-100/80 text-gray-700 border-gray-200/50 hover:from-gray-100 hover:to-gray-200/80 shadow-md transition-all duration-300 border border-gray-600/20 rounded-lg active:scale-[0.98]',
         
-        'green_outline' => 'bg-gradient-to-r from-green-50 to-green-100/80 text-green-700 border-green-200/50 hover:from-green-100 hover:to-green-200/80 shadow-md hover:shadow-lg transition-all duration-300 border border-green-600/20 rounded-lg active:scale-[0.98]',
+        'green_outline' => 'bg-gradient-to-r from-green-50 to-green-100/80 text-green-700 border-green-200/50 hover:from-green-100 hover:to-green-200/80 shadow-md transition-all duration-300 border border-green-600/20 rounded-lg active:scale-[0.98]',
         
-        'blue_outline' => 'bg-gradient-to-r from-blue-50 to-blue-100/80 text-blue-700 border-blue-200/50 hover:from-blue-100 hover:to-blue-200/80 shadow-md hover:shadow-lg transition-all duration-300 border border-blue-600/20 rounded-lg active:scale-[0.98]',
+        'blue_outline' => 'bg-gradient-to-r from-blue-50 to-blue-100/80 text-blue-700 border-blue-200/50 hover:from-blue-100 hover:to-blue-200/80 shadow-md transition-all duration-300 border border-blue-600/20 rounded-lg active:scale-[0.98]',
         
-        'red_outline' => 'bg-gradient-to-r from-red-50 to-red-100/80 text-red-700 border-red-200/50 hover:from-red-100 hover:to-red-200/80 shadow-md hover:shadow-lg transition-all duration-300 border border-red-600/20 rounded-lg active:scale-[0.98]',
+        'red_outline' => 'bg-gradient-to-r from-red-50 to-red-100/80 text-red-700 border-red-200/50 hover:from-red-100 hover:to-red-200/80 shadow-md transition-all duration-300 border border-red-600/20 rounded-lg active:scale-[0.98]',
         
-        'yellow_outline' => 'bg-gradient-to-r from-amber-50 to-amber-100/80 text-amber-700 border-amber-200/50 hover:from-amber-100 hover:to-amber-200/80 shadow-md hover:shadow-lg transition-all duration-300 border border-amber-600/20 rounded-lg active:scale-[0.98]',
+        'yellow_outline' => 'bg-gradient-to-r from-amber-50 to-amber-100/80 text-amber-700 border-amber-200/50 hover:from-amber-100 hover:to-amber-200/80 shadow-md transition-all duration-300 border border-amber-600/20 rounded-lg active:scale-[0.98]',
         
-        'purple_outline' => 'bg-gradient-to-r from-purple-50 to-purple-100/80 text-purple-700 border-purple-200/50 hover:from-purple-100 hover:to-purple-200/80 shadow-md hover:shadow-lg transition-all duration-300 border border-purple-600/20 rounded-lg active:scale-[0.98]',
+        'purple_outline' => 'bg-gradient-to-r from-purple-50 to-purple-100/80 text-purple-700 border-purple-200/50 hover:from-purple-100 hover:to-purple-200/80 shadow-md transition-all duration-300 border border-purple-600/20 rounded-lg active:scale-[0.98]',
         
         // TEXT VARIANTS (dentro do texto)
         'gray_text' => 'text-gray-700 hover:text-gray-900 bg-transparent hover:bg-gray-100/50 border-0 shadow-none px-1 py-0.5 rounded-md',
