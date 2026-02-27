@@ -1,7 +1,10 @@
+@php($showActions = $showActions ?? true)
+
 <div class="grid grid-cols-4 md:grid-cols-12 gap-2 items-center">
     <!-- TÍTULO -->
     <div class="col-span-3 md:col-span-4">
         <x-form.input type="text" name="title" wire:model.defer="title" placeholder="Título da Atividade *" variant='pills' autofocus />
+        <x-form.error for="title" />
     </div>
     
     <div class="col-span-2 hidden md:block">
@@ -22,10 +25,12 @@
         </div>
     </div>
 
-    <!-- AÇÃO -->
-    <div class="col-span-1 lg:col-span-2 flex justify-center gap-2">
-        <x-button type="submit" icon="fa-solid fa-check" variant="green_outline" />
-        <x-button type="button" icon="fa-solid fa-close" variant="red_outline" wire:click="cancelCreateTask()" />
-    </div>
+    @if ($showActions)
+        <!-- AÇÃO -->
+        <div class="col-span-1 lg:col-span-2 flex justify-center gap-2">
+            <x-button type="submit" icon="fa-solid fa-check" variant="green_outline" />
+            <x-button type="button" icon="fa-solid fa-close" variant="red_outline" wire:click="cancelCreateTask()" />
+        </div>
+    @endif
 
 </div>

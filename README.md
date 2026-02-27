@@ -124,6 +124,8 @@ O sistema é organizado por **módulos funcionais independentes**, cada um com s
 ## Bibliotecas Utilizadas no Projeto
 
 - **Reactividade:** [Livewire](https://laravel-livewire.com/)
+- **Permissões:** [Spatie](https://laravel-livewire.com/)
+- **Validações:** [Validation Laravel BR](https://laravel-livewire.com/)
 
 ## Autores
 

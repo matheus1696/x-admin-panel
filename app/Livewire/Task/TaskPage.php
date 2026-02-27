@@ -43,91 +43,51 @@ class TaskPage extends Component
     ];
 
     public Collection $users;
-
     public Collection $organizations;
-
     public Collection $taskCategories;
-
     public Collection $taskPriorities;
-
     public Collection $taskStatuses;
-
     public Collection $taskStepCategories;
-
     public Collection $taskStepStatuses;
-
     public Collection $workflows;
 
     public $taskHubId;
-
     public $taskId;
 
     public ?string $title = null;
-
     public ?int $user_id = null;
-
     public ?int $organization_id = null;
-
     public ?int $task_category_id = null;
-
     public ?int $task_priority_id = null;
-
     public ?int $task_status_id = null;
-
     public ?int $task_step_status_id = null;
-
     public ?int $workflow_id = null;
 
     public bool $isCreatingTaskStep = false;
-
     public ?int $selectedTaskId = null;
-
     public ?int $selectedTaskStepId = null;
-
     public ?int $member_user_id = null;
-
     public ?int $completedStatusId = null;
-
     public ?int $cancelledStatusId = null;
-
     public ?int $pendingKanbanTaskId = null;
-
     public ?int $pendingKanbanFromStatusId = null;
-
     public ?int $pendingKanbanToStatusId = null;
-
     public array $pendingKanbanSourceOrder = [];
-
     public array $pendingKanbanTargetOrder = [];
-
     public ?string $pendingKanbanReasonType = null;
-
     public string $kanbanReason = '';
-
     public string $kanbanReasonTitle = '';
-
     public string $kanbanCompletionComment = '';
-
     public ?int $stepCompletedStatusId = null;
-
     public ?int $stepCancelledStatusId = null;
-
     public ?int $pendingKanbanStepId = null;
-
     public ?int $pendingKanbanStepFromStatusId = null;
-
     public ?int $pendingKanbanStepToStatusId = null;
-
     public array $pendingKanbanStepSourceOrder = [];
-
     public array $pendingKanbanStepTargetOrder = [];
-
     public ?string $pendingKanbanStepReasonType = null;
-
     public string $kanbanStepReason = '';
-
     public string $kanbanStepReasonTitle = '';
-
     public string $kanbanStepCompletionComment = '';
 
     public function boot(TaskService $taskService, TaskStatusService $taskStatusService, TaskStepStatusService $taskStepStatusesService)
@@ -194,6 +154,7 @@ class TaskPage extends Component
     // Início Formulário de Criação de Tarefa
     public function enableCreateTask()
     {
+        dd("Olá");
         $this->resetForm();
         $this->setDefaults();
         $this->openModal('modal-task-create');
