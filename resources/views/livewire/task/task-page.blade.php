@@ -378,15 +378,6 @@
             </div>
         </div>
 
-        <!-- FormulÃ¡rio de CriaÃ§Ã£o -->
-        @if ($isCreatingTask)
-            <div class="border border-gray-200 border-t-0 p-4">
-                <form wire:submit.prevent="storeTask" class="space-y-4">
-                    @include('livewire.task._partials.task-form')
-                </form>
-            </div>
-        @endif
-
         <!-- Lista de Tarefas -->
         <div class="divide-y divide-gray-200 border border-gray-200 border-t-0 rounded-b-xl">
             @forelse ($tasks as $task)
@@ -633,14 +624,12 @@
                     <p class="text-sm text-gray-500 mb-4 text-center max-w-sm">
                         Comece criando sua primeira tarefa para gerenciar suas atividades
                     </p>
-                    @if (!$isCreatingTask)
-                        <x-button 
-                            text="Criar Primeira Tarefa"
-                            icon="fas fa-plus"
-                            wire:click="$set('isCreatingTask', true)"
-                            size="sm"
-                        />
-                    @endif
+                    <x-button 
+                        text="Criar Primeira Tarefa"
+                        icon="fas fa-plus"
+                        wire:click="enableCreateTask"
+                        size="sm"
+                    />
                 </div>
             @endforelse
         </div>
@@ -1071,6 +1060,16 @@
             </form>
         @endif
 
+        @if ($modalKey === 'modal-task-create')
+            <x-slot name="header">
+                Nova Tarefa
+            </x-slot>
+
+            <form wire:submit.prevent="storeTask" class="space-y-4">
+                @include('livewire.task._partials.task-form')
+            </form>
+        @endif
+
         @if ($modalKey === 'modal-kanban-reason')
             <x-slot name="header">
                 {{ $kanbanReasonTitle }}
@@ -1136,7 +1135,6 @@
     </x-modal>
 
 </div>
-
 
 
 

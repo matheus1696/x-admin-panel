@@ -78,8 +78,6 @@ class TaskPage extends Component
 
     public ?int $workflow_id = null;
 
-    public bool $isCreatingTask = false;
-
     public bool $isCreatingTaskStep = false;
 
     public ?int $selectedTaskId = null;
@@ -198,14 +196,14 @@ class TaskPage extends Component
     {
         $this->resetForm();
         $this->setDefaults();
-        $this->isCreatingTask = true;
+        $this->openModal('modal-task-create');
     }
 
     public function cancelCreateTask()
     {
         $this->resetForm();
         $this->setDefaults();
-        $this->isCreatingTask = false;
+        $this->closeModal();
     }
 
     public function storeTask()
@@ -214,8 +212,8 @@ class TaskPage extends Component
 
         $this->taskService->create($this->taskHubId, $data);
 
-        $this->isCreatingTask = false;
         $this->resetForm();
+        $this->closeModal();
         $this->flashSuccess('Tarefa criada com sucesso.');
     }
     // Fim
