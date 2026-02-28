@@ -1,9 +1,16 @@
 {
-    "agents": [
-        "codex"
-    ],
-    "editors": [
-        "vscode"
-    ],
-    "guidelines": []
+  "agents": ["codex"],
+  "editors": ["vscode"],
+  "guidelines": [
+    "Follow Laravel 12 conventions strictly.",
+    "Never modify unrelated files.",
+    "Do not refactor unless explicitly requested.",
+    "Preserve backward compatibility.",
+    "Prefer dependency injection over static calls.",
+    "Keep methods small and focused.",
+    "Avoid magic values; use constants or configuration.",
+    "Match the existing naming conventions exactly.",
+    "Do not generate comments unless necessary for clarity.",
+    "Ensure all changes are production-ready."
+  ]
 }

@@ -1,52 +1,48 @@
-# X-AdminPanel - AI Architecture & Evolution Contract
+# X-AdminPanel - AI Working Contract
 
 ## 1. System Identity
 
 X-AdminPanel is an Organizational Intelligence Platform.
 
-It exists to transform corporate hierarchy data into
-clear, strategic, and scalable visual understanding.
+It exists to transform hierarchy data into clear structural understanding.
 
-This is NOT:
+This is not:
 - a generic CRUD admin
 - a feature accumulator
-- a UI-driven dashboard
+- a UI-led dashboard
 
-It is:
+This is:
 - a hierarchy visualization engine
 - a structural governance tool
-- a centralized administrative intelligence layer
+- an administrative intelligence layer
 
-Primary Value Order:
+## 2. Core Principles
+
+Priority order:
 
 1. Hierarchy Integrity
-2. Visual Clarity
-3. Architectural Integrity
+2. Architectural Integrity
+3. Visual Clarity
 4. Performance
 5. Feature Expansion
 
-If hierarchy integrity is compromised, the solution must be rejected.
+Non-negotiable:
 
----
+- if hierarchy integrity is at risk, reject the solution
+- if business rules spread across layers, consolidate them
+- if a change increases coupling without clear gain, reconsider it
 
-# 1.1 Language & Encoding
+Language and stack:
 
-Layout (UI) uses PT-BR with UTF-8 encoding.
-Backend code, class names, and technical conventions remain in English and follow Laravel defaults.
+- UI uses PT-BR
+- files and docs use UTF-8
+- backend code stays in English
+- Laravel 12 + PHP 8.2+
+- Blade + Livewire v3 + AlpineJS
 
----
+## 3. Layer Model
 
-# 1.2 Core Stack Guidelines
-
-- Backend: Laravel 12 (PHP 8.2+)
-- Frontend: Blade + Livewire v3
-- Interatividade: Livewire 3 + AlpineJS
-
----
-
-# 2. Architectural Foundation
-
-## 2.1 Architectural Hierarchy (Laravel)
+Expected direction:
 
 Services
 ^
@@ -56,243 +52,181 @@ Livewire
 ^
 Blade
 
-Rules:
-
-- Services own all business logic.
-- Controllers are thin.
-- Livewire manages UI state only.
-- Blade is declarative.
-- No query logic inside views.
-- No duplicated permission checks.
-- No UI-driven domain rules.
-
-If business rules appear outside Services, refactor.
-
----
-
-# 3. Core Modules (Implemented)
-
-## 3.1 Organogram (Strategic Core)
-
-The Organogram is the heart of the system.
-
 Responsibilities:
-- Represent hierarchical relationships
-- Maintain parent-child integrity
-- Express structure visually
 
-Non-negotiable:
+- Services own business logic and consistency rules
+- Controllers handle thin HTTP flows
+- Livewire manages UI state and interaction flow
+- Blade stays declarative
 
-- No duplicated hierarchy traversal logic
-- No client-side structural rules
-- No alternate hierarchy engines
-
-Hierarchy logic must live in Services.
-
----
-
-## 3.2 Dashboard
-
-Role:
-System orchestrator.
-
-Must:
-- Aggregate and summarize
-- Provide navigation
-
-Must not:
-- Contain business rules
-- Perform heavy structural logic
-
----
-
-## 3.3 Workflow
-
-Organizational process engine linked to OrganizationChart.
-
-Must:
-- Use WorkflowService / WorkflowStepService
-- Keep step ordering and deadlines consistent
-- Avoid embedding workflow rules in UI
-
----
-
-## 3.4 Tasks (Operational Execution)
-
-TaskHub is the container for tasks and steps.
-TaskPage is the operational UI for execution.
-Membership/share management is handled inside TaskPage (Membros tab).
-
-Must:
-- Use TaskService for task creation, kanban moves, and activity logging
-- Preserve hub ownership and membership rules
-- Keep audit trail consistent
-
----
-
-# 4. Engineering Decision Doctrine
-
-When implementing or evolving:
-
-Prioritize in order:
-
-1. Preserve hierarchy integrity
-2. Preserve service boundaries
-3. Preserve visual clarity
-4. Improve performance
-5. Expand features
-
-If a solution increases UI complexity significantly, reconsider.
-
-Avoid:
-
-- Duplicated hierarchy logic
-- Controller-heavy business rules
-- Service fragmentation
-- Tight module coupling
-- Premature abstraction
-- Overengineering
-
----
-
-# 5. Evolution Modes
-
-The system operates in one mode at a time.
-
-## 5.1 Structural Evolution
-
-Focus:
-- Service boundary enforcement
-- Business logic consolidation
-- Removal of duplication
-- Architectural consistency
-
-Output must include:
-- Issue description
-- Architectural impact
-- Severity (Critical / Structural / Improvement)
-- Incremental fix proposal
-
----
-
-## 5.2 Functional Evolution
-
-Focus:
-- Safe feature expansion
-- Permission-aware growth
-- Respect hierarchy integrity
-
-Each proposal must include:
-- Business value
-- Architectural impact
-- Required Service changes
-- Migration complexity
-- Risk level
-
----
-
-## 5.3 Operational Evolution
-
-Focus:
-- Query efficiency
-- N+1 detection
-- Permission evaluation cost
-- Tree traversal performance
-- Caching opportunities
-- Scalability limits
-
-Each improvement must:
-- Identify bottleneck
-- Explain system impact
-- Provide measurable gain expectation
-
----
-
-# 6. Change Proposal Protocol
-
-Before implementing:
-
-1. Clearly define the problem.
-2. Identify affected architectural layer.
-3. Propose 2-3 strategies.
-4. Compare tradeoffs.
-5. Recommend safest path.
-
-Avoid single-solution bias.
-
----
-
-# 7. Code Review Rules
-
-When reviewing code:
-
-Check for:
-- Business logic outside Services
-- Responsibility leakage
-- Duplicated domain logic
-- Permission misuse
-- N+1 queries
-- Unsafe hierarchy manipulation
-- Tight coupling
-
-Classify findings:
-
-- Critical (architecture break risk)
-- Structural (design degradation risk)
-- Improvement (refinement opportunity)
-
-Do not rewrite stable modules unnecessarily.
-
----
-
-# 8. System Protection Rules
+## 4. Guardrails
 
 Never:
 
-- Break Organogram hierarchy integrity
-- Duplicate hierarchy traversal logic
-- Move domain rules into UI
-- Bypass Services
-- Introduce parallel service structures
-- Increase click complexity without justification
+- break Organogram hierarchy integrity
+- duplicate hierarchy traversal logic
+- move domain rules into UI
+- bypass Services for business logic
+- create parallel service structures for the same concern
+- put query logic in Blade views
+- duplicate permission checks without need
+- add UI complexity without clear value
 
-If a request violates these rules:
+If a request conflicts with these guardrails:
 
-- Explain why
-- Propose safer alternative
-- Refuse unsafe implementation if necessary
+- explain the risk
+- propose the safer path
+- refuse unsafe implementation if needed
 
----
+## 5. Module Guardrails
 
-# 9. Red Flags
+### Organogram
 
-If detected, pause:
+Strategic core of the system.
 
-- Business logic inside Livewire
-- Duplicate permission evaluation
-- UI defining domain rules
-- Feature expansion increasing structural coupling
-- Performance degradation in tree traversal
+Must:
 
----
+- preserve parent-child integrity
+- keep hierarchy logic centralized
+- remain the single structural source used by dependent modules
 
-# 10. Definition of Done
+Must not:
 
-An evolution task is complete when:
+- use alternate hierarchy engines
+- define structural rules on the client
 
-- It respects architectural hierarchy
-- Service boundaries remain intact
-- No duplication introduced
-- Organogram integrity preserved
-- Risk documented
-- Impact justified
-- Performance impact considered
+### Workflow
 
----
+Process model linked to `OrganizationChart`.
 
-# 11. Long-Term Objective
+Must:
 
-Build a scalable, hierarchy-safe,
-performance-aware organizational intelligence platform
-capable of handling large enterprise structures
-without architectural degradation.
+- use `WorkflowService` and `WorkflowStepService`
+- preserve step order
+- preserve deadline consistency
+
+Must not:
+
+- push workflow rules into UI state
+
+### Tasks
+
+Operational execution layer.
+
+Must:
+
+- use `TaskService` for task creation
+- use `TaskService` for kanban moves
+- use `TaskService` for task activity logging
+- preserve hub ownership and member access rules
+
+Current code note:
+
+- `TaskPage` still holds part of the operational flow; treat this as existing reality, not as the target pattern
+
+### Dashboard
+
+Entry surface only.
+
+Must not:
+
+- become a business-logic hub
+- absorb heavy structural or operational logic
+
+## 6. Decision Rules
+
+When changing the system:
+
+1. protect hierarchy first
+2. preserve service boundaries
+3. keep modules cohesive
+4. reduce duplication
+5. only then optimize or expand
+
+Avoid:
+
+- controller-heavy rules
+- service fragmentation
+- tight module coupling
+- premature abstraction
+- overengineering
+
+## 7. Code Review Focus
+
+Always check for:
+
+- business logic outside Services
+- duplicated domain logic
+- unsafe hierarchy changes
+- permission misuse
+- N+1 queries
+- responsibility leakage
+- coupling increase
+
+Classify findings as:
+
+- `Critical`
+- `Structural`
+- `Improvement`
+
+## 8. Red Flags
+
+Pause if you find:
+
+- business logic inside Livewire
+- duplicated permission evaluation
+- UI deciding domain rules
+- structural coupling increasing during feature work
+- tree traversal performance regressions
+
+## 9. Documentation Map
+
+Use the docs before changing code.
+
+Read in this order:
+
+1. `docs-ai/README.md`
+2. `docs-ai/DOMAINS.md`
+3. `docs-ai/ARCHITECTURE.md`
+4. `docs-ai/CONVENTIONS.md`
+5. `docs-ai/domains/<MODULO>.md`
+6. `docs-ai/SYSTEM_MAP.md` for cross-document navigation
+
+What each file is for:
+
+- `docs-ai/README.md`: entry index
+- `docs-ai/DOMAINS.md`: quick module selection
+- `docs-ai/ARCHITECTURE.md`: system-wide relationships and flow
+- `docs-ai/CONVENTIONS.md`: how this codebase writes code
+- `docs-ai/SYSTEM_MAP.md`: document precedence, reading flow, module dependency, risk map
+- `docs-ai/domains/ORGANIZATION.md`: hierarchy and workflow scope
+- `docs-ai/domains/TASK.md`: execution, hubs, kanban, steps
+- `docs-ai/domains/ADMINISTRATION.md`: users, permissions, task catalogs
+- `docs-ai/domains/CONFIGURATION.md`: base reference data
+- `docs-ai/domains/AUDIT.md`: system-wide logging
+- `docs-ai/domains/AUTH.md`: login and access lifecycle
+- `docs-ai/domains/PROFILE.md`: authenticated user self-service
+- `docs-ai/domains/PUBLIC.md`: public contact surface
+- `docs-ai/domains/DASHBOARD.md`: authenticated entry page
+
+Lookup by task:
+
+- hierarchy or workflow changes: `ARCHITECTURE.md`, `SYSTEM_MAP.md`, `domains/ORGANIZATION.md`
+- task execution changes: `ARCHITECTURE.md`, `domains/TASK.md`, `domains/ADMINISTRATION.md`
+- access or identity changes: `domains/AUTH.md`, `domains/PROFILE.md`, `domains/ADMINISTRATION.md`
+- coding style decisions: `CONVENTIONS.md`
+
+## 10. Definition Of Done
+
+A change is done when:
+
+- hierarchy integrity is preserved
+- service boundaries remain understandable
+- no unnecessary duplication is introduced
+- risk is known
+- impact is justified
+- performance impact was considered
+
+## 11. Long-Term Goal
+
+Keep the platform hierarchy-safe, scalable, and structurally coherent as the codebase grows.
