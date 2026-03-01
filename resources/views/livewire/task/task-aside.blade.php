@@ -52,7 +52,7 @@
             </div>
         </div>
     @else
-        <div x-data="taskAside({{ $task->id }})" class="h-full flex flex-col bg-gradient-to-br from-white via-green-50/30 to-white" x-ref="asideContainer" >
+        <div class="h-full flex flex-col bg-gradient-to-br from-white via-green-50/30 to-white" x-ref="asideContainer" >
             <!-- HEADER -->
             <header class="sticky top-0 z-30 bg-white/80 border-b border-white/40 shadow-lg">
                 <div class="px-6 py-5">
@@ -455,7 +455,7 @@
 
                     <!-- Timeline Atividades -->
                     <div class="grid grid-col-1 gap-4 mt-6 pt-4 border-t border-gray-100/80">
-                        @foreach ($task->taskActivities() as $taskActivity)
+                        @foreach ($task->taskActivities as $taskActivity)
                             @if ($taskActivity->type == 'comment')                                
                                 <div class="relative pl-8 border-l-2 border-emerald-200/60 last:border-l-0">
                                     <div class="absolute left-[-9px] top-0 w-4 h-4 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-full border-2 border-white shadow-md"></div>

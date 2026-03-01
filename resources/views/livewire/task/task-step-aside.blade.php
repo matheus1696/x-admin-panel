@@ -1,4 +1,4 @@
-<div wire:init="loadStep" class="relative h-full">
+<div class="relative h-full">
 
     <!-- Flash Message -->
     <x-alert.flash />
@@ -45,7 +45,7 @@
             </div>
         </div>
     @else
-        <div x-data="taskStepAside({{ $step->id }})" class="h-full flex flex-col bg-gradient-to-br from-white via-amber-50/30 to-white" x-ref="asideContainer">
+        <div x-data="{}" class="h-full flex flex-col bg-gradient-to-br from-white via-amber-50/30 to-white" x-ref="asideContainer">
             
             <!-- HEADER - Padrão premium do task -->
             <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-xl backdrop-saturate-150 border-b border-white/40 shadow-lg">
@@ -112,7 +112,7 @@
                         </div>
 
                         <!-- Botão Fechar -->
-                        <button @click="openAsideTask = false" class="relative group shrink-0 text-gray-400 hover:text-gray-600 transition-all duration-300">
+                        <button @click="openAsideStep = false" class="relative group shrink-0 text-gray-400 hover:text-gray-600 transition-all duration-300">
                             <div class="absolute inset-0 bg-gray-100/80 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300"></div>
                             <div class="relative px-4 py-2">
                                 <i class="fas fa-times text-lg transition-all duration-500 group-hover:rotate-180"></i>
@@ -250,7 +250,7 @@
                                 </div>
                             @else
                                 <span class="text-xs font-semibold text-gray-900 bg-gray-100/80 px-3 py-1.5 rounded-lg">
-                                    {{ $step->responsable_organization->acronym ?? $step->responsable_organization->title ?? '—' }}
+                                    {{ $step->organization?->acronym ?? $step->organization?->title ?? '—' }}
                                 </span>
                             @endif
                         </div>
@@ -271,7 +271,7 @@
                                 </div>
                             @else
                                 <span class="text-xs font-semibold text-gray-900 bg-gray-100/80 px-3 py-1.5 rounded-lg">
-                                    {{ $step->responsable->name ?? '—' }}
+                                    {{ $step->user?->name ?? '—' }}
                                 </span>
                             @endif
                         </div>
@@ -505,7 +505,7 @@
                     <div class="flex items-center justify-end gap-3">
                         
                         <div class="flex items-center gap-2">
-                            <x-button @click="openAsideTask = false" 
+                            <x-button @click="openAsideStep = false" 
                                 variant="gray_outline"
                                     icon="fas fa-times" 
                                     text="Fechar"  />

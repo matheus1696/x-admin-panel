@@ -5,6 +5,7 @@ namespace App\Services\Task;
 use App\Models\Administration\Task\TaskStatus;
 use App\Models\Administration\Task\TaskStepStatus;
 use App\Models\Administration\User\User;
+use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Task\Task;
 use App\Models\Task\TaskActivity;
 use App\Models\Task\TaskHub;
@@ -22,6 +23,7 @@ class TaskService
             'taskPriority',
             'taskStatus',
             'taskCategory',
+            'taskActivities.user',
             'taskSteps',
             'taskStepsFinished',
         ])->findOrFail($id);
@@ -105,8 +107,11 @@ class TaskService
      *     completed:int,
      *     overdue:int,
      *     cancelled:int,
+     *     overdue_tasks:array<int, array{id:int, code:string, title:string, deadline_at:string|null, responsible:string}>,
+     *     overdue_steps:array<int, array{id:int, code:string, title:string, deadline_at:string|null, responsible:string, task_code:string|null}>,
      *     tasks_by_responsible:array<int, array{label:string, total:int}>,
      *     tasks_by_step_status:array<int, array{label:string, total:int}>,
+     *     steps_by_organization:array<int, array{label:string, total:int}>,
      *     steps_by_responsible:array<int, array{label:string, total:int}>,
      *     tasks_by_status_active:array<int, array{label:string, total:int, color:string|null}>,
      *     steps_by_status_active:array<int, array{label:string, total:int, color:string|null}>,
@@ -150,6 +155,26 @@ class TaskService
         }
 
         $overdue = $overdueQuery->count();
+
+        $overdueTasks = Task::query()
+            ->where('task_hub_id', $taskHub->id)
+            ->whereNotNull('deadline_at')
+            ->where('deadline_at', '<', now())
+            ->when($terminalStatusIds !== [], fn ($query) => $query->whereNotIn('task_status_id', $terminalStatusIds))
+            ->with('user')
+            ->orderBy('deadline_at')
+            ->limit(8)
+            ->get()
+            ->map(function (Task $task) {
+                return [
+                    'id' => $task->id,
+                    'code' => $task->code,
+                    'title' => $task->title,
+                    'deadline_at' => $task->deadline_at?->format('Y-m-d'),
+                    'responsible' => $task->user?->name ?? 'Sem responsável',
+                ];
+            })
+            ->all();
 
         $responsibleCounts = (clone $baseQuery)
             ->select('user_id', DB::raw('count(*) as total'))
@@ -240,6 +265,41 @@ class TaskService
             ->values()
             ->all();
 
+        $stepOrganizationCounts = TaskStep::query()
+            ->where('task_hub_id', $taskHub->id)
+            ->select('organization_id', DB::raw('count(*) as total'))
+            ->groupBy('organization_id')
+            ->orderByDesc('total')
+            ->get();
+
+        $organizationIds = $stepOrganizationCounts
+            ->pluck('organization_id')
+            ->filter()
+            ->values();
+
+        $organizations = OrganizationChart::query()
+            ->whereIn('id', $organizationIds)
+            ->get(['id', 'acronym', 'title'])
+            ->keyBy('id');
+
+        $stepsByOrganization = $stepOrganizationCounts
+            ->map(function ($row) use ($organizations) {
+                $organization = $row->organization_id
+                    ? $organizations->get($row->organization_id)
+                    : null;
+
+                $label = $organization
+                    ? ($organization->acronym ?: $organization->title)
+                    : 'Sem setor';
+
+                return [
+                    'label' => $label,
+                    'total' => (int) $row->total,
+                ];
+            })
+            ->values()
+            ->all();
+
         $terminalTaskTitles = ['Concluído', 'Cancelado'];
         $terminalStepTitles = ['Concluída', 'Cancelada'];
 
@@ -291,6 +351,32 @@ class TaskService
             ->values()
             ->all();
 
+        $stepTerminalStatusIds = TaskStepStatus::query()
+            ->whereIn('title', $terminalStepTitles)
+            ->pluck('id')
+            ->all();
+
+        $overdueSteps = TaskStep::query()
+            ->where('task_hub_id', $taskHub->id)
+            ->whereNotNull('deadline_at')
+            ->where('deadline_at', '<', now())
+            ->when($stepTerminalStatusIds !== [], fn ($query) => $query->whereNotIn('task_status_id', $stepTerminalStatusIds))
+            ->with(['user', 'task'])
+            ->orderBy('deadline_at')
+            ->limit(8)
+            ->get()
+            ->map(function (TaskStep $step) {
+                return [
+                    'id' => $step->id,
+                    'code' => $step->code,
+                    'title' => $step->title,
+                    'deadline_at' => $step->deadline_at?->format('Y-m-d'),
+                    'responsible' => $step->user?->name ?? 'Sem responsável',
+                    'task_code' => $step->task?->code,
+                ];
+            })
+            ->all();
+
         $tasksActiveTotal = collect($tasksByStatusActive)->sum('total');
         $stepsActiveTotal = collect($stepsByStatusActive)->sum('total');
 
@@ -300,8 +386,11 @@ class TaskService
             'completed' => $completed,
             'overdue' => $overdue,
             'cancelled' => $cancelled,
+            'overdue_tasks' => $overdueTasks,
+            'overdue_steps' => $overdueSteps,
             'tasks_by_responsible' => $tasksByResponsible,
             'tasks_by_step_status' => $tasksByStepStatus,
+            'steps_by_organization' => $stepsByOrganization,
             'steps_by_responsible' => $stepsByResponsible,
             'tasks_by_status_active' => $tasksByStatusActive,
             'steps_by_status_active' => $stepsByStatusActive,

@@ -82,14 +82,17 @@ class TaskStepAside extends Component
         $this->taskPriorities = TaskPriority::orderBy('level')->get();
         $this->taskStepCategories = TaskStepCategory::orderBy('title')->get();
         $this->taskStepStatuses = $this->taskStepStatusesService->index();
+        $this->loadStep();
     }
 
     public function loadStep()
     {
         $this->step = TaskStep::with([
+            'organization',
             'taskPriority',
             'taskStepStatus',
             'taskStepCategory',
+            'user',
             'stepActivities.user',
         ])->findOrFail($this->stepId);
         $this->isLoading = false;
