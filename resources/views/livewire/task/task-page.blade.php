@@ -78,6 +78,13 @@
                     <span>Kanban Etapas</span>
                 </span>
             </button>
+
+            <button type="button" class="relative px-6 py-2.5 text-sm font-medium transition-all duration-200" :class="tab === 'sharing' ? 'bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 text-white shadow-md' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'" @click="tab = 'sharing'">
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-users" :class="tab === 'sharing' ? 'text-white' : 'text-gray-400'"></i>
+                    <span>Compartilhamento</span>
+                </span>
+            </button>
         </div>
 
         <!-- Dashboard -->
@@ -759,6 +766,113 @@
                             </div>
                         @endforelse
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div x-show="tab === 'sharing'" x-cloak>
+            <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+                <div class="border-b border-slate-200 bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 px-6 py-4 text-white">
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <p class="text-sm font-semibold uppercase">Compartilhamento do Ambiente</p>
+                            <p class="mt-1 text-xs text-white/80">Gerencie quem pode acessar este ambiente de projeto</p>
+                        </div>
+                        <span class="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold">
+                            {{ $members->count() }} membros
+                        </span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6 p-6 lg:grid-cols-[360px_1fr]">
+                    <section class="space-y-4 rounded-3xl border border-slate-200 bg-slate-50/70 p-5">
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-900">Adicionar Membro</h3>
+                            <p class="mt-1 text-xs text-gray-500">
+                                @if ($canManageMembers)
+                                    O proprietário do ambiente pode incluir novos participantes.
+                                @else
+                                    Apenas o proprietário do ambiente pode adicionar ou remover membros.
+                                @endif
+                            </p>
+                        </div>
+
+                        <div class="space-y-3">
+                            <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+                                Usuário
+                            </label>
+
+                            <x-form.select-livewire
+                                wire:model.defer="member_user_id"
+                                name="member_user_id"
+                                :collection="$availableMemberUsers"
+                                valueField="id"
+                                labelField="name"
+                                placeholder="Selecione um usuário"
+                                borderColor="gray"
+                                :disabled="! $canManageMembers"
+                            />
+
+                            @error('member_user_id')
+                                <p class="text-sm font-medium text-red-600">{{ $message }}</p>
+                            @enderror
+
+                            <x-button
+                                type="button"
+                                text="Adicionar ao Ambiente"
+                                icon="fa-solid fa-user-plus"
+                                wire:click="addMember"
+                                class="w-full justify-center"
+                                @disabled(! $canManageMembers)
+                            />
+                        </div>
+                    </section>
+
+                    <section class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-900">Membros Atuais</h3>
+                                <p class="mt-1 text-xs text-gray-500">Pessoas que podem acessar este ambiente.</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            @forelse ($members as $member)
+                                <div class="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-4 md:flex-row md:items-center md:justify-between">
+                                    <div class="min-w-0">
+                                        <p class="truncate text-sm font-semibold text-gray-900">{{ $member->user?->name ?? 'Usuário' }}</p>
+                                        <p class="mt-1 text-xs text-gray-500">{{ $member->user?->email ?? 'Sem e-mail' }}</p>
+                                    </div>
+
+                                    <div class="flex items-center gap-2">
+                                        @if ((int) $member->user_id === $taskHubOwnerId)
+                                            <span class="rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-700">
+                                                Proprietário
+                                            </span>
+                                        @else
+                                            <span class="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-700">
+                                                Membro
+                                            </span>
+                                        @endif
+
+                                        @if ($canManageMembers && (int) $member->user_id !== $taskHubOwnerId)
+                                            <x-button
+                                                type="button"
+                                                text="Remover"
+                                                icon="fa-solid fa-user-minus"
+                                                variant="gray_outline"
+                                                wire:click="removeMember({{ $member->id }})"
+                                            />
+                                        @endif
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-6 py-10 text-center text-sm text-gray-400">
+                                    Nenhum membro vinculado a este ambiente.
+                                </div>
+                            @endforelse
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>

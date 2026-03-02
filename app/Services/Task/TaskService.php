@@ -9,14 +9,69 @@ use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Task\Task;
 use App\Models\Task\TaskActivity;
 use App\Models\Task\TaskHub;
+use App\Models\Task\TaskHubMember;
 use App\Models\Task\TaskStep;
 use App\Models\Task\TaskStepActivity;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class TaskService
 {
+    public function members(string $hubUuid): Collection
+    {
+        $taskHub = TaskHub::query()
+            ->with(['members.user'])
+            ->where('uuid', $hubUuid)
+            ->firstOrFail();
+
+        return $taskHub->members
+            ->sortBy(fn (TaskHubMember $member) => $member->user?->name ?? '')
+            ->values();
+    }
+
+    public function addMember(string $hubUuid, int $actorId, int $memberUserId): bool
+    {
+        $taskHub = TaskHub::query()
+            ->where('uuid', $hubUuid)
+            ->firstOrFail();
+
+        if ($taskHub->owner_id !== $actorId) {
+            return false;
+        }
+
+        TaskHubMember::firstOrCreate([
+            'task_hub_id' => $taskHub->id,
+            'user_id' => $memberUserId,
+        ]);
+
+        return true;
+    }
+
+    public function removeMember(string $hubUuid, int $actorId, int $membershipId): bool
+    {
+        $taskHub = TaskHub::query()
+            ->where('uuid', $hubUuid)
+            ->firstOrFail();
+
+        if ($taskHub->owner_id !== $actorId) {
+            return false;
+        }
+
+        $membership = TaskHubMember::query()
+            ->where('task_hub_id', $taskHub->id)
+            ->findOrFail($membershipId);
+
+        if ($membership->user_id === $taskHub->owner_id) {
+            return false;
+        }
+
+        $membership->delete();
+
+        return true;
+    }
+
     public function find(int $id): Task
     {
         return Task::with([

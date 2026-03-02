@@ -56,6 +56,8 @@ class TaskPage extends Component
 
     public int $taskHubInternalId;
 
+    public int $taskHubOwnerId;
+
     public ?int $selectedTaskId = null;
 
     public ?int $selectedStepId = null;
@@ -79,6 +81,8 @@ class TaskPage extends Component
     public ?int $step_task_priority_id = null;
 
     public ?int $task_step_status_id = null;
+
+    public ?int $member_user_id = null;
 
     public ?int $pendingStepMoveStepId = null;
 
@@ -133,6 +137,7 @@ class TaskPage extends Component
 
         $this->taskHubId = $taskHub->uuid;
         $this->taskHubInternalId = $taskHub->id;
+        $this->taskHubOwnerId = (int) $taskHub->owner_id;
         $this->users = User::orderBy('name')->get();
         $this->organizations = OrganizationChart::orderBy('order')->get();
         $this->taskCategories = TaskCategory::orderBy('title')->get();
@@ -241,6 +246,45 @@ class TaskPage extends Component
     public function closedAsideTaskStep(): void
     {
         $this->selectedStepId = null;
+    }
+
+    public function addMember(): void
+    {
+        $data = $this->validate([
+            'member_user_id' => 'required|exists:users,id',
+        ]);
+
+        $added = $this->taskService->addMember(
+            $this->taskHubId,
+            (int) Auth::id(),
+            (int) $data['member_user_id']
+        );
+
+        if (! $added) {
+            $this->flashError('Apenas o proprietário pode gerenciar os membros do ambiente.');
+
+            return;
+        }
+
+        $this->member_user_id = null;
+        $this->flashSuccess('Membro adicionado ao ambiente com sucesso.');
+    }
+
+    public function removeMember(int $membershipId): void
+    {
+        $removed = $this->taskService->removeMember(
+            $this->taskHubId,
+            (int) Auth::id(),
+            $membershipId
+        );
+
+        if (! $removed) {
+            $this->flashError('Não foi possível remover este membro do ambiente.');
+
+            return;
+        }
+
+        $this->flashSuccess('Membro removido do ambiente com sucesso.');
     }
 
     public function requestStepKanbanDrop(int $stepId, int $fromStatusId, int $toStatusId, array $targetOrder): void
@@ -483,11 +527,22 @@ class TaskPage extends Component
 
     public function render()
     {
+        $members = $this->taskService->members($this->taskHubId);
+        $memberUserIds = $members
+            ->pluck('user_id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+
         return view('livewire.task.task-page', [
             'tasks' => $this->taskService->index($this->taskHubId, $this->filters),
             'dashboard' => $this->taskService->dashboard($this->taskHubId),
             'stepKanban' => $this->taskService->stepKanban($this->taskHubId),
             'stepCompletionStatusIds' => $this->stepCompletionStatusIds(),
+            'members' => $members,
+            'canManageMembers' => $this->taskHubOwnerId === (int) Auth::id(),
+            'availableMemberUsers' => $this->users
+                ->reject(fn (User $user): bool => in_array((int) $user->id, $memberUserIds, true))
+                ->values(),
         ]);
     }
 }
