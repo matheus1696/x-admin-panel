@@ -785,10 +785,20 @@ class TaskService
             $toStatusId = $toStatusId === 0 ? null : $toStatusId;
 
             $previousStatusId = $step->task_status_id;
+            $terminalStatusIds = $this->stepTerminalStatusIds();
+
+            if (
+                $fromStatusId !== $toStatusId
+                && $fromStatusId !== null
+                && $toStatusId !== null
+                && in_array($fromStatusId, $terminalStatusIds, true)
+                && in_array($toStatusId, $terminalStatusIds, true)
+            ) {
+                return;
+            }
 
             if ($fromStatusId !== $toStatusId) {
                 $updates = ['task_status_id' => $toStatusId];
-                $terminalStatusIds = $this->stepTerminalStatusIds();
 
                 if ($toStatusId !== null && in_array($toStatusId, $terminalStatusIds, true) && $step->finished_at === null) {
                     $updates['finished_at'] = now();
@@ -811,12 +821,18 @@ class TaskService
             $description = ($this->actorName()).' moveu a etapa no kanban';
             if ($reason && $reasonType === 'completion') {
                 $description = ($this->actorName()).' concluiu a etapa: '.$reason;
+                $this->recordTaskCommentForCompletedStep($step, $reason);
+                $this->recordTaskStepCompletionActivity($step);
             }
             if ($reason && $reasonType === 'cancellation') {
                 $description = ($this->actorName()).' cancelou a etapa: '.$reason;
+                $this->recordTaskCommentForCancelledStep($step, $reason);
+                $this->recordTaskStepCancellationActivity($step);
             }
             if ($reason && $reasonType === 'reopen') {
                 $description = ($this->actorName()).' reabriu a etapa: '.$reason;
+                $this->recordTaskCommentForReopenedStep($step, $reason);
+                $this->recordTaskStepReopenActivity($step);
             }
 
             TaskStepActivity::create([
@@ -834,6 +850,42 @@ class TaskService
                 ],
             ]);
         });
+    }
+
+    public function completeStep(int $stepId, string $comment): TaskStep
+    {
+        $step = TaskStep::query()->findOrFail($stepId);
+        $completedStatusId = TaskStepStatus::query()
+            ->where('title', 'Concluída')
+            ->value('id');
+
+        if (! $completedStatusId) {
+            return $step;
+        }
+
+        $step->update([
+            'task_status_id' => $completedStatusId,
+            'finished_at' => now(),
+        ]);
+
+        $this->recordTaskCommentForCompletedStep($step, $comment);
+        $this->recordTaskStepCompletionActivity($step);
+
+        TaskStepActivity::create([
+            'task_step_id' => $step->id,
+            'user_id' => Auth::user()?->id,
+            'type' => 'comment',
+            'description' => $comment,
+        ]);
+
+        TaskStepActivity::create([
+            'task_step_id' => $step->id,
+            'user_id' => Auth::user()?->id,
+            'type' => 'finished_change',
+            'description' => $this->actorName().' marcou a etapa como concluída',
+        ]);
+
+        return $step->refresh();
     }
 
     public function storeStepComment(int $stepId, string $comment): void
@@ -879,6 +931,66 @@ class TaskService
             'type' => $type,
             'description' => $description,
             'meta' => $meta,
+        ]);
+    }
+
+    private function recordTaskCommentForCompletedStep(TaskStep $step, string $comment): void
+    {
+        TaskActivity::create([
+            'task_id' => $step->task_id,
+            'user_id' => Auth::user()?->id,
+            'type' => 'comment',
+            'description' => $comment,
+        ]);
+    }
+
+    private function recordTaskStepCompletionActivity(TaskStep $step): void
+    {
+        TaskActivity::create([
+            'task_id' => $step->task_id,
+            'user_id' => Auth::user()?->id,
+            'type' => 'step_finished_change',
+            'description' => $this->actorName().' concluiu a etapa '.$step->title,
+        ]);
+    }
+
+    private function recordTaskCommentForCancelledStep(TaskStep $step, string $reason): void
+    {
+        TaskActivity::create([
+            'task_id' => $step->task_id,
+            'user_id' => Auth::user()?->id,
+            'type' => 'comment',
+            'description' => $reason,
+        ]);
+    }
+
+    private function recordTaskStepCancellationActivity(TaskStep $step): void
+    {
+        TaskActivity::create([
+            'task_id' => $step->task_id,
+            'user_id' => Auth::user()?->id,
+            'type' => 'step_cancellation_change',
+            'description' => $this->actorName().' cancelou a etapa '.$step->title,
+        ]);
+    }
+
+    private function recordTaskCommentForReopenedStep(TaskStep $step, string $reason): void
+    {
+        TaskActivity::create([
+            'task_id' => $step->task_id,
+            'user_id' => Auth::user()?->id,
+            'type' => 'comment',
+            'description' => $reason,
+        ]);
+    }
+
+    private function recordTaskStepReopenActivity(TaskStep $step): void
+    {
+        TaskActivity::create([
+            'task_id' => $step->task_id,
+            'user_id' => Auth::user()?->id,
+            'type' => 'step_reopen_change',
+            'description' => $this->actorName().' reabriu a etapa '.$step->title,
         ]);
     }
 

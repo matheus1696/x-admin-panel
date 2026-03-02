@@ -70,47 +70,49 @@
     </div>
 
     {{-- Lista de atividades --}}
-    <x-page.table>
-        <x-slot name="thead">
-            <tr>
-                <x-page.table-th class="text-center">Ordem</x-page.table-th>
-                <x-page.table-th>Atividade</x-page.table-th>
-                <x-page.table-th class="text-center">Setor</x-page.table-th>
-                <x-page.table-th class="text-center">Prazo</x-page.table-th>
-                <x-page.table-th class="text-center">Obrigatório</x-page.table-th>
-                <x-page.table-th class="text-center">Paralelo?</x-page.table-th>
-                <x-page.table-th class="text-center">Ações</x-page.table-th>
-            </tr>
-        </x-slot>
-        <x-slot name="tbody">
-            @forelse ($workflowSteps as $workflowStep)
-                <tr class="hover:bg-gray-50">
-                    <x-page.table-td class="text-center">{{ $workflowStep->step_order }}</x-page.table-td>
-                    <x-page.table-td>{{ $workflowStep->title }}</x-page.table-td>
-                    <x-page.table-td>{{ $workflowStep->organization?->acronym }}</x-page.table-td>
-                    <x-page.table-td class="text-center">{{ $workflowStep->deadline_days }}</x-page.table-td>
-                    <x-page.table-td class="text-center">
-                        <x-page.table-status :condition="$workflowStep->required" />
-                    </x-page.table-td>
-                    <x-page.table-td class="text-center">
-                        <x-page.table-status :condition="$workflowStep->allow_parallel" />
-                    </x-page.table-td>
-                    <x-page.table-td class="text-center">
-                        <div class="flex items-center justify-center gap-2">
-                            <x-button wire:click="edit({{ $workflowStep->id }})" icon="fa-solid fa-pen" title="Editar Atividade" variant="green_text" />
-                            @if ( $workflowStep->step_order != 1)
-                                <x-button wire:click="orderUp({{ $workflowStep->id }})" icon="fa-solid fa-arrow-up" title="Subir Atividade" variant="green_text" />
-                            @endif
-                        </div>                        
-                    </x-page.table-td>
-                </tr>
-            @empty
+    <div class="h-96 overflow-scroll">
+        <x-page.table>
+            <x-slot name="thead">
                 <tr>
-                    <td colspan="6" class="px-4 py-4 text-center text-gray-500">
-                        Sem atividades adicionadas.
-                    </td>
+                    <x-page.table-th class="text-center">Ordem</x-page.table-th>
+                    <x-page.table-th>Atividade</x-page.table-th>
+                    <x-page.table-th class="text-center">Setor</x-page.table-th>
+                    <x-page.table-th class="text-center">Prazo</x-page.table-th>
+                    <x-page.table-th class="text-center">Obrigatório</x-page.table-th>
+                    <x-page.table-th class="text-center">Paralelo?</x-page.table-th>
+                    <x-page.table-th class="text-center">Ações</x-page.table-th>
                 </tr>
-            @endforelse
-        </x-slot>
-    </x-page.table>
+            </x-slot>
+            <x-slot name="tbody">
+                @forelse ($workflowSteps as $workflowStep)
+                    <tr class="hover:bg-gray-50">
+                        <x-page.table-td class="text-center">{{ $workflowStep->step_order }}</x-page.table-td>
+                        <x-page.table-td>{{ $workflowStep->title }}</x-page.table-td>
+                        <x-page.table-td>{{ $workflowStep->organization?->acronym }}</x-page.table-td>
+                        <x-page.table-td class="text-center">{{ $workflowStep->deadline_days }}</x-page.table-td>
+                        <x-page.table-td class="text-center">
+                            <x-page.table-status :condition="$workflowStep->required" />
+                        </x-page.table-td>
+                        <x-page.table-td class="text-center">
+                            <x-page.table-status :condition="$workflowStep->allow_parallel" />
+                        </x-page.table-td>
+                        <x-page.table-td class="text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <x-button wire:click="edit({{ $workflowStep->id }})" icon="fa-solid fa-pen" title="Editar Atividade" variant="green_text" />
+                                @if ( $workflowStep->step_order != 1)
+                                    <x-button wire:click="orderUp({{ $workflowStep->id }})" icon="fa-solid fa-arrow-up" title="Subir Atividade" variant="green_text" />
+                                @endif
+                            </div>                        
+                        </x-page.table-td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="px-4 py-4 text-center text-gray-500">
+                            Sem atividades adicionadas.
+                        </td>
+                    </tr>
+                @endforelse
+            </x-slot>
+        </x-page.table>
+    </div>
 </div>

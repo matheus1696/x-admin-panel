@@ -6,9 +6,10 @@ use App\Livewire\Traits\Modal;
 use App\Livewire\Traits\WithFlashMessage;
 use App\Models\Administration\Task\TaskCategory;
 use App\Models\Administration\Task\TaskPriority;
+use App\Models\Administration\Task\TaskStepStatus;
+use App\Models\Administration\User\User;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Task\Task;
-use App\Models\Administration\User\User;
 use App\Models\Task\TaskHub;
 use App\Models\Task\TaskStep;
 use App\Services\Administration\Task\TaskStatusService;
@@ -79,12 +80,26 @@ class TaskPage extends Component
 
     public ?int $task_step_status_id = null;
 
+    public ?int $pendingStepMoveStepId = null;
+
+    public ?int $pendingStepMoveFromStatusId = null;
+
+    public ?int $pendingStepMoveToStatusId = null;
+
+    /**
+     * @var array<int>
+     */
+    public array $pendingStepMoveTargetOrder = [];
+
+    public string $stepCompletionComment = '';
+
+    public ?string $pendingStepMoveReasonType = null;
+
     public function boot(
         TaskService $taskService,
         TaskStatusService $taskStatusService,
         TaskStepStatusService $taskStepStatusService
-    ): void
-    {
+    ): void {
         $this->taskService = $taskService;
         $this->taskStatusService = $taskStatusService;
         $this->taskStepStatusService = $taskStepStatusService;
@@ -228,11 +243,251 @@ class TaskPage extends Component
         $this->selectedStepId = null;
     }
 
+    public function requestStepKanbanDrop(int $stepId, int $fromStatusId, int $toStatusId, array $targetOrder): void
+    {
+        if ($this->isInvalidStepTerminalSwap($fromStatusId, $toStatusId)) {
+            $this->flashError('Não é permitido mover uma etapa cancelada para concluída ou uma etapa concluída para cancelada.');
+
+            return;
+        }
+
+        $reasonType = $this->stepReasonTypeForTransition($fromStatusId, $toStatusId);
+
+        if (
+            $fromStatusId !== $toStatusId
+            && $reasonType !== null
+        ) {
+            $this->pendingStepMoveStepId = $stepId;
+            $this->pendingStepMoveFromStatusId = $fromStatusId;
+            $this->pendingStepMoveToStatusId = $toStatusId;
+            $this->pendingStepMoveTargetOrder = array_map(fn ($id): int => (int) $id, $targetOrder);
+            $this->stepCompletionComment = '';
+            $this->pendingStepMoveReasonType = $reasonType;
+            $this->openModal('modal-step-completion-move');
+
+            return;
+        }
+
+        $this->performStepKanbanDrop($stepId, $fromStatusId, $toStatusId, $targetOrder);
+    }
+
+    public function reorderStepKanbanCard(
+        int $stepId,
+        int $fromStatusId,
+        int $toStatusId,
+        array $targetOrder,
+        ?string $completionComment = null
+    ): void {
+        $completionComment = $completionComment !== null ? trim($completionComment) : null;
+
+        if ($this->isInvalidStepTerminalSwap($fromStatusId, $toStatusId)) {
+            $this->flashError('Não é permitido mover uma etapa cancelada para concluída ou uma etapa concluída para cancelada.');
+
+            return;
+        }
+
+        $reasonType = $this->stepReasonTypeForTransition($fromStatusId, $toStatusId);
+
+        if (
+            $fromStatusId !== $toStatusId
+            && $reasonType !== null
+            && ($completionComment === null || $completionComment === '')
+        ) {
+            $this->flashError(
+                match ($reasonType) {
+                    'completion' => 'Informe um comentário para concluir a etapa.',
+                    'cancellation' => 'Informe o motivo para cancelar a etapa.',
+                    'reopen' => 'Informe o motivo para reabrir a etapa.',
+                    default => 'Informe um motivo para continuar.',
+                }
+            );
+
+            return;
+        }
+
+        $columns = collect($this->taskService->stepKanban($this->taskHubId));
+
+        $sourceColumn = $columns->firstWhere('status_id', $fromStatusId);
+        $targetColumn = $columns->firstWhere('status_id', $toStatusId);
+
+        if (! $sourceColumn || ! $targetColumn) {
+            return;
+        }
+
+        $sourceOrder = $sourceColumn['steps']
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->reject(fn (int $id): bool => $id === $stepId)
+            ->values()
+            ->all();
+
+        $targetIds = $targetColumn['steps']
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->reject(fn (int $id): bool => $id === $stepId)
+            ->values()
+            ->all();
+
+        $allowedIds = [...$targetIds, $stepId];
+
+        $normalizedTargetOrder = collect($targetOrder)
+            ->map(fn ($id): int => (int) $id)
+            ->filter(fn (int $id): bool => in_array($id, $allowedIds, true))
+            ->unique()
+            ->values();
+
+        foreach ($allowedIds as $allowedId) {
+            if (! $normalizedTargetOrder->contains($allowedId)) {
+                $normalizedTargetOrder->push($allowedId);
+            }
+        }
+
+        $targetOrder = $normalizedTargetOrder->all();
+
+        $this->taskService->moveKanbanStep(
+            $this->taskHubId,
+            $stepId,
+            $fromStatusId,
+            $toStatusId,
+            $sourceOrder,
+            $targetOrder,
+            $completionComment,
+            $completionComment !== null && $fromStatusId !== $toStatusId ? $reasonType : null
+        );
+    }
+
+    public function confirmStepCompletionMove(): void
+    {
+        $this->validate([
+            'stepCompletionComment' => 'required|string|max:2000',
+        ]);
+
+        if (
+            $this->pendingStepMoveStepId === null
+            || $this->pendingStepMoveFromStatusId === null
+            || $this->pendingStepMoveToStatusId === null
+        ) {
+            $this->closeModal();
+
+            return;
+        }
+
+        $this->performStepKanbanDrop(
+            $this->pendingStepMoveStepId,
+            $this->pendingStepMoveFromStatusId,
+            $this->pendingStepMoveToStatusId,
+            $this->pendingStepMoveTargetOrder,
+            $this->stepCompletionComment
+        );
+
+        $this->closeModal();
+    }
+
+    public function closeModal(): void
+    {
+        $this->modalKey = null;
+        $this->showModal = false;
+        $this->resetValidation();
+        $this->resetPendingStepMove();
+    }
+
+    /**
+     * @return array<int>
+     */
+    private function stepCompletionStatusIds(): array
+    {
+        return TaskStepStatus::query()
+            ->where('title', 'Concluída')
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+    }
+
+    /**
+     * @return array<int>
+     */
+    private function stepCancellationStatusIds(): array
+    {
+        return TaskStepStatus::query()
+            ->where('title', 'Cancelada')
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+    }
+
+    /**
+     * @return array<int>
+     */
+    private function stepTerminalStatusIds(): array
+    {
+        return TaskStepStatus::query()
+            ->whereIn('title', ['Concluída', 'Cancelada'])
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+    }
+
+    private function stepReasonTypeForTransition(int $fromStatusId, int $toStatusId): ?string
+    {
+        if ($fromStatusId === $toStatusId) {
+            return null;
+        }
+
+        if (in_array($toStatusId, $this->stepCompletionStatusIds(), true)) {
+            return 'completion';
+        }
+
+        if (in_array($toStatusId, $this->stepCancellationStatusIds(), true)) {
+            return 'cancellation';
+        }
+
+        if (
+            in_array($fromStatusId, $this->stepTerminalStatusIds(), true)
+            && ! in_array($toStatusId, $this->stepTerminalStatusIds(), true)
+        ) {
+            return 'reopen';
+        }
+
+        return null;
+    }
+
+    private function isInvalidStepTerminalSwap(int $fromStatusId, int $toStatusId): bool
+    {
+        if ($fromStatusId === $toStatusId) {
+            return false;
+        }
+
+        return in_array($fromStatusId, $this->stepTerminalStatusIds(), true)
+            && in_array($toStatusId, $this->stepTerminalStatusIds(), true);
+    }
+
+    private function performStepKanbanDrop(
+        int $stepId,
+        int $fromStatusId,
+        int $toStatusId,
+        array $targetOrder,
+        ?string $completionComment = null
+    ): void {
+        $this->reorderStepKanbanCard($stepId, $fromStatusId, $toStatusId, $targetOrder, $completionComment);
+    }
+
+    private function resetPendingStepMove(): void
+    {
+        $this->pendingStepMoveStepId = null;
+        $this->pendingStepMoveFromStatusId = null;
+        $this->pendingStepMoveToStatusId = null;
+        $this->pendingStepMoveTargetOrder = [];
+        $this->stepCompletionComment = '';
+        $this->pendingStepMoveReasonType = null;
+    }
+
     public function render()
     {
         return view('livewire.task.task-page', [
             'tasks' => $this->taskService->index($this->taskHubId, $this->filters),
             'dashboard' => $this->taskService->dashboard($this->taskHubId),
+            'stepKanban' => $this->taskService->stepKanban($this->taskHubId),
+            'stepCompletionStatusIds' => $this->stepCompletionStatusIds(),
         ]);
     }
 }

@@ -7,7 +7,54 @@
         </x-slot>
     </x-page.header>
 
-    <div x-data="{ openAsideTask: false, openAsideStep: false, tab: 'dashboard', expandedTaskId: null, stepFormTaskId: null }">
+    <div x-data="{
+        openAsideTask: false,
+        openAsideStep: false,
+        tab: 'dashboard',
+        expandedTaskId: null,
+        stepFormTaskId: null,
+        draggedStepId: null,
+        draggedFromStatusId: null,
+        dragOverStatusId: null,
+        dragOverInsertBeforeId: null,
+        buildStepTargetOrder(columnIds, insertBeforeId = null) {
+            if (this.draggedStepId === null) {
+                return columnIds;
+            }
+
+            const base = columnIds.filter((id) => id !== this.draggedStepId);
+            const result = [];
+            let inserted = false;
+
+            for (const id of base) {
+                if (insertBeforeId !== null && id === insertBeforeId && ! inserted) {
+                    result.push(this.draggedStepId);
+                    inserted = true;
+                }
+
+                result.push(id);
+            }
+
+            if (! inserted) {
+                result.push(this.draggedStepId);
+            }
+
+            return result;
+        },
+        dropStepOnColumn(statusId, columnIds, insertBeforeId = null) {
+            if (this.draggedStepId === null || this.draggedFromStatusId === null) {
+                return;
+            }
+
+            const targetOrder = this.buildStepTargetOrder(columnIds, insertBeforeId);
+            $wire.requestStepKanbanDrop(this.draggedStepId, this.draggedFromStatusId, statusId, targetOrder);
+
+            this.draggedStepId = null;
+            this.draggedFromStatusId = null;
+            this.dragOverStatusId = null;
+            this.dragOverInsertBeforeId = null;
+        }
+    }">
 
         <!-- Botões Superiores -->
         <div class="mb-6 flex items-center rounded-xl border border-gray-200 overflow-hidden">
@@ -22,6 +69,13 @@
                 <span class="flex items-center gap-2">
                     <i class="fa-regular fa-list-alt" :class="tab === 'list' ? 'text-white' : 'text-gray-400'"></i>
                     <span>Lista</span>
+                </span>
+            </button>
+
+            <button type="button" class="relative px-6 py-2.5 text-sm font-medium transition-all duration-200" :class="tab === 'step-kanban' ? 'bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 text-white shadow-md' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'" @click="tab = 'step-kanban'">
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-grip" :class="tab === 'step-kanban' ? 'text-white' : 'text-gray-400'"></i>
+                    <span>Kanban Etapas</span>
                 </span>
             </button>
         </div>
@@ -106,7 +160,7 @@
                     </div>
 
                     <div class="space-y-6 p-6">
-                        <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                        <div class="grid grid-cols-2 gap-6 md:grid-cols-3">
 
                             <div class="flex flex-col items-center justify-center gap-4">
                                 <div class="relative h-44 w-44 rounded-full" style="{{ $taskStatusChartStyle }}">
@@ -122,7 +176,7 @@
                                 <div class="space-y-3">
                                     <div class="flex items-center justify-between">
                                         <h4 class="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">Status</h4>
-                                        <span class="text-[11px] text-gray-400">Tarefas ativas</span>
+                                        <span class="text-[11px] text-gray-400 hidden md:block">Tarefas ativas</span>
                                     </div>
 
                                     @forelse (($dashboard['tasks_by_status_active'] ?? []) as $item)
@@ -221,7 +275,7 @@
 
                     <div class="space-y-6 p-6">
 
-                        <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                        <div class="grid grid-cols-2 gap-6 md:grid-cols-3">
 
                             <div class="flex flex-col items-center justify-center gap-4">
                                 <div class="relative h-44 w-44 rounded-full" style="{{ $stepStatusChartStyle }}">
@@ -237,7 +291,7 @@
                                 <div class="space-y-3">
                                     <div class="flex items-center justify-between">
                                         <h4 class="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">Status</h4>
-                                        <span class="text-[11px] text-gray-400">Etapas ativas</span>
+                                        <span class="text-[11px] text-gray-400 hidden md:block">Etapas ativas</span>
                                     </div>
 
                                     @forelse (($dashboard['steps_by_status_active'] ?? []) as $item)
@@ -337,7 +391,7 @@
                                         </div>
                                     </button>
                                 @empty
-                                    <div class="rounded-2xl border border-dashed border-emerald-200 bg-emerald-50 px-4 py-4 text-center text-sm text-emerald-700">Nenhuma etapa atrasada.</div>
+                                    <div class="rounded-2xl border border-dashed border-amber-200 bg-amber-50 px-4 py-4 text-center text-sm text-amber-700">Nenhuma etapa atrasada.</div>
                                 @endforelse
                             </div>
                         </div>
@@ -500,6 +554,215 @@
             </div>
         </div>
 
+        <div x-show="tab === 'step-kanban'" x-cloak>
+            <div class="overflow-hidden rounded-3xl border border-amber-200 bg-white shadow-sm">
+                <div class="border-b border-amber-100 bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 px-6 py-4 text-white">
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <p class="text-sm font-semibold uppercase">Kanban de Etapas</p>
+                            <p class="mt-1 text-xs text-white/80 line-clamp-1">Movimente etapas entre colunas sem sair do cronograma</p>
+                        </div>
+                        <span class="rounded-full border border-white/20 bg-white/10 py-1 text-xs font-semibold w-24 text-center">
+                            {{ collect($stepKanban ?? [])->flatMap(fn ($column) => $column['steps'])->count() }} etapas
+                        </span>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto px-4 py-5">
+                    <div class="grid min-w-[980px] grid-flow-col auto-cols-[minmax(260px,1fr)] gap-4">
+                        @forelse (($stepKanban ?? []) as $column)
+                            @php
+                                $columnStepIds = $column['steps']
+                                    ->pluck('id')
+                                    ->map(fn ($id): int => (int) $id)
+                                    ->values()
+                                    ->all();
+
+                                $columnTheme = match ($column['color'] ?? null) {
+                                    'blue' => [
+                                        'border' => 'border-blue-200',
+                                        'surface' => 'from-blue-50/70 to-white',
+                                        'header' => 'bg-blue-100 text-blue-800 border-blue-200',
+                                        'count' => 'bg-blue-100 text-blue-700',
+                                        'drop' => 'bg-blue-100/40',
+                                        'placeholder' => 'border-blue-300 bg-blue-100/70 text-blue-700',
+                                        'card' => 'border-blue-100',
+                                        'code' => 'text-blue-700',
+                                    ],
+                                    'yellow' => [
+                                        'border' => 'border-yellow-200',
+                                        'surface' => 'from-yellow-50/70 to-white',
+                                        'header' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
+                                        'count' => 'bg-yellow-100 text-yellow-700',
+                                        'drop' => 'bg-yellow-100/40',
+                                        'placeholder' => 'border-yellow-300 bg-yellow-100/70 text-yellow-700',
+                                        'card' => 'border-yellow-100',
+                                        'code' => 'text-yellow-700',
+                                    ],
+                                    'green' => [
+                                        'border' => 'border-green-200',
+                                        'surface' => 'from-green-50/70 to-white',
+                                        'header' => 'bg-green-100 text-green-800 border-green-200',
+                                        'count' => 'bg-green-100 text-green-700',
+                                        'drop' => 'bg-green-100/40',
+                                        'placeholder' => 'border-green-300 bg-green-100/70 text-green-700',
+                                        'card' => 'border-green-100',
+                                        'code' => 'text-green-700',
+                                    ],
+                                    'red' => [
+                                        'border' => 'border-red-200',
+                                        'surface' => 'from-red-50/70 to-white',
+                                        'header' => 'bg-red-100 text-red-800 border-red-200',
+                                        'count' => 'bg-red-100 text-red-700',
+                                        'drop' => 'bg-red-100/40',
+                                        'placeholder' => 'border-red-300 bg-red-100/70 text-red-700',
+                                        'card' => 'border-red-100',
+                                        'code' => 'text-red-700',
+                                    ],
+                                    'gray' => [
+                                        'border' => 'border-gray-200',
+                                        'surface' => 'from-gray-50/80 to-white',
+                                        'header' => 'bg-gray-100 text-gray-800 border-gray-200',
+                                        'count' => 'bg-gray-100 text-gray-700',
+                                        'drop' => 'bg-gray-100/60',
+                                        'placeholder' => 'border-gray-300 bg-gray-100/80 text-gray-700',
+                                        'card' => 'border-gray-200',
+                                        'code' => 'text-gray-700',
+                                    ],
+                                    default => [
+                                        'border' => 'border-slate-200',
+                                        'surface' => 'from-slate-50/80 to-white',
+                                        'header' => 'bg-slate-100 text-slate-800 border-slate-200',
+                                        'count' => 'bg-slate-100 text-slate-700',
+                                        'drop' => 'bg-slate-100/50',
+                                        'placeholder' => 'border-slate-300 bg-slate-100/80 text-slate-700',
+                                        'card' => 'border-slate-200',
+                                        'code' => 'text-slate-700',
+                                    ],
+                                };
+                            @endphp
+                            <section class="flex h-full flex-col rounded-3xl border {{ $columnTheme['border'] }} bg-gradient-to-b {{ $columnTheme['surface'] }}">
+                                <header class="border-b border-amber-100 px-4 py-4">
+                                    <div class="flex items-center justify-between gap-3">
+                                        <div class="min-w-0">
+                                            <span class="inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold {{ $columnTheme['header'] }}">
+                                                {{ $column['title'] }}
+                                            </span>
+                                        </div>
+                                        <span class="rounded-full px-2.5 py-1 text-[11px] font-semibold shadow-sm {{ $columnTheme['count'] }}">
+                                            {{ $column['steps']->count() }}
+                                        </span>
+                                    </div>
+                                </header>
+
+                                <div class="flex-1 space-y-1 py-1 px-2"
+                                     @dragover.prevent="
+                                        dragOverStatusId = {{ (int) $column['status_id'] }};
+                                        dragOverInsertBeforeId = null;
+                                     "
+                                     @dragleave="
+                                        if (dragOverStatusId === {{ (int) $column['status_id'] }}) {
+                                            dragOverStatusId = null;
+                                            dragOverInsertBeforeId = null;
+                                        }
+                                     "
+                                     @drop.prevent="dropStepOnColumn({{ (int) $column['status_id'] }}, @js($columnStepIds))"
+                                     :class="dragOverStatusId === {{ (int) $column['status_id'] }} ? '{{ $columnTheme['drop'] }}' : ''">
+                                    @forelse ($column['steps'] as $step)
+                                        <div class="overflow-hidden rounded-xl transition-all duration-150"
+                                             @dragover.prevent="
+                                                dragOverStatusId = {{ (int) $column['status_id'] }};
+                                                dragOverInsertBeforeId = {{ $step->id }};
+                                             "
+                                             @drop.prevent="dropStepOnColumn({{ (int) $column['status_id'] }}, @js($columnStepIds), {{ $step->id }})"></div>
+                                        <div class="overflow-hidden rounded-xl transition-all duration-150"
+                                             :class="draggedStepId !== null && dragOverStatusId === {{ (int) $column['status_id'] }} && dragOverInsertBeforeId === {{ $step->id }} ? 'max-h-14 opacity-100 mb-2' : 'max-h-0 opacity-0'">
+                                            <div class="flex items-center gap-2 rounded-xl border-2 border-dashed px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] {{ $columnTheme['placeholder'] }}">
+                                                <i class="fa-solid fa-down-long"></i>
+                                                <span>Solte aqui</span>
+                                            </div>
+                                        </div>
+                                        <article class="rounded-2xl border {{ $columnTheme['card'] }} bg-white p-4 shadow-sm transition hover:shadow-md cursor-grab active:cursor-grabbing"
+                                                 draggable="true"
+                                                 @dragstart="
+                                                    draggedStepId = {{ $step->id }};
+                                                    draggedFromStatusId = {{ (int) $column['status_id'] }};
+                                                 "
+                                                 @dragend="
+                                                    draggedStepId = null;
+                                                    draggedFromStatusId = null;
+                                                    dragOverStatusId = null;
+                                                    dragOverInsertBeforeId = null;
+                                                 ">
+                                            <div class="flex items-start justify-between gap-3">
+                                                <button type="button" wire:click="openAsideTaskStep({{ $step->id }})" @click="openAsideTask = false; openAsideStep = true" class="min-w-0 text-left">
+                                                    <p class="truncate text-xs font-semibold text-gray-900">
+                                                        <span class="font-mono {{ $columnTheme['code'] }}">{{ $step->code }}</span>
+                                                        <span class="text-gray-300">-</span>
+                                                        <span>{{ $step->title }}</span>
+                                                    </p>
+                                                    <p class="mt-1 truncate text-[11px] text-gray-500">
+                                                        {{ $step->task?->code ? $step->task->code.' - ' : '' }} {{ $step->task?->title ? $step->task->title.' - ' : '' }}
+                                                    </p>
+                                                </button>
+
+                                                @if ($step->taskPriority)
+                                                    <span class="inline-flex items-center rounded-full px-2 py-1 text-[11px] font-medium {{ $step->taskPriority->color_code_tailwind ?? 'bg-gray-100 text-gray-700' }}">
+                                                        {{ $step->taskPriority->title }}
+                                                    </span>
+                                                @endif
+                                            </div>
+
+                                            <div class="mt-0.5 text-[11px] text-gray-500">                                                
+                                                <div class="flex items-center gap-1">
+                                                    <span class="text-[10px] font-semibold uppercase text-gray-400">Setor: </span>
+                                                    <span class="min-w-0 flex-1 truncate font-medium text-gray-700">{{ $step->organization?->acronym ?? $step->organization?->title ?? 'Sem setor' }}</span>
+                                                </div>
+                                                <div class="flex items-center gap-1">
+                                                    <span class="text-[10px] font-semibold uppercase text-gray-400">Responsável: </span>
+                                                    <span class="min-w-0 flex-1 truncate font-medium text-gray-700">{{ $step->user?->name ?? 'Sem responsável' }}</span>
+                                                </div>
+                                                <div class="flex items-center gap-1">
+                                                    <span class="text-[10px] font-semibold uppercase text-gray-400">Prazo: </span>
+                                                    <span class="min-w-0 flex-1 truncate font-medium {{ $step->deadline_at && $step->deadline_at->isPast() && ! $step->finished_at ? 'text-rose-700' : 'text-gray-700' }}">
+                                                        {{ $step->deadline_at?->format('d/m/Y') ?? 'Sem prazo' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                        </article>
+                                    @empty
+                                        <div class="flex min-h-40 items-center justify-center rounded-2xl border border-dashed border-amber-200 bg-white/70 px-4 py-6 text-center text-sm text-gray-400">
+                                            Nenhuma etapa nesta coluna.
+                                        </div>
+                                    @endforelse
+
+                                    @if ($column['steps']->isNotEmpty())
+                                        <div class="overflow-hidden rounded-xl transition-all duration-150"
+                                             @dragover.prevent="
+                                                dragOverStatusId = {{ (int) $column['status_id'] }};
+                                                dragOverInsertBeforeId = null;
+                                             "
+                                             @drop.prevent="dropStepOnColumn({{ (int) $column['status_id'] }}, @js($columnStepIds))"
+                                             :class="draggedStepId !== null && dragOverStatusId === {{ (int) $column['status_id'] }} && dragOverInsertBeforeId === null ? 'max-h-14 opacity-100 mt-1' : 'max-h-0 opacity-0'">
+                                            <div class="flex items-center gap-2 rounded-xl border-2 border-dashed px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] {{ $columnTheme['placeholder'] }}">
+                                                <i class="fa-solid fa-down-long"></i>
+                                                <span>Solte no fim da coluna</span>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                            </section>
+                        @empty
+                            <div class="rounded-3xl border border-dashed border-gray-200 bg-gray-50 px-6 py-10 text-center text-sm text-gray-400">
+                                Nenhuma etapa encontrada para montar o kanban.
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div>
             <div x-show="openAsideTask" x-transition:enter="transition-opacity duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" wire:click="closedAsideTask()" @click="openAsideTask = false" class="fixed inset-0 z-30 bg-black/50"></div>
 
@@ -532,6 +795,55 @@
                         <x-button type="button" text="Salvar Tarefa" icon="fa-solid fa-check" wire:click="storeTask" />
                     </div>
                 </form>
+            @elseif ($modalKey === 'modal-step-completion-move')
+                <x-slot name="header">
+                    {{
+                        $pendingStepMoveReasonType === 'reopen'
+                            ? 'Reabrir Etapa'
+                            : ($pendingStepMoveReasonType === 'cancellation' ? 'Cancelar Etapa' : 'Concluir Etapa')
+                    }}
+                </x-slot>
+
+                <div class="space-y-4">
+                    <p class="text-sm text-gray-600">
+                        @if ($pendingStepMoveReasonType === 'reopen')
+                            Informe o motivo que deve ser registrado na atividade da tarefa para reabrir esta etapa.
+                        @elseif ($pendingStepMoveReasonType === 'cancellation')
+                            Informe o motivo que deve ser registrado na atividade da tarefa para cancelar esta etapa.
+                        @else
+                            Informe o texto que deve ser registrado na atividade da tarefa para concluir esta etapa.
+                        @endif
+                    </p>
+
+                    <x-form.textarea
+                        wire:model.defer="stepCompletionComment"
+                        placeholder="{{
+                            $pendingStepMoveReasonType === 'reopen'
+                                ? 'Descreva o motivo da reabertura...'
+                                : ($pendingStepMoveReasonType === 'cancellation'
+                                    ? 'Descreva o motivo do cancelamento...'
+                                    : 'Descreva a conclusão da etapa...')
+                        }}"
+                    />
+
+                    @error('stepCompletionComment')
+                        <p class="text-sm font-medium text-red-600">{{ $message }}</p>
+                    @enderror
+
+                    <div class="flex justify-end gap-2 pt-2">
+                        <x-button text="Cancelar" variant="gray_outline" wire:click="closeModal" type="button" />
+                        <x-button
+                            type="button"
+                            :text="$pendingStepMoveReasonType === 'reopen'
+                                ? 'Reabrir Etapa'
+                                : ($pendingStepMoveReasonType === 'cancellation' ? 'Cancelar Etapa' : 'Concluir Etapa')"
+                            :icon="$pendingStepMoveReasonType === 'reopen'
+                                ? 'fa-solid fa-rotate-left'
+                                : ($pendingStepMoveReasonType === 'cancellation' ? 'fa-solid fa-ban' : 'fa-solid fa-check')"
+                            wire:click="confirmStepCompletionMove"
+                        />
+                    </div>
+                </div>
             @endif
         </x-modal>
     </div>

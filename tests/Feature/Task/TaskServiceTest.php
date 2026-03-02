@@ -476,6 +476,208 @@ test('moveKanbanStep updates status, ordering, and history', function () {
     )->toBe(1);
 });
 
+test('moveKanbanStep stores completion comment and completion log in task activities', function () {
+    $user = User::factory()->create();
+    Auth::login($user);
+
+    $hub = createTaskHubForTaskService($user, 'Hub Step Completion', 'HUBC');
+
+    $pending = TaskStepStatus::create(['title' => 'Pendente']);
+    $done = TaskStepStatus::create(['title' => 'Concluída']);
+
+    $task = Task::create([
+        'task_hub_id' => $hub->id,
+        'title' => 'Task Step Completion',
+    ]);
+
+    $step = TaskStep::create([
+        'task_id' => $task->id,
+        'task_hub_id' => $hub->id,
+        'title' => 'Etapa Final',
+        'task_status_id' => $pending->id,
+        'kanban_order' => 1,
+    ]);
+
+    app(TaskService::class)->moveKanbanStep(
+        $hub->uuid,
+        $step->id,
+        $pending->id,
+        $done->id,
+        [],
+        [$step->id],
+        'Entrega validada pelo setor.',
+        'completion'
+    );
+
+    $taskComments = TaskActivity::where('task_id', $task->id)
+        ->orderBy('id')
+        ->get();
+
+    expect($taskComments)->toHaveCount(2);
+    expect($taskComments[0]->type)->toBe('comment');
+    expect($taskComments[0]->description)->toBe('Entrega validada pelo setor.');
+    expect($taskComments[1]->type)->toBe('step_finished_change');
+    expect($taskComments[1]->description)->toContain('concluiu a etapa Etapa Final');
+});
+
+test('completeStep requires comment flow to write task activities', function () {
+    $user = User::factory()->create();
+    Auth::login($user);
+
+    $hub = createTaskHubForTaskService($user, 'Hub Complete Step', 'HUBF');
+
+    $done = TaskStepStatus::create(['title' => 'Concluída']);
+
+    $task = Task::create([
+        'task_hub_id' => $hub->id,
+        'title' => 'Task Complete Step',
+    ]);
+
+    $step = TaskStep::create([
+        'task_id' => $task->id,
+        'task_hub_id' => $hub->id,
+        'title' => 'Etapa Completa',
+    ]);
+
+    app(TaskService::class)->completeStep($step->id, 'Concluída após revisão final.');
+
+    $step->refresh();
+
+    expect($step->task_status_id)->toBe($done->id);
+    expect($step->finished_at)->not->toBeNull();
+    expect(TaskActivity::where('task_id', $task->id)->where('type', 'comment')->count())->toBe(1);
+    expect(TaskActivity::where('task_id', $task->id)->where('type', 'step_finished_change')->count())->toBe(1);
+});
+
+test('moveKanbanStep stores reopen reason and reopen log in task activities', function () {
+    $user = User::factory()->create();
+    Auth::login($user);
+
+    $hub = createTaskHubForTaskService($user, 'Hub Step Reopen', 'HUBR');
+
+    $pending = TaskStepStatus::create(['title' => 'Pendente']);
+    $done = TaskStepStatus::create(['title' => 'Concluída']);
+
+    $task = Task::create([
+        'task_hub_id' => $hub->id,
+        'title' => 'Task Step Reopen',
+    ]);
+
+    $step = TaskStep::create([
+        'task_id' => $task->id,
+        'task_hub_id' => $hub->id,
+        'title' => 'Etapa Reaberta',
+        'task_status_id' => $done->id,
+        'finished_at' => now(),
+        'kanban_order' => 1,
+    ]);
+
+    app(TaskService::class)->moveKanbanStep(
+        $hub->uuid,
+        $step->id,
+        $done->id,
+        $pending->id,
+        [$step->id],
+        [$step->id],
+        'Necessário complementar a evidência.',
+        'reopen'
+    );
+
+    $taskActivities = TaskActivity::where('task_id', $task->id)
+        ->orderBy('id')
+        ->get();
+
+    expect($taskActivities)->toHaveCount(2);
+    expect($taskActivities[0]->type)->toBe('comment');
+    expect($taskActivities[0]->description)->toBe('Necessário complementar a evidência.');
+    expect($taskActivities[1]->type)->toBe('step_reopen_change');
+    expect($taskActivities[1]->description)->toContain('reabriu a etapa Etapa Reaberta');
+});
+
+test('moveKanbanStep stores cancellation reason and cancellation log in task activities', function () {
+    $user = User::factory()->create();
+    Auth::login($user);
+
+    $hub = createTaskHubForTaskService($user, 'Hub Step Cancel', 'HUBX');
+
+    $pending = TaskStepStatus::create(['title' => 'Pendente']);
+    $cancelled = TaskStepStatus::create(['title' => 'Cancelada']);
+
+    $task = Task::create([
+        'task_hub_id' => $hub->id,
+        'title' => 'Task Step Cancel',
+    ]);
+
+    $step = TaskStep::create([
+        'task_id' => $task->id,
+        'task_hub_id' => $hub->id,
+        'title' => 'Etapa Cancelada',
+        'task_status_id' => $pending->id,
+        'kanban_order' => 1,
+    ]);
+
+    app(TaskService::class)->moveKanbanStep(
+        $hub->uuid,
+        $step->id,
+        $pending->id,
+        $cancelled->id,
+        [],
+        [$step->id],
+        'Cancelada por mudança de escopo.',
+        'cancellation'
+    );
+
+    $taskActivities = TaskActivity::where('task_id', $task->id)
+        ->orderBy('id')
+        ->get();
+
+    expect($taskActivities)->toHaveCount(2);
+    expect($taskActivities[0]->type)->toBe('comment');
+    expect($taskActivities[0]->description)->toBe('Cancelada por mudança de escopo.');
+    expect($taskActivities[1]->type)->toBe('step_cancellation_change');
+    expect($taskActivities[1]->description)->toContain('cancelou a etapa Etapa Cancelada');
+});
+
+test('moveKanbanStep does not allow switching directly between terminal step statuses', function () {
+    $user = User::factory()->create();
+    Auth::login($user);
+
+    $hub = createTaskHubForTaskService($user, 'Hub Step Terminal Swap', 'HUBT');
+
+    $done = TaskStepStatus::create(['title' => 'Concluída']);
+    $cancelled = TaskStepStatus::create(['title' => 'Cancelada']);
+
+    $task = Task::create([
+        'task_hub_id' => $hub->id,
+        'title' => 'Task Terminal Swap',
+    ]);
+
+    $step = TaskStep::create([
+        'task_id' => $task->id,
+        'task_hub_id' => $hub->id,
+        'title' => 'Etapa Terminal',
+        'task_status_id' => $done->id,
+        'finished_at' => now(),
+        'kanban_order' => 1,
+    ]);
+
+    app(TaskService::class)->moveKanbanStep(
+        $hub->uuid,
+        $step->id,
+        $done->id,
+        $cancelled->id,
+        [$step->id],
+        [$step->id],
+        'Tentativa inválida',
+        'cancellation'
+    );
+
+    $step->refresh();
+
+    expect($step->task_status_id)->toBe($done->id);
+    expect(TaskActivity::where('task_id', $task->id)->count())->toBe(0);
+});
+
 test('kanban includes tasks without status', function () {
     $user = User::factory()->create();
     Auth::login($user);

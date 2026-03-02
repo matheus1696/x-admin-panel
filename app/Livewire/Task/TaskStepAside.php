@@ -8,10 +8,10 @@ use App\Models\Administration\Task\TaskStepCategory;
 use App\Models\Administration\User\User;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Task\Task;
-use App\Models\Task\TaskActivity;
 use App\Models\Task\TaskStep;
 use App\Models\Task\TaskStepActivity;
 use App\Services\Administration\Task\TaskStepStatusService;
+use App\Services\Task\TaskService;
 use App\Validation\Task\TaskStepRules;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -24,6 +24,8 @@ class TaskStepAside extends Component
     use WithFlashMessage;
 
     protected TaskStepStatusService $taskStepStatusesService;
+
+    protected TaskService $taskService;
 
     public $stepId;
 
@@ -65,9 +67,10 @@ class TaskStepAside extends Component
 
     public $isLoading = true;
 
-    public function boot(TaskStepStatusService $taskStepStatusesService)
+    public function boot(TaskStepStatusService $taskStepStatusesService, TaskService $taskService)
     {
         $this->taskStepStatusesService = $taskStepStatusesService;
+        $this->taskService = $taskService;
     }
 
     public function mount($stepId)
@@ -297,26 +300,12 @@ class TaskStepAside extends Component
 
     public function stepFinished()
     {
-        $this->step->update([
-            'task_status_id' => 6,
-            'finished_at' => now(),
-        ]);
+        $data = $this->validate(TaskStepRules::storeComment());
 
-        TaskActivity::create([
-            'task_id' => $this->step->task->id,
-            'user_id' => Auth::user()->id,
-            'type' => 'step_finished_change',
-            'description' => Auth::user()->name.' marcou a etapa '.$this->step->title.' como concluída',
-        ]);
+        $this->taskService->completeStep($this->step->id, $data['comment']);
 
-        TaskStepActivity::create([
-            'task_step_id' => $this->step->id,
-            'user_id' => Auth::user()->id,
-            'type' => 'finished_change',
-            'description' => Auth::user()->name.' marcou a etapa como concluída',
-        ]);
-
-        $this->flashSuccess('Tarefa marcada como concluída.');
+        $this->comment = '';
+        $this->flashSuccess('Etapa marcada como concluída.');
         $this->step->refresh();
     }
 
