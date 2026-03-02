@@ -180,6 +180,7 @@ class TaskService
             ->select('user_id', DB::raw('count(*) as total'))
             ->groupBy('user_id')
             ->orderByDesc('total')
+            ->limit(5)
             ->get();
 
         $userIds = $responsibleCounts
@@ -202,6 +203,7 @@ class TaskService
                     'total' => (int) $row->total,
                 ];
             })
+            ->take(5)
             ->values()
             ->all();
 
@@ -240,6 +242,7 @@ class TaskService
             ->select('user_id', DB::raw('count(*) as total'))
             ->groupBy('user_id')
             ->orderByDesc('total')
+            ->limit(5)
             ->get();
 
         $stepUserIds = $stepResponsibleCounts
@@ -262,6 +265,7 @@ class TaskService
                     'total' => (int) $row->total,
                 ];
             })
+            ->take(5)
             ->values()
             ->all();
 
@@ -270,6 +274,7 @@ class TaskService
             ->select('organization_id', DB::raw('count(*) as total'))
             ->groupBy('organization_id')
             ->orderByDesc('total')
+            ->limit(5)
             ->get();
 
         $organizationIds = $stepOrganizationCounts
@@ -297,6 +302,7 @@ class TaskService
                     'total' => (int) $row->total,
                 ];
             })
+            ->take(5)
             ->values()
             ->all();
 
@@ -396,6 +402,183 @@ class TaskService
             'steps_by_status_active' => $stepsByStatusActive,
             'tasks_active_total' => $tasksActiveTotal,
             'steps_active_total' => $stepsActiveTotal,
+        ];
+    }
+
+    /**
+     * @return array{
+     *     hubs_total:int,
+     *     total:int,
+     *     overdue:int,
+     *     statuses:array<int, array{label:string, total:int, color:string}>,
+     *     users:array<int, array{label:string, total:int}>,
+     *     organizations:array<int, array{label:string, total:int}>,
+     *     overdue_tasks:array<int, array{id:int, code:string, title:string, deadline_at:string|null, responsible:string, hub:string}>
+     * }
+     */
+    public function userOverview(int $userId): array
+    {
+        $hubIds = $this->accessibleHubIds($userId);
+
+        if ($hubIds === []) {
+            return [
+                'hubs_total' => 0,
+                'total' => 0,
+                'overdue' => 0,
+                'statuses' => [],
+                'users' => [],
+                'organizations' => [],
+                'overdue_tasks' => [],
+            ];
+        }
+
+        $baseTaskQuery = Task::query()->whereIn('task_hub_id', $hubIds);
+        $terminalStatusIds = $this->terminalStatusIds();
+        $total = (clone $baseTaskQuery)->count();
+
+        $taskStatuses = TaskStatus::query()
+            ->orderBy('id')
+            ->get(['id', 'title', 'color']);
+
+        $taskStatusCounts = (clone $baseTaskQuery)
+            ->select('task_status_id', DB::raw('count(*) as total'))
+            ->groupBy('task_status_id')
+            ->get()
+            ->keyBy('task_status_id');
+
+        $statuses = $taskStatuses
+            ->map(function (TaskStatus $status) use ($taskStatusCounts) {
+                return [
+                    'label' => $status->title,
+                    'total' => (int) ($taskStatusCounts[$status->id]->total ?? 0),
+                    'color' => $this->colorToHex($status->color),
+                ];
+            })
+            ->filter(fn (array $status) => $status['total'] > 0)
+            ->values();
+
+        $tasksWithoutStatus = (int) data_get($taskStatusCounts->get(null), 'total', 0);
+
+        if ($tasksWithoutStatus > 0) {
+            $statuses->push([
+                'label' => 'Sem status',
+                'total' => $tasksWithoutStatus,
+                'color' => $this->colorToHex(null),
+            ]);
+        }
+
+        $overdueQuery = (clone $baseTaskQuery)
+            ->whereNotNull('deadline_at')
+            ->where('deadline_at', '<', now());
+
+        if ($terminalStatusIds !== []) {
+            $overdueQuery->whereNotIn('task_status_id', $terminalStatusIds);
+        }
+
+        $overdue = $overdueQuery->count();
+
+        $responsibleCounts = (clone $baseTaskQuery)
+            ->select('user_id', DB::raw('count(*) as total'))
+            ->groupBy('user_id')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+
+        $userIds = $responsibleCounts
+            ->pluck('user_id')
+            ->filter()
+            ->values();
+
+        $users = User::query()
+            ->whereIn('id', $userIds)
+            ->pluck('name', 'id');
+
+        $tasksByUser = $responsibleCounts
+            ->map(function ($row) use ($users) {
+                $label = $row->user_id
+                    ? ($users[$row->user_id] ?? 'Usuário')
+                    : 'Sem responsável';
+
+                return [
+                    'label' => $label,
+                    'total' => (int) $row->total,
+                ];
+            })
+            ->take(5)
+            ->values()
+            ->all();
+
+        $stepOrganizationCounts = TaskStep::query()
+            ->whereIn('task_hub_id', $hubIds)
+            ->select('organization_id', DB::raw('count(*) as total'))
+            ->groupBy('organization_id')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+
+        $organizationIds = $stepOrganizationCounts
+            ->pluck('organization_id')
+            ->filter()
+            ->values();
+
+        $organizations = OrganizationChart::query()
+            ->whereIn('id', $organizationIds)
+            ->get(['id', 'acronym', 'title'])
+            ->keyBy('id');
+
+        $stepsByOrganization = $stepOrganizationCounts
+            ->map(function ($row) use ($organizations) {
+                $organization = $row->organization_id
+                    ? $organizations->get($row->organization_id)
+                    : null;
+
+                $label = $organization
+                    ? ($organization->acronym ?: $organization->title)
+                    : 'Sem setor';
+
+                return [
+                    'label' => $label,
+                    'total' => (int) $row->total,
+                ];
+            })
+            ->take(5)
+            ->values()
+            ->all();
+
+        $hubLabels = TaskHub::query()
+            ->whereIn('id', $hubIds)
+            ->get(['id', 'acronym', 'title'])
+            ->mapWithKeys(fn (TaskHub $hub) => [$hub->id => $hub->acronym ?: $hub->title]);
+
+        $overdueTasks = Task::query()
+            ->whereIn('task_hub_id', $hubIds)
+            ->whereNotNull('deadline_at')
+            ->where('deadline_at', '<', now())
+            ->when($terminalStatusIds !== [], fn ($query) => $query->whereNotIn('task_status_id', $terminalStatusIds))
+            ->with('user')
+            ->orderBy('deadline_at')
+            ->limit(6)
+            ->get()
+            ->map(function (Task $task) use ($hubLabels) {
+                return [
+                    'id' => $task->id,
+                    'code' => $task->code,
+                    'title' => $task->title,
+                    'deadline_at' => $task->deadline_at?->format('Y-m-d'),
+                    'responsible' => $task->user?->name ?? 'Sem responsável',
+                    'hub' => $hubLabels[$task->task_hub_id] ?? 'Hub',
+                ];
+            })
+            ->all();
+
+        return [
+            'hubs_total' => count($hubIds),
+            'total' => $total,
+            'overdue' => $overdue,
+            'statuses' => $statuses->all(),
+            'users' => $tasksByUser,
+            'organizations' => $stepsByOrganization,
+            'overdue_tasks' => $overdueTasks,
         ];
     }
 
@@ -744,6 +927,36 @@ class TaskService
             ->pluck('id')
             ->map(fn ($id) => (int) $id)
             ->all();
+    }
+
+    /**
+     * @return array<int>
+     */
+    private function accessibleHubIds(int $userId): array
+    {
+        return TaskHub::query()
+            ->where(function ($query) use ($userId): void {
+                $query->where('owner_id', $userId)
+                    ->orWhereHas('members', function ($memberQuery) use ($userId): void {
+                        $memberQuery->where('user_id', $userId);
+                    });
+            })
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+    }
+
+    private function colorToHex(?string $color): string
+    {
+        return match ($color) {
+            'blue' => '#2563eb',
+            'yellow' => '#ca8a04',
+            'green' => '#15803d',
+            'red' => '#dc2626',
+            'emerald' => '#047857',
+            'gray', null => '#6b7280',
+            default => '#334155',
+        };
     }
 
     private function nextKanbanOrder(int $taskHubId, ?int $statusId): int

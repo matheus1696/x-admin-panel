@@ -1,31 +1,58 @@
 <x-app-layout>
+    @php
+        $taskOverview = $taskOverview ?? [
+            'hubs_total' => 0,
+            'total' => 0,
+            'overdue' => 0,
+            'statuses' => [],
+            'users' => [],
+            'organizations' => [],
+            'overdue_tasks' => [],
+        ];
+
+        $statusTotal = collect($taskOverview['statuses'])->sum('total');
+        $statusOffset = 0;
+        $statusSegments = [];
+
+        foreach ($taskOverview['statuses'] as $status) {
+            if ($statusTotal === 0 || $status['total'] === 0) {
+                continue;
+            }
+
+            $slice = round(($status['total'] / $statusTotal) * 100, 2);
+            $end = min(100, $statusOffset + $slice);
+            $statusSegments[] = "{$status['color']} {$statusOffset}% {$end}%";
+            $statusOffset = $end;
+        }
+
+        $statusChartStyle = $statusSegments !== []
+            ? 'background: conic-gradient(' . implode(', ', $statusSegments) . ');'
+            : 'background: #e5e7eb;';
+
+        $usersMax = max(1, (int) (collect($taskOverview['users'])->max('total') ?? 0));
+        $organizationsMax = max(1, (int) (collect($taskOverview['organizations'])->max('total') ?? 0));
+    @endphp
+
     <div class="py-8 lg:py-2 space-y-8 mx-auto px-4 lg:px-6">
-        
-        <!-- Card de Boas-vindas Premium (mantido) -->
         <div class="group relative overflow-hidden rounded-2xl bg-emerald-800 text-white shadow-xl hover:shadow-2xl transition-all duration-500">
-            
-            <!-- Efeitos decorativos -->
             <div class="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/10"></div>
             <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-white/50 via-white/20 to-white/50"></div>
-            
-            <!-- Padrão de fundo sutil -->
+
             <div class="absolute inset-0 opacity-10">
                 <div class="absolute -top-24 -right-24 w-96 h-96 bg-white rounded-full blur-3xl"></div>
                 <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-emerald-300 rounded-full blur-3xl"></div>
             </div>
-            
-            <!-- Conteúdo principal -->
+
             <div class="relative p-8">
                 <div class="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-6">
                     <div class="flex-1 flex items-center gap-4">
-                        <!-- Ícone com glow -->
                         <div class="relative">
                             <div class="absolute inset-0 bg-white/30 rounded-xl blur-lg opacity-50 group-hover:opacity-70 transition-opacity duration-500"></div>
                             <div class="relative w-16 h-16 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:-rotate-3 transition-all duration-500">
                                 <i class="fa-solid fa-user text-2xl"></i>
                             </div>
                         </div>
-                        
+
                         <div class="space-y-1">
                             <h1 class="text-3xl font-bold tracking-tight">
                                 Olá, <span class="text-white">{{ Auth::user()->name }}</span>!
@@ -36,10 +63,9 @@
                             </p>
                         </div>
                     </div>
-                    
-                    <!-- Data e Hora Premium -->
+
                     <div class="hidden lg:flex lg:flex-col lg:items-end gap-4 lg:gap-2 text-emerald-100 lg:px-4 lg:pt-2"
-                         x-data="{ date: '', time: '', 
+                         x-data="{ date: '', time: '',
                             init() {
                                 this.update()
                                 setInterval(() => this.update(), 1000)
@@ -69,16 +95,9 @@
             </div>
         </div>
 
-        <!-- Grid Principal -->
         <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            
-            <!-- Coluna Principal (Ações Rápidas) -->
             <div class="lg:col-span-2 xl:col-span-3 space-y-6">
-                
-                <!-- Card de Ações Rápidas (estrutura manual) -->
                 <div class="bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
-                    
-                    <!-- Header do Card -->
                     <div class="relative px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
@@ -94,10 +113,8 @@
                         </div>
                     </div>
 
-                    <!-- Body do Card -->
                     <div class="p-6">
                         <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
-                            <!-- Abrir Chamado -->
                             <a href="#" variant="gray_outline" class="!p-0 !border-0 !bg-transparent hover:!bg-transparent group/action">
                                 <div class="w-full p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200/80 hover:border-orange-300/80 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                                     <div class="flex flex-col items-center text-center">
@@ -109,7 +126,6 @@
                                 </div>
                             </a>
 
-                            <!-- Perfil -->
                             <a href="{{ route('profile.edit') }}" variant="gray_outline" class="!p-0 !border-0 !bg-transparent hover:!bg-transparent group/action">
                                 <div class="w-full p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200/80 hover:border-emerald-300/80 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                                     <div class="flex flex-col items-center text-center">
@@ -121,7 +137,6 @@
                                 </div>
                             </a>
 
-                            <!-- Lista Telefônica -->
                             <a href="{{ route('public.contacts.index') }}" variant="gray_outline" class="!p-0 !border-0 !bg-transparent hover:!bg-transparent group/action">
                                 <div class="w-full p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200/80 hover:border-emerald-300/80 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                                     <div class="flex flex-col items-center text-center">
@@ -133,19 +148,17 @@
                                 </div>
                             </a>
 
-                            <!-- Organograma -->
-                            <a href="{{ route('chart.index') }}" variant="gray_outline" class="!p-0 !border-0 !bg-transparent hover:!bg-transparent group/action">
+                            <a href="{{ route('tasks.index') }}" variant="gray_outline" class="!p-0 !border-0 !bg-transparent hover:!bg-transparent group/action">
                                 <div class="w-full p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200/80 hover:border-emerald-300/80 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                                     <div class="flex flex-col items-center text-center">
                                         <div class="w-12 h-12 bg-gradient-to-br from-emerald-50 to-emerald-100/80 rounded-xl flex items-center justify-center mb-3 group-hover/action:scale-110 group-hover/action:-rotate-3 transition-all duration-300">
-                                            <i class="fa-solid fa-sitemap text-emerald-700 text-xl"></i>
+                                            <i class="fas fa-list-check text-emerald-700 text-xl"></i>
                                         </div>
-                                        <p class="text-sm font-medium text-gray-700 group-hover/action:text-emerald-800 transition-colors">Organograma</p>
+                                        <p class="text-sm font-medium text-gray-700 group-hover/action:text-emerald-800 transition-colors">Tarefas</p>
                                     </div>
                                 </div>
                             </a>
 
-                            <!-- Alterar Senha -->
                             <a href="{{ route('profile.password.edit') }}" variant="gray_outline" class="">
                                 <div class="w-full p-5 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-200/80 hover:border-yellow-300/80 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                                     <div class="flex flex-col items-center text-center">
@@ -160,47 +173,174 @@
                     </div>
                 </div>
 
-                <!-- Espaço para futuros widgets -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Placeholder Atividades -->
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
                     <div class="bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl shadow-lg overflow-hidden">
                         <div class="px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
                             <div class="flex items-center gap-3">
-                                <div class="w-1 h-5 bg-gradient-to-b from-gray-400 to-gray-500 rounded-full"></div>
-                                <h4 class="text-sm font-semibold text-gray-700">Atividades Recentes</h4>
+                                <div class="w-1 h-5 bg-gradient-to-b from-emerald-700 to-emerald-900 rounded-full"></div>
+                                <h4 class="text-sm font-semibold text-gray-700">Status das Tarefas</h4>
                             </div>
                         </div>
-                        <div class="p-6 space-y-3">
-                            <div class="h-8 bg-gray-100 rounded-lg animate-pulse"></div>
-                            <div class="h-8 bg-gray-100 rounded-lg animate-pulse"></div>
-                            <div class="h-8 bg-gray-100 rounded-lg animate-pulse"></div>
+
+                        <div class="p-6 space-y-6">
+                            <div class="flex justify-center">
+                                <div class="relative h-44 w-44 rounded-full" style="{{ $statusChartStyle }}">
+                                    <div class="absolute inset-6 rounded-full bg-white shadow-inner"></div>
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                                        <span class="text-3xl font-bold text-gray-900">{{ $taskOverview['total'] }}</span>
+                                        <span class="text-xs font-medium uppercase tracking-[0.2em] text-gray-500">Tarefas</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-3 text-center">
+                                <div class="rounded-xl bg-gray-50 px-3 py-3">
+                                    <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-500">Hubs</p>
+                                    <p class="mt-1 text-lg font-bold text-gray-900">{{ $taskOverview['hubs_total'] }}</p>
+                                </div>
+                                <div class="rounded-xl bg-yellow-50 px-3 py-3">
+                                    <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-yellow-700">Atrasadas</p>
+                                    <p class="mt-1 text-lg font-bold text-yellow-800">{{ $taskOverview['overdue'] }}</p>
+                                </div>
+                                <div class="rounded-xl bg-emerald-50 px-3 py-3">
+                                    <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-700">Em Dia</p>
+                                    <p class="mt-1 text-lg font-bold text-emerald-800">{{ max($taskOverview['total'] - $taskOverview['overdue'], 0) }}</p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3">
+                                @forelse($taskOverview['statuses'] as $status)
+                                    <div class="flex items-center justify-between gap-3 text-sm">
+                                        <div class="flex min-w-0 items-center gap-2">
+                                            <span class="h-2.5 w-2.5 rounded-full" style="background-color: {{ $status['color'] }}"></span>
+                                            <span class="truncate text-gray-600">{{ $status['label'] }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <span class="font-semibold text-gray-900">{{ $status['total'] }}</span>
+                                            <span class="w-10 text-right text-xs text-gray-500">
+                                                {{ $statusTotal > 0 ? number_format(($status['total'] / $statusTotal) * 100, 0) : 0 }}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-500">
+                                        Nenhuma tarefa encontrada nos hubs com acesso.
+                                    </p>
+                                @endforelse
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Placeholder Estatísticas -->
-                    <div class="bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl shadow-lg overflow-hidden">
+                    <div class="xl:col-span-2 bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl shadow-lg overflow-hidden">
                         <div class="px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
                             <div class="flex items-center gap-3">
-                                <div class="w-1 h-5 bg-gradient-to-b from-gray-400 to-gray-500 rounded-full"></div>
-                                <h4 class="text-sm font-semibold text-gray-700">Estatísticas</h4>
+                                <div class="w-1 h-5 bg-gradient-to-b from-emerald-700 to-emerald-900 rounded-full"></div>
+                                <h4 class="text-sm font-semibold text-gray-700">Responsáveis e Setores</h4>
                             </div>
                         </div>
-                        <div class="p-6 space-y-3">
-                            <div class="h-8 bg-gray-100 rounded-lg animate-pulse"></div>
-                            <div class="h-8 bg-gray-100 rounded-lg animate-pulse"></div>
-                            <div class="h-8 bg-gray-100 rounded-lg animate-pulse"></div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <h5 class="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Usuários</h5>
+                                    <span class="text-xs text-gray-400">Tarefas</span>
+                                </div>
+
+                                @forelse($taskOverview['users'] as $user)
+                                    <div class="space-y-1.5">
+                                        <div class="flex items-center justify-between gap-3 text-sm">
+                                            <span class="truncate text-gray-600">{{ $user['label'] }}</span>
+                                            <span class="font-semibold text-gray-900">{{ $user['total'] }}</span>
+                                        </div>
+                                        <div class="h-2.5 rounded-full bg-gray-100 overflow-hidden">
+                                            <div class="h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-800"
+                                                 style="width: {{ max(12, (int) round(($user['total'] / $usersMax) * 100)) }}%"></div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-500">
+                                        Nenhum responsável com tarefas no momento.
+                                    </p>
+                                @endforelse
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <h5 class="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Setores</h5>
+                                    <span class="text-xs text-gray-400">Etapas</span>
+                                </div>
+
+                                @forelse($taskOverview['organizations'] as $organization)
+                                    <div class="space-y-1.5">
+                                        <div class="flex items-center justify-between gap-3 text-sm">
+                                            <span class="truncate text-gray-600">{{ $organization['label'] }}</span>
+                                            <span class="font-semibold text-gray-900">{{ $organization['total'] }}</span>
+                                        </div>
+                                        <div class="h-2.5 rounded-full bg-gray-100 overflow-hidden">
+                                            <div class="h-full rounded-full bg-gradient-to-r from-slate-500 to-slate-700"
+                                                 style="width: {{ max(12, (int) round(($organization['total'] / $organizationsMax) * 100)) }}%"></div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-500">
+                                        Nenhuma etapa vinculada a setores foi encontrada.
+                                    </p>
+                                @endforelse
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Sidebar (Notificações) -->
-            <div class="space-y-6">
-                
-                <!-- Card de Notificações -->
+
                 <div class="bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl shadow-lg overflow-hidden">
-                    
-                    <!-- Header -->
+                    <div class="px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
+                        <div class="flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-1 h-5 bg-gradient-to-b from-yellow-500 to-amber-600 rounded-full"></div>
+                                <h4 class="text-sm font-semibold text-gray-700">Tarefas Atrasadas</h4>
+                            </div>
+                            <span class="rounded-full bg-yellow-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-yellow-700">
+                                {{ $taskOverview['overdue'] }} pendências
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="p-6 space-y-3">
+                        @forelse($taskOverview['overdue_tasks'] as $task)
+                            <div class="flex flex-col gap-3 rounded-2xl border border-gray-200/80 bg-gradient-to-r from-white to-gray-50 px-4 py-4 md:flex-row md:items-center md:justify-between">
+                                <div class="min-w-0 space-y-1">
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-700">
+                                            {{ $task['hub'] }}
+                                        </span>
+                                        <span class="text-xs font-semibold text-gray-500">{{ $task['code'] }}</span>
+                                    </div>
+                                    <p class="truncate text-sm font-semibold text-gray-900">{{ $task['title'] }}</p>
+                                    <p class="text-xs text-gray-500">Responsável: {{ $task['responsible'] }}</p>
+                                </div>
+
+                                <div class="flex items-center gap-2 rounded-xl bg-yellow-50 px-3 py-2 text-xs font-medium text-yellow-800">
+                                    <i class="fa-solid fa-clock"></i>
+                                    <span>
+                                        Prazo:
+                                        {{ $task['deadline_at'] ? \Illuminate\Support\Carbon::parse($task['deadline_at'])->format('d/m/Y') : 'Não informado' }}
+                                    </span>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="flex flex-col items-center justify-center rounded-2xl bg-emerald-50 px-6 py-10 text-center">
+                                <div class="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+                                    <i class="fa-solid fa-circle-check text-xl"></i>
+                                </div>
+                                <p class="text-sm font-semibold text-emerald-800">Nenhuma tarefa atrasada.</p>
+                                <p class="mt-1 text-xs text-emerald-700">As tarefas visíveis para você estão dentro do prazo.</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl shadow-lg overflow-hidden">
                     <div class="relative px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
@@ -218,45 +358,39 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Body -->
+
                     <div class="p-3">
                         @if(Auth::user()->password_default)
-                            <!-- Aviso de Senha Padrão -->
                             <div class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-yellow-50 to-yellow-100/80 border border-yellow-200/80 shadow-sm hover:shadow-md transition-all duration-300">
-                                
-                                <!-- Efeito decorativo -->
                                 <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-yellow-500 to-amber-500"></div>
-                                
+
                                 <div class="px-4 py-2">
                                     <div class="space-y-3">
                                         <div class="flex items-center gap-4">
                                             <div class="w-10 h-10 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
                                                 <i class="fa-solid fa-triangle-exclamation text-white text-sm"></i>
                                             </div>
-                                            
+
                                             <div class="flex-1">
                                                 <h4 class="text-sm font-bold text-yellow-800">Atenção à Segurança</h4>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="flex-1 space-y-3">
-                                            
                                             <p class="text-xs text-yellow-700 leading-relaxed">
                                                 Você ainda está usando a senha padrão do sistema. Por motivos de segurança, recomendamos que altere sua senha imediatamente.
                                             </p>
-                                            
-                                            <x-button href="{{ route('profile.password.edit') }}" 
-                                                      text="Alterar Senha Agora" 
-                                                      icon="fa-solid fa-key" 
-                                                      variant="yellow_solid" 
+
+                                            <x-button href="{{ route('profile.password.edit') }}"
+                                                      text="Alterar Senha Agora"
+                                                      icon="fa-solid fa-key"
+                                                      variant="yellow_solid"
                                                       fullWidth="true" />
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         @else
-                            <!-- Sem notificações -->
                             <div class="flex flex-col items-center justify-center py-8 text-center">
                                 <div class="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mb-3">
                                     <i class="fa-regular fa-bell-slash text-gray-400 text-2xl"></i>
@@ -266,8 +400,7 @@
                             </div>
                         @endif
                     </div>
-                    
-                    <!-- Footer -->
+
                     <div class="px-6 py-3 border-t border-gray-200/80 bg-gradient-to-r from-gray-50/50 to-white/50">
                         <x-button href="#" variant="gray_text" class="w-full !text-gray-500 hover:!text-emerald-700 !text-xs flex items-center justify-center gap-1">
                             <i class="fas fa-history text-[10px]"></i>
@@ -277,7 +410,6 @@
                     </div>
                 </div>
 
-                <!-- Card de Informações do Sistema -->
                 <div class="bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl shadow-lg overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
                         <div class="flex items-center gap-3">
@@ -285,7 +417,7 @@
                             <h4 class="text-sm font-semibold text-gray-700">Sistema</h4>
                         </div>
                     </div>
-                    
+
                     <div class="p-6 space-y-3 text-xs">
                         <div class="flex justify-between items-center py-1.5 border-b border-gray-100">
                             <span class="text-gray-500">Versão:</span>

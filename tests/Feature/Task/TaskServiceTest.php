@@ -3,9 +3,11 @@
 use App\Models\Administration\Task\TaskStatus;
 use App\Models\Administration\Task\TaskStepStatus;
 use App\Models\Administration\User\User;
+use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Task\Task;
 use App\Models\Task\TaskActivity;
 use App\Models\Task\TaskHub;
+use App\Models\Task\TaskHubMember;
 use App\Models\Task\TaskStep;
 use App\Models\Task\TaskStepActivity;
 use App\Services\Task\TaskService;
@@ -106,6 +108,88 @@ test('dashboard aggregates task and step metrics for a hub', function () {
     expect(collect($stats['tasks_by_step_status'])->pluck('total')->sum())->toBe(2);
     expect($stats['tasks_active_total'])->toBe(2);
     expect($stats['steps_active_total'])->toBe(2);
+});
+
+test('userOverview aggregates only hubs visible to the user', function () {
+    $viewer = User::factory()->create();
+    $owner = User::factory()->create();
+    $responsible = User::factory()->create();
+
+    $ownedHub = createTaskHubForTaskService($viewer, 'Hub Próprio', 'HUBP');
+    $sharedHub = createTaskHubForTaskService($owner, 'Hub Compartilhado', 'HUBC');
+    $hiddenHub = createTaskHubForTaskService($owner, 'Hub Oculto', 'HUBO');
+
+    TaskHubMember::create([
+        'task_hub_id' => $sharedHub->id,
+        'user_id' => $viewer->id,
+    ]);
+
+    $inProgressStatus = TaskStatus::create(['title' => 'Em andamento']);
+    $completedStatus = TaskStatus::create(['title' => 'Concluído']);
+    $cancelledStatus = TaskStatus::create(['title' => 'Cancelado']);
+
+    $ownedTask = Task::create([
+        'task_hub_id' => $ownedHub->id,
+        'title' => 'Tarefa Própria',
+        'user_id' => $responsible->id,
+        'task_status_id' => $inProgressStatus->id,
+    ]);
+
+    $sharedTask = Task::create([
+        'task_hub_id' => $sharedHub->id,
+        'title' => 'Tarefa Atrasada',
+        'task_status_id' => $inProgressStatus->id,
+        'deadline_at' => now()->subDay(),
+    ]);
+
+    Task::create([
+        'task_hub_id' => $sharedHub->id,
+        'title' => 'Tarefa Concluída',
+        'user_id' => $responsible->id,
+        'task_status_id' => $completedStatus->id,
+    ]);
+
+    $hiddenTask = Task::create([
+        'task_hub_id' => $hiddenHub->id,
+        'title' => 'Tarefa Oculta',
+        'task_status_id' => $cancelledStatus->id,
+    ]);
+
+    $pendingStepStatus = TaskStepStatus::create(['title' => 'Pendente']);
+    $organization = OrganizationChart::create([
+        'title' => 'Setor Financeiro',
+        'acronym' => 'FIN',
+        'order' => 1,
+        'hierarchy' => 0,
+        'is_active' => true,
+    ]);
+
+    TaskStep::create([
+        'task_id' => $sharedTask->id,
+        'task_hub_id' => $sharedHub->id,
+        'title' => 'Etapa Visível',
+        'organization_id' => $organization->id,
+        'task_status_id' => $pendingStepStatus->id,
+    ]);
+
+    TaskStep::create([
+        'task_id' => $hiddenTask->id,
+        'task_hub_id' => $hiddenHub->id,
+        'title' => 'Etapa Oculta',
+        'organization_id' => $organization->id,
+        'task_status_id' => $pendingStepStatus->id,
+    ]);
+
+    $overview = app(TaskService::class)->userOverview($viewer->id);
+
+    expect($overview['hubs_total'])->toBe(2);
+    expect($overview['total'])->toBe(3);
+    expect($overview['overdue'])->toBe(1);
+    expect(collect($overview['statuses'])->pluck('total')->sum())->toBe(3);
+    expect(collect($overview['users'])->pluck('total')->sum())->toBe(3);
+    expect(collect($overview['organizations'])->pluck('total')->sum())->toBe(1);
+    expect($overview['overdue_tasks'])->toHaveCount(1);
+    expect($overview['overdue_tasks'][0]['hub'])->toBe('HUBC');
 });
 
 test('moveKanbanTask updates status, ordering, and history', function () {

@@ -39,7 +39,7 @@
     // Variantes seguindo padrão [cor]_[tipo]
     $variants = [
         // SOLID VARIANTS (com gradiente)
-        'green_solid' => 'text-white bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-800 hover:to-emerald-900 shadow-md transition-all duration-300 -translate-y-0.5 border border-emerald-600/20 rounded-lg active:scale-[0.98]',
+        'green_solid' => 'text-white bg-gradient-to-r from-emerald-700 via-emerald-800 to-teal-800 hover:from-emerald-800 hover:to-emerald-900 shadow-md transition-all duration-300 -translate-y-0.5 border border-emerald-600/20 rounded-lg active:scale-[0.98]',
         
         'gray_solid' => 'text-white bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 shadow-md transition-all duration-300 -translate-y-0.5 border border-gray-600/20 rounded-lg active:scale-[0.98]',
         

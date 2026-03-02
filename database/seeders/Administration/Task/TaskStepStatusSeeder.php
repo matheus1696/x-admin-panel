@@ -18,13 +18,6 @@ class TaskStepStatusSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'title' => 'Aguardando Dependência',
-                'color' => 'purple',
-                'color_code_tailwind' => 'bg-purple-100 text-purple-700 hover:bg-purple-200',
-                'is_default' => false,
-                'is_active' => true,
-            ],
-            [
                 'title' => 'Em andamento',
                 'color' => 'blue',
                 'color_code_tailwind' => 'bg-blue-100 text-blue-600 hover:bg-blue-200',
