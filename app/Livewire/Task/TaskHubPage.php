@@ -6,6 +6,7 @@ use App\Livewire\Traits\Modal;
 use App\Livewire\Traits\WithFlashMessage;
 use App\Models\Task\TaskHub;
 use App\Models\Task\TaskHubMember;
+use App\Services\Task\TaskService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -15,10 +16,17 @@ class TaskHubPage extends Component
 {
     use Modal, WithFlashMessage;
 
+    protected TaskService $taskService;
+
     public string $taskHubId;
     public string $title = '';
     public string $acronym = '';
     public ?string $description = null;
+
+    public function boot(TaskService $taskService): void
+    {
+        $this->taskService = $taskService;
+    }
 
     /* CREATE */
     public function create(): void
@@ -47,7 +55,7 @@ class TaskHubPage extends Component
             'user_id' => Auth::user()->id,
         ]);
 
-        $this->flashSuccess('Usuário adicionado com sucesso.');
+        $this->flashSuccess('UsuÃ¡rio adicionado com sucesso.');
         $this->closeModal();
     }
 
@@ -55,16 +63,13 @@ class TaskHubPage extends Component
     {
         $userId = Auth::user()->id;
 
-        $taskHubs = TaskHub::query()
-            ->with(['members.user'])
-            ->where(function ($query) use ($userId): void {
-                $query->where('owner_id', $userId)
-                    ->orWhereHas('members', function ($memberQuery) use ($userId): void {
-                        $memberQuery->where('user_id', $userId);
-                    });
-            })
-            ->get();
+        $taskHubs = $this->taskService->accessibleHubs($userId);
 
         return view('livewire.task.task-hub-page', compact('taskHubs'));
     }
 }
+
+
+
+
+

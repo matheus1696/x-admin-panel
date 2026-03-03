@@ -2,8 +2,8 @@
 
 namespace App\Validation\Task;
 
-use App\Models\Task\TaskStep;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 
 class TaskStepRules
 {
@@ -36,15 +36,33 @@ class TaskStepRules
         ];
     }
 
-    public static function organizationResponsable(): array
+    /**
+     * @param array<int>|null $allowedOrganizationIds
+     */
+    public static function organizationResponsable(?array $allowedOrganizationIds = null): array
     {
+        if ($allowedOrganizationIds !== null) {
+            return [
+                'organization_responsable_id' => ['nullable', Rule::in($allowedOrganizationIds)],
+            ];
+        }
+
         return [
             'organization_responsable_id' => 'nullable|exists:organization_charts,id',
         ];
     }
 
-    public static function responsable(): array
+    /**
+     * @param array<int>|null $allowedUserIds
+     */
+    public static function responsable(?array $allowedUserIds = null): array
     {
+        if ($allowedUserIds !== null) {
+            return [
+                'responsable_id' => ['nullable', Rule::in($allowedUserIds)],
+            ];
+        }
+
         return [
             'responsable_id' => 'nullable|exists:users,id',
         ];

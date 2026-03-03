@@ -262,12 +262,13 @@
                                 Responsável
                             </span>
                             @if (!$step->finished_at)
-                                <div class="flex-1">
+                                <div class="flex-1" wire:key="step-responsable-wrapper-{{ $organization_responsable_id ?? 'all' }}-{{ $usersKey }}">
                                     <x-form.select-livewire wire:model.live="responsable_id" 
-                                            :collection="$users" 
+                                            :collection="$this->filteredUsers" 
                                             valueField="id" labelField="name" 
                                             :selected="$step->user_id" 
-                                            variant="inline" />
+                                            variant="inline"
+                                            wire:key="step-responsable-{{ $organization_responsable_id ?? 'all' }}-{{ $usersKey }}" />
                                 </div>
                             @else
                                 <span class="text-xs font-semibold text-gray-900 bg-gray-100/80 px-3 py-1.5 rounded-lg">

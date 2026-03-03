@@ -5,8 +5,6 @@ namespace App\Livewire\Task;
 use App\Livewire\Traits\WithFlashMessage;
 use App\Models\Administration\Task\TaskPriority;
 use App\Models\Administration\Task\TaskStepCategory;
-use App\Models\Administration\User\User;
-use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Task\Task;
 use App\Models\Task\TaskStep;
 use App\Models\Task\TaskStepActivity;
@@ -67,6 +65,8 @@ class TaskStepAside extends Component
 
     public $isLoading = true;
 
+    public int $usersKey = 0;
+
     public function boot(TaskStepStatusService $taskStepStatusesService, TaskService $taskService)
     {
         $this->taskStepStatusesService = $taskStepStatusesService;
@@ -79,9 +79,9 @@ class TaskStepAside extends Component
         $this->step = null;
         $this->stepId = $stepId;
 
-        // Listas estáticas
-        $this->users = User::orderBy('name')->get();
-        $this->organizations = OrganizationChart::orderBy('order')->get();
+        // Listas estÃ¡ticas
+        $this->users = collect();
+        $this->organizations = collect();
         $this->taskPriorities = TaskPriority::orderBy('level')->get();
         $this->taskStepCategories = TaskStepCategory::orderBy('title')->get();
         $this->taskStepStatuses = $this->taskStepStatusesService->index();
@@ -98,32 +98,49 @@ class TaskStepAside extends Component
             'user',
             'stepActivities.user',
         ])->findOrFail($this->stepId);
+        $this->users = $this->taskService->accessUsersByHubId($this->step->task_hub_id);
+        $this->organizations = $this->taskService->organizationAccessesByHubId($this->step->task_hub_id);
+        $this->syncUsersForOrganization($this->step->organization_id);
         $this->isLoading = false;
     }
 
     public function updatedOrganizationResponsableId()
     {
-        $data = $this->validate(TaskStepRules::organizationResponsable());
+        $allowedOrganizationIds = $this->organizations
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+
+        $data = $this->validate(TaskStepRules::organizationResponsable($allowedOrganizationIds));
+
+        $this->responsable_id = null;
 
         $this->step->update([
             'organization_id' => $data['organization_responsable_id'],
+            'user_id' => null,
             'updated_at' => now(),
         ]);
+
+        $this->syncUsersForOrganization($data['organization_responsable_id']);
+        $this->usersKey++;
+        $this->dispatch('$refresh');
 
         TaskStepActivity::create([
             'task_step_id' => $this->step->id,
             'user_id' => Auth::user()->id,
             'type' => 'organization_responsable_change',
-            'description' => Auth::user()->name.' alterou o responsável',
+            'description' => Auth::user()->name.' alterou o responsÃ¡vel',
         ]);
 
-        $this->flashSuccess('Responsável atualizado.');
+        $this->flashSuccess('ResponsÃ¡vel atualizado.');
         $this->step->refresh();
     }
 
     public function updatedResponsableId()
     {
-        $data = $this->validate(TaskStepRules::responsable());
+        $allowedUserIds = $this->resolveAllowedUserIds();
+
+        $data = $this->validate(TaskStepRules::responsable($allowedUserIds));
 
         $this->step->update([
             'user_id' => $data['responsable_id'],
@@ -134,11 +151,77 @@ class TaskStepAside extends Component
             'task_step_id' => $this->step->id,
             'user_id' => Auth::user()->id,
             'type' => 'responsable_change',
-            'description' => Auth::user()->name.' alterou o responsável',
+            'description' => Auth::user()->name.' alterou o responsÃ¡vel',
         ]);
 
-        $this->flashSuccess('Responsável atualizado.');
+        $this->flashSuccess('ResponsÃ¡vel atualizado.');
         $this->step->refresh();
+    }
+
+    private function resolveAllowedUserIds(): array
+    {
+        $organizationId = $this->organization_responsable_id
+            ? (int) $this->organization_responsable_id
+            : ($this->step?->organization_id ? (int) $this->step->organization_id : null);
+
+        if ($organizationId !== null) {
+            $organization = $this->organizations->firstWhere('id', $organizationId);
+
+            if ($organization) {
+                return $organization->users
+                    ->pluck('id')
+                    ->map(fn ($id): int => (int) $id)
+                    ->all();
+            }
+        }
+
+        return $this->users
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+    }
+
+    private function syncUsersForOrganization(?int $organizationId): void
+    {
+        if ($organizationId === null) {
+            $this->users = $this->taskService->accessUsersByHubId($this->step->task_hub_id);
+            $this->usersKey++;
+
+            return;
+        }
+
+        $organization = $this->organizations->firstWhere('id', (int) $organizationId);
+
+        if (! $organization) {
+            $this->users = $this->taskService->accessUsersByHubId($this->step->task_hub_id);
+            $this->usersKey++;
+
+            return;
+        }
+
+        $this->users = $organization->users
+            ->sortBy(fn ($user) => $user->name ?? '')
+            ->values();
+        $this->usersKey++;
+    }
+
+    public function getFilteredUsersProperty(): Collection
+    {
+        $organizationId = $this->organization_responsable_id
+            ? (int) $this->organization_responsable_id
+            : ($this->step?->organization_id ? (int) $this->step->organization_id : null);
+
+        if ($organizationId !== null) {
+            $organization = $this->organizations->firstWhere('id', $organizationId);
+
+            if ($organization) {
+                return $organization->users
+                    ->sortBy(fn ($user) => $user->name ?? '')
+                    ->values();
+            }
+        }
+
+        return $this->users;
     }
 
     public function updatedListCategoryId()
@@ -235,7 +318,7 @@ class TaskStepAside extends Component
         $this->isEditingDescription = false;
         $this->savingDescription = false;
 
-        $this->flashSuccess('Descrição atualizado.');
+        $this->flashSuccess('DescriÃ§Ã£o atualizado.');
         $this->step->refresh();
     }
 
@@ -305,7 +388,7 @@ class TaskStepAside extends Component
         $this->taskService->completeStep($this->step->id, $data['comment']);
 
         $this->comment = '';
-        $this->flashSuccess('Etapa marcada como concluída.');
+        $this->flashSuccess('Etapa marcada como concluÃ­da.');
         $this->step->refresh();
     }
 

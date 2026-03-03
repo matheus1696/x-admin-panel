@@ -3,10 +3,12 @@
 namespace App\Models\Task;
 
 use App\Models\Administration\User\User;
+use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Traits\HasTitleFilter;
 use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TaskHub extends Model
@@ -41,4 +43,11 @@ class TaskHub extends Model
     {
         return $this->hasMany(TaskHubMember::class);
     }
+
+    public function organizations(): BelongsToMany
+    {
+        return $this->belongsToMany(OrganizationChart::class, 'task_hub_organization', 'task_hub_id', 'organization_chart_id')
+            ->withTimestamps();
+    }
 }
+

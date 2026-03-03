@@ -31,6 +31,150 @@ class TaskService
             ->values();
     }
 
+    public function memberUsers(string $hubUuid): Collection
+    {
+        return $this->members($hubUuid)
+            ->map(fn (TaskHubMember $member) => $member->user)
+            ->filter()
+            ->values();
+    }
+
+    public function memberUsersByHubId(int $taskHubId): Collection
+    {
+        return TaskHubMember::query()
+            ->with('user')
+            ->where('task_hub_id', $taskHubId)
+            ->get()
+            ->map(fn (TaskHubMember $member) => $member->user)
+            ->filter()
+            ->sortBy(fn (User $user) => $user->name ?? '')
+            ->values();
+    }
+
+    public function organizationAccesses(string $hubUuid): Collection
+    {
+        $taskHub = TaskHub::query()
+            ->with('organizations.users')
+            ->where('uuid', $hubUuid)
+            ->firstOrFail();
+
+        return $taskHub->organizations
+            ->sortBy(fn (OrganizationChart $organization) => $organization->title ?? '')
+            ->values();
+    }
+
+    public function organizationAccessesByHubId(int $taskHubId): Collection
+    {
+        $taskHub = TaskHub::query()
+            ->with('organizations.users')
+            ->findOrFail($taskHubId);
+
+        return $taskHub->organizations
+            ->sortBy(fn (OrganizationChart $organization) => $organization->title ?? '')
+            ->values();
+    }
+
+    public function addOrganizationAccess(string $hubUuid, int $actorId, int $organizationId): bool
+    {
+        $taskHub = TaskHub::query()
+            ->where('uuid', $hubUuid)
+            ->firstOrFail();
+
+        if ($taskHub->owner_id !== $actorId) {
+            return false;
+        }
+
+        $taskHub->organizations()->syncWithoutDetaching([$organizationId]);
+
+        return true;
+    }
+
+    public function removeOrganizationAccess(string $hubUuid, int $actorId, int $organizationId): bool
+    {
+        $taskHub = TaskHub::query()
+            ->where('uuid', $hubUuid)
+            ->firstOrFail();
+
+        if ($taskHub->owner_id !== $actorId) {
+            return false;
+        }
+
+        $taskHub->organizations()->detach($organizationId);
+
+        return true;
+    }
+
+    public function accessUsers(string $hubUuid): Collection
+    {
+        $taskHub = TaskHub::query()
+            ->with(['owner', 'members.user', 'organizations.users'])
+            ->where('uuid', $hubUuid)
+            ->firstOrFail();
+
+        return $this->collectAccessUsers($taskHub);
+    }
+
+    public function accessUsersByHubId(int $taskHubId): Collection
+    {
+        $taskHub = TaskHub::query()
+            ->with(['owner', 'members.user', 'organizations.users'])
+            ->findOrFail($taskHubId);
+
+        return $this->collectAccessUsers($taskHub);
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection<int, array{
+     *     user:\App\Models\Administration\User\User,
+     *     type:string,
+     *     membership_id:int|null,
+     *     sector_labels:array<int, string>,
+     *     has_sector_access:bool
+     * }>
+     */
+    public function accessUserEntries(string $hubUuid): Collection
+    {
+        $taskHub = TaskHub::query()
+            ->with(['owner', 'members.user', 'organizations.users'])
+            ->where('uuid', $hubUuid)
+            ->firstOrFail();
+
+        return $this->collectAccessUserEntries($taskHub);
+    }
+
+    public function findAccessibleHub(string $hubUuid, int $userId): TaskHub
+    {
+        return TaskHub::query()
+            ->with(['members.user', 'organizations'])
+            ->where('uuid', $hubUuid)
+            ->where(function ($query) use ($userId): void {
+                $query->where('owner_id', $userId)
+                    ->orWhereHas('members', function ($memberQuery) use ($userId): void {
+                        $memberQuery->where('user_id', $userId);
+                    })
+                    ->orWhereHas('organizations.users', function ($organizationQuery) use ($userId): void {
+                        $organizationQuery->where('users.id', $userId);
+                    });
+            })
+            ->firstOrFail();
+    }
+
+    public function accessibleHubs(int $userId): Collection
+    {
+        return TaskHub::query()
+            ->with(['members.user', 'organizations'])
+            ->where(function ($query) use ($userId): void {
+                $query->where('owner_id', $userId)
+                    ->orWhereHas('members', function ($memberQuery) use ($userId): void {
+                        $memberQuery->where('user_id', $userId);
+                    })
+                    ->orWhereHas('organizations.users', function ($organizationQuery) use ($userId): void {
+                        $organizationQuery->where('users.id', $userId);
+                    });
+            })
+            ->get();
+    }
+
     public function addMember(string $hubUuid, int $actorId, int $memberUserId): bool
     {
         $taskHub = TaskHub::query()
@@ -135,7 +279,7 @@ class TaskService
         $query->where('task_hub_id', $taskHub->id)
             ->whereNull('finished_at');
 
-        // Filtra pelo título
+        // Filtra pelo tÃ­tulo
         if ($filters['title']) {
             $query->where('title', 'like', '%'.$filters['title'].'%');
         }
@@ -225,11 +369,11 @@ class TaskService
         $total = (clone $baseQuery)->count();
 
         $statusIds = TaskStatus::query()
-            ->whereIn('title', ['Em andamento', 'Concluído', 'Cancelado'])
+            ->whereIn('title', ['Em andamento', 'ConcluÃ­do', 'Cancelado'])
             ->pluck('id', 'title');
 
         $inProgressStatusId = $statusIds['Em andamento'] ?? null;
-        $completedStatusId = $statusIds['Concluído'] ?? null;
+        $completedStatusId = $statusIds['ConcluÃ­do'] ?? null;
         $cancelledStatusId = $statusIds['Cancelado'] ?? null;
 
         $inProgress = $inProgressStatusId
@@ -268,7 +412,7 @@ class TaskService
                     'code' => $task->code,
                     'title' => $task->title,
                     'deadline_at' => $task->deadline_at?->format('Y-m-d'),
-                    'responsible' => $task->user?->name ?? 'Sem responsável',
+                    'responsible' => $task->user?->name ?? 'Sem responsÃ¡vel',
                 ];
             })
             ->all();
@@ -292,8 +436,8 @@ class TaskService
         $tasksByResponsible = $responsibleCounts
             ->map(function ($row) use ($users) {
                 $label = $row->user_id
-                    ? ($users[$row->user_id] ?? 'Usuário')
-                    : 'Sem responsável';
+                    ? ($users[$row->user_id] ?? 'UsuÃ¡rio')
+                    : 'Sem responsÃ¡vel';
 
                 return [
                     'label' => $label,
@@ -354,8 +498,8 @@ class TaskService
         $stepsByResponsible = $stepResponsibleCounts
             ->map(function ($row) use ($stepUsers) {
                 $label = $row->user_id
-                    ? ($stepUsers[$row->user_id] ?? 'Usuário')
-                    : 'Sem responsável';
+                    ? ($stepUsers[$row->user_id] ?? 'UsuÃ¡rio')
+                    : 'Sem responsÃ¡vel';
 
                 return [
                     'label' => $label,
@@ -403,8 +547,8 @@ class TaskService
             ->values()
             ->all();
 
-        $terminalTaskTitles = ['Concluído', 'Cancelado'];
-        $terminalStepTitles = ['Concluída', 'Cancelada'];
+        $terminalTaskTitles = ['ConcluÃ­do', 'Cancelado'];
+        $terminalStepTitles = ['ConcluÃ­da', 'Cancelada'];
 
         $taskStatuses = TaskStatus::query()
             ->whereNotIn('title', $terminalTaskTitles)
@@ -474,7 +618,7 @@ class TaskService
                     'code' => $step->code,
                     'title' => $step->title,
                     'deadline_at' => $step->deadline_at?->format('Y-m-d'),
-                    'responsible' => $step->user?->name ?? 'Sem responsável',
+                    'responsible' => $step->user?->name ?? 'Sem responsÃ¡vel',
                     'task_code' => $step->task?->code,
                 ];
             })
@@ -593,8 +737,8 @@ class TaskService
         $tasksByUser = $responsibleCounts
             ->map(function ($row) use ($users) {
                 $label = $row->user_id
-                    ? ($users[$row->user_id] ?? 'Usuário')
-                    : 'Sem responsável';
+                    ? ($users[$row->user_id] ?? 'UsuÃ¡rio')
+                    : 'Sem responsÃ¡vel';
 
                 return [
                     'label' => $label,
@@ -662,7 +806,7 @@ class TaskService
                     'code' => $task->code,
                     'title' => $task->title,
                     'deadline_at' => $task->deadline_at?->format('Y-m-d'),
-                    'responsible' => $task->user?->name ?? 'Sem responsável',
+                    'responsible' => $task->user?->name ?? 'Sem responsÃ¡vel',
                     'hub' => $hubLabels[$task->task_hub_id] ?? 'Hub',
                 ];
             })
@@ -953,7 +1097,7 @@ class TaskService
     {
         $step = TaskStep::query()->findOrFail($stepId);
         $completedStatusId = TaskStepStatus::query()
-            ->where('title', 'Concluída')
+            ->where('title', 'ConcluÃ­da')
             ->value('id');
 
         if (! $completedStatusId) {
@@ -979,7 +1123,7 @@ class TaskService
             'task_step_id' => $step->id,
             'user_id' => Auth::user()?->id,
             'type' => 'finished_change',
-            'description' => $this->actorName().' marcou a etapa como concluída',
+            'description' => $this->actorName().' marcou a etapa como concluÃ­da',
         ]);
 
         return $step->refresh();
@@ -1120,7 +1264,7 @@ class TaskService
     private function terminalStatusIds(): array
     {
         return TaskStatus::query()
-            ->whereIn('title', ['Concluído', 'Cancelado'])
+            ->whereIn('title', ['ConcluÃ­do', 'Cancelado'])
             ->pluck('id')
             ->map(fn ($id) => (int) $id)
             ->all();
@@ -1132,7 +1276,7 @@ class TaskService
     private function stepTerminalStatusIds(): array
     {
         return TaskStepStatus::query()
-            ->whereIn('title', ['Concluída', 'Cancelada'])
+            ->whereIn('title', ['ConcluÃ­da', 'Cancelada'])
             ->pluck('id')
             ->map(fn ($id) => (int) $id)
             ->all();
@@ -1148,11 +1292,100 @@ class TaskService
                 $query->where('owner_id', $userId)
                     ->orWhereHas('members', function ($memberQuery) use ($userId): void {
                         $memberQuery->where('user_id', $userId);
+                    })
+                    ->orWhereHas('organizations.users', function ($organizationQuery) use ($userId): void {
+                        $organizationQuery->where('users.id', $userId);
                     });
             })
             ->pluck('id')
             ->map(fn ($id) => (int) $id)
             ->all();
+    }
+
+    private function collectAccessUsers(TaskHub $taskHub): Collection
+    {
+        $users = collect();
+
+        if ($taskHub->owner) {
+            $users->push($taskHub->owner);
+        }
+
+        foreach ($taskHub->members as $member) {
+            if ($member->user) {
+                $users->push($member->user);
+            }
+        }
+
+        foreach ($taskHub->organizations as $organization) {
+            foreach ($organization->users as $user) {
+                $users->push($user);
+            }
+        }
+
+        return $users
+            ->unique('id')
+            ->sortBy(fn (User $user) => $user->name ?? '')
+            ->values();
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection<int, array{
+     *     user:\App\Models\Administration\User\User,
+     *     type:string,
+     *     membership_id:int|null,
+     *     sector_labels:array<int, string>,
+     *     has_sector_access:bool
+     * }>
+     */
+    private function collectAccessUserEntries(TaskHub $taskHub): Collection
+    {
+        $sectorMap = [];
+
+        foreach ($taskHub->organizations as $organization) {
+            $label = $organization->acronym ?: $organization->title;
+
+            foreach ($organization->users as $user) {
+                if (! $user) {
+                    continue;
+                }
+
+                $sectorMap[$user->id] ??= [];
+                if (! in_array($label, $sectorMap[$user->id], true)) {
+                    $sectorMap[$user->id][] = $label;
+                }
+            }
+        }
+
+        $memberMap = [];
+        foreach ($taskHub->members as $member) {
+            if ($member->user) {
+                $memberMap[$member->user->id] = $member->id;
+            }
+        }
+
+        $users = $this->collectAccessUsers($taskHub);
+
+        return $users
+            ->map(function (User $user) use ($taskHub, $memberMap, $sectorMap): array {
+                $type = 'sector';
+                if ($taskHub->owner && $user->id === $taskHub->owner->id) {
+                    $type = 'owner';
+                } elseif (array_key_exists($user->id, $memberMap)) {
+                    $type = 'member';
+                }
+
+                $sectorLabels = $sectorMap[$user->id] ?? [];
+
+                return [
+                    'user' => $user,
+                    'type' => $type,
+                    'membership_id' => $memberMap[$user->id] ?? null,
+                    'sector_labels' => $sectorLabels,
+                    'has_sector_access' => $sectorLabels !== [],
+                ];
+            })
+            ->sortBy(fn (array $entry) => $entry['user']->name ?? '')
+            ->values();
     }
 
     private function colorToHex(?string $color): string
@@ -1236,3 +1469,4 @@ class TaskService
         }
     }
 }
+

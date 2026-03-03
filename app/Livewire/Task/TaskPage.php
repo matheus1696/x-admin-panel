@@ -19,6 +19,7 @@ use App\Validation\Task\TaskRules;
 use App\Validation\Task\TaskStepRules;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -86,7 +87,10 @@ class TaskPage extends Component
 
     public ?int $member_organization_id = null;
 
-    public string $sharingMode = 'user';
+    /**
+     * @var array<int>
+     */
+    public array $expandedOrganizationIds = [];
 
     public ?int $pendingStepMoveStepId = null;
 
@@ -129,15 +133,7 @@ class TaskPage extends Component
     {
         $userId = Auth::user()->id;
 
-        $taskHub = TaskHub::query()
-            ->where('uuid', $uuid)
-            ->where(function ($query) use ($userId): void {
-                $query->where('owner_id', $userId)
-                    ->orWhereHas('members', function ($memberQuery) use ($userId): void {
-                        $memberQuery->where('user_id', $userId);
-                    });
-            })
-            ->firstOrFail();
+        $taskHub = $this->taskService->findAccessibleHub($uuid, $userId);
 
         $this->taskHubId = $taskHub->uuid;
         $this->taskHubInternalId = $taskHub->id;
@@ -186,9 +182,22 @@ class TaskPage extends Component
         $this->setStepDefaults();
     }
 
+    public function updatedOrganizationId(): void
+    {
+        $this->step_user_id = null;
+    }
+
     public function storeTask(): void
     {
-        $data = $this->validate(TaskRules::store());
+        $accessUserIds = $this->taskService
+            ->accessUsers($this->taskHubId)
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+
+        $data = $this->validate(array_merge(TaskRules::store(), [
+            'user_id' => ['nullable', Rule::in($accessUserIds)],
+        ]));
 
         $this->taskService->create($this->taskHubId, $data);
 
@@ -214,10 +223,36 @@ class TaskPage extends Component
 
     public function storeTaskStep(int $taskId): void
     {
+        $accessUserIds = $this->taskService
+            ->accessUsersByHubId($this->taskHubInternalId)
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+        $accessOrganizationIds = $this->taskService
+            ->organizationAccessesByHubId($this->taskHubInternalId)
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+        $allowedUserIds = $accessUserIds;
+        $selectedOrganizationId = $this->organization_id ? (int) $this->organization_id : null;
+
+        if ($selectedOrganizationId !== null) {
+            $organization = $this->taskService
+                ->organizationAccessesByHubId($this->taskHubInternalId)
+                ->firstWhere('id', $selectedOrganizationId);
+
+            if ($organization) {
+                $allowedUserIds = $organization->users
+                    ->pluck('id')
+                    ->map(fn ($id): int => (int) $id)
+                    ->all();
+            }
+        }
+
         $data = $this->validate([
             'step_title' => TaskStepRules::store()['title'],
-            'step_user_id' => TaskStepRules::store()['user_id'],
-            'organization_id' => TaskStepRules::store()['organization_id'],
+            'step_user_id' => ['nullable', Rule::in($allowedUserIds)],
+            'organization_id' => ['nullable', Rule::in($accessOrganizationIds)],
             'step_task_priority_id' => TaskStepRules::store()['task_priority_id'],
             'task_step_status_id' => TaskStepRules::store()['task_step_status_id'],
         ]);
@@ -259,6 +294,18 @@ class TaskPage extends Component
             'member_user_id' => 'required|exists:users,id',
         ]);
 
+        $accessUserIds = $this->taskService
+            ->accessUsers($this->taskHubId)
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+
+        if (in_array((int) $data['member_user_id'], $accessUserIds, true)) {
+            $this->flashError('Este usuário já possui acesso ao ambiente.');
+
+            return;
+        }
+
         $added = $this->taskService->addMember(
             $this->taskHubId,
             (int) Auth::id(),
@@ -266,7 +313,7 @@ class TaskPage extends Component
         );
 
         if (! $added) {
-            $this->flashError('Apenas o proprietário pode gerenciar os membros do ambiente.');
+            $this->flashError('Apenas o proprietÃ¡rio pode gerenciar os membros do ambiente.');
 
             return;
         }
@@ -297,6 +344,61 @@ class TaskPage extends Component
         $this->flashSuccess($addedCount.' usuário(s) adicionados ao ambiente.');
     }
 
+    public function addOrganizationAccess(): void
+    {
+        $data = $this->validate([
+            'member_organization_id' => 'required|exists:organization_charts,id',
+        ]);
+
+        $added = $this->taskService->addOrganizationAccess(
+            $this->taskHubId,
+            (int) Auth::id(),
+            (int) $data['member_organization_id']
+        );
+
+        if (! $added) {
+            $this->flashError('NÃ£o foi possÃ­vel compartilhar este setor.');
+
+            return;
+        }
+
+        $this->member_organization_id = null;
+        $this->flashSuccess('Setor adicionado ao compartilhamento com sucesso.');
+    }
+
+    public function removeOrganizationAccess(int $organizationId): void
+    {
+        $removed = $this->taskService->removeOrganizationAccess(
+            $this->taskHubId,
+            (int) Auth::id(),
+            $organizationId
+        );
+
+        if (! $removed) {
+            $this->flashError('NÃ£o foi possÃ­vel remover este setor do compartilhamento.');
+
+            return;
+        }
+
+        $this->flashSuccess('Setor removido do compartilhamento com sucesso.');
+    }
+
+    public function toggleOrganizationUsers(int $organizationId): void
+    {
+        if (in_array($organizationId, $this->expandedOrganizationIds, true)) {
+            $this->expandedOrganizationIds = array_values(
+                array_filter(
+                    $this->expandedOrganizationIds,
+                    fn (int $id): bool => $id !== $organizationId
+                )
+            );
+
+            return;
+        }
+
+        $this->expandedOrganizationIds[] = $organizationId;
+    }
+
     public function removeMember(int $membershipId): void
     {
         $removed = $this->taskService->removeMember(
@@ -306,7 +408,7 @@ class TaskPage extends Component
         );
 
         if (! $removed) {
-            $this->flashError('Não foi possível remover este membro do ambiente.');
+            $this->flashError('NÃ£o foi possÃ­vel remover este membro do ambiente.');
 
             return;
         }
@@ -317,7 +419,7 @@ class TaskPage extends Component
     public function requestStepKanbanDrop(int $stepId, int $fromStatusId, int $toStatusId, array $targetOrder): void
     {
         if ($this->isInvalidStepTerminalSwap($fromStatusId, $toStatusId)) {
-            $this->flashError('Não é permitido mover uma etapa cancelada para concluída ou uma etapa concluída para cancelada.');
+            $this->flashError('NÃ£o Ã© permitido mover uma etapa cancelada para concluÃ­da ou uma etapa concluÃ­da para cancelada.');
 
             return;
         }
@@ -352,7 +454,7 @@ class TaskPage extends Component
         $completionComment = $completionComment !== null ? trim($completionComment) : null;
 
         if ($this->isInvalidStepTerminalSwap($fromStatusId, $toStatusId)) {
-            $this->flashError('Não é permitido mover uma etapa cancelada para concluída ou uma etapa concluída para cancelada.');
+            $this->flashError('NÃ£o Ã© permitido mover uma etapa cancelada para concluÃ­da ou uma etapa concluÃ­da para cancelada.');
 
             return;
         }
@@ -366,7 +468,7 @@ class TaskPage extends Component
         ) {
             $this->flashError(
                 match ($reasonType) {
-                    'completion' => 'Informe um comentário para concluir a etapa.',
+                    'completion' => 'Informe um comentÃ¡rio para concluir a etapa.',
                     'cancellation' => 'Informe o motivo para cancelar a etapa.',
                     'reopen' => 'Informe o motivo para reabrir a etapa.',
                     default => 'Informe um motivo para continuar.',
@@ -468,7 +570,7 @@ class TaskPage extends Component
     private function stepCompletionStatusIds(): array
     {
         return TaskStepStatus::query()
-            ->where('title', 'Concluída')
+            ->where('title', 'ConcluÃ­da')
             ->pluck('id')
             ->map(fn ($id): int => (int) $id)
             ->all();
@@ -492,7 +594,7 @@ class TaskPage extends Component
     private function stepTerminalStatusIds(): array
     {
         return TaskStepStatus::query()
-            ->whereIn('title', ['Concluída', 'Cancelada'])
+            ->whereIn('title', ['ConcluÃ­da', 'Cancelada'])
             ->pluck('id')
             ->map(fn ($id): int => (int) $id)
             ->all();
@@ -555,10 +657,31 @@ class TaskPage extends Component
     public function render()
     {
         $members = $this->taskService->members($this->taskHubId);
+        $responsibleUsers = $this->taskService->accessUsers($this->taskHubId);
+        $accessEntries = $this->taskService->accessUserEntries($this->taskHubId);
+        $organizationAccesses = $this->taskService->organizationAccesses($this->taskHubId);
         $memberUserIds = $members
             ->pluck('user_id')
             ->map(fn ($id): int => (int) $id)
             ->all();
+        $accessUserIds = $responsibleUsers
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+        $organizationAccessIds = $organizationAccesses
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+        $stepFormUsers = $responsibleUsers;
+
+        if ($this->organization_id) {
+            $organization = $organizationAccesses->firstWhere('id', (int) $this->organization_id);
+            if ($organization) {
+                $stepFormUsers = $organization->users
+                    ->sortBy(fn (User $user) => $user->name ?? '')
+                    ->values();
+            }
+        }
 
         return view('livewire.task.task-page', [
             'tasks' => $this->taskService->index($this->taskHubId, $this->filters),
@@ -566,10 +689,21 @@ class TaskPage extends Component
             'stepKanban' => $this->taskService->stepKanban($this->taskHubId),
             'stepCompletionStatusIds' => $this->stepCompletionStatusIds(),
             'members' => $members,
+            'responsibleUsers' => $responsibleUsers,
+            'accessEntries' => $accessEntries,
+            'organizationAccesses' => $organizationAccesses,
+            'accessibleOrganizations' => $organizationAccesses,
+            'stepFormUsers' => $stepFormUsers,
             'canManageMembers' => $this->taskHubOwnerId === (int) Auth::id(),
             'availableMemberUsers' => $this->users
                 ->reject(fn (User $user): bool => in_array((int) $user->id, $memberUserIds, true))
+                ->reject(fn (User $user): bool => in_array((int) $user->id, $accessUserIds, true))
+                ->values(),
+            'availableOrganizations' => $this->organizations
+                ->reject(fn (OrganizationChart $organization): bool => in_array((int) $organization->id, $organizationAccessIds, true))
                 ->values(),
         ]);
     }
 }
+
+

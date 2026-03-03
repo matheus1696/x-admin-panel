@@ -5,7 +5,6 @@ namespace App\Livewire\Task;
 use App\Livewire\Traits\WithFlashMessage;
 use App\Models\Administration\Task\TaskCategory;
 use App\Models\Administration\Task\TaskPriority;
-use App\Models\Administration\User\User;
 use App\Models\Task\TaskActivity;
 use App\Services\Administration\Task\TaskStatusService;
 use App\Services\Task\TaskService;
@@ -70,8 +69,8 @@ class TaskAside extends Component
         $this->task = null;
         $this->taskId = $taskId;
 
-        // Listas estáticas
-        $this->users = User::orderBy('name')->get();
+        // Listas estÃ¡ticas
+        $this->users = collect();
         $this->taskPriorities = TaskPriority::orderBy('level')->get();
         $this->taskCategories = TaskCategory::orderBy('title')->get();
         $this->taskStatuses = $this->taskStatusService->index();
@@ -82,12 +81,18 @@ class TaskAside extends Component
     public function loadTask()
     {
         $this->task = $this->taskService->find($this->taskId);
+        $this->users = $this->taskService->accessUsersByHubId($this->task->task_hub_id);
         $this->isLoading = false;
     }
 
     public function updatedResponsableId()
     {
-        $data = $this->validate(TaskStepRules::responsable());
+        $allowedUserIds = $this->users
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+
+        $data = $this->validate(TaskStepRules::responsable($allowedUserIds));
 
         $this->task->update([
             'user_id' => $data['responsable_id'],
@@ -98,11 +103,11 @@ class TaskAside extends Component
             'task_id' => $this->task->id,
             'user_id' => Auth::user()->id,
             'type' => 'responsable_change',
-            'description' => Auth::user()->name.' alterou o responsável',
+            'description' => Auth::user()->name.' alterou o responsÃ¡vel',
         ]);
 
         $this->task->refresh();
-        $this->flashSuccess('Responsável atualizado.');
+        $this->flashSuccess('ResponsÃ¡vel atualizado.');
     }
 
     public function updatedListCategoryId()
@@ -178,14 +183,14 @@ class TaskAside extends Component
             'task_id' => $this->task->id,
             'user_id' => Auth::user()->id,
             'type' => 'description_change',
-            'description' => Auth::user()->name.' alterou a descrição',
+            'description' => Auth::user()->name.' alterou a descriÃ§Ã£o',
         ]);
 
         $this->isEditingDescription = false;
         $this->savingDescription = false;
 
         $this->task->refresh();
-        $this->flashSuccess('Descrição atualizada.');
+        $this->flashSuccess('DescriÃ§Ã£o atualizada.');
     }
 
     public function enableDeadlineEdit()
@@ -241,11 +246,11 @@ class TaskAside extends Component
         $this->taskService->changeStatus(
             $this->task->id,
             4,
-            Auth::user()->name.' marcou a tarefa como concluída',
+            Auth::user()->name.' marcou a tarefa como concluÃ­da',
             'finished_change'
         );
 
-        $this->flashSuccess('Tarefa marcada como concluída.');
+        $this->flashSuccess('Tarefa marcada como concluÃ­da.');
         $this->task->refresh();
     }
 
@@ -254,3 +259,4 @@ class TaskAside extends Component
         return view('livewire.task.task-aside');
     }
 }
+

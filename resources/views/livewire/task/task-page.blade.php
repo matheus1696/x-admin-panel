@@ -57,7 +57,7 @@
     }"
     x-on:step-form-closed.window="stepFormTaskId = null">
 
-        <!-- Botões Superiores -->
+        <!-- BotÃµes Superiores -->
         <div class="mb-6 flex items-center rounded-xl border border-gray-200 overflow-hidden">
             <button type="button" class="relative px-6 py-2.5 text-sm font-medium transition-all duration-200" :class="tab === 'dashboard' ? 'bg-gradient-to-r from-emerald-700 via-emerald-800 to-teal-800 text-white shadow-md' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'" @click="tab = 'dashboard'">
                 <span class="flex items-center gap-2">
@@ -159,7 +159,7 @@
                         <div class="flex items-center justify-between gap-4">
                             <div>
                                 <p class="text-sm font-semibold uppercase text-white">Painel de Tarefas</p>
-                                <p class="text-xs text-white/80">Distribuição ativa, responsáveis e atrasos</p>
+                                <p class="text-xs text-white/80">DistribuiÃ§Ã£o ativa, responsÃ¡veis e atrasos</p>
                             </div>
                             <span class="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold">
                                 {{ $dashboard['tasks_active_total'] ?? 0 }} ativas
@@ -216,7 +216,7 @@
 
                             <div class="col-span-3 space-y-3 border-y border-emerald-800/20 py-6">
                                 <div class="flex items-center justify-between">
-                                    <h4 class="text-sm font-semibold uppercase text-gray-500">Responsáveis</h4>
+                                    <h4 class="text-sm font-semibold uppercase text-gray-500">ResponsÃ¡veis</h4>
                                     <span class="text-[11px] text-gray-400">Por tarefa</span>
                                 </div>
 
@@ -232,7 +232,7 @@
                                         </div>
                                     </div>
                                 @empty
-                                    <div class="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-4 py-4 text-center text-sm text-gray-400">Nenhum responsável vinculado.</div>
+                                    <div class="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-4 py-4 text-center text-sm text-gray-400">Nenhum responsÃ¡vel vinculado.</div>
                                 @endforelse
                             </div>
                         </div>
@@ -253,7 +253,7 @@
                                                     <span class="mx-1 text-gray-300">-</span>
                                                     <span>{{ $item['title'] }}</span>
                                                 </p>
-                                                <p class="mt-1 truncate text-[11px] text-gray-500"><span class="text-gray-400">Responsável:</span>{{ $item['responsible'] }}</p>
+                                                <p class="mt-1 truncate text-[11px] text-gray-500"><span class="text-gray-400">ResponsÃ¡vel:</span>{{ $item['responsible'] }}</p>
                                             </div>
                                             <span class="rounded-full bg-rose-50 px-2.5 py-1 text-[11px] font-semibold text-rose-700">
                                                 {{ $item['deadline_at'] ? \Illuminate\Support\Carbon::parse($item['deadline_at'])->format('d/m/Y') : '-' }}
@@ -274,7 +274,7 @@
                         <div class="flex items-center justify-between gap-4">
                             <div>
                                 <p class="text-xs font-semibold uppercase">Painel de Etapas</p>
-                                <p class="text-xs text-white/80">Status, responsáveis, setores e pendências</p>
+                                <p class="text-xs text-white/80">Status, responsÃ¡veis, setores e pendÃªncias</p>
                             </div>
                             <span class="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold">
                                 {{ $dashboard['steps_active_total'] ?? 0 }} ativas
@@ -334,7 +334,7 @@
                             <div class="col-span-3 grid grid-cols-1 gap-10 lg:grid-cols-2 border-y border-gray-300/80 py-6">
                                 <div class="space-y-3">
                                     <div class="flex items-center justify-between">
-                                        <h4 class="text-xs font-semibold uppercase text-gray-500">Responsáveis</h4>
+                                        <h4 class="text-xs font-semibold uppercase text-gray-500">ResponsÃ¡veis</h4>
                                         <span class="text-[11px] text-gray-400">Por etapa</span>
                                     </div>
 
@@ -350,7 +350,7 @@
                                             </div>
                                         </div>
                                     @empty
-                                        <div class="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-4 py-4 text-center text-sm text-gray-400">Nenhum responsável vinculado.</div>
+                                        <div class="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-4 py-4 text-center text-sm text-gray-400">Nenhum responsÃ¡vel vinculado.</div>
                                     @endforelse
                                 </div>
 
@@ -413,17 +413,17 @@
 
         <div x-show="tab === 'list'" x-cloak>
             <div class="overflow-hidden rounded-3xl border border-emerald-200 bg-white shadow-sm">
-                <!-- Cabeçalho da Tabela -->
+                <!-- CabeÃ§alho da Tabela -->
                 <div class="border-b border-emerald-100 bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-800 px-6 py-4">
                     <div class="grid grid-cols-5 gap-4 text-xs font-medium uppercase text-white/80 md:grid-cols-12">
-                        <div class="col-span-5 md:col-span-4">Título da tarefa</div>
-                        <div class="hidden text-center md:col-span-2 md:block">Responsável</div>
+                        <div class="col-span-5 md:col-span-4">TÃ­tulo da tarefa</div>
+                        <div class="hidden text-center md:col-span-2 md:block">ResponsÃ¡vel</div>
                         <div class="hidden md:col-span-4 md:grid md:grid-cols-3 md:gap-2">
                             <div class="text-center">Categoria</div>
                             <div class="text-center">Prioridade</div>
                             <div class="text-center">Status</div>
                         </div>
-                        <div class="hidden text-center md:col-span-1 md:block">Início</div>
+                        <div class="hidden text-center md:col-span-1 md:block">InÃ­cio</div>
                         <div class="hidden text-center md:col-span-1 md:block">Prazo</div>
                     </div>
                 </div>
@@ -490,16 +490,16 @@
 
                             <div x-show="expandedTaskId === {{ $task->id }}" x-cloak class="bg-amber-50/40">
                                 <div class="grid grid-cols-5 gap-4 text-[10px] font-medium uppercase tracking-wider border-y border-amber-800/80 text-amber-800/80 md:grid-cols-12 px-4 py-3">
-                                    <div class="col-span-5 md:col-span-4">Título da etapa</div>
+                                    <div class="col-span-5 md:col-span-4">TÃ­tulo da etapa</div>
                                     <div class="hidden md:col-span-3 md:grid md:grid-cols-2 md:gap-2">
                                         <div class="text-center">Setor</div>
-                                        <div class="text-center">Responsável</div>
+                                        <div class="text-center">ResponsÃ¡vel</div>
                                     </div>
                                     <div class="hidden md:col-span-3 md:grid md:grid-cols-2 md:gap-2">
                                         <div class="text-center">Prioridade</div>
                                         <div class="text-center">Status</div>
                                     </div>
-                                    <div class="hidden text-center md:col-span-1 md:block">Início</div>
+                                    <div class="hidden text-center md:col-span-1 md:block">InÃ­cio</div>
                                     <div class="hidden text-center md:col-span-1 md:block">Prazo</div>
                                 </div>
 
@@ -555,7 +555,7 @@
                                             </div>
                                         </div>
                                     @empty
-                                        <div class="rounded-xl border border-dashed border-amber-200 bg-white/70 px-4 py-4 text-center text-sm text-gray-400">Esta tarefa ainda não possui etapas.</div>
+                                        <div class="rounded-xl border border-dashed border-amber-200 bg-white/70 px-4 py-4 text-center text-sm text-gray-400">Esta tarefa ainda nÃ£o possui etapas.</div>
                                     @endforelse
                                 </div>
                             </div>
@@ -732,8 +732,8 @@
                                                     <span class="min-w-0 flex-1 truncate font-medium text-gray-700">{{ $step->organization?->acronym ?? $step->organization?->title ?? 'Sem setor' }}</span>
                                                 </div>
                                                 <div class="flex items-center gap-1">
-                                                    <span class="text-[10px] font-semibold uppercase text-gray-400">Responsável: </span>
-                                                    <span class="min-w-0 flex-1 truncate font-medium text-gray-700">{{ $step->user?->name ?? 'Sem responsável' }}</span>
+                                                    <span class="text-[10px] font-semibold uppercase text-gray-400">ResponsÃ¡vel: </span>
+                                                    <span class="min-w-0 flex-1 truncate font-medium text-gray-700">{{ $step->user?->name ?? 'Sem responsÃ¡vel' }}</span>
                                                 </div>
                                                 <div class="flex items-center gap-1">
                                                     <span class="text-[10px] font-semibold uppercase text-gray-400">Prazo: </span>
@@ -785,146 +785,184 @@
                             <p class="mt-1 text-xs text-white/80">Gerencie quem pode acessar este ambiente de projeto</p>
                         </div>
                         <span class="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold">
-                            {{ $members->count() }} membros
+                            {{ $accessEntries->count() }} membros
                         </span>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 gap-6 p-6 lg:grid-cols-[360px_1fr]">
-                    <section class="space-y-4 rounded-3xl border border-slate-200 bg-slate-50/70 p-5">
+                <div class="grid grid-cols-1 gap-6 p-6 lg:grid-cols-2">
+                    <section class="space-y-4 rounded-3xl border border-slate-200 bg-white p-5">
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-900">Adicionar ao Ambiente</h3>
+                            <h3 class="text-sm font-semibold text-gray-900">UsuÃ¡rios do Ambiente</h3>
                             <p class="mt-1 text-xs text-gray-500">
                                 @if ($canManageMembers)
-                                    O proprietário do ambiente pode incluir novos participantes.
+                                    Adicione usuÃ¡rios diretamente ao ambiente.
                                 @else
-                                    Apenas o proprietário do ambiente pode adicionar ou remover membros.
+                                    Apenas o proprietÃ¡rio do ambiente pode adicionar ou remover membros.
                                 @endif
                             </p>
                         </div>
 
-                        <div class="flex items-center gap-2">
-                            <x-button
-                                type="button"
-                                text="Usuário"
-                                icon="fa-solid fa-user"
-                                variant="{{ $sharingMode === 'user' ? 'green_outline' : 'gray_outline' }}"
-                                wire:click="$set('sharingMode', 'user')"
-                                @disabled(! $canManageMembers)
+                        <form wire:submit.prevent="addMember" class="space-y-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+                            <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+                                UsuÃ¡rio
+                            </label>
+
+                            <x-form.select-livewire
+                                wire:model.defer="member_user_id"
+                                name="member_user_id"
+                                :collection="$availableMemberUsers"
+                                valueField="id"
+                                labelField="name"
+                                placeholder="Selecione um usuÃ¡rio"
+                                borderColor="gray"
+                                :disabled="! $canManageMembers"
                             />
+
+                            @error('member_user_id')
+                                <p class="text-sm font-medium text-red-600">{{ $message }}</p>
+                            @enderror
+
                             <x-button
-                                type="button"
-                                text="Setor"
-                                icon="fa-solid fa-building"
-                                variant="{{ $sharingMode === 'sector' ? 'green_outline' : 'gray_outline' }}"
-                                wire:click="$set('sharingMode', 'sector')"
-                                @disabled(! $canManageMembers)
+                                type="submit"
+                                text="Adicionar UsuÃ¡rio"
+                                icon="fa-solid fa-user-plus"
+                                class="w-full justify-center"
+                                :disabled="! $canManageMembers"
                             />
-                        </div>
+                        </form>
 
                         <div class="space-y-3">
-                            @if ($sharingMode === 'user')
-                                <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
-                                    Usuário
-                                </label>
+                            @forelse ($accessEntries as $entry)
+                                @if ($entry['type'] !== 'sector')
+                                    <div class="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-4 md:flex-row md:items-center md:justify-between">
+                                        <div class="min-w-0">
+                                            <p class="truncate text-sm font-semibold text-gray-900">{{ $entry['user']->name ?? 'UsuÃ¡rio' }}</p>
+                                            <p class="mt-1 text-xs text-gray-500">{{ $entry['user']->email ?? 'Sem e-mail' }}</p>
+                                            @if (! empty($entry['sector_labels']))
+                                                <p class="mt-1 text-[11px] text-gray-400">
+                                                    Setor: {{ implode(', ', $entry['sector_labels']) }}
+                                                </p>
+                                            @endif
+                                        </div>
 
-                                <x-form.select-livewire
-                                    wire:model.defer="member_user_id"
-                                    name="member_user_id"
-                                    :collection="$availableMemberUsers"
-                                    valueField="id"
-                                    labelField="name"
-                                    placeholder="Selecione um usuário"
-                                    borderColor="gray"
-                                    :disabled="! $canManageMembers"
-                                />
+                                        <div class="flex items-center gap-2">
+                                            @if ($entry['type'] === 'owner')
+                                                <span class="rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-700">
+                                                    ProprietÃ¡rio
+                                                </span>
+                                            @else
+                                                <span class="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-700">
+                                                    Membro
+                                                </span>
+                                            @endif
 
-                                @error('member_user_id')
-                                    <p class="text-sm font-medium text-red-600">{{ $message }}</p>
-                                @enderror
-
-                                <x-button
-                                    type="button"
-                                    text="Adicionar Usuário"
-                                    icon="fa-solid fa-user-plus"
-                                    wire:click="addMember"
-                                    class="w-full justify-center"
-                                    @disabled(! $canManageMembers)
-                                />
-                            @else
-                                <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
-                                    Setor
-                                </label>
-
-                                <x-form.select-livewire
-                                    wire:model.defer="member_organization_id"
-                                    name="member_organization_id"
-                                    :collection="$organizations"
-                                    valueField="id"
-                                    labelField="title"
-                                    labelAcronym="acronym"
-                                    placeholder="Selecione um setor"
-                                    borderColor="gray"
-                                    :disabled="! $canManageMembers"
-                                />
-
-                                @error('member_organization_id')
-                                    <p class="text-sm font-medium text-red-600">{{ $message }}</p>
-                                @enderror
-
-                                <x-button
-                                    type="button"
-                                    text="Adicionar Setor"
-                                    icon="fa-solid fa-users"
-                                    wire:click="addMembersByOrganization"
-                                    class="w-full justify-center"
-                                    @disabled(! $canManageMembers)
-                                />
-                            @endif
+                                            @if ($canManageMembers && $entry['type'] === 'member' && $entry['membership_id'])
+                                                <x-button
+                                                    type="button"
+                                                    text="Remover"
+                                                    icon="fa-solid fa-user-minus"
+                                                    variant="gray_outline"
+                                                    wire:click="removeMember({{ (int) $entry['membership_id'] }})"
+                                                />
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endif
+                            @empty
+                                <div class="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-6 py-10 text-center text-sm text-gray-400">
+                                    Nenhum membro vinculado a este ambiente.
+                                </div>
+                            @endforelse
                         </div>
                     </section>
 
-                    <section class="space-y-4">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h3 class="text-sm font-semibold text-gray-900">Membros Atuais</h3>
-                                <p class="mt-1 text-xs text-gray-500">Pessoas que podem acessar este ambiente.</p>
-                            </div>
+                    <section class="space-y-4 rounded-3xl border border-slate-200 bg-white p-5">
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-900">Setores do Ambiente</h3>
+                            <p class="mt-1 text-xs text-gray-500">
+                                @if ($canManageMembers)
+                                    Vincule setores para liberar acesso automï¿½tico.
+                                @else
+                                    Apenas o proprietÃ¡rio do ambiente pode adicionar ou remover setores.
+                                @endif
+                            </p>
                         </div>
 
+                        <form wire:submit.prevent="addOrganizationAccess" class="space-y-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+                            <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+                                Setor
+                            </label>
+
+                            <x-form.select-livewire
+                                wire:model.defer="member_organization_id"
+                                name="member_organization_id"
+                                :collection="$availableOrganizations"
+                                valueField="id"
+                                labelField="title"
+                                labelAcronym="acronym"
+                                placeholder="Selecione um setor"
+                                borderColor="gray"
+                                :disabled="! $canManageMembers"
+                            />
+
+                            @error('member_organization_id')
+                                <p class="text-sm font-medium text-red-600">{{ $message }}</p>
+                            @enderror
+
+                            <x-button
+                                type="submit"
+                                text="Adicionar Setor"
+                                icon="fa-solid fa-users"
+                                class="w-full justify-center"
+                                :disabled="! $canManageMembers"
+                            />
+                        </form>
+
                         <div class="space-y-3">
-                            @forelse ($members as $member)
+                            @forelse ($organizationAccesses as $organization)
                                 <div class="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-4 md:flex-row md:items-center md:justify-between">
                                     <div class="min-w-0">
-                                        <p class="truncate text-sm font-semibold text-gray-900">{{ $member->user?->name ?? 'Usuário' }}</p>
-                                        <p class="mt-1 text-xs text-gray-500">{{ $member->user?->email ?? 'Sem e-mail' }}</p>
+                                        <p class="truncate text-sm font-semibold text-gray-900">{{ $organization->acronym ?? $organization->title }}</p>
+                                        <p class="mt-1 text-xs text-gray-500">{{ $organization->title }}</p>
                                     </div>
 
                                     <div class="flex items-center gap-2">
-                                        @if ((int) $member->user_id === $taskHubOwnerId)
-                                            <span class="rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-700">
-                                                Proprietário
-                                            </span>
-                                        @else
-                                            <span class="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-700">
-                                                Membro
-                                            </span>
-                                        @endif
+                                        <span class="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-700">
+                                            Setor
+                                        </span>
 
-                                        @if ($canManageMembers && (int) $member->user_id !== $taskHubOwnerId)
+                                        <x-button
+                                            type="button"
+                                            icon="fa-solid fa-users"
+                                            variant="gray_outline"
+                                            wire:click="toggleOrganizationUsers({{ (int) $organization->id }})"
+                                        />
+
+                                        @if ($canManageMembers)
                                             <x-button
                                                 type="button"
-                                                text="Remover"
-                                                icon="fa-solid fa-user-minus"
+                                                icon="fa-solid fa-trash"
                                                 variant="gray_outline"
-                                                wire:click="removeMember({{ $member->id }})"
+                                                wire:click="removeOrganizationAccess({{ (int) $organization->id }})"
                                             />
                                         @endif
                                     </div>
                                 </div>
+
+                                @if (in_array((int) $organization->id, $expandedOrganizationIds, true))
+                                    <div class="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-4 py-3 text-xs text-gray-600">
+                                        @php($userNames = $organization->users?->pluck('name')->filter()->values() ?? collect())
+                                        @if ($userNames->isEmpty())
+                                            Nenhum usuário vinculado a este setor.
+                                        @else
+                                            <p>{{ $userNames->implode(', ') }}</p>
+                                        @endif
+                                    </div>
+                                @endif
                             @empty
-                                <div class="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-6 py-10 text-center text-sm text-gray-400">
-                                    Nenhum membro vinculado a este ambiente.
+                                <div class="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-6 py-8 text-center text-sm text-gray-400">
+                                    Nenhum setor vinculado a este ambiente.
                                 </div>
                             @endforelse
                         </div>
@@ -992,7 +1030,7 @@
                                 ? 'Descreva o motivo da reabertura...'
                                 : ($pendingStepMoveReasonType === 'cancellation'
                                     ? 'Descreva o motivo do cancelamento...'
-                                    : 'Descreva a conclusão da etapa...')
+                                    : 'Descreva a conclusÃ£o da etapa...')
                         }}"
                     />
 
