@@ -84,6 +84,10 @@ class TaskPage extends Component
 
     public ?int $member_user_id = null;
 
+    public ?int $member_organization_id = null;
+
+    public string $sharingMode = 'user';
+
     public ?int $pendingStepMoveStepId = null;
 
     public ?int $pendingStepMoveFromStatusId = null;
@@ -235,6 +239,7 @@ class TaskPage extends Component
         ]);
 
         $this->cancelCreateTaskStep();
+        $this->dispatch('step-form-closed');
         $this->flashSuccess('Etapa criada com sucesso.');
     }
 
@@ -268,6 +273,28 @@ class TaskPage extends Component
 
         $this->member_user_id = null;
         $this->flashSuccess('Membro adicionado ao ambiente com sucesso.');
+    }
+
+    public function addMembersByOrganization(): void
+    {
+        $data = $this->validate([
+            'member_organization_id' => 'required|exists:organization_charts,id',
+        ]);
+
+        $addedCount = $this->taskService->addMembersByOrganization(
+            $this->taskHubId,
+            (int) Auth::id(),
+            (int) $data['member_organization_id']
+        );
+
+        if ($addedCount === 0) {
+            $this->flashError('Nenhum usuário novo foi adicionado para este setor.');
+
+            return;
+        }
+
+        $this->member_organization_id = null;
+        $this->flashSuccess($addedCount.' usuário(s) adicionados ao ambiente.');
     }
 
     public function removeMember(int $membershipId): void

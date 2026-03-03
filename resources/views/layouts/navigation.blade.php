@@ -44,7 +44,7 @@
             @can('organization.manage.chart')
                 <x-sidebar.dropdown-link
                     href="{{ route('organization.manage.chart') }}"
-                    title="Organograma (Configuração)"
+                    title="Setores"
                     icon="fa-solid fa-gear"
                     :active="request()->routeIs('organization.manage.chart')"
                 />

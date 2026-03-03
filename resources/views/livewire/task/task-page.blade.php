@@ -54,7 +54,8 @@
             this.dragOverStatusId = null;
             this.dragOverInsertBeforeId = null;
         }
-    }">
+    }"
+    x-on:step-form-closed.window="stepFormTaskId = null">
 
         <!-- Botões Superiores -->
         <div class="mb-6 flex items-center rounded-xl border border-gray-200 overflow-hidden">
@@ -158,7 +159,7 @@
                         <div class="flex items-center justify-between gap-4">
                             <div>
                                 <p class="text-sm font-semibold uppercase text-white">Painel de Tarefas</p>
-                                <p class="mt-2 text-sm text-white/80">Distribuição ativa, responsáveis e atrasos</p>
+                                <p class="text-xs text-white/80">Distribuição ativa, responsáveis e atrasos</p>
                             </div>
                             <span class="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold">
                                 {{ $dashboard['tasks_active_total'] ?? 0 }} ativas
@@ -182,8 +183,8 @@
                             <div class="col-span-2 space-y-5">
                                 <div class="space-y-3">
                                     <div class="flex items-center justify-between">
-                                        <h4 class="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">Status</h4>
-                                        <span class="text-[11px] text-gray-400 hidden md:block">Tarefas ativas</span>
+                                        <h4 class="text-sm font-semibold uppercase text-gray-500">Status</h4>
+                                        <span class="text-[10px] text-gray-400 hidden md:block">Tarefas ativas</span>
                                     </div>
 
                                     @forelse (($dashboard['tasks_by_status_active'] ?? []) as $item)
@@ -198,12 +199,13 @@
                                         @endphp
                                         <div class="space-y-1.5">
                                             <div class="flex items-center justify-between gap-3 text-sm">
-                                                <span class="truncate text-gray-600">{{ $item['label'] }}</span>
+                                                <span class="text-xs truncate text-gray-600">{{ $item['label'] }}</span>
                                                 <span class="font-semibold text-gray-900">{{ $item['total'] }}</span>
                                             </div>
-                                            <div class="h-2.5 overflow-hidden rounded-full bg-gray-100">
-                                                <div class="h-full rounded-full bg-gradient-to-r {{ $taskBarColor }}"
-                                                     style="width: {{ max(10, $taskStatusTotal > 0 ? (int) round(($item['total'] / $taskStatusTotal) * 100) : 0) }}%"></div>
+                                            <div class="h-2 overflow-hidden rounded-full bg-gray-100">
+                                                @if ($item['total'] > 0)
+                                                    <div class="h-full rounded-full bg-gradient-to-r {{ $taskBarColor }}" style="width: {{ max(10, $taskStatusTotal > 0 ? (int) round(($item['total'] / $taskStatusTotal) * 100) : 0) }}%"></div>
+                                                @endif
                                             </div>
                                         </div>
                                     @empty
@@ -214,17 +216,17 @@
 
                             <div class="col-span-3 space-y-3 border-y border-emerald-800/20 py-6">
                                 <div class="flex items-center justify-between">
-                                    <h4 class="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">Responsáveis</h4>
+                                    <h4 class="text-sm font-semibold uppercase text-gray-500">Responsáveis</h4>
                                     <span class="text-[11px] text-gray-400">Por tarefa</span>
                                 </div>
 
                                 @forelse (($dashboard['tasks_by_responsible'] ?? []) as $item)
                                     <div class="space-y-1.5">
                                         <div class="flex items-center justify-between gap-3 text-sm">
-                                            <span class="truncate text-gray-600">{{ $item['label'] }}</span>
+                                            <span class="text-xs truncate text-gray-600">{{ $item['label'] }}</span>
                                             <span class="font-semibold text-gray-900">{{ $item['total'] }}</span>
                                         </div>
-                                        <div class="h-2.5 overflow-hidden rounded-full bg-gray-100">
+                                        <div class="h-2 overflow-hidden rounded-full bg-gray-100">
                                             <div class="h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-800"
                                                     style="width: {{ max(10, (int) round(($item['total'] / $taskResponsibleMax) * 100)) }}%"></div>
                                         </div>
@@ -272,7 +274,7 @@
                         <div class="flex items-center justify-between gap-4">
                             <div>
                                 <p class="text-xs font-semibold uppercase">Painel de Etapas</p>
-                                <p class="mt-2 text-sm text-white/80">Status, responsáveis, setores e pendências</p>
+                                <p class="text-xs text-white/80">Status, responsáveis, setores e pendências</p>
                             </div>
                             <span class="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold">
                                 {{ $dashboard['steps_active_total'] ?? 0 }} ativas
@@ -297,8 +299,8 @@
                             <div class="col-span-2 space-y-5">
                                 <div class="space-y-3">
                                     <div class="flex items-center justify-between">
-                                        <h4 class="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">Status</h4>
-                                        <span class="text-[11px] text-gray-400 hidden md:block">Etapas ativas</span>
+                                        <h4 class="text-sm font-semibold uppercase text-gray-500">Status</h4>
+                                        <span class="text-[10px] text-gray-400 hidden md:block">Etapas ativas</span>
                                     </div>
 
                                     @forelse (($dashboard['steps_by_status_active'] ?? []) as $item)
@@ -313,12 +315,14 @@
                                         @endphp
                                         <div class="space-y-1.5">
                                             <div class="flex items-center justify-between gap-3 text-sm">
-                                                <span class="truncate text-gray-600">{{ $item['label'] }}</span>
+                                                <span class="text-xs text-gray-600">{{ $item['label'] }}</span>
                                                 <span class="font-semibold text-gray-900">{{ $item['total'] }}</span>
                                             </div>
                                             <div class="h-2.5 overflow-hidden rounded-full bg-gray-100">
-                                                <div class="h-full rounded-full bg-gradient-to-r {{ $stepBarColor }}"
+                                                @if ($item['total'] > 0)
+                                                    <div class="h-full rounded-full bg-gradient-to-r {{ $stepBarColor }}"
                                                      style="width: {{ max(10, $stepStatusTotal > 0 ? (int) round(($item['total'] / $stepStatusTotal) * 100) : 0) }}%"></div>
+                                                @endif
                                             </div>
                                         </div>
                                     @empty
@@ -330,14 +334,14 @@
                             <div class="col-span-3 grid grid-cols-1 gap-10 lg:grid-cols-2 border-y border-gray-300/80 py-6">
                                 <div class="space-y-3">
                                     <div class="flex items-center justify-between">
-                                        <h4 class="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">Responsáveis</h4>
+                                        <h4 class="text-xs font-semibold uppercase text-gray-500">Responsáveis</h4>
                                         <span class="text-[11px] text-gray-400">Por etapa</span>
                                     </div>
 
                                     @forelse (($dashboard['steps_by_responsible'] ?? []) as $item)
                                         <div class="space-y-1.5">
                                             <div class="flex items-center justify-between gap-3 text-sm">
-                                                <span class="truncate text-gray-600">{{ $item['label'] }}</span>
+                                                <span class="text-xs text-gray-600">{{ $item['label'] }}</span>
                                                 <span class="font-semibold text-gray-900">{{ $item['total'] }}</span>
                                             </div>
                                             <div class="h-2.5 overflow-hidden rounded-full bg-gray-100">
@@ -352,14 +356,14 @@
 
                                 <div class="space-y-3">
                                     <div class="flex items-center justify-between">
-                                        <h4 class="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">Setores</h4>
+                                        <h4 class="text-xs font-semibold uppercase text-gray-500">Setores</h4>
                                         <span class="text-[11px] text-gray-400">Por etapa</span>
                                     </div>
 
                                     @forelse (($dashboard['steps_by_organization'] ?? []) as $item)
                                         <div class="space-y-1.5">
                                             <div class="flex items-center justify-between gap-3 text-sm">
-                                                <span class="truncate text-gray-600">{{ $item['label'] }}</span>
+                                                <span class="text-xs text-gray-600">{{ $item['label'] }}</span>
                                                 <span class="font-semibold text-gray-900">{{ $item['total'] }}</span>
                                             </div>
                                             <div class="h-2.5 overflow-hidden rounded-full bg-gray-100">
@@ -440,7 +444,7 @@
                                             <span class="text-xs font-mono font-medium text-emerald-700 hover:underline">{{ $task->code }}</span>
                                             <i class="fas fa-external-link-alt text-[8px] text-gray-400"></i>
                                             <span class="mx-1 text-gray-300">-</span>
-                                            <span class="truncate text-xs text-gray-700" title="{{ $task->title }}">{{ $task->title }}</span>
+                                            <span class="text-xs text-gray-700" title="{{ $task->title }}">{{ $task->title }}</span>
                                         </p>
 
                                         <x-button type="button" variant="green_text" @click.stop="expandedTaskId = {{ $task->id }}; stepFormTaskId = stepFormTaskId === {{ $task->id }} ? null : {{ $task->id }}" title="Nova etapa" class="flex items-center rounded-lg">
@@ -484,7 +488,7 @@
                                 </div>
                             </div>
 
-                            <div x-show="expandedTaskId === {{ $task->id }}" x-cloak class="border-y border-emerald-100 bg-amber-50/40">
+                            <div x-show="expandedTaskId === {{ $task->id }}" x-cloak class="bg-amber-50/40">
                                 <div class="grid grid-cols-5 gap-4 text-[10px] font-medium uppercase tracking-wider border-y border-amber-800/80 text-amber-800/80 md:grid-cols-12 px-4 py-3">
                                     <div class="col-span-5 md:col-span-4">Título da etapa</div>
                                     <div class="hidden md:col-span-3 md:grid md:grid-cols-2 md:gap-2">
@@ -508,9 +512,11 @@
                                         <div class="grid grid-cols-5 gap-4 px-3 py-1.5 md:grid-cols-12">
                                             <div class="col-span-5 min-w-0 md:col-span-4">
                                                 <x-button type="button" variant="yellow_text" wire:click="openAsideTaskStep({{ $step->id }})" @click="openAsideTask = false; openAsideStep = true">
-                                                    <span class="text-[11px] font-mono font-medium text-amber-700">{{ $step->code }}</span>
-                                                    <span class="text-gray-300">-</span>
-                                                    <span class="truncate text-xs font-medium text-gray-800" title="{{ $step->title }}">{{ $step->title }}</span>
+                                                    <div class="line-clamp-1">
+                                                        <span class="text-[11px] font-mono font-medium text-amber-700">{{ $step->code }}</span>
+                                                        <span class="text-gray-300">-</span>
+                                                        <span class="text-xs font-medium text-gray-800" title="{{ $step->title }}">{{ $step->title }}</span>
+                                                    </div>
                                                 </x-button>
                                             </div>
 
@@ -771,7 +777,7 @@
         </div>
 
         <div x-show="tab === 'sharing'" x-cloak>
-            <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+            <div class="rounded-3xl border border-slate-200 bg-white shadow-sm">
                 <div class="border-b border-slate-200 bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900 px-6 py-4 text-white">
                     <div class="flex items-center justify-between gap-4">
                         <div>
@@ -787,7 +793,7 @@
                 <div class="grid grid-cols-1 gap-6 p-6 lg:grid-cols-[360px_1fr]">
                     <section class="space-y-4 rounded-3xl border border-slate-200 bg-slate-50/70 p-5">
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-900">Adicionar Membro</h3>
+                            <h3 class="text-sm font-semibold text-gray-900">Adicionar ao Ambiente</h3>
                             <p class="mt-1 text-xs text-gray-500">
                                 @if ($canManageMembers)
                                     O proprietário do ambiente pode incluir novos participantes.
@@ -797,34 +803,84 @@
                             </p>
                         </div>
 
-                        <div class="space-y-3">
-                            <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
-                                Usuário
-                            </label>
-
-                            <x-form.select-livewire
-                                wire:model.defer="member_user_id"
-                                name="member_user_id"
-                                :collection="$availableMemberUsers"
-                                valueField="id"
-                                labelField="name"
-                                placeholder="Selecione um usuário"
-                                borderColor="gray"
-                                :disabled="! $canManageMembers"
-                            />
-
-                            @error('member_user_id')
-                                <p class="text-sm font-medium text-red-600">{{ $message }}</p>
-                            @enderror
-
+                        <div class="flex items-center gap-2">
                             <x-button
                                 type="button"
-                                text="Adicionar ao Ambiente"
-                                icon="fa-solid fa-user-plus"
-                                wire:click="addMember"
-                                class="w-full justify-center"
+                                text="Usuário"
+                                icon="fa-solid fa-user"
+                                variant="{{ $sharingMode === 'user' ? 'green_outline' : 'gray_outline' }}"
+                                wire:click="$set('sharingMode', 'user')"
                                 @disabled(! $canManageMembers)
                             />
+                            <x-button
+                                type="button"
+                                text="Setor"
+                                icon="fa-solid fa-building"
+                                variant="{{ $sharingMode === 'sector' ? 'green_outline' : 'gray_outline' }}"
+                                wire:click="$set('sharingMode', 'sector')"
+                                @disabled(! $canManageMembers)
+                            />
+                        </div>
+
+                        <div class="space-y-3">
+                            @if ($sharingMode === 'user')
+                                <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+                                    Usuário
+                                </label>
+
+                                <x-form.select-livewire
+                                    wire:model.defer="member_user_id"
+                                    name="member_user_id"
+                                    :collection="$availableMemberUsers"
+                                    valueField="id"
+                                    labelField="name"
+                                    placeholder="Selecione um usuário"
+                                    borderColor="gray"
+                                    :disabled="! $canManageMembers"
+                                />
+
+                                @error('member_user_id')
+                                    <p class="text-sm font-medium text-red-600">{{ $message }}</p>
+                                @enderror
+
+                                <x-button
+                                    type="button"
+                                    text="Adicionar Usuário"
+                                    icon="fa-solid fa-user-plus"
+                                    wire:click="addMember"
+                                    class="w-full justify-center"
+                                    @disabled(! $canManageMembers)
+                                />
+                            @else
+                                <label class="block text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">
+                                    Setor
+                                </label>
+
+                                <x-form.select-livewire
+                                    wire:model.defer="member_organization_id"
+                                    name="member_organization_id"
+                                    :collection="$organizations"
+                                    valueField="id"
+                                    labelField="title"
+                                    labelAcronym="acronym"
+                                    placeholder="Selecione um setor"
+                                    borderColor="gray"
+                                    :disabled="! $canManageMembers"
+                                />
+
+                                @error('member_organization_id')
+                                    <p class="text-sm font-medium text-red-600">{{ $message }}</p>
+                                @enderror
+
+                                <x-button
+                                    type="button"
+                                    text="Adicionar Setor"
+                                    icon="fa-solid fa-users"
+                                    wire:click="addMembersByOrganization"
+                                    class="w-full justify-center"
+                                    @disabled(! $canManageMembers)
+                                />
+                            @endif
                         </div>
                     </section>
 

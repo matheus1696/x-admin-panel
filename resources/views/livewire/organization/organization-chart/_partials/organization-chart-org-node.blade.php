@@ -14,6 +14,7 @@ $levels = [
 ];
 
 $levelData = $levels[$level] ?? ['color' => 'bg-slate-500'];
+$responsibleUser = $node->responsibleUser;
 @endphp
 
 <div class="flex flex-col items-center" x-data="{ open: false }">
@@ -44,32 +45,30 @@ $levelData = $levels[$level] ?? ['color' => 'bg-slate-500'];
                 {{-- Container da foto com efeito de moldura --}}
                 <div class="relative mb-3">
                     <div class="absolute inset-0 bg-emerald-100 rounded-full blur-md opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                    <img src="{{ $node->responsible_photo ? asset('storage/' . $node->responsible_photo) : 'https://tse4.mm.bing.net/th/id/OIP.dDKYQqVBsG1tIt2uJzEJHwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3' }}" alt="{{ $node->responsible_name ?? '-' }}" class="relative size-24 rounded-full border-2 border-white shadow-md object-cover object-center group-hover:scale-105 transition-transform duration-300" />
+                    <img
+                        src="{{ $responsibleUser?->avatar ? asset('storage/' . $responsibleUser->avatar) : 'https://tse4.mm.bing.net/th/id/OIP.dDKYQqVBsG1tIt2uJzEJHwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3' }}"
+                        alt="{{ $responsibleUser?->name ?? '-' }}"
+                        class="relative size-24 rounded-full border-2 border-white shadow-md object-cover transition-transform duration-300"
+                    />
                 </div>
 
                 {{-- Informações do responsável com design melhorado --}}
                 <div class="text-center space-y-1">
                     <div class="text-sm font-semibold text-slate-800 px-2">
-                        {{ $node->responsible_name ?? 'Responsável não cadastrado' }}
+                        {{ $responsibleUser?->name ?? 'Responsável não definido' }}
                     </div>
-                    
-                    @if($node->responsible_role)
-                        <div class="text-[11px] text-emerald-600 font-medium bg-emerald-50 px-2 py-0.5 rounded-full inline-block">
-                            {{ $node->responsible_role }}
-                        </div>
-                    @endif
 
-                    @if($node->contact)
+                    @if($responsibleUser?->phone_work || $responsibleUser?->phone_personal)
                         <div class="flex items-center justify-center gap-1.5 text-xs text-slate-600">
                             <i class="fa-solid fa-phone text-emerald-500 text-[10px]"></i>
-                            <span>{{ $node->contact }}</span>
+                            <span>{{ $responsibleUser->phone_work ?? $responsibleUser->phone_personal }}</span>
                         </div>
                     @endif
 
-                    @if($node->email)
+                    @if($responsibleUser?->email)
                         <div class="flex items-center justify-center gap-1.5 text-xs text-slate-600">
                             <i class="fa-solid fa-envelope text-emerald-500 text-[10px]"></i>
-                            <span class="truncate max-w-[180px]">{{ $node->email }}</span>
+                            <span class="truncate max-w-[180px]">{{ $responsibleUser->email }}</span>
                         </div>
                     @endif
                 </div>

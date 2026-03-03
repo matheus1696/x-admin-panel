@@ -17,7 +17,6 @@ use Illuminate\Validation\Rule;
  * - Diretamente no Livewire via $this->validate()
  * - Dentro de FormRequests quando o fluxo for HTTP
  */
-
 class OrganizationChartRules
 {
     public static function store(): array
@@ -32,10 +31,7 @@ class OrganizationChartRules
                 Rule::unique('organization_charts', 'acronym'),
             ],
             'hierarchy' => 'required|integer',
-            'responsible_photo' => 'nullable|image|max:1024', // 1MB
-            'responsible_name' => 'nullable|string|max:255',
-            'responsible_contact' => 'nullable|string|max:50',
-            'responsible_email' => 'nullable|email|max:255',
+            'responsible_user_id' => 'nullable|integer|exists:users,id',
         ];
     }
 
@@ -52,10 +48,12 @@ class OrganizationChartRules
                     ->ignore($chartId),
             ],
             'hierarchy' => 'required|integer',
-            'responsible_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'responsible_name' => 'nullable|string|max:255',
-            'responsible_contact' => 'nullable|string|max:50',
-            'responsible_email' => 'nullable|email|max:255',
+            'responsible_user_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('organization_chart_user', 'user_id')
+                    ->where('organization_chart_id', $chartId),
+            ],
         ];
     }
 }

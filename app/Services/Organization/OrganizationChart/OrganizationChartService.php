@@ -10,7 +10,11 @@ class OrganizationChartService
 {
     public function tree(): Collection
     {
-        return OrganizationChart::with('children.children')
+        return OrganizationChart::with([
+            'responsibleUser',
+            'children.responsibleUser',
+            'children.children.responsibleUser',
+        ])
             ->where('hierarchy', 0)
             ->where('is_active', true)
             ->orderBy('order')
@@ -24,16 +28,22 @@ class OrganizationChartService
 
     public function index(array $filters): Collection
     {
-        $query = OrganizationChart::query();
+        $query = OrganizationChart::query()
+            ->withCount('users')
+            ->with('responsibleUser');
         if ($filters['acronym']) {
-            $query->where('acronym', 'like', '%' . strtoupper($filters['acronym']) . '%');
+            $query->where('acronym', 'like', '%'.strtoupper($filters['acronym']).'%');
         }
         if ($filters['filter']) {
-            $query->where('filter', 'like', '%' . strtolower($filters['filter']) . '%');
+            $query->where('filter', 'like', '%'.strtolower($filters['filter']).'%');
         }
         if ($filters['status'] !== 'all') {
             $query->where('is_active', $filters['status']);
         }
+        if (($filters['responsible_user_id'] ?? 'all') !== 'all') {
+            $query->where('responsible_user_id', (int) $filters['responsible_user_id']);
+        }
+
         return $query->orderBy('order')->get();
     }
 
@@ -53,7 +63,14 @@ class OrganizationChartService
     public function status(int $id): OrganizationChart
     {
         $organizationChart = OrganizationChart::findOrFail($id);
+
         return $organizationChart->toggleStatus();
+    }
+
+    public function syncUsers(int $organizationId, array $userIds): void
+    {
+        $organizationChart = OrganizationChart::findOrFail($organizationId);
+        $organizationChart->users()->sync($userIds);
     }
 
     public function reorder(): void
@@ -67,19 +84,20 @@ class OrganizationChartService
             foreach ($organizations as $organization) {
 
                 if ($organization->hierarchy === 0) {
-                    $organization->order = '0' . $organization->acronym;
+                    $organization->order = '0'.$organization->acronym;
                     $organization->number_hierarchy = 1;
                     $organization->save();
+
                     continue;
                 }
 
                 $predecessor = $organizations[$organization->hierarchy] ?? null;
 
-                if (!$predecessor) {
+                if (! $predecessor) {
                     continue;
                 }
 
-                $order = $predecessor->order . $organization->id . $organization->acronym;
+                $order = $predecessor->order.$organization->id.$organization->acronym;
 
                 $organization->order = $order;
                 $organization->number_hierarchy = preg_match_all('/\d+/', $order);
@@ -87,5 +105,4 @@ class OrganizationChartService
             }
         });
     }
-
 }

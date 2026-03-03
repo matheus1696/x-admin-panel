@@ -5,10 +5,12 @@ namespace App\Models\Administration\User;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Models\Configuration\Occupation\Occupation;
+use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Traits\HasUuid;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -17,7 +19,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasUuid, HasFactory, HasRoles, Notifiable;
+    use HasFactory, HasRoles, HasUuid, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -71,7 +73,13 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(Occupation::class, 'occupation_id');
     }
 
-    //Criação do Filter Name
+    public function organizations(): BelongsToMany
+    {
+        return $this->belongsToMany(OrganizationChart::class, 'organization_chart_user', 'user_id', 'organization_chart_id')
+            ->withTimestamps();
+    }
+
+    // Criação do Filter Name
     public function setNameAttribute(string $value): void
     {
         $this->attributes['name'] = $value;

@@ -72,6 +72,48 @@ class TaskService
         return true;
     }
 
+    public function addMembersByOrganization(string $hubUuid, int $actorId, int $organizationId): int
+    {
+        $taskHub = TaskHub::query()
+            ->where('uuid', $hubUuid)
+            ->firstOrFail();
+
+        if ($taskHub->owner_id !== $actorId) {
+            return 0;
+        }
+
+        $organization = OrganizationChart::query()
+            ->with('users')
+            ->findOrFail($organizationId);
+
+        $userIds = $organization->users
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+
+        if ($userIds === []) {
+            return 0;
+        }
+
+        $existingUserIds = TaskHubMember::query()
+            ->where('task_hub_id', $taskHub->id)
+            ->whereIn('user_id', $userIds)
+            ->pluck('user_id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+
+        $newUserIds = array_values(array_diff($userIds, $existingUserIds));
+
+        foreach ($newUserIds as $userId) {
+            TaskHubMember::firstOrCreate([
+                'task_hub_id' => $taskHub->id,
+                'user_id' => $userId,
+            ]);
+        }
+
+        return count($newUserIds);
+    }
+
     public function find(int $id): Task
     {
         return Task::with([
