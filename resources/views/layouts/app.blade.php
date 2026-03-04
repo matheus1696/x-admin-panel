@@ -137,7 +137,7 @@
                            x-transition:leave="transition ease-in duration-200"
                            x-transition:leave-start="translate-x-0 opacity-100"
                            x-transition:leave-end="-translate-x-full opacity-0" 
-                           class="fixed inset-y-0 left-0 w-80 bg-gradient-to-b from-emerald-50 to-white z-50 shadow-2xl overflow-y-auto border-r border-emerald-200/50">
+                           class="fixed inset-y-0 left-0 w-[85vw] max-w-80 bg-gradient-to-b from-emerald-50 to-white z-50 shadow-2xl overflow-y-auto border-r border-emerald-200/50">
                         
                         <!-- Topo com animação -->
                         <div class="h-16 flex items-center justify-between px-6 bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-800 border-b border-emerald-700/30">
@@ -186,7 +186,7 @@
                                x-transition:leave="transition ease-in duration-200"
                                x-transition:leave-start="translate-x-0 opacity-100"
                                x-transition:leave-end="translate-x-full opacity-0" 
-                               class="fixed inset-y-0 right-0 w-80 bg-white z-50 shadow-lg overflow-y-auto">
+                               class="fixed inset-y-0 right-0 w-[85vw] max-w-80 bg-white z-50 shadow-2xl overflow-y-auto border-l border-emerald-200/50">
                             
                             <div class="max-w-xs mx-auto overflow-hidden">
                                 <!-- Header com avatar e gradiente -->
@@ -270,7 +270,11 @@
                 <!-- Header fixo -->
                 <header class="w-full flex items-center justify-between py-3 px-4 lg:px-8 h-16 bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-800 shadow-lg sticky top-0 z-10">
                     <!-- Left Section -->
-                    <div>
+                    <div class="flex items-center gap-2">
+                        <button @click="sidebarExpanded = !sidebarExpanded"
+                                class="hidden lg:inline-flex py-2 px-3 rounded-lg transition-all duration-200 hover:bg-emerald-800 active:scale-95">
+                            <i class="fa-solid fa-bars-staggered text-white text-lg"></i>
+                        </button>
                         <!-- Menu Hamburger -->
                         <button @click="openAside = true" 
                                 class="lg:hidden py-2 px-3 rounded-lg transition-all duration-200 hover:bg-emerald-800 active:scale-95">

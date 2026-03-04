@@ -7,10 +7,10 @@
 
 <a
     href="{{ $href }}"
-    class="block px-3 py-2 rounded-lg text-xs transition-all duration-200 ease-out
+    class="block rounded-xl border border-transparent px-3 py-2 text-xs transition-all duration-200 ease-out
     {{ $active
-        ? 'bg-gradient-to-r from-emerald-700 to-emerald-800 text-white shadow-md'
-        : 'text-gray-600 hover:bg-emerald-50 hover:text-emerald-800 hover:translate-x-1'
+        ? 'bg-gradient-to-r from-emerald-700 to-emerald-800 text-white shadow-sm ring-1 ring-emerald-700/10'
+        : 'text-gray-600 hover:bg-emerald-50/80 hover:border-emerald-100 hover:text-emerald-800 hover:translate-x-1'
     }}"
     {{ $attributes }}
 >
