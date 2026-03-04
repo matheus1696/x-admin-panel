@@ -46,7 +46,6 @@ Create these permissions (or map to existing naming pattern if already defined):
 - assets.state.change
 - assets.return
 - assets.reports.view
-- assets.bulk.execute
 
 ### State Machine
 Asset states:
@@ -66,8 +65,6 @@ RETURNED_TO_PATRIMONY is terminal.
 - asset_invoice_items
 - assets
 - asset_events
-- bulk_operations
-- bulk_operation_items
 
 ### Event rules
 - Every change to assets.state/unit_id/sector_id MUST create an asset_event.
@@ -116,8 +113,6 @@ Implement migrations + models for:
 - asset_invoice_items
 - assets
 - asset_events
-- bulk_operations
-- bulk_operation_items
 
 Requirements:
 - Follow system migration and auditing conventions.
@@ -125,7 +120,6 @@ Requirements:
 - Add indexes:
   - assets: (state, unit_id, sector_id), (invoice_item_id), unique(code)
   - asset_events: (asset_id, created_at), (type, created_at)
-  - bulk_operation_items: (bulk_operation_id, status)
 - Define Eloquent relations for all models.
 - Ensure UTF-8 (utf8mb4).
 
@@ -152,7 +146,6 @@ Implement DTOs (English, camelCase properties) in `app/DTOs/Assets/`:
 - AuditAssetDTO
 - ChangeAssetStateDTO
 - ReturnToPatrimonyDTO
-- CreateBulkOperationDTO
 
 Requirements:
 - Strong typing where possible
@@ -217,10 +210,6 @@ Implement services in `app/Services/Assets/`:
   - store photo according to system file storage pattern
   - create AUDITED event
 
-### BulkOperationService (only creation & dispatch stub here)
-- createOperation(CreateBulkOperationDTO): BulkOperation
-- addItems(op, assetIds): void
-- dispatch(op): void
 
 Requirements:
 - All write operations use DB::transaction()
@@ -253,7 +242,6 @@ Methods:
 - changeState
 - return
 - viewReports
-- bulkExecute
 
 Requirements:
 - Use Spatie permission checks
@@ -304,7 +292,7 @@ Output:
 
 ## Stage 8 — Livewire UI: Assets List & Detail
 Implement:
-- AssetsIndex: filters + pagination + selection (for bulk)
+- AssetsIndex: filters + pagination
 - AssetShow: details + timeline paginated
 
 Requirements:
@@ -348,26 +336,6 @@ Requirements:
 - Mobile-friendly layout using system components
 - PT-BR translations
 - authorize audit
-
-Output:
-- List created/modified files with paths.
-
----
-
-## Stage 11 — Bulk Operations (Queue)
-Implement:
-- Job: `app/Jobs/Assets/ProcessBulkOperationJob.php`
-- UI: BulkOperationProgress
-- Integration: create bulk ops from selection on AssetsIndex
-
-Requirements:
-- Process items in chunks of 200
-- Track per-item OK/FAIL and error messages
-- Mark bulk status DONE/PARTIAL/FAILED
-- Use services for actual operations
-- Safe retries where possible
-- PT-BR translations
-- authorize bulk.execute
 
 Output:
 - List created/modified files with paths.

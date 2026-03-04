@@ -4,6 +4,17 @@ use App\Http\Controllers\Audit\LogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
+use App\Livewire\Assets\InvoiceForm;
+use App\Livewire\Assets\InvoiceIndex;
+use App\Livewire\Assets\InvoiceShow;
+use App\Livewire\Assets\AssetShow;
+use App\Livewire\Assets\AssetsIndex;
+use App\Livewire\Assets\AssetsByState;
+use App\Livewire\Assets\AssetsByUnit;
+use App\Livewire\Assets\AuditsByPeriod;
+use App\Livewire\Assets\AuditMobile;
+use App\Livewire\Assets\PurchasesByPeriod;
+use App\Livewire\Assets\TransfersByPeriod;
 use App\Livewire\Administration\Task\TaskStatusPage;
 use App\Livewire\Administration\User\UserPage;
 use App\Livewire\Configuration\Establishment\Establishment\EstablishmentList;
@@ -21,6 +32,7 @@ use App\Livewire\Organization\Workflow\WorkflowProcessesPage;
 use App\Livewire\Public\Contact\ContactPage;
 use App\Livewire\Task\TaskHubPage;
 use App\Livewire\Task\TaskPage;
+use App\Models\Assets\Asset;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -68,6 +80,31 @@ Route::middleware(['auth', 'verified'])->group(function () {
     */
     Route::get('/tarefas', TaskHubPage::class)->name('tasks.index');
     Route::get('/tarefas/{uuid}', TaskPage::class)->name('tasks.show');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Ativos
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('ativos')->name('assets.')->group(function () {
+        Route::get('/lista', AssetsIndex::class)->name('index');
+        Route::get('/item/{uuid}', AssetShow::class)->name('show');
+        Route::get('/auditoria-mobile', AuditMobile::class)->name('audit-mobile');
+        Route::prefix('relatorios')->name('reports.')->middleware('can:viewReports,'.Asset::class)->group(function () {
+            Route::get('/ativos-por-unidade', AssetsByUnit::class)->name('assets-by-unit');
+            Route::get('/ativos-por-estado', AssetsByState::class)->name('assets-by-state');
+            Route::get('/transferencias', TransfersByPeriod::class)->name('transfers-by-period');
+            Route::get('/auditorias', AuditsByPeriod::class)->name('audits-by-period');
+            Route::get('/compras', PurchasesByPeriod::class)->name('purchases-by-period');
+        });
+
+        Route::prefix('notas')->name('invoices.')->middleware('can:manageInvoices,'.Asset::class)->group(function () {
+            Route::get('/', InvoiceIndex::class)->name('index');
+            Route::get('/nova', InvoiceForm::class)->name('create');
+            Route::get('/{uuid}', InvoiceShow::class)->name('show');
+            Route::get('/{uuid}/editar', InvoiceForm::class)->name('edit');
+        });
+    });
 
     /*
     |--------------------------------------------------------------------------

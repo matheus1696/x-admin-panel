@@ -17,7 +17,7 @@
         <table class="w-full text-[13px] table-auto relative">
             
             <!-- Cabeçalho Sticky com Design Premium -->
-            <thead class="sticky top-0 z-10 bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-800 text-[12px] text-white uppercase tracking-wider shadow-lg">
+            <thead class="sticky top-0 z-10 bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-800 text-[12px] text-white uppercase tracking-wider shadow-lg text-left">
                 <tr>
                     {{ $thead ?? '' }}
                 </tr>

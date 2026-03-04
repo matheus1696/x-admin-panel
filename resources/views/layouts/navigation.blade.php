@@ -135,6 +135,55 @@
         </x-sidebar.main-dropdown>
     @endcanany
 
+    @canany(['assets.view','assets.invoices.manage','assets.stock.receive','assets.release','assets.transfer','assets.audit','assets.state.change','assets.return','assets.reports.view'])
+        <x-sidebar.main-dropdown
+            title="Ativos"
+            icon="fa-solid fa-boxes-stacked"
+            :active="request()->routeIs('assets.*')"
+        >
+            @can('assets.view')
+                <x-sidebar.dropdown-link
+                    href="{{ route('assets.index') }}"
+                    title="Lista de Ativos"
+                    icon="fa-solid fa-box-archive"
+                    :active="request()->routeIs('assets.index') || request()->routeIs('assets.show')"
+                />
+            @endcan
+
+            @can('assets.invoices.manage')
+                <x-sidebar.dropdown-link
+                    href="{{ route('assets.invoices.index') }}"
+                    title="Notas Fiscais"
+                    icon="fa-solid fa-file-invoice-dollar"
+                    :active="request()->routeIs('assets.invoices.*')"
+                />
+            @endcan
+
+            @can('assets.audit')
+                <x-sidebar.dropdown-link
+                    href="{{ route('assets.audit-mobile') }}"
+                    title="Auditoria Mobile"
+                    icon="fa-solid fa-camera"
+                    :active="request()->routeIs('assets.audit-mobile')"
+                />
+            @endcan
+
+            @can('assets.reports.view')
+                <x-sidebar.dropdown
+                    title="Relatorios"
+                    icon="fa-solid fa-chart-column"
+                    :active="request()->routeIs('assets.reports.*')"
+                >
+                    <x-sidebar.dropdown-link href="{{ route('assets.reports.assets-by-unit') }}" title="Ativos por Unidade" />
+                    <x-sidebar.dropdown-link href="{{ route('assets.reports.assets-by-state') }}" title="Ativos por Estado" />
+                    <x-sidebar.dropdown-link href="{{ route('assets.reports.transfers-by-period') }}" title="Transferencias" />
+                    <x-sidebar.dropdown-link href="{{ route('assets.reports.audits-by-period') }}" title="Auditorias" />
+                    <x-sidebar.dropdown-link href="{{ route('assets.reports.purchases-by-period') }}" title="Compras" />
+                </x-sidebar.dropdown>
+            @endcan
+        </x-sidebar.main-dropdown>
+    @endcanany
+
     @can('audit.logs.view')
         <x-sidebar.main-link
             href="{{ route('audit.logs.view') }}"

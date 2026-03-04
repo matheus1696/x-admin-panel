@@ -74,6 +74,52 @@ class PermissionSeeder extends Seeder
                 'translation' => 'Permissões de Usuários',
             ],
 
+            // Ativos (Patrimonio)
+            [
+                'name' => 'assets.view',
+                'description' => 'Visualizar ativos',
+                'translation' => 'Visualizar ativos',
+            ],
+            [
+                'name' => 'assets.invoices.manage',
+                'description' => 'Gerenciar notas de ativos',
+                'translation' => 'Gerenciar notas de ativos',
+            ],
+            [
+                'name' => 'assets.stock.receive',
+                'description' => 'Receber ativos em estoque',
+                'translation' => 'Receber ativos em estoque',
+            ],
+            [
+                'name' => 'assets.release',
+                'description' => 'Liberar ativos',
+                'translation' => 'Liberar ativos',
+            ],
+            [
+                'name' => 'assets.transfer',
+                'description' => 'Transferir ativos',
+                'translation' => 'Transferir ativos',
+            ],
+            [
+                'name' => 'assets.audit',
+                'description' => 'Auditar ativos',
+                'translation' => 'Auditar ativos',
+            ],
+            [
+                'name' => 'assets.state.change',
+                'description' => 'Alterar estado de ativos',
+                'translation' => 'Alterar estado de ativos',
+            ],
+            [
+                'name' => 'assets.return',
+                'description' => 'Retornar ativos ao patrimonio',
+                'translation' => 'Retornar ativos ao patrimonio',
+            ],
+            [
+                'name' => 'assets.reports.view',
+                'description' => 'Visualizar relatorios de ativos',
+                'translation' => 'Visualizar relatorios de ativos',
+            ],
             // Auditoria
             [
                 'name' => 'audit.logs.view',
