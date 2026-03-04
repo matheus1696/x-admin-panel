@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Services\Notification\NotificationService;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,18 +25,28 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Define o estilo padrão de paginação
         Paginator::defaultView('components.pagination');
 
-        // Define o estilo padrão de paginação
-        VerifyEmail::toMailUsing(function ($notifiable, $url) {
+        View::composer('layouts.app', function ($view): void {
+            $summary = [
+                'unread_count' => 0,
+                'recent' => collect(),
+            ];
 
-        return (new \Illuminate\Notifications\Messages\MailMessage)
-            ->subject('Verifique sua conta')
-            ->view('emails.administration.users.user_verification', [
-                'user' => $notifiable,
-                'verificationUrl' => $url,
-            ]);
-    });
+            if (Auth::check()) {
+                $summary = app(NotificationService::class)->summaryForUser(Auth::user());
+            }
+
+            $view->with('layoutNotificationSummary', $summary);
+        });
+
+        VerifyEmail::toMailUsing(function ($notifiable, $url) {
+            return (new MailMessage)
+                ->subject('Verifique sua conta')
+                ->view('emails.administration.users.user_verification', [
+                    'user' => $notifiable,
+                    'verificationUrl' => $url,
+                ]);
+        });
     }
 }

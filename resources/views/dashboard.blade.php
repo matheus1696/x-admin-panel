@@ -6,6 +6,10 @@
             'overdue' => 0,
             'statuses' => [],
         ];
+        $notificationSummary = $notificationSummary ?? [
+            'unread_count' => 0,
+            'recent' => collect(),
+        ];
 
         $statusTotal = collect($taskOverview['statuses'])->sum('total');
         $statusOffset = 0;
@@ -242,7 +246,7 @@
                             </div>
                             <div class="relative">
                                 <i class="fas fa-bell text-emerald-800 text-sm"></i>
-                                @if(Auth::user()->password_default)
+                                @if(Auth::user()->password_default || (($notificationSummary['unread_count'] ?? 0) > 0))
                                     <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
                                     <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                                 @endif
@@ -250,7 +254,7 @@
                         </div>
                     </div>
 
-                    <div class="p-3">
+                    <div class="space-y-3 p-3">
                         @if(Auth::user()->password_default)
                             <div class="group relative overflow-hidden rounded-xl bg-gradient-to-br from-yellow-50 to-yellow-100/80 border border-yellow-200/80 shadow-sm hover:shadow-md transition-all duration-300">
                                 <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-yellow-500 to-amber-500"></div>
@@ -281,7 +285,7 @@
                                     </div>
                                 </div>
                             </div>
-                        @else
+                        @elseif(($notificationSummary['recent'] ?? collect())->isEmpty())
                             <div class="flex flex-col items-center justify-center py-8 text-center">
                                 <div class="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mb-3">
                                     <i class="fa-regular fa-bell-slash text-gray-400 text-2xl"></i>
@@ -290,10 +294,31 @@
                                 <p class="text-xs text-gray-500 mt-1">Nenhuma notificação no momento</p>
                             </div>
                         @endif
+
+                        @foreach ($notificationSummary['recent'] as $notification)
+                            <div class="rounded-xl border {{ $notification['is_read'] ? 'border-gray-200 bg-white' : 'border-emerald-200 bg-emerald-50/40' }} px-4 py-3">
+                                <div class="flex items-start gap-3">
+                                    <div class="mt-0.5 flex h-9 w-9 items-center justify-center rounded-xl {{ $notification['is_read'] ? 'bg-gray-100 text-gray-500' : 'bg-emerald-100 text-emerald-700' }}">
+                                        <i class="{{ $notification['icon'] }}"></i>
+                                    </div>
+
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex items-center justify-between gap-3">
+                                            <p class="truncate text-xs font-semibold text-gray-900">{{ $notification['title'] }}</p>
+                                            @if (! $notification['is_read'])
+                                                <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-700">Nova</span>
+                                            @endif
+                                        </div>
+                                        <p class="mt-1 text-xs leading-relaxed text-gray-600">{{ $notification['message'] }}</p>
+                                        <p class="mt-2 text-[11px] text-gray-400">{{ $notification['created_at']?->format('d/m/Y H:i') }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
 
                     <div class="px-6 py-3 border-t border-gray-200/80 bg-gradient-to-r from-gray-50/50 to-white/50">
-                        <x-button href="#" variant="gray_text" class="w-full !text-gray-500 hover:!text-emerald-700 !text-xs flex items-center justify-center gap-1">
+                        <x-button href="{{ route('notifications.index') }}" variant="gray_text" class="w-full !text-gray-500 hover:!text-emerald-700 !text-xs flex items-center justify-center gap-1">
                             <i class="fas fa-history text-[10px]"></i>
                             Ver histórico de notificações
                             <i class="fas fa-chevron-right text-[8px]"></i>

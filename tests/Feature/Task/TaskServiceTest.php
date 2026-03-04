@@ -1140,3 +1140,42 @@ test('stepKanban filters steps by task, organization, and responsible user', fun
     expect(collect($byUser)->flatMap(fn ($column) => $column['steps']->pluck('id'))->all())->toBe([$stepA->id]);
     expect($stepB->id)->not->toBe($stepA->id);
 });
+
+test('addMember notifies the user when added to a task hub', function () {
+    $owner = User::factory()->create();
+    $member = User::factory()->create();
+
+    $hub = createTaskHubForTaskService($owner, 'Hub Notificacao', 'HUBN');
+
+    $added = app(TaskService::class)->addMember($hub->uuid, $owner->id, $member->id);
+
+    expect($added)->toBeTrue();
+    expect($member->notifications()->count())->toBe(1);
+    expect($member->notifications()->first()->data['title'])->toBe('Voce foi associado a um ambiente de tarefas');
+});
+
+test('create notifies the responsible user when a task is assigned on creation', function () {
+    $owner = User::factory()->create();
+    $responsible = User::factory()->create();
+    Auth::login($owner);
+
+    $hub = createTaskHubForTaskService($owner, 'Hub Tarefa', 'HUBT');
+
+    TaskHubMember::create([
+        'task_hub_id' => $hub->id,
+        'user_id' => $responsible->id,
+    ]);
+
+    app(TaskService::class)->create($hub->uuid, [
+        'title' => 'Nova tarefa com responsavel',
+        'user_id' => $responsible->id,
+        'task_category_id' => null,
+        'task_priority_id' => null,
+        'task_status_id' => null,
+        'description' => null,
+        'deadline_at' => null,
+    ]);
+
+    expect($responsible->notifications()->count())->toBe(1);
+    expect($responsible->notifications()->first()->data['title'])->toBe('Voce foi associado a uma tarefa');
+});

@@ -8,6 +8,7 @@ use App\Models\Task\TaskActivity;
 use App\Services\Administration\Task\TaskStatusService;
 use App\Services\Task\TaskCategoryService;
 use App\Services\Task\TaskService;
+use App\Support\Notifications\InteractsWithSystemNotifications;
 use App\Validation\Task\TaskStepRules;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,7 @@ use Livewire\Component;
 
 class TaskAside extends Component
 {
+    use InteractsWithSystemNotifications;
     use WithFlashMessage;
 
     protected TaskService $taskService;
@@ -106,6 +108,7 @@ class TaskAside extends Component
             ->pluck('id')
             ->map(fn ($id): int => (int) $id)
             ->all();
+        $previousResponsibleId = (int) ($this->task->user_id ?? 0);
 
         $data = $this->validate(TaskStepRules::responsable($allowedUserIds));
 
@@ -121,7 +124,21 @@ class TaskAside extends Component
             'description' => Auth::user()->name.' alterou o responsável',
         ]);
 
-        $this->task->refresh();
+        $this->task->refresh()->load(['taskHub', 'user']);
+
+        if ($this->task->user && (int) $this->task->user->id !== $previousResponsibleId) {
+            $this->notifyUsers(
+                $this->task->user,
+                'Voce foi associado a uma tarefa',
+                'A tarefa '.$this->task->code.' - '.$this->task->title.' foi atribuida a voce.',
+                [
+                    'url' => route('tasks.show', $this->task->taskHub->uuid),
+                    'icon' => 'fa-solid fa-list-check',
+                    'level' => 'info',
+                ]
+            );
+        }
+
         $this->flashSuccess('Responsável atualizado.');
     }
 

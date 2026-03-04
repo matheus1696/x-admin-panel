@@ -14,6 +14,7 @@ use App\Services\Task\TaskCategoryService;
 use App\Services\Administration\Task\TaskStatusService;
 use App\Services\Administration\Task\TaskStepStatusService;
 use App\Services\Task\TaskService;
+use App\Support\Notifications\InteractsWithSystemNotifications;
 use App\Validation\Task\TaskCategoryRules;
 use App\Validation\Task\TaskRules;
 use App\Validation\Task\TaskStepRules;
@@ -27,6 +28,7 @@ use Livewire\WithPagination;
 #[Layout('layouts.app')]
 class TaskPage extends Component
 {
+    use InteractsWithSystemNotifications;
     use Modal, WithFlashMessage, WithPagination;
 
     protected TaskService $taskService;
@@ -416,7 +418,7 @@ class TaskPage extends Component
             ->where('task_hub_id', $this->taskHubInternalId)
             ->findOrFail($taskId);
 
-        TaskStep::create([
+        $step = TaskStep::create([
             'task_hub_id' => $this->taskHubInternalId,
             'task_id' => $task->id,
             'title' => $data['step_title'],
@@ -427,6 +429,21 @@ class TaskPage extends Component
             'kanban_order' => $this->taskService->nextStepKanbanOrder($this->taskHubInternalId, $data['task_step_status_id']),
             'created_user_id' => Auth::id(),
         ]);
+
+        $step->load(['task.taskHub', 'organization.users']);
+
+        if ($step->organization && $step->organization->users->isNotEmpty()) {
+            $this->notifyUsers(
+                $step->organization->users,
+                'Seu setor foi associado a uma tarefa',
+                'A etapa '.$step->code.' da tarefa '.($step->task?->code ?? $task->code).' foi direcionada ao setor '.$step->organization->title.'.',
+                [
+                    'url' => route('tasks.show', $step->task?->taskHub?->uuid ?? $this->taskHubId),
+                    'icon' => 'fa-solid fa-sitemap',
+                    'level' => 'info',
+                ]
+            );
+        }
 
         $this->cancelCreateTaskStep();
         $this->dispatch('step-form-closed');

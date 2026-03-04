@@ -3,16 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ActivityLogHelper;
+use App\Services\Notification\NotificationService;
 use App\Services\Task\TaskService;
 
 class DashboardController extends Controller
 {
-    public function index(TaskService $taskService)
+    public function index(TaskService $taskService, NotificationService $notificationService)
     {
-        ActivityLogHelper::action('Página do painel após autenticação');
+        ActivityLogHelper::action('Pagina do painel apos autenticacao');
+        $user = request()->user();
 
         return view('dashboard', [
-            'taskOverview' => $taskService->userOverview((int) request()->user()->id),
+            'taskOverview' => $taskService->userOverview((int) $user->id),
+            'notificationSummary' => $notificationService->summaryForUser($user),
         ]);
     }
 }

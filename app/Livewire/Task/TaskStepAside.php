@@ -10,6 +10,7 @@ use App\Models\Task\TaskStep;
 use App\Models\Task\TaskStepActivity;
 use App\Services\Administration\Task\TaskStepStatusService;
 use App\Services\Task\TaskService;
+use App\Support\Notifications\InteractsWithSystemNotifications;
 use App\Validation\Task\TaskStepRules;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,7 @@ use function Livewire\str;
 
 class TaskStepAside extends Component
 {
+    use InteractsWithSystemNotifications;
     use WithFlashMessage;
 
     protected TaskStepStatusService $taskStepStatusesService;
@@ -110,6 +112,7 @@ class TaskStepAside extends Component
             ->pluck('id')
             ->map(fn ($id): int => (int) $id)
             ->all();
+        $previousOrganizationId = (int) ($this->step->organization_id ?? 0);
 
         $data = $this->validate(TaskStepRules::organizationResponsable($allowedOrganizationIds));
 
@@ -133,7 +136,24 @@ class TaskStepAside extends Component
         ]);
 
         $this->flashSuccess('Responsável atualizado.');
-        $this->step->refresh();
+        $this->step->refresh()->load(['task.taskHub', 'organization.users']);
+
+        if (
+            $this->step->organization
+            && (int) $this->step->organization->id !== $previousOrganizationId
+            && $this->step->organization->users->isNotEmpty()
+        ) {
+            $this->notifyUsers(
+                $this->step->organization->users,
+                'Seu setor foi associado a uma tarefa',
+                'A etapa '.$this->step->code.' da tarefa '.($this->step->task?->code ?? 'sem codigo').' foi direcionada ao setor '.$this->step->organization->title.'.',
+                [
+                    'url' => route('tasks.show', $this->step->task?->taskHub?->uuid ?? $this->step->taskHub->uuid),
+                    'icon' => 'fa-solid fa-sitemap',
+                    'level' => 'info',
+                ]
+            );
+        }
     }
 
     public function updatedResponsableId()

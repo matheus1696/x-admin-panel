@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Audit\LogController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Livewire\Administration\Task\TaskStatusPage;
 use App\Livewire\Administration\User\UserPage;
@@ -46,6 +47,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     /* Dashboard */
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::prefix('notificacoes')->name('notifications.')->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::post('/marcar-todas', [NotificationController::class, 'readAll'])->name('read-all');
+        Route::post('/{notificationId}/marcar', [NotificationController::class, 'read'])->name('read');
+    });
 
     /*
     |--------------------------------------------------------------------------

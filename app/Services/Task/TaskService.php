@@ -13,6 +13,7 @@ use App\Models\Task\TaskHub;
 use App\Models\Task\TaskHubMember;
 use App\Models\Task\TaskStep;
 use App\Models\Task\TaskStepActivity;
+use App\Support\Notifications\InteractsWithSystemNotifications;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +21,8 @@ use Illuminate\Support\Facades\DB;
 
 class TaskService
 {
+    use InteractsWithSystemNotifications;
+
     public function availableWorkflows(): Collection
     {
         return Workflow::query()
@@ -195,10 +198,27 @@ class TaskService
             return false;
         }
 
-        TaskHubMember::firstOrCreate([
+        $membership = TaskHubMember::firstOrCreate([
             'task_hub_id' => $taskHub->id,
             'user_id' => $memberUserId,
         ]);
+
+        if ($membership->wasRecentlyCreated) {
+            $memberUser = User::query()->find($memberUserId);
+
+            if ($memberUser) {
+                $this->notifyUsers(
+                    $memberUser,
+                    'Voce foi associado a um ambiente de tarefas',
+                    'Agora voce tem acesso ao ambiente '.$taskHub->title.'.',
+                    [
+                        'url' => route('tasks.show', $taskHub->uuid),
+                        'icon' => 'fa-solid fa-layer-group',
+                        'level' => 'info',
+                    ]
+                );
+            }
+        }
 
         return true;
     }
@@ -263,6 +283,23 @@ class TaskService
                 'task_hub_id' => $taskHub->id,
                 'user_id' => $userId,
             ]);
+        }
+
+        $users = User::query()
+            ->whereIn('id', $newUserIds)
+            ->get();
+
+        if ($users->isNotEmpty()) {
+            $this->notifyUsers(
+                $users,
+                'Voce foi associado a um ambiente de tarefas',
+                'Seu acesso ao ambiente '.$taskHub->title.' foi liberado por vinculacao de setor.',
+                [
+                    'url' => route('tasks.show', $taskHub->uuid),
+                    'icon' => 'fa-solid fa-layer-group',
+                    'level' => 'info',
+                ]
+            );
         }
 
         return count($newUserIds);
@@ -448,6 +485,21 @@ class TaskService
             'type' => 'created',
             'description' => 'Tarefa criada por '.Auth::user()->name,
         ]);
+
+        $task->refresh()->load(['taskHub', 'user']);
+
+        if ($task->user) {
+            $this->notifyUsers(
+                $task->user,
+                'Voce foi associado a uma tarefa',
+                'A tarefa '.$task->code.' - '.$task->title.' foi atribuida a voce.',
+                [
+                    'url' => route('tasks.show', $task->taskHub->uuid),
+                    'icon' => 'fa-solid fa-list-check',
+                    'level' => 'info',
+                ]
+            );
+        }
     }
 
     public function update(int $id, array $data): void
