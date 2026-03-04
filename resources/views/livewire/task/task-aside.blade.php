@@ -138,8 +138,50 @@
 
             <!-- CONTENT -->
             <div class="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-gray-50/50 [&::-webkit-scrollbar-thumb]:bg-gray-300/50 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-gray-400/50">
+
+                <!-- Cópia do Fluxo -->
+                @if (! $task->finished_at && $task->taskSteps->isEmpty() && $workflows->isNotEmpty())
+                    <section class="p-6 border-b border-gray-100/80 bg-gradient-to-br from-sky-50/40 to-white">
+                        <div class="flex items-center gap-3 mb-5">
+                            <div class="flex items-center justify-center size-10 bg-gradient-to-br from-sky-50 to-cyan-100/80 rounded-xl shadow-sm">
+                                <i class="fas fa-diagram-project text-sky-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-900">Copiar Fluxo de Trabalho</h3>
+                                <p class="text-xs text-gray-500">Cria as etapas a partir de um workflow ativo.</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <x-form.label value="Fluxo de Trabalho" />
+                                <x-form.select-livewire
+                                    wire:model.live="workflow_id"
+                                    name="workflow_id"
+                                    :collection="$workflows"
+                                    valueField="id"
+                                    labelField="title"
+                                    placeholder="Selecione um fluxo"
+                                />
+                            </div>
+
+                            <div class="rounded-xl border border-sky-100 bg-white/80 px-4 py-3 text-xs text-gray-600">
+                                As etapas serão criadas com o título e o setor do workflow. Os dias configurados em cada etapa serão acumulados para definir o prazo das etapas e o prazo final da tarefa.
+                            </div>
+
+                            <div class="flex justify-end">
+                                <x-button
+                                    type="button"
+                                    text="Copiar Fluxo"
+                                    icon="fas fa-copy"
+                                    wire:click="copyWorkflowToTask"
+                                />
+                            </div>
+                        </div>
+                    </section>
+                @endif
                 
-                <!-- DESCRIÇÃO -->
+                <!-- Descrição -->
                 <section class="p-6 border-b border-gray-100/80 bg-white/30" x-data="{ chars: {{ strlen(trim($task->description ?? '')) }} }">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center gap-3">

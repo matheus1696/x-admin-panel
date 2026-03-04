@@ -4,17 +4,17 @@ namespace App\Livewire\Task;
 
 use App\Livewire\Traits\Modal;
 use App\Livewire\Traits\WithFlashMessage;
-use App\Models\Administration\Task\TaskCategory;
 use App\Models\Administration\Task\TaskPriority;
 use App\Models\Administration\Task\TaskStepStatus;
 use App\Models\Administration\User\User;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Task\Task;
-use App\Models\Task\TaskHub;
 use App\Models\Task\TaskStep;
+use App\Services\Task\TaskCategoryService;
 use App\Services\Administration\Task\TaskStatusService;
 use App\Services\Administration\Task\TaskStepStatusService;
 use App\Services\Task\TaskService;
+use App\Validation\Task\TaskCategoryRules;
 use App\Validation\Task\TaskRules;
 use App\Validation\Task\TaskStepRules;
 use Illuminate\Support\Collection;
@@ -31,19 +31,28 @@ class TaskPage extends Component
 
     protected TaskService $taskService;
 
+    protected TaskCategoryService $taskCategoryService;
+
     protected TaskStatusService $taskStatusService;
 
     protected TaskStepStatusService $taskStepStatusService;
 
     public array $filters = [
         'title' => '',
-        'workflow_run_status_id' => 'all',
+        'organization_id' => '',
+        'user_id' => '',
+        'task_category_id' => '',
+        'task_status_id' => '',
+        'task_priority_id' => '',
+        'is_overdue' => 'all',
         'perPage' => 50,
     ];
 
     public Collection $users;
 
     public Collection $taskCategories;
+
+    public Collection $taskHubCategories;
 
     public Collection $taskPriorities;
 
@@ -68,6 +77,8 @@ class TaskPage extends Component
     public ?int $user_id = null;
 
     public ?int $task_category_id = null;
+
+    public ?int $taskHubCategoryId = null;
 
     public ?int $task_priority_id = null;
 
@@ -107,12 +118,18 @@ class TaskPage extends Component
 
     public ?string $pendingStepMoveReasonType = null;
 
+    public string $taskHubCategoryTitle = '';
+
+    public ?string $taskHubCategoryDescription = null;
+
     public function boot(
         TaskService $taskService,
+        TaskCategoryService $taskCategoryService,
         TaskStatusService $taskStatusService,
         TaskStepStatusService $taskStepStatusService
     ): void {
         $this->taskService = $taskService;
+        $this->taskCategoryService = $taskCategoryService;
         $this->taskStatusService = $taskStatusService;
         $this->taskStepStatusService = $taskStepStatusService;
     }
@@ -129,6 +146,16 @@ class TaskPage extends Component
         $this->task_step_status_id = $this->taskStepStatuses->firstWhere('is_default', true)?->id;
     }
 
+    protected function refreshTaskCategories(): void
+    {
+        $this->taskCategories = $this->taskCategoryService->visibleForHub($this->taskHubInternalId, true);
+        $this->taskHubCategories = $this->taskCategoryService->localForHub($this->taskHubInternalId);
+
+        if ($this->task_category_id !== null && ! $this->taskCategories->contains('id', $this->task_category_id)) {
+            $this->task_category_id = null;
+        }
+    }
+
     public function mount(string $uuid): void
     {
         $userId = Auth::user()->id;
@@ -140,15 +167,31 @@ class TaskPage extends Component
         $this->taskHubOwnerId = (int) $taskHub->owner_id;
         $this->users = User::orderBy('name')->get();
         $this->organizations = OrganizationChart::orderBy('order')->get();
-        $this->taskCategories = TaskCategory::orderBy('title')->get();
         $this->taskPriorities = TaskPriority::orderBy('level')->get();
         $this->taskStatuses = $this->taskStatusService->index();
         $this->taskStepStatuses = $this->taskStepStatusService->index();
+        $this->refreshTaskCategories();
         $this->setStepDefaults();
     }
 
     public function updatedFilters(): void
     {
+        $this->resetPage();
+    }
+
+    public function resetListFilters(): void
+    {
+        $this->filters = [
+            'title' => '',
+            'organization_id' => '',
+            'user_id' => '',
+            'task_category_id' => '',
+            'task_status_id' => '',
+            'task_priority_id' => '',
+            'is_overdue' => 'all',
+            'perPage' => $this->filters['perPage'] ?? 50,
+        ];
+
         $this->resetPage();
     }
 
@@ -194,9 +237,14 @@ class TaskPage extends Component
             ->pluck('id')
             ->map(fn ($id): int => (int) $id)
             ->all();
+        $availableCategoryIds = $this->taskCategories
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
 
         $data = $this->validate(array_merge(TaskRules::store(), [
             'user_id' => ['nullable', Rule::in($accessUserIds)],
+            'task_category_id' => ['nullable', Rule::in($availableCategoryIds)],
         ]));
 
         $this->taskService->create($this->taskHubId, $data);
@@ -204,6 +252,98 @@ class TaskPage extends Component
         $this->resetForm();
         $this->closeModal();
         $this->flashSuccess('Tarefa criada com sucesso.');
+    }
+
+    public function createTaskCategory(): void
+    {
+        $this->reset('taskHubCategoryId', 'taskHubCategoryTitle', 'taskHubCategoryDescription');
+        $this->openModal('modal-task-category-create');
+    }
+
+    public function storeTaskCategory(): void
+    {
+        $data = $this->validate(TaskCategoryRules::store($this->taskHubInternalId));
+
+        $category = $this->taskCategoryService->createForHub(
+            $this->taskHubInternalId,
+            (int) Auth::id(),
+            [
+                'title' => $data['taskHubCategoryTitle'],
+                'description' => $data['taskHubCategoryDescription'] ?? null,
+            ]
+        );
+
+        if (! $category) {
+            $this->flashError('Apenas o proprietário pode gerenciar as categorias deste ambiente.');
+
+            return;
+        }
+
+        $this->refreshTaskCategories();
+        $this->closeModal();
+        $this->flashSuccess('Categoria do ambiente criada com sucesso.');
+    }
+
+    public function editTaskCategory(int $id): void
+    {
+        $category = $this->taskHubCategories->firstWhere('id', $id);
+
+        if (! $category) {
+            abort(404);
+        }
+
+        $this->taskHubCategoryId = $category->id;
+        $this->taskHubCategoryTitle = $category->title;
+        $this->taskHubCategoryDescription = $category->description;
+
+        $this->openModal('modal-task-category-edit');
+    }
+
+    public function updateTaskCategory(): void
+    {
+        if (! $this->taskHubCategoryId) {
+            return;
+        }
+
+        $data = $this->validate(TaskCategoryRules::store($this->taskHubInternalId, $this->taskHubCategoryId));
+
+        $updated = $this->taskCategoryService->updateForHub(
+            $this->taskHubInternalId,
+            (int) Auth::id(),
+            $this->taskHubCategoryId,
+            [
+                'title' => $data['taskHubCategoryTitle'],
+                'description' => $data['taskHubCategoryDescription'] ?? null,
+            ]
+        );
+
+        if (! $updated) {
+            $this->flashError('Apenas o proprietário pode gerenciar as categorias deste ambiente.');
+
+            return;
+        }
+
+        $this->refreshTaskCategories();
+        $this->closeModal();
+        $this->flashSuccess('Categoria do ambiente atualizada com sucesso.');
+    }
+
+    public function toggleTaskCategoryStatus(int $id): void
+    {
+        $updated = $this->taskCategoryService->toggleStatusForHub(
+            $this->taskHubInternalId,
+            (int) Auth::id(),
+            $id
+        );
+
+        if (! $updated) {
+            $this->flashError('Apenas o proprietário pode gerenciar as categorias deste ambiente.');
+
+            return;
+        }
+
+        $this->refreshTaskCategories();
+        $this->flashSuccess('Status da categoria atualizado com sucesso.');
     }
 
     public function openAsideTask(int $id): void
@@ -288,6 +428,18 @@ class TaskPage extends Component
         $this->selectedStepId = null;
     }
 
+    public function openMemberShareModal(): void
+    {
+        $this->reset('member_user_id');
+        $this->openModal('modal-task-member-share');
+    }
+
+    public function openOrganizationShareModal(): void
+    {
+        $this->reset('member_organization_id');
+        $this->openModal('modal-task-organization-share');
+    }
+
     public function addMember(): void
     {
         $data = $this->validate([
@@ -313,12 +465,13 @@ class TaskPage extends Component
         );
 
         if (! $added) {
-            $this->flashError('Apenas o proprietÃ¡rio pode gerenciar os membros do ambiente.');
+            $this->flashError('Apenas o proprietário pode gerenciar os membros do ambiente.');
 
             return;
         }
 
         $this->member_user_id = null;
+        $this->closeModal();
         $this->flashSuccess('Membro adicionado ao ambiente com sucesso.');
     }
 
@@ -357,12 +510,13 @@ class TaskPage extends Component
         );
 
         if (! $added) {
-            $this->flashError('NÃ£o foi possÃ­vel compartilhar este setor.');
+            $this->flashError('Não foi possível compartilhar este setor.');
 
             return;
         }
 
         $this->member_organization_id = null;
+        $this->closeModal();
         $this->flashSuccess('Setor adicionado ao compartilhamento com sucesso.');
     }
 
@@ -375,7 +529,7 @@ class TaskPage extends Component
         );
 
         if (! $removed) {
-            $this->flashError('NÃ£o foi possÃ­vel remover este setor do compartilhamento.');
+            $this->flashError('Não foi possível remover este setor do compartilhamento.');
 
             return;
         }
@@ -408,7 +562,7 @@ class TaskPage extends Component
         );
 
         if (! $removed) {
-            $this->flashError('NÃ£o foi possÃ­vel remover este membro do ambiente.');
+            $this->flashError('Não foi possível remover este membro do ambiente.');
 
             return;
         }
@@ -419,7 +573,7 @@ class TaskPage extends Component
     public function requestStepKanbanDrop(int $stepId, int $fromStatusId, int $toStatusId, array $targetOrder): void
     {
         if ($this->isInvalidStepTerminalSwap($fromStatusId, $toStatusId)) {
-            $this->flashError('NÃ£o Ã© permitido mover uma etapa cancelada para concluÃ­da ou uma etapa concluÃ­da para cancelada.');
+            $this->flashError('Não é permitido mover uma etapa cancelada para concluída ou uma etapa concluída para cancelada.');
 
             return;
         }
@@ -454,7 +608,7 @@ class TaskPage extends Component
         $completionComment = $completionComment !== null ? trim($completionComment) : null;
 
         if ($this->isInvalidStepTerminalSwap($fromStatusId, $toStatusId)) {
-            $this->flashError('NÃ£o Ã© permitido mover uma etapa cancelada para concluÃ­da ou uma etapa concluÃ­da para cancelada.');
+            $this->flashError('Não é permitido mover uma etapa cancelada para concluída ou uma etapa concluída para cancelada.');
 
             return;
         }
@@ -468,7 +622,7 @@ class TaskPage extends Component
         ) {
             $this->flashError(
                 match ($reasonType) {
-                    'completion' => 'Informe um comentÃ¡rio para concluir a etapa.',
+                    'completion' => 'Informe um comentário para concluir a etapa.',
                     'cancellation' => 'Informe o motivo para cancelar a etapa.',
                     'reopen' => 'Informe o motivo para reabrir a etapa.',
                     default => 'Informe um motivo para continuar.',
@@ -517,7 +671,7 @@ class TaskPage extends Component
 
         $targetOrder = $normalizedTargetOrder->all();
 
-        $this->taskService->moveKanbanStep(
+        $moved = $this->taskService->moveKanbanStep(
             $this->taskHubId,
             $stepId,
             $fromStatusId,
@@ -527,6 +681,10 @@ class TaskPage extends Component
             $completionComment,
             $completionComment !== null && $fromStatusId !== $toStatusId ? $reasonType : null
         );
+
+        if (! $moved && $fromStatusId !== $toStatusId && in_array($toStatusId, $this->stepInProgressStatusIds(), true)) {
+            $this->flashError('Não é possível iniciar esta etapa enquanto a etapa anterior obrigatória do fluxo estiver aberta.');
+        }
     }
 
     public function confirmStepCompletionMove(): void
@@ -570,7 +728,7 @@ class TaskPage extends Component
     private function stepCompletionStatusIds(): array
     {
         return TaskStepStatus::query()
-            ->where('title', 'ConcluÃ­da')
+            ->where('title', 'Concluída')
             ->pluck('id')
             ->map(fn ($id): int => (int) $id)
             ->all();
@@ -594,7 +752,19 @@ class TaskPage extends Component
     private function stepTerminalStatusIds(): array
     {
         return TaskStepStatus::query()
-            ->whereIn('title', ['ConcluÃ­da', 'Cancelada'])
+            ->whereIn('title', ['Concluída', 'Cancelada'])
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+    }
+
+    /**
+     * @return array<int>
+     */
+    private function stepInProgressStatusIds(): array
+    {
+        return $this->taskStepStatuses
+            ->filter(fn ($status): bool => in_array($status->title, ['Em andamento', 'Em execucao', 'Em execução'], true))
             ->pluck('id')
             ->map(fn ($id): int => (int) $id)
             ->all();
@@ -705,5 +875,4 @@ class TaskPage extends Component
         ]);
     }
 }
-
 

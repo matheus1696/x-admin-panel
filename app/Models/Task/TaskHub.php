@@ -3,6 +3,7 @@
 namespace App\Models\Task;
 
 use App\Models\Administration\User\User;
+use App\Models\Administration\Task\TaskCategory;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Traits\HasTitleFilter;
 use App\Models\Traits\HasUuid;
@@ -29,6 +30,11 @@ class TaskHub extends Model
         return $this->hasMany(Task::class, 'task_hub_id');
     }
 
+    public function taskCategories(): HasMany
+    {
+        return $this->hasMany(TaskCategory::class, 'task_hub_id');
+    }
+
     public function taskSteps(): HasMany
     {
         return $this->hasMany(TaskStep::class, 'task_hub_id');
@@ -50,4 +56,3 @@ class TaskHub extends Model
             ->withTimestamps();
     }
 }
-

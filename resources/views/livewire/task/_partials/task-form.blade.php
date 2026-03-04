@@ -1,21 +1,21 @@
-﻿@php($showActions = $showActions ?? true)
+@php($showActions = $showActions ?? true)
 
 <div class="grid grid-cols-12 gap-4 items-start">
     <div class="col-span-12">
-        <x-form.label value="TÃ­tulo" for="title" />
+        <x-form.label value="Título" for="title" />
         <x-form.input
             type="text"
             id="title"
             name="title"
             wire:model.defer="title"
-            placeholder="TÃ­tulo da tarefa"
+            placeholder="Título da tarefa"
             autofocus
         />
         <x-form.error for="title" />
     </div>
 
     <div class="col-span-6">
-        <x-form.label value="ResponsÃ¡vel" for="user_id" />
+        <x-form.label value="Responsável" for="user_id" />
         <x-form.select-livewire
             id="user_id"
             name="user_id"
@@ -23,7 +23,7 @@
             :collection="$responsibleUsers"
             valueField="id"
             labelField="name"
-            default="Selecione o responsÃ¡vel"
+            default="Selecione o responsável"
         />
         <x-form.error for="user_id" />
     </div>

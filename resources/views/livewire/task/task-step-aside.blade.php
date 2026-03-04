@@ -128,7 +128,7 @@
             <!-- CONTENT - Scroll customizado (IGUAL AO TASK) -->
             <div class="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-gray-50/50 [&::-webkit-scrollbar-thumb]:bg-gray-300/50 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-gray-400/50">
                 
-                <!-- DESCRIÇÃO - IDÊNTICA AO TASK -->
+                <!-- Descrição -->
                 <section class="p-6 border-b border-gray-100/80 bg-white/30" x-data="{ chars: {{ strlen(trim($step->description ?? '')) }} }">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center gap-3">

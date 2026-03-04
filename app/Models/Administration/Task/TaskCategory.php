@@ -3,12 +3,15 @@
 namespace App\Models\Administration\Task;
 
 use App\Models\Task\Task;
+use App\Models\Task\TaskHub;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TaskCategory extends Model
 {
     protected $fillable = [
+        'task_hub_id',
         'title',
         'description',
         'is_default',
@@ -20,8 +23,15 @@ class TaskCategory extends Model
         return $this->hasMany(Task::class);
     }
 
-    public static function default(): ?static
+    public function taskHub(): BelongsTo
     {
-        return static::where('is_default', true)->first();
+        return $this->belongsTo(TaskHub::class, 'task_hub_id');
+    }
+
+    public static function defaultForHub(int $taskHubId): ?static
+    {
+        return static::where('task_hub_id', $taskHubId)
+            ->where('is_default', true)
+            ->first();
     }
 }

@@ -47,7 +47,7 @@ test('moveKanbanStep stores reason metadata when provided', function () {
         $done->id,
         [],
         [$step->id],
-        'Finalizada com evidÃªncia',
+        'Finalizada com evidência',
         'completion'
     );
 
@@ -56,6 +56,6 @@ test('moveKanbanStep stores reason metadata when provided', function () {
         ->first();
 
     expect($activity)->not->toBeNull();
-    expect($activity->meta['reason'])->toBe('Finalizada com evidÃªncia');
+    expect($activity->meta['reason'])->toBe('Finalizada com evidência');
     expect($activity->meta['reason_type'])->toBe('completion');
 });

@@ -79,7 +79,7 @@ class TaskStepAside extends Component
         $this->step = null;
         $this->stepId = $stepId;
 
-        // Listas estÃ¡ticas
+        // Listas estáticas
         $this->users = collect();
         $this->organizations = collect();
         $this->taskPriorities = TaskPriority::orderBy('level')->get();
@@ -129,10 +129,10 @@ class TaskStepAside extends Component
             'task_step_id' => $this->step->id,
             'user_id' => Auth::user()->id,
             'type' => 'organization_responsable_change',
-            'description' => Auth::user()->name.' alterou o responsÃ¡vel',
+            'description' => Auth::user()->name.' alterou o responsável',
         ]);
 
-        $this->flashSuccess('ResponsÃ¡vel atualizado.');
+        $this->flashSuccess('Responsável atualizado.');
         $this->step->refresh();
     }
 
@@ -151,10 +151,10 @@ class TaskStepAside extends Component
             'task_step_id' => $this->step->id,
             'user_id' => Auth::user()->id,
             'type' => 'responsable_change',
-            'description' => Auth::user()->name.' alterou o responsÃ¡vel',
+            'description' => Auth::user()->name.' alterou o responsável',
         ]);
 
-        $this->flashSuccess('ResponsÃ¡vel atualizado.');
+        $this->flashSuccess('Responsável atualizado.');
         $this->step->refresh();
     }
 
@@ -267,23 +267,20 @@ class TaskStepAside extends Component
     {
         $data = $this->validate(TaskStepRules::status());
 
-        if ($data['list_status_id'] == 3) {
-            $this->step->update([
-                'task_status_id' => $data['list_status_id'],
-                'started_at' => now(),
-            ]);
-        } else {
-            $this->step->update([
-                'task_status_id' => $data['list_status_id'],
-            ]);
+        $updatedStep = $this->taskService->changeStepStatus(
+            $this->step->id,
+            $data['list_status_id'],
+            Auth::user()->name.' alterou o status'
+        );
+
+        if (! $updatedStep) {
+            $this->step->refresh();
+            $this->flashError('Não é possível iniciar esta etapa enquanto a etapa anterior obrigatória do fluxo estiver aberta.');
+
+            return;
         }
 
-        TaskStepActivity::create([
-            'task_step_id' => $this->step->id,
-            'user_id' => Auth::user()->id,
-            'type' => 'status_change',
-            'description' => Auth::user()->name.' alterou o status',
-        ]);
+        $this->step = $updatedStep;
 
         $this->flashSuccess('Status atualizado.');
         $this->step->refresh();
@@ -318,7 +315,7 @@ class TaskStepAside extends Component
         $this->isEditingDescription = false;
         $this->savingDescription = false;
 
-        $this->flashSuccess('DescriÃ§Ã£o atualizado.');
+        $this->flashSuccess('Descrição atualizado.');
         $this->step->refresh();
     }
 
@@ -388,7 +385,7 @@ class TaskStepAside extends Component
         $this->taskService->completeStep($this->step->id, $data['comment']);
 
         $this->comment = '';
-        $this->flashSuccess('Etapa marcada como concluÃ­da.');
+        $this->flashSuccess('Etapa marcada como concluída.');
         $this->step->refresh();
     }
 

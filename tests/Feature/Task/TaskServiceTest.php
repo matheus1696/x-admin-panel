@@ -1,9 +1,13 @@
 <?php
 
+use App\Models\Administration\Task\TaskCategory;
+use App\Models\Administration\Task\TaskPriority;
 use App\Models\Administration\Task\TaskStatus;
 use App\Models\Administration\Task\TaskStepStatus;
 use App\Models\Administration\User\User;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
+use App\Models\Organization\Workflow\Workflow;
+use App\Models\Organization\Workflow\WorkflowStep;
 use App\Models\Task\Task;
 use App\Models\Task\TaskActivity;
 use App\Models\Task\TaskHub;
@@ -40,6 +44,268 @@ test('storeComment updates task updated_at and creates activity', function () {
 
     expect($task->updated_at->greaterThan(now()->subMinute()))->toBeTrue();
     expect(TaskActivity::where('task_id', $task->id)->count())->toBe(1);
+});
+
+test('index applies list filters for task page', function () {
+    $owner = User::factory()->create();
+    $responsible = User::factory()->create();
+    $otherResponsible = User::factory()->create();
+    $hub = createTaskHubForTaskService($owner, 'Hub Filtros', 'HUBF');
+
+    $organization = OrganizationChart::create([
+        'acronym' => 'OPE',
+        'title' => 'Operações',
+        'order' => 1,
+        'hierarchy' => '1',
+        'number_hierarchy' => 1,
+    ]);
+    $otherOrganization = OrganizationChart::create([
+        'acronym' => 'COM',
+        'title' => 'Comercial',
+        'order' => 2,
+        'hierarchy' => '2',
+        'number_hierarchy' => 2,
+    ]);
+
+    $category = TaskCategory::create([
+        'task_hub_id' => $hub->id,
+        'title' => 'Operacional',
+        'is_active' => true,
+    ]);
+    $otherCategory = TaskCategory::create([
+        'task_hub_id' => $hub->id,
+        'title' => 'Estratégica',
+        'is_active' => true,
+    ]);
+
+    $priority = TaskPriority::create([
+        'title' => 'Alta',
+        'level' => 1,
+        'is_active' => true,
+    ]);
+    $otherPriority = TaskPriority::create([
+        'title' => 'Baixa',
+        'level' => 2,
+        'is_active' => true,
+    ]);
+
+    $status = TaskStatus::create(['title' => 'Em andamento']);
+    $otherStatus = TaskStatus::create(['title' => 'Pendente']);
+
+    $matchingTask = Task::create([
+        'task_hub_id' => $hub->id,
+        'title' => 'Task filtrada',
+        'user_id' => $responsible->id,
+        'task_category_id' => $category->id,
+        'task_priority_id' => $priority->id,
+        'task_status_id' => $status->id,
+        'deadline_at' => now()->subDay(),
+    ]);
+
+    TaskStep::create([
+        'task_id' => $matchingTask->id,
+        'task_hub_id' => $hub->id,
+        'title' => 'Etapa filtrada',
+        'organization_id' => $organization->id,
+    ]);
+
+    $otherTask = Task::create([
+        'task_hub_id' => $hub->id,
+        'title' => 'Task fora do filtro',
+        'user_id' => $otherResponsible->id,
+        'task_category_id' => $otherCategory->id,
+        'task_priority_id' => $otherPriority->id,
+        'task_status_id' => $otherStatus->id,
+        'deadline_at' => now()->addDay(),
+    ]);
+
+    TaskStep::create([
+        'task_id' => $otherTask->id,
+        'task_hub_id' => $hub->id,
+        'title' => 'Outra etapa',
+        'organization_id' => $otherOrganization->id,
+    ]);
+
+    $results = app(TaskService::class)->index($hub->uuid, [
+        'title' => '',
+        'organization_id' => (string) $organization->id,
+        'user_id' => (string) $responsible->id,
+        'task_category_id' => (string) $category->id,
+        'task_status_id' => (string) $status->id,
+        'task_priority_id' => (string) $priority->id,
+        'is_overdue' => 'yes',
+        'perPage' => 50,
+    ]);
+
+    expect($results->total())->toBe(1);
+    expect($results->items()[0]->id)->toBe($matchingTask->id);
+});
+
+test('copyWorkflowToTask copies workflow steps with accumulated deadlines and blocks duplicates', function () {
+    $owner = User::factory()->create();
+    Auth::login($owner);
+
+    $hub = createTaskHubForTaskService($owner, 'Hub Workflow Copy', 'HUWC');
+
+    $defaultStepStatus = TaskStepStatus::create([
+        'title' => 'Pendente',
+        'is_default' => true,
+    ]);
+
+    $organizationA = OrganizationChart::create([
+        'acronym' => 'TRI',
+        'title' => 'Triagem',
+        'order' => 1,
+        'hierarchy' => '1',
+        'number_hierarchy' => 1,
+    ]);
+
+    $organizationB = OrganizationChart::create([
+        'acronym' => 'ANA',
+        'title' => 'Análise',
+        'order' => 2,
+        'hierarchy' => '2',
+        'number_hierarchy' => 2,
+    ]);
+
+    $workflow = Workflow::create([
+        'title' => 'Fluxo Operacional',
+        'is_active' => true,
+        'total_estimated_days' => 5,
+    ]);
+
+    WorkflowStep::create([
+        'workflow_id' => $workflow->id,
+        'title' => 'Triar solicitação',
+        'step_order' => 1,
+        'deadline_days' => 2,
+        'required' => true,
+        'organization_id' => $organizationA->id,
+    ]);
+
+    WorkflowStep::create([
+        'workflow_id' => $workflow->id,
+        'title' => 'Analisar demanda',
+        'step_order' => 2,
+        'deadline_days' => 3,
+        'required' => false,
+        'allow_parallel' => true,
+        'organization_id' => $organizationB->id,
+    ]);
+
+    $task = Task::create([
+        'task_hub_id' => $hub->id,
+        'title' => 'Task sem etapas',
+    ])->fresh();
+
+    $copied = app(TaskService::class)->copyWorkflowToTask($task->id, $workflow->id);
+
+    $task->refresh();
+    $steps = TaskStep::query()
+        ->where('task_id', $task->id)
+        ->orderBy('id')
+        ->get();
+    $baseDate = $task->created_at->copy()->startOfDay();
+
+    expect($copied)->toBeTrue();
+    expect($steps)->toHaveCount(2);
+    expect($steps[0]->title)->toBe('Triar solicitação');
+    expect($steps[0]->organization_id)->toBe($organizationA->id);
+    expect($steps[0]->task_status_id)->toBe($defaultStepStatus->id);
+    expect($steps[0]->workflow_step_order)->toBe(1);
+    expect($steps[0]->is_required)->toBeTrue();
+    expect($steps[0]->allow_parallel)->toBeFalse();
+    expect($steps[0]->deadline_at?->format('Y-m-d'))->toBe($baseDate->copy()->addDays(2)->format('Y-m-d'));
+    expect($steps[1]->title)->toBe('Analisar demanda');
+    expect($steps[1]->organization_id)->toBe($organizationB->id);
+    expect($steps[1]->workflow_step_order)->toBe(2);
+    expect($steps[1]->is_required)->toBeFalse();
+    expect($steps[1]->allow_parallel)->toBeTrue();
+    expect($steps[1]->deadline_at?->format('Y-m-d'))->toBe($baseDate->copy()->addDays(5)->format('Y-m-d'));
+    expect($task->deadline_at?->format('Y-m-d'))->toBe($baseDate->copy()->addDays(5)->format('Y-m-d'));
+    expect(TaskActivity::where('task_id', $task->id)->where('type', 'workflow_copy')->count())->toBe(1);
+
+    $copiedAgain = app(TaskService::class)->copyWorkflowToTask($task->id, $workflow->id);
+
+    expect($copiedAgain)->toBeFalse();
+    expect(TaskStep::query()->where('task_id', $task->id)->count())->toBe(2);
+});
+
+test('moveKanbanStep blocks starting next workflow step while previous required step is open', function () {
+    $user = User::factory()->create();
+    Auth::login($user);
+
+    $hub = createTaskHubForTaskService($user, 'Hub Workflow Sequence', 'HUWS');
+
+    $pending = TaskStepStatus::create(['title' => 'Pendente']);
+    $running = TaskStepStatus::create(['title' => 'Em andamento']);
+
+    $task = Task::create([
+        'task_hub_id' => $hub->id,
+        'title' => 'Task com fluxo',
+    ]);
+
+    $stepOne = TaskStep::create([
+        'task_id' => $task->id,
+        'task_hub_id' => $hub->id,
+        'title' => 'Etapa 1',
+        'task_status_id' => $pending->id,
+        'workflow_step_order' => 1,
+        'is_required' => true,
+        'allow_parallel' => false,
+        'kanban_order' => 1,
+    ]);
+
+    $stepTwo = TaskStep::create([
+        'task_id' => $task->id,
+        'task_hub_id' => $hub->id,
+        'title' => 'Etapa 2',
+        'task_status_id' => $pending->id,
+        'workflow_step_order' => 2,
+        'is_required' => true,
+        'allow_parallel' => false,
+        'kanban_order' => 2,
+    ]);
+
+    $moved = app(TaskService::class)->moveKanbanStep(
+        $hub->uuid,
+        $stepTwo->id,
+        $pending->id,
+        $running->id,
+        [$stepOne->id],
+        [$stepTwo->id],
+        null,
+        null
+    );
+
+    $stepTwo->refresh();
+
+    expect($moved)->toBeFalse();
+    expect($stepTwo->task_status_id)->toBe($pending->id);
+    expect($stepTwo->started_at)->toBeNull();
+
+    $stepOne->update([
+        'task_status_id' => $running->id,
+        'started_at' => now()->subDay(),
+        'finished_at' => now(),
+    ]);
+
+    $movedAfterPreviousFinished = app(TaskService::class)->moveKanbanStep(
+        $hub->uuid,
+        $stepTwo->id,
+        $pending->id,
+        $running->id,
+        [],
+        [$stepTwo->id],
+        null,
+        null
+    );
+
+    $stepTwo->refresh();
+
+    expect($movedAfterPreviousFinished)->toBeTrue();
+    expect($stepTwo->task_status_id)->toBe($running->id);
+    expect($stepTwo->started_at)->not->toBeNull();
 });
 
 test('dashboard aggregates task and step metrics for a hub', function () {
@@ -308,7 +574,7 @@ test('moveKanbanTask stores reason metadata when provided', function () {
         $done->id,
         [],
         [$task->id],
-        'Finalizado com evidÃªncias',
+        'Finalizado com evidências',
         'completion'
     );
 
@@ -317,7 +583,7 @@ test('moveKanbanTask stores reason metadata when provided', function () {
         ->first();
 
     expect($activity)->not->toBeNull();
-    expect($activity->meta['reason'])->toBe('Finalizado com evidÃªncias');
+    expect($activity->meta['reason'])->toBe('Finalizado com evidências');
     expect($activity->meta['reason_type'])->toBe('completion');
 });
 
@@ -453,6 +719,7 @@ test('moveKanbanStep updates status, ordering, and history', function () {
     $stepA2->refresh();
 
     expect($stepA2->task_status_id)->toBe($running->id);
+    expect($stepA2->started_at)->not->toBeNull();
     expect(
         TaskStep::query()
             ->where('task_status_id', $pending->id)
@@ -474,6 +741,11 @@ test('moveKanbanStep updates status, ordering, and history', function () {
             ->where('type', 'kanban_move')
             ->count()
     )->toBe(1);
+    expect(
+        TaskStepActivity::where('task_step_id', $stepA2->id)
+            ->where('type', 'kanban_move')
+            ->value('description')
+    )->toContain('moveu a etapa no kanban para Em execucao');
 });
 
 test('moveKanbanStep stores completion comment and completion log in task activities', function () {
@@ -518,6 +790,41 @@ test('moveKanbanStep stores completion comment and completion log in task activi
     expect($taskComments[0]->description)->toBe('Entrega validada pelo setor.');
     expect($taskComments[1]->type)->toBe('step_finished_change');
     expect($taskComments[1]->description)->toContain('concluiu a etapa Etapa Final');
+});
+
+test('changeStepStatus fills started_at and finished_at for steps', function () {
+    $user = User::factory()->create();
+    Auth::login($user);
+
+    $hub = createTaskHubForTaskService($user, 'Hub Step Status Change', 'HUSC');
+
+    $pending = TaskStepStatus::create(['title' => 'Pendente']);
+    $inProgress = TaskStepStatus::create(['title' => 'Em andamento']);
+    $done = TaskStepStatus::create(['title' => 'Concluída']);
+
+    $task = Task::create([
+        'task_hub_id' => $hub->id,
+        'title' => 'Task Step Status Change',
+    ]);
+
+    $step = TaskStep::create([
+        'task_id' => $task->id,
+        'task_hub_id' => $hub->id,
+        'title' => 'Etapa com mudança direta',
+        'task_status_id' => $pending->id,
+    ]);
+
+    $step = app(TaskService::class)->changeStepStatus($step->id, $inProgress->id);
+
+    expect($step->task_status_id)->toBe($inProgress->id);
+    expect($step->started_at)->not->toBeNull();
+    expect($step->finished_at)->toBeNull();
+
+    $step = app(TaskService::class)->changeStepStatus($step->id, $done->id);
+
+    expect($step->task_status_id)->toBe($done->id);
+    expect($step->started_at)->not->toBeNull();
+    expect($step->finished_at)->not->toBeNull();
 });
 
 test('completeStep requires comment flow to write task activities', function () {

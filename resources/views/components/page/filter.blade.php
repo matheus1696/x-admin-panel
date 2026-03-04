@@ -20,11 +20,11 @@
                 <button 
                     type="button"
                     wire:click="{{ $clearAction }}"
-                    class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-medium
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-medium
                            bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-600
                            transition-all duration-200"
                 >
-                    <i class="fas fa-times text-[8px]"></i>
+                    <i class="fas fa-times text-xs transition-all duration-300 group-hover:text-emerald-700"></i>
                     <span>Limpar</span>
                 </button>
             @endif
@@ -32,7 +32,7 @@
             <button 
                 type="button" 
                 @click="openAccordion = !openAccordion" 
-                class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium 
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-medium
                        bg-gray-100 text-gray-700 hover:bg-emerald-100 hover:text-emerald-700 
                        transition-all duration-200 group"
             >

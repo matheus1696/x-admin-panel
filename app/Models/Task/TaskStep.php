@@ -27,6 +27,9 @@ class TaskStep extends Model
         'task_category_id',
         'task_priority_id',
         'task_status_id',
+        'workflow_step_order',
+        'is_required',
+        'allow_parallel',
         'kanban_order',
         'started_at',
         'deadline_at',
@@ -35,6 +38,9 @@ class TaskStep extends Model
     ];
 
     protected $casts = [
+        'workflow_step_order' => 'integer',
+        'is_required' => 'boolean',
+        'allow_parallel' => 'boolean',
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
         'deadline_at' => 'datetime',

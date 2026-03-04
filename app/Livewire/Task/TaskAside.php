@@ -3,14 +3,15 @@
 namespace App\Livewire\Task;
 
 use App\Livewire\Traits\WithFlashMessage;
-use App\Models\Administration\Task\TaskCategory;
 use App\Models\Administration\Task\TaskPriority;
 use App\Models\Task\TaskActivity;
 use App\Services\Administration\Task\TaskStatusService;
+use App\Services\Task\TaskCategoryService;
 use App\Services\Task\TaskService;
 use App\Validation\Task\TaskStepRules;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class TaskAside extends Component
@@ -18,6 +19,8 @@ class TaskAside extends Component
     use WithFlashMessage;
 
     protected TaskService $taskService;
+
+    protected TaskCategoryService $taskCategoryService;
 
     protected TaskStatusService $taskStatusService;
 
@@ -33,6 +36,8 @@ class TaskAside extends Component
 
     public Collection $taskPriorities;
 
+    public Collection $workflows;
+
     public $description = '';
 
     public $responsable_id;
@@ -47,6 +52,8 @@ class TaskAside extends Component
 
     public $comment;
 
+    public $workflow_id = null;
+
     public $isEditingDescription = false;
 
     public $savingDescription = false;
@@ -57,9 +64,14 @@ class TaskAside extends Component
 
     public $isLoading = true;
 
-    public function boot(TaskService $taskService, TaskStatusService $taskStatusService)
+    public function boot(
+        TaskService $taskService,
+        TaskCategoryService $taskCategoryService,
+        TaskStatusService $taskStatusService
+    )
     {
         $this->taskService = $taskService;
+        $this->taskCategoryService = $taskCategoryService;
         $this->taskStatusService = $taskStatusService;
     }
 
@@ -69,11 +81,13 @@ class TaskAside extends Component
         $this->task = null;
         $this->taskId = $taskId;
 
-        // Listas estÃ¡ticas
+        // Listas estáticas
         $this->users = collect();
         $this->taskPriorities = TaskPriority::orderBy('level')->get();
-        $this->taskCategories = TaskCategory::orderBy('title')->get();
+        $this->taskCategories = collect();
         $this->taskStatuses = $this->taskStatusService->index();
+        $this->workflows = $this->taskService->availableWorkflows();
+        $this->workflow_id = $this->workflows->first()?->id;
 
         $this->loadTask();
     }
@@ -82,6 +96,7 @@ class TaskAside extends Component
     {
         $this->task = $this->taskService->find($this->taskId);
         $this->users = $this->taskService->accessUsersByHubId($this->task->task_hub_id);
+        $this->taskCategories = $this->taskCategoryService->visibleForHub($this->task->task_hub_id, true);
         $this->isLoading = false;
     }
 
@@ -103,16 +118,23 @@ class TaskAside extends Component
             'task_id' => $this->task->id,
             'user_id' => Auth::user()->id,
             'type' => 'responsable_change',
-            'description' => Auth::user()->name.' alterou o responsÃ¡vel',
+            'description' => Auth::user()->name.' alterou o responsável',
         ]);
 
         $this->task->refresh();
-        $this->flashSuccess('ResponsÃ¡vel atualizado.');
+        $this->flashSuccess('Responsável atualizado.');
     }
 
     public function updatedListCategoryId()
     {
-        $data = $this->validate(TaskStepRules::category());
+        $availableCategoryIds = $this->taskCategories
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+
+        $data = $this->validate([
+            'list_category_id' => ['nullable', Rule::in($availableCategoryIds)],
+        ]);
 
         $this->task->update([
             'task_category_id' => $data['list_category_id'],
@@ -183,14 +205,14 @@ class TaskAside extends Component
             'task_id' => $this->task->id,
             'user_id' => Auth::user()->id,
             'type' => 'description_change',
-            'description' => Auth::user()->name.' alterou a descriÃ§Ã£o',
+            'description' => Auth::user()->name.' alterou a descrição',
         ]);
 
         $this->isEditingDescription = false;
         $this->savingDescription = false;
 
         $this->task->refresh();
-        $this->flashSuccess('DescriÃ§Ã£o atualizada.');
+        $this->flashSuccess('Descrição atualizada.');
     }
 
     public function enableDeadlineEdit()
@@ -241,16 +263,40 @@ class TaskAside extends Component
         $this->task->refresh();
     }
 
+    public function copyWorkflowToTask(): void
+    {
+        $workflowIds = $this->workflows
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+
+        $data = $this->validate([
+            'workflow_id' => ['required', Rule::in($workflowIds)],
+        ]);
+
+        $copied = $this->taskService->copyWorkflowToTask($this->task->id, (int) $data['workflow_id']);
+
+        if (! $copied) {
+            $this->loadTask();
+            $this->flashError('Não foi possível copiar o fluxo. Esta tarefa já possui etapas ou o fluxo selecionado está inválido.');
+
+            return;
+        }
+
+        $this->loadTask();
+        $this->flashSuccess('Fluxo de trabalho copiado para a tarefa com sucesso.');
+    }
+
     public function taskFinished()
     {
         $this->taskService->changeStatus(
             $this->task->id,
             4,
-            Auth::user()->name.' marcou a tarefa como concluÃ­da',
+            Auth::user()->name.' marcou a tarefa como concluída',
             'finished_change'
         );
 
-        $this->flashSuccess('Tarefa marcada como concluÃ­da.');
+        $this->flashSuccess('Tarefa marcada como concluída.');
         $this->task->refresh();
     }
 
@@ -259,4 +305,3 @@ class TaskAside extends Component
         return view('livewire.task.task-aside');
     }
 }
-

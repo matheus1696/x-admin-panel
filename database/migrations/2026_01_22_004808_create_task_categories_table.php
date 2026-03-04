@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('task_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->unique();
+            $table->foreignId('task_hub_id')->constrained('task_hubs')->cascadeOnDelete();
+            $table->string('title');
             $table->text('description')->nullable();
             $table->boolean('is_default')->default(false);
             $table->boolean('is_active')->default(true);
+            $table->unique(['task_hub_id', 'title'], 'task_categories_hub_title_unique');
+            $table->index(['task_hub_id', 'is_active'], 'task_categories_hub_active_index');
             $table->timestamps();
         });
     }
