@@ -1,5 +1,5 @@
 <div class="grid grid-cols-12 gap-2 -mt-4">
-    <div class="col-span-9 md:col-span-11">
+    <div class="col-span-9 md:col-span-10">
         <x-form.input
             type="text"
             name="step_title"
@@ -10,7 +10,7 @@
         />
     </div>
 
-    <div class="col-span-3 md:col-span-1 flex justify-center gap-2">
+    <div class="col-span-3 md:col-span-2 flex justify-center gap-2">
         <x-button
             type="button"
             icon="fa-solid fa-check"

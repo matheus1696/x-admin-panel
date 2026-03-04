@@ -48,6 +48,12 @@ class TaskPage extends Component
         'perPage' => 50,
     ];
 
+    public array $stepKanbanFilters = [
+        'task_id' => '',
+        'organization_id' => '',
+        'user_id' => '',
+    ];
+
     public Collection $users;
 
     public Collection $taskCategories;
@@ -193,6 +199,15 @@ class TaskPage extends Component
         ];
 
         $this->resetPage();
+    }
+
+    public function resetStepKanbanFilters(): void
+    {
+        $this->stepKanbanFilters = [
+            'task_id' => '',
+            'organization_id' => '',
+            'user_id' => '',
+        ];
     }
 
     public function resetForm(): void
@@ -572,6 +587,12 @@ class TaskPage extends Component
 
     public function requestStepKanbanDrop(int $stepId, int $fromStatusId, int $toStatusId, array $targetOrder): void
     {
+        if ($this->stepKanbanHasActiveFilters()) {
+            $this->flashError('Limpe os filtros do kanban para reorganizar etapas com seguranca.');
+
+            return;
+        }
+
         if ($this->isInvalidStepTerminalSwap($fromStatusId, $toStatusId)) {
             $this->flashError('Não é permitido mover uma etapa cancelada para concluída ou uma etapa concluída para cancelada.');
 
@@ -605,6 +626,12 @@ class TaskPage extends Component
         array $targetOrder,
         ?string $completionComment = null
     ): void {
+        if ($this->stepKanbanHasActiveFilters()) {
+            $this->flashError('Limpe os filtros do kanban para reorganizar etapas com seguranca.');
+
+            return;
+        }
+
         $completionComment = $completionComment !== null ? trim($completionComment) : null;
 
         if ($this->isInvalidStepTerminalSwap($fromStatusId, $toStatusId)) {
@@ -814,6 +841,12 @@ class TaskPage extends Component
         $this->reorderStepKanbanCard($stepId, $fromStatusId, $toStatusId, $targetOrder, $completionComment);
     }
 
+    private function stepKanbanHasActiveFilters(): bool
+    {
+        return collect($this->stepKanbanFilters)
+            ->contains(fn ($value): bool => $value !== null && $value !== '');
+    }
+
     private function resetPendingStepMove(): void
     {
         $this->pendingStepMoveStepId = null;
@@ -853,10 +886,18 @@ class TaskPage extends Component
             }
         }
 
+        $stepKanbanTaskOptions = Task::query()
+            ->where('task_hub_id', $this->taskHubInternalId)
+            ->orderBy('code')
+            ->orderBy('title')
+            ->get(['id', 'code', 'title']);
+
         return view('livewire.task.task-page', [
             'tasks' => $this->taskService->index($this->taskHubId, $this->filters),
             'dashboard' => $this->taskService->dashboard($this->taskHubId),
-            'stepKanban' => $this->taskService->stepKanban($this->taskHubId),
+            'stepKanban' => $this->taskService->stepKanban($this->taskHubId, $this->stepKanbanFilters),
+            'stepKanbanTaskOptions' => $stepKanbanTaskOptions,
+            'stepKanbanFiltersActive' => $this->stepKanbanHasActiveFilters(),
             'stepCompletionStatusIds' => $this->stepCompletionStatusIds(),
             'members' => $members,
             'responsibleUsers' => $responsibleUsers,
@@ -875,4 +916,3 @@ class TaskPage extends Component
         ]);
     }
 }
-

@@ -452,10 +452,7 @@ test('userOverview aggregates only hubs visible to the user', function () {
     expect($overview['total'])->toBe(3);
     expect($overview['overdue'])->toBe(1);
     expect(collect($overview['statuses'])->pluck('total')->sum())->toBe(3);
-    expect(collect($overview['users'])->pluck('total')->sum())->toBe(3);
-    expect(collect($overview['organizations'])->pluck('total')->sum())->toBe(1);
-    expect($overview['overdue_tasks'])->toHaveCount(1);
-    expect($overview['overdue_tasks'][0]['hub'])->toBe('HUBC');
+    expect($overview)->not->toHaveKeys(['users', 'organizations', 'overdue_tasks']);
 });
 
 test('moveKanbanTask updates status, ordering, and history', function () {
@@ -1067,4 +1064,79 @@ test('kanban hides tasks and steps finished more than three days ago', function 
 
     expect($stepIds)->not->toContain($oldStep->id);
     expect($stepIds)->toContain($recentStep->id);
+});
+
+test('stepKanban filters steps by task, organization, and responsible user', function () {
+    $owner = User::factory()->create();
+    $responsibleA = User::factory()->create(['name' => 'Responsavel A']);
+    $responsibleB = User::factory()->create(['name' => 'Responsavel B']);
+
+    $hub = createTaskHubForTaskService($owner, 'Hub Filtros', 'HUBF');
+
+    $status = TaskStepStatus::create([
+        'title' => 'Em andamento',
+    ]);
+
+    $organizationA = OrganizationChart::create([
+        'title' => 'Setor A',
+        'acronym' => 'STA',
+        'order' => 1,
+        'hierarchy' => 0,
+        'number_hierarchy' => '1',
+    ]);
+
+    $organizationB = OrganizationChart::create([
+        'title' => 'Setor B',
+        'acronym' => 'STB',
+        'order' => 2,
+        'hierarchy' => 0,
+        'number_hierarchy' => '2',
+    ]);
+
+    $taskA = Task::create([
+        'task_hub_id' => $hub->id,
+        'title' => 'Projeto A',
+    ]);
+
+    $taskB = Task::create([
+        'task_hub_id' => $hub->id,
+        'title' => 'Projeto B',
+    ]);
+
+    $stepA = TaskStep::create([
+        'task_id' => $taskA->id,
+        'task_hub_id' => $hub->id,
+        'title' => 'Etapa A',
+        'task_status_id' => $status->id,
+        'organization_id' => $organizationA->id,
+        'user_id' => $responsibleA->id,
+        'kanban_order' => 1,
+    ]);
+
+    $stepB = TaskStep::create([
+        'task_id' => $taskB->id,
+        'task_hub_id' => $hub->id,
+        'title' => 'Etapa B',
+        'task_status_id' => $status->id,
+        'organization_id' => $organizationB->id,
+        'user_id' => $responsibleB->id,
+        'kanban_order' => 2,
+    ]);
+
+    $byTask = app(TaskService::class)->stepKanban($hub->uuid, [
+        'task_id' => (string) $taskA->id,
+    ]);
+
+    $byOrganization = app(TaskService::class)->stepKanban($hub->uuid, [
+        'organization_id' => (string) $organizationA->id,
+    ]);
+
+    $byUser = app(TaskService::class)->stepKanban($hub->uuid, [
+        'user_id' => (string) $responsibleA->id,
+    ]);
+
+    expect(collect($byTask)->flatMap(fn ($column) => $column['steps']->pluck('id'))->all())->toBe([$stepA->id]);
+    expect(collect($byOrganization)->flatMap(fn ($column) => $column['steps']->pluck('id'))->all())->toBe([$stepA->id]);
+    expect(collect($byUser)->flatMap(fn ($column) => $column['steps']->pluck('id'))->all())->toBe([$stepA->id]);
+    expect($stepB->id)->not->toBe($stepA->id);
 });

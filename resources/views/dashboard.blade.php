@@ -5,9 +5,6 @@
             'total' => 0,
             'overdue' => 0,
             'statuses' => [],
-            'users' => [],
-            'organizations' => [],
-            'overdue_tasks' => [],
         ];
 
         $statusTotal = collect($taskOverview['statuses'])->sum('total');
@@ -29,8 +26,6 @@
             ? 'background: conic-gradient(' . implode(', ', $statusSegments) . ');'
             : 'background: #e5e7eb;';
 
-        $usersMax = max(1, (int) (collect($taskOverview['users'])->max('total') ?? 0));
-        $organizationsMax = max(1, (int) (collect($taskOverview['organizations'])->max('total') ?? 0));
     @endphp
 
     <div class="py-8 lg:py-2 space-y-8 mx-auto px-4 lg:px-6">
@@ -173,7 +168,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                <div>
                     <div class="bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl shadow-lg overflow-hidden">
                         <div class="px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
                             <div class="flex items-center gap-3">
@@ -231,112 +226,8 @@
                         </div>
                     </div>
 
-                    <div class="xl:col-span-2 bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl shadow-lg overflow-hidden">
-                        <div class="px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
-                            <div class="flex items-center gap-3">
-                                <div class="w-1 h-5 bg-gradient-to-b from-emerald-700 to-emerald-900 rounded-full"></div>
-                                <h4 class="text-sm font-semibold text-gray-700">Responsáveis e Setores</h4>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-                            <div class="space-y-4">
-                                <div class="flex items-center justify-between">
-                                    <h5 class="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Usuários</h5>
-                                    <span class="text-xs text-gray-400">Tarefas</span>
-                                </div>
-
-                                @forelse($taskOverview['users'] as $user)
-                                    <div class="space-y-1.5">
-                                        <div class="flex items-center justify-between gap-3 text-sm">
-                                            <span class="truncate text-gray-600">{{ $user['label'] }}</span>
-                                            <span class="font-semibold text-gray-900">{{ $user['total'] }}</span>
-                                        </div>
-                                        <div class="h-2.5 rounded-full bg-gray-100 overflow-hidden">
-                                            <div class="h-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-800"
-                                                 style="width: {{ max(12, (int) round(($user['total'] / $usersMax) * 100)) }}%"></div>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <p class="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-500">
-                                        Nenhum responsável com tarefas no momento.
-                                    </p>
-                                @endforelse
-                            </div>
-
-                            <div class="space-y-4">
-                                <div class="flex items-center justify-between">
-                                    <h5 class="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Setores</h5>
-                                    <span class="text-xs text-gray-400">Etapas</span>
-                                </div>
-
-                                @forelse($taskOverview['organizations'] as $organization)
-                                    <div class="space-y-1.5">
-                                        <div class="flex items-center justify-between gap-3 text-sm">
-                                            <span class="truncate text-gray-600">{{ $organization['label'] }}</span>
-                                            <span class="font-semibold text-gray-900">{{ $organization['total'] }}</span>
-                                        </div>
-                                        <div class="h-2.5 rounded-full bg-gray-100 overflow-hidden">
-                                            <div class="h-full rounded-full bg-gradient-to-r from-slate-500 to-slate-700"
-                                                 style="width: {{ max(12, (int) round(($organization['total'] / $organizationsMax) * 100)) }}%"></div>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <p class="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-500">
-                                        Nenhuma etapa vinculada a setores foi encontrada.
-                                    </p>
-                                @endforelse
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
-                <div class="bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl shadow-lg overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
-                        <div class="flex items-center justify-between gap-3">
-                            <div class="flex items-center gap-3">
-                                <div class="w-1 h-5 bg-gradient-to-b from-yellow-500 to-amber-600 rounded-full"></div>
-                                <h4 class="text-sm font-semibold text-gray-700">Tarefas Atrasadas</h4>
-                            </div>
-                            <span class="rounded-full bg-yellow-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-yellow-700">
-                                {{ $taskOverview['overdue'] }} pendências
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="p-6 space-y-3">
-                        @forelse($taskOverview['overdue_tasks'] as $task)
-                            <div class="flex flex-col gap-3 rounded-2xl border border-gray-200/80 bg-gradient-to-r from-white to-gray-50 px-4 py-4 md:flex-row md:items-center md:justify-between">
-                                <div class="min-w-0 space-y-1">
-                                    <div class="flex flex-wrap items-center gap-2">
-                                        <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-700">
-                                            {{ $task['hub'] }}
-                                        </span>
-                                        <span class="text-xs font-semibold text-gray-500">{{ $task['code'] }}</span>
-                                    </div>
-                                    <p class="truncate text-sm font-semibold text-gray-900">{{ $task['title'] }}</p>
-                                    <p class="text-xs text-gray-500">Responsável: {{ $task['responsible'] }}</p>
-                                </div>
-
-                                <div class="flex items-center gap-2 rounded-xl bg-yellow-50 px-3 py-2 text-xs font-medium text-yellow-800">
-                                    <i class="fa-solid fa-clock"></i>
-                                    <span>
-                                        Prazo:
-                                        {{ $task['deadline_at'] ? \Illuminate\Support\Carbon::parse($task['deadline_at'])->format('d/m/Y') : 'Não informado' }}
-                                    </span>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="flex flex-col items-center justify-center rounded-2xl bg-emerald-50 px-6 py-10 text-center">
-                                <div class="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
-                                    <i class="fa-solid fa-circle-check text-xl"></i>
-                                </div>
-                                <p class="text-sm font-semibold text-emerald-800">Nenhuma tarefa atrasada.</p>
-                                <p class="mt-1 text-xs text-emerald-700">As tarefas visíveis para você estão dentro do prazo.</p>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
             </div>
 
             <div class="space-y-6">

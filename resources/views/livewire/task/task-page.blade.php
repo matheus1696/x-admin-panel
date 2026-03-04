@@ -705,6 +705,55 @@
                     </div>
                 </div>
 
+                <div class="border-b border-amber-100 bg-amber-50/70 px-4 py-4 md:px-6">
+                    <div class="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)_auto]">
+                        <x-form.select-livewire
+                            wire:model.live="stepKanbanFilters.task_id"
+                            name="stepKanbanFilters.task_id"
+                            :collection="$stepKanbanTaskOptions"
+                            valueField="id"
+                            labelField="title"
+                            placeholder="Todos os projetos"
+                            borderColor="yellow"
+                        />
+
+                        <x-form.select-livewire
+                            wire:model.live="stepKanbanFilters.organization_id"
+                            name="stepKanbanFilters.organization_id"
+                            :collection="$accessibleOrganizations"
+                            valueField="id"
+                            labelField="title"
+                            labelAcronym="acronym"
+                            placeholder="Todos os setores"
+                            borderColor="yellow"
+                        />
+
+                        <x-form.select-livewire
+                            wire:model.live="stepKanbanFilters.user_id"
+                            name="stepKanbanFilters.user_id"
+                            :collection="$responsibleUsers"
+                            valueField="id"
+                            labelField="name"
+                            placeholder="Todos os responsaveis"
+                            borderColor="yellow"
+                        />
+
+                        <x-button
+                            type="button"
+                            text="Limpar"
+                            icon="fa-solid fa-filter-circle-xmark"
+                            variant="gray_outline"
+                            wire:click="resetStepKanbanFilters"
+                        />
+                    </div>
+
+                    @if ($stepKanbanFiltersActive)
+                        <div class="mt-3 rounded-2xl border border-amber-200 bg-white px-4 py-3 text-xs text-amber-800">
+                            Filtros ativos no kanban. A reorganizacao por arraste fica bloqueada para preservar a ordem real das etapas.
+                        </div>
+                    @endif
+                </div>
+
                 <div class="overflow-x-auto px-4 py-5 md:px-6">
                     <div class="grid min-w-[1080px] grid-flow-col auto-cols-[minmax(300px,1fr)] gap-5">
                         @forelse (($stepKanban ?? []) as $column)
@@ -822,12 +871,12 @@
                                             </div>
                                         </div>
 
-                                        <article class="cursor-grab rounded-2xl border {{ $columnTheme['card'] }} bg-white p-4 shadow-sm transition hover:shadow-md active:cursor-grabbing"
-                                                 draggable="true"
+                                        <article class="rounded-2xl border {{ $columnTheme['card'] }} bg-white p-4 shadow-sm transition hover:shadow-md {{ $stepKanbanFiltersActive ? 'cursor-default' : 'cursor-grab active:cursor-grabbing' }}"
+                                                 draggable="{{ $stepKanbanFiltersActive ? 'false' : 'true' }}"
                                                  @dragstart="
-                                                    draggedStepId = {{ $step->id }};
-                                                    draggedFromStatusId = {{ (int) $column['status_id'] }};
-                                                 "
+                                                     draggedStepId = {{ $step->id }};
+                                                     draggedFromStatusId = {{ (int) $column['status_id'] }};
+                                                  "
                                                  @dragend="
                                                     draggedStepId = null;
                                                     draggedFromStatusId = null;
@@ -1435,4 +1484,3 @@
         </x-modal>
     </div>
 </div>
-

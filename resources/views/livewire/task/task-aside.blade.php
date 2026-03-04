@@ -286,7 +286,7 @@
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
                         <div class="flex items-center justify-between p-3 bg-white/70 rounded-xl border border-gray-100/80 shadow-sm hover:border-gray-200 hover:bg-white/90 transition-all">
                             <span class="text-xs font-medium text-gray-500 flex items-center gap-2">
                                 <i class="fas fa-user-circle text-gray-400 transition-transform duration-300 group-hover:rotate-12 "></i>
