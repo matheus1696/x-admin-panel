@@ -3,6 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\Administration\User\User;
+use Database\Seeders\Administration\Product\ProductDepartmentSeeder;
+use Database\Seeders\Administration\Product\ProductMeasureUnitSeeder;
+use Database\Seeders\Administration\Product\ProductSeeder;
+use Database\Seeders\Administration\Product\ProductTypeSeeder;
+use Database\Seeders\Administration\Supplier\SupplierSeeder;
 use Database\Seeders\Administration\Task\TaskPrioritySeeder;
 use Database\Seeders\Administration\Task\TaskStatusSeeder;
 use Database\Seeders\Administration\Task\TaskStepCategorySeeder;
@@ -30,11 +35,16 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             PermissionSeeder::class,
+            ProductDepartmentSeeder::class,
+            ProductTypeSeeder::class,
+            ProductMeasureUnitSeeder::class,
+            ProductSeeder::class,
             OccupationSeeder::class,
             GenderSeeder::class,
             RegionCountrySeeder::class,
             RegionStateSeeder::class,
             RegionCitySeeder::class,
+            SupplierSeeder::class,
             FinancialBlockSeeder::class,
             EstablishmentTypesSeeder::class,
             EstablishmentSeeder::class,

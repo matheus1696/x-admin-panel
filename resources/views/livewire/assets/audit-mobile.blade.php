@@ -2,15 +2,15 @@
     <x-alert.flash />
 
     <x-page.header
-        :title="__('assets.audit_mobile.title')"
-        :subtitle="__('assets.audit_mobile.subtitle')"
+        :title="'Auditoria mobile'"
+        :subtitle="'Busque o ativo, capture a foto e registre a auditoria'"
         icon="fa-solid fa-camera"
         color="blue"
     >
         <x-slot name="button">
             <x-button
                 :href="route('assets.index')"
-                :text="__('assets.actions.back')"
+                :text="'Voltar'"
                 icon="fa-solid fa-arrow-left"
                 variant="gray_outline"
             />
@@ -21,17 +21,17 @@
         <div class="rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-50 to-white p-5 shadow-sm">
             <form wire:submit.prevent="searchAsset" class="space-y-4">
                 <div>
-                    <x-form.label :value="__('assets.audit_mobile.fields.search_code')" />
+                    <x-form.label :value="'Codigo do ativo'" />
                     <x-form.input
                         type="text"
                         wire:model="searchCode"
-                        :placeholder="__('assets.audit_mobile.placeholders.search_code')"
+                        :placeholder="'Digite ou escaneie o codigo do ativo'"
                     />
                     <x-form.error for="searchCode" />
                 </div>
 
                 <div class="flex justify-end">
-                    <x-button type="submit" :text="__('assets.audit_mobile.actions.search')" icon="fa-solid fa-magnifying-glass" />
+                    <x-button type="submit" :text="'Buscar ativo'" icon="fa-solid fa-magnifying-glass" />
                 </div>
             </form>
         </div>
@@ -48,19 +48,19 @@
 
                 <form wire:submit.prevent="audit" class="space-y-4">
                     <div>
-                        <x-form.label :value="__('assets.audit_mobile.fields.photo')" />
+                        <x-form.label :value="'Foto da auditoria'" />
                         <x-form.input type="file" wire:model="photo" accept="image/*" name="photo" />
                         <x-form.error for="photo" />
                     </div>
 
                     <div>
-                        <x-form.label :value="__('assets.audit_mobile.fields.notes')" />
+                        <x-form.label :value="'Observacoes'" />
                         <x-form.textarea wire:model="notes" rows="4" name="notes" />
                         <x-form.error for="notes" />
                     </div>
 
                     <div class="flex justify-end">
-                        <x-button type="submit" :text="__('assets.audit_mobile.actions.submit')" icon="fa-solid fa-camera-retro" />
+                        <x-button type="submit" :text="'Registrar auditoria'" icon="fa-solid fa-camera-retro" />
                     </div>
                 </form>
             </div>

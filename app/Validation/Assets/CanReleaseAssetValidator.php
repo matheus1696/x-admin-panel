@@ -15,7 +15,7 @@ class CanReleaseAssetValidator
 
     public function validateOrFail(Asset $asset, ReleaseAssetDTO $dto): void
     {
-        $this->allowedStateTransitionValidator->validateOrFail($asset->state, AssetState::RELEASED);
+        $this->allowedStateTransitionValidator->validateOrFail($asset->state, AssetState::IN_USE);
         $this->sectorBelongsToUnitValidator->validateOrFail($dto->unitId, $dto->sectorId);
     }
 }

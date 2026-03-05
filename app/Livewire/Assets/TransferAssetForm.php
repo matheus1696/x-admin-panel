@@ -23,6 +23,8 @@ class TransferAssetForm extends Component
 
     public int $assetId;
 
+    public bool $iconOnly = false;
+
     public ?int $unitId = null;
 
     public ?int $sectorId = null;
@@ -34,7 +36,7 @@ class TransferAssetForm extends Component
         $this->assetOperationService = $assetOperationService;
     }
 
-    public function mount(string $assetUuid): void
+    public function mount(string $assetUuid, bool $iconOnly = false): void
     {
         $asset = Asset::query()->where('uuid', $assetUuid)->firstOrFail();
 
@@ -42,6 +44,7 @@ class TransferAssetForm extends Component
 
         $this->assetUuid = $asset->uuid;
         $this->assetId = $asset->id;
+        $this->iconOnly = $iconOnly;
     }
 
     public function open(): void
@@ -71,7 +74,7 @@ class TransferAssetForm extends Component
             notes: $data['notes'],
         ));
 
-        $this->flashSuccess(__('assets.operations.transfer.messages.success'));
+        $this->flashSuccess('Ativo transferido com sucesso.');
 
         return redirect()->route('assets.show', $this->assetUuid);
     }

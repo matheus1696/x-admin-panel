@@ -82,7 +82,7 @@ class ReceiveStockForm extends Component
             actorUserId: auth()->id(),
         ));
 
-        $this->flashSuccess(__('assets.invoices.receive_stock.messages.success', ['count' => count($assets)]));
+        $this->flashSuccess(count($assets).' ativo(s) gerado(s) no estoque com sucesso.');
 
         return redirect()->route('assets.invoices.show', $this->invoiceUuid);
     }

@@ -2,6 +2,8 @@
 
 namespace App\Models\Assets;
 
+use App\Models\Administration\Product\Product;
+use App\Models\Administration\Product\ProductMeasureUnit;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasUuidRouteKey;
 use Illuminate\Database\Eloquent\Model;
@@ -15,6 +17,8 @@ class AssetInvoiceItem extends Model
     protected $fillable = [
         'uuid',
         'asset_invoice_id',
+        'product_id',
+        'product_measure_unit_id',
         'item_code',
         'description',
         'quantity',
@@ -43,5 +47,15 @@ class AssetInvoiceItem extends Model
     public function assets(): HasMany
     {
         return $this->hasMany(Asset::class, 'invoice_item_id');
+    }
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
+
+    public function measureUnit(): BelongsTo
+    {
+        return $this->belongsTo(ProductMeasureUnit::class, 'product_measure_unit_id');
     }
 }

@@ -11,12 +11,10 @@ class AllowedStateTransitionValidator
      * @var array<string, array<int, string>>
      */
     private array $allowedTransitions = [
-        'IN_STOCK' => ['RELEASED'],
-        'RELEASED' => ['IN_USE', 'MAINTENANCE', 'RETURNED_TO_PATRIMONY'],
-        'IN_USE' => ['MAINTENANCE'],
-        'MAINTENANCE' => ['RELEASED'],
+        'IN_STOCK' => ['IN_USE', 'MAINTENANCE', 'DAMAGED'],
+        'IN_USE' => ['IN_STOCK', 'MAINTENANCE', 'DAMAGED'],
+        'MAINTENANCE' => ['IN_STOCK', 'IN_USE', 'DAMAGED'],
         'DAMAGED' => [],
-        'RETURNED_TO_PATRIMONY' => [],
     ];
 
     public function validateOrFail(AssetState $fromState, AssetState $toState): void

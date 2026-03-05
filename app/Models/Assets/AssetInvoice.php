@@ -3,6 +3,7 @@
 namespace App\Models\Assets;
 
 use App\Models\Administration\User\User;
+use App\Models\Configuration\FinancialBlock\FinancialBlock;
 use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasUuidRouteKey;
 use Illuminate\Database\Eloquent\Model;
@@ -17,12 +18,17 @@ class AssetInvoice extends Model
         'uuid',
         'invoice_number',
         'invoice_series',
+        'financial_block_id',
         'supplier_name',
         'supplier_document',
+        'supply_order',
         'issue_date',
         'received_date',
         'total_amount',
         'notes',
+        'is_finalized',
+        'finalized_at',
+        'finalized_user_id',
         'created_user_id',
     ];
 
@@ -32,6 +38,8 @@ class AssetInvoice extends Model
             'issue_date' => 'date',
             'received_date' => 'date',
             'total_amount' => 'decimal:2',
+            'is_finalized' => 'boolean',
+            'finalized_at' => 'datetime',
         ];
     }
 
@@ -43,5 +51,15 @@ class AssetInvoice extends Model
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_user_id');
+    }
+
+    public function finalizedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'finalized_user_id');
+    }
+
+    public function financialBlock(): BelongsTo
+    {
+        return $this->belongsTo(FinancialBlock::class, 'financial_block_id');
     }
 }

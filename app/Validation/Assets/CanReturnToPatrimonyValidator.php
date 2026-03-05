@@ -14,6 +14,6 @@ class CanReturnToPatrimonyValidator
 
     public function validateOrFail(Asset $asset, ReturnToPatrimonyDTO $dto): void
     {
-        $this->allowedStateTransitionValidator->validateOrFail($asset->state, AssetState::RETURNED_TO_PATRIMONY);
+        $this->allowedStateTransitionValidator->validateOrFail($asset->state, AssetState::IN_STOCK);
     }
 }

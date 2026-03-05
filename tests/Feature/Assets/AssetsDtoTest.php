@@ -17,6 +17,8 @@ test('assets dto classes can be instantiated with named parameters', function ()
         supplierName: 'Fornecedor Teste',
         supplierDocument: '00.000.000/0001-00',
         issueDate: '2026-03-04',
+        financialBlockId: 2,
+        supplyOrder: '12345-6789',
         receivedDate: '2026-03-05',
         totalAmount: '1520.55',
         notes: 'Observacao',
@@ -26,11 +28,12 @@ test('assets dto classes can be instantiated with named parameters', function ()
     $upsertItem = new UpsertInvoiceItemDTO(
         assetInvoiceId: 12,
         itemId: 15,
+        productId: 30,
+        productMeasureUnitId: 31,
         itemCode: 'ITEM-01',
         description: 'Notebook',
         quantity: 3,
         unitPrice: 1000,
-        totalPrice: 3000,
         brand: 'Dell',
         model: 'Latitude',
         metadata: ['ram' => '16GB'],
@@ -50,6 +53,7 @@ test('assets dto classes can be instantiated with named parameters', function ()
     $releaseAsset = new ReleaseAssetDTO(
         assetId: 4,
         unitId: 8,
+        patrimonyNumber: 'PAT-0004',
         sectorId: 11,
         actorUserId: 2,
         notes: 'Liberado para uso',
@@ -84,6 +88,8 @@ test('assets dto classes can be instantiated with named parameters', function ()
     );
 
     expect($createInvoice->invoiceNumber)->toBe('NF-200')
+        ->and($createInvoice->financialBlockId)->toBe(2)
+        ->and($createInvoice->supplyOrder)->toBe('12345-6789')
         ->and($createInvoice->createdUserId)->toBe(9)
         ->and($upsertItem->metadata)->toBe(['ram' => '16GB'])
         ->and($receiveStock->quantity)->toBe(2)

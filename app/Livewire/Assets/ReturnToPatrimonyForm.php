@@ -56,7 +56,7 @@ class ReturnToPatrimonyForm extends Component
             notes: $data['notes'],
         ));
 
-        $this->flashSuccess(__('assets.operations.return.messages.success'));
+        $this->flashSuccess('Ativo retornado ao patrimonio com sucesso.');
 
         return redirect()->route('assets.show', $this->assetUuid);
     }

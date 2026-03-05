@@ -16,6 +16,10 @@ use App\Livewire\Assets\AuditMobile;
 use App\Livewire\Assets\PurchasesByPeriod;
 use App\Livewire\Assets\TransfersByPeriod;
 use App\Livewire\Administration\Task\TaskStatusPage;
+use App\Livewire\Administration\Product\ProductMeasureUnitPage;
+use App\Livewire\Administration\Product\ProductPage;
+use App\Livewire\Administration\Product\ProductTypePage;
+use App\Livewire\Administration\Supplier\SupplierPage;
 use App\Livewire\Administration\User\UserPage;
 use App\Livewire\Configuration\Establishment\Establishment\EstablishmentList;
 use App\Livewire\Configuration\Establishment\Establishment\EstablishmentShow;
@@ -128,6 +132,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         /* Usuários & Acessos */
         Route::get('/usuarios', UserPage::class)->middleware('can:administration.manage.users')->name('users');
+        Route::get('/fornecedores', SupplierPage::class)->middleware('can:administration.manage.suppliers')->name('suppliers');
+        Route::get('/produtos', ProductPage::class)->middleware('can:administration.manage.products')->name('products');
+        Route::get('/tipos-produto', ProductTypePage::class)->middleware('can:administration.manage.product-types')->name('product-types');
+        Route::get('/unidades-medida', ProductMeasureUnitPage::class)->middleware('can:administration.manage.product-measure-units')->name('product-measure-units');
 
         /* Status / Execução de Tasks */
         Route::prefix('tasks')->name('tasks.')->group(function () {

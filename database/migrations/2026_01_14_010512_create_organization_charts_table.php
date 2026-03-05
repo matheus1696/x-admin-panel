@@ -21,10 +21,7 @@ return new class extends Migration
             $table->integer('hierarchy');
             $table->string('number_hierarchy')->nullable();
             $table->boolean('is_active')->default(true);
-            $table->string('responsible_photo')->nullable();
-            $table->string('responsible_name')->nullable();
-            $table->string('responsible_contact')->nullable();
-            $table->string('responsible_email')->nullable();
+            $table->foreignId('responsible_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }

@@ -146,11 +146,11 @@ test('assets index filters by state through livewire', function () {
     $this->actingAs($user);
 
     $inStock = createAssetsOpsAsset(AssetState::IN_STOCK);
-    $released = createAssetsOpsAsset(AssetState::RELEASED);
+    $inUse = createAssetsOpsAsset(AssetState::IN_USE);
 
     Livewire::test(AssetsIndex::class)
-        ->set('filters.state', 'RELEASED')
-        ->assertSee($released->code)
+        ->set('filters.state', 'IN_USE')
+        ->assertSee($inUse->code)
         ->assertDontSee($inStock->code);
 });
 
@@ -237,11 +237,14 @@ test('operation components execute release transfer state change and return', fu
         ->call('open')
         ->set('unitId', $unitA->id)
         ->set('sectorId', $sectorA->id)
+        ->set('patrimonyNumber', 'PAT-OPS-401')
         ->call('save')
         ->assertRedirect(route('assets.show', $asset->uuid));
 
     $asset->refresh();
-    expect($asset->state)->toBe(AssetState::RELEASED);
+    expect($asset->state)->toBe(AssetState::IN_USE)
+        ->and($asset->code)->toBe('PAT-OPS-401')
+        ->and($asset->patrimony_number)->toBe('PAT-OPS-401');
 
     Livewire::test(TransferAssetForm::class, ['assetUuid' => $asset->uuid])
         ->call('open')
@@ -252,7 +255,7 @@ test('operation components execute release transfer state change and return', fu
 
     Livewire::test(ChangeStateForm::class, ['assetUuid' => $asset->uuid])
         ->call('open')
-        ->set('toState', AssetState::IN_USE->value)
+        ->set('toState', AssetState::IN_STOCK->value)
         ->call('save')
         ->assertRedirect(route('assets.show', $asset->uuid));
 
@@ -264,7 +267,7 @@ test('operation components execute release transfer state change and return', fu
 
     Livewire::test(ChangeStateForm::class, ['assetUuid' => $asset->uuid])
         ->call('open')
-        ->set('toState', AssetState::RELEASED->value)
+        ->set('toState', AssetState::IN_USE->value)
         ->call('save')
         ->assertRedirect(route('assets.show', $asset->uuid));
 
@@ -275,7 +278,7 @@ test('operation components execute release transfer state change and return', fu
 
     $asset->refresh();
 
-    expect($asset->state)->toBe(AssetState::RETURNED_TO_PATRIMONY)
+    expect($asset->state)->toBe(AssetState::IN_STOCK)
         ->and($asset->unit_id)->toBe($unitB->id)
         ->and($asset->sector_id)->toBeNull();
 });

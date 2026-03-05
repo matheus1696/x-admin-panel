@@ -13,15 +13,13 @@ test('assets config loads', function () {
 
 test('asset enums contain required values', function () {
     expect(AssetState::cases())
-        ->toHaveCount(6);
+        ->toHaveCount(4);
     expect(collect(AssetState::cases())->pluck('value')->all())
         ->toBe([
             'IN_STOCK',
-            'RELEASED',
             'IN_USE',
             'MAINTENANCE',
             'DAMAGED',
-            'RETURNED_TO_PATRIMONY',
         ]);
 
     expect(collect(AssetEventType::cases())->pluck('value')->all())

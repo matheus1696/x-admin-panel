@@ -10,6 +10,8 @@ class CreateInvoiceDTO
         public readonly string $supplierName,
         public readonly ?string $supplierDocument,
         public readonly string $issueDate,
+        public readonly ?int $financialBlockId = null,
+        public readonly ?string $supplyOrder = null,
         public readonly ?string $receivedDate = null,
         public readonly float|int|string $totalAmount = 0,
         public readonly ?string $notes = null,

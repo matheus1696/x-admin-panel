@@ -2,61 +2,58 @@
     <x-alert.flash />
 
     <x-page.header
-        :title="__('assets.assets_index.title')"
-        :subtitle="__('assets.assets_index.subtitle')"
+        :title="'Lista de Ativos'"
+        :subtitle="'Consulte o patrimonio por estado, unidade e setor'"
         icon="fa-solid fa-boxes-stacked"
-        color="amber"
     />
 
-    <x-page.filter :title="__('assets.assets_index.filters_title')">
+    <x-page.filter :title="'Filtros de ativos'">
         <div class="md:col-span-4">
-            <x-form.label :value="__('assets.assets_index.fields.search')" />
+            <x-form.label :value="'Busca'" />
             <x-form.input
                 type="text"
-                :placeholder="__('assets.assets_index.placeholders.search')"
+                :placeholder="'Busque por codigo, descricao ou patrimonio do ativo'"
                 wire:model.live.debounce.500ms="filters.search"
             />
         </div>
 
         <div class="md:col-span-2">
-            <x-form.label :value="__('assets.assets_index.fields.state')" />
+            <x-form.label :value="'Estado'" />
             <x-form.select-livewire
                 wire:model.live="filters.state"
                 name="filters.state"
                 :options="[
-                    ['value' => 'all', 'label' => __('assets.filters.all')],
-                    ['value' => 'IN_STOCK', 'label' => __('assets.states.in_stock')],
-                    ['value' => 'RELEASED', 'label' => __('assets.states.released')],
-                    ['value' => 'IN_USE', 'label' => __('assets.states.in_use')],
-                    ['value' => 'MAINTENANCE', 'label' => __('assets.states.maintenance')],
-                    ['value' => 'DAMAGED', 'label' => __('assets.states.damaged')],
-                    ['value' => 'RETURNED_TO_PATRIMONY', 'label' => __('assets.states.returned_to_patrimony')],
+                    ['value' => 'all', 'label' => 'Todos'],
+                    ['value' => 'IN_STOCK', 'label' => 'Em estoque'],
+                    ['value' => 'IN_USE', 'label' => 'Em uso'],
+                    ['value' => 'MAINTENANCE', 'label' => 'Em manutencao'],
+                    ['value' => 'DAMAGED', 'label' => 'Inservivel'],
                 ]"
             />
         </div>
 
         <div class="md:col-span-2">
-            <x-form.label :value="__('assets.assets_index.fields.unit')" />
+            <x-form.label :value="'Unidade'" />
             <x-form.select-livewire
                 wire:model.live="filters.unitId"
                 name="filters.unitId"
-                :default="__('assets.filters.all_units')"
-                :options="collect($units)->map(fn ($unit) => ['value' => $unit->id, 'label' => $unit->title])->prepend(['value' => 'all', 'label' => __('assets.filters.all')])->values()->all()"
+                :default="'Todas as unidades'"
+                :options="collect($units)->map(fn ($unit) => ['value' => $unit->id, 'label' => $unit->title])->prepend(['value' => 'all', 'label' => 'Todos'])->values()->all()"
             />
         </div>
 
         <div class="md:col-span-2">
-            <x-form.label :value="__('assets.assets_index.fields.sector')" />
+            <x-form.label :value="'Setor'" />
             <x-form.select-livewire
                 wire:model.live="filters.sectorId"
                 name="filters.sectorId"
-                :default="__('assets.filters.all_sectors')"
-                :options="collect($sectors)->map(fn ($sector) => ['value' => $sector->id, 'label' => $sector->title])->prepend(['value' => 'all', 'label' => __('assets.filters.all')])->values()->all()"
+                :default="'Todos os setores'"
+                :options="collect($sectors)->map(fn ($sector) => ['value' => $sector->id, 'label' => $sector->title])->prepend(['value' => 'all', 'label' => 'Todos'])->values()->all()"
             />
         </div>
 
         <div class="md:col-span-2">
-            <x-form.label :value="__('assets.assets_index.fields.per_page')" />
+            <x-form.label :value="'Itens por pagina'" />
             <x-form.select-livewire
                 wire:model.live="filters.perPage"
                 name="filters.perPage"
@@ -71,23 +68,23 @@
 
     @if ($isInvoiceScoped)
         <div class="mb-3 flex flex-col gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs text-blue-800 md:flex-row md:items-center md:justify-between">
-            <span>{{ __('assets.assets_index.invoice_scope_notice') }}</span>
+            <span>{{ 'A lista esta filtrada pelos ativos vinculados a uma nota fiscal/item especifico.' }}</span>
             <x-button
                 wire:click="clearInvoiceFilter"
-                :text="__('assets.assets_index.actions.clear_invoice_filter')"
+                :text="'Limpar filtro da nota'"
                 icon="fa-solid fa-filter-circle-xmark"
                 variant="blue_text"
             />
         </div>
     @endif
 
-    <x-page.table :pagination="$assets" :empty-message="__('assets.assets_index.empty')">
+    <x-page.table :pagination="$assets" :empty-message="'Nenhum ativo encontrado.'">
         <x-slot name="thead">
             <tr>
-                <x-page.table-th :value="__('assets.assets_index.table.asset')" />
-                <x-page.table-th class="hidden md:table-cell" :value="__('assets.assets_index.table.location')" />
-                <x-page.table-th class="hidden lg:table-cell" :value="__('assets.assets_index.table.invoice')" />
-                <x-page.table-th class="w-24 text-center" :value="__('assets.assets_index.table.actions')" />
+                <x-page.table-th :value="'Ativo'" />
+                <x-page.table-th class="hidden md:table-cell" :value="'Localizacao'" />
+                <x-page.table-th class="hidden lg:table-cell" :value="'Origem'" />
+                <x-page.table-th class="w-72 text-center" :value="'Acoes'" />
             </tr>
         </x-slot>
 
@@ -101,7 +98,7 @@
                     </x-page.table-td>
                     <x-page.table-td class="hidden md:table-cell">
                         <div class="flex flex-col gap-1 text-xs text-gray-600">
-                            <span>{{ $asset->unit?->title ?? __('assets.assets_index.labels.no_unit') }}</span>
+                            <span>{{ $asset->unit?->title ?? 'Sem unidade' }}</span>
                         </div>
                     </x-page.table-td>
                     <x-page.table-td class="hidden lg:table-cell">
@@ -110,13 +107,25 @@
                         </div>
                     </x-page.table-td>
                     <x-page.table-td>
-                        <div class="flex items-center justify-center">
+                        <div class="flex flex-wrap items-center justify-center gap-2">
                             <x-button
                                 :href="route('assets.show', $asset->uuid)"
                                 icon="fa-solid fa-eye"
-                                :title="__('assets.actions.view')"
+                                :title="'Visualizar'"
                                 variant="blue_text"
                             />
+
+                            @can('release', \App\Models\Assets\Asset::class)
+                                <livewire:assets.release-asset-form :asset-uuid="$asset->uuid" :icon-only="true" :key="'release-index-'.$asset->id" />
+                            @endcan
+
+                            @can('transfer', \App\Models\Assets\Asset::class)
+                                <livewire:assets.transfer-asset-form :asset-uuid="$asset->uuid" :icon-only="true" :key="'transfer-index-'.$asset->id" />
+                            @endcan
+
+                            @can('changeState', \App\Models\Assets\Asset::class)
+                                <livewire:assets.change-state-form :asset-uuid="$asset->uuid" :icon-only="true" :key="'state-index-'.$asset->id" />
+                            @endcan
                         </div>
                     </x-page.table-td>
                 </tr>

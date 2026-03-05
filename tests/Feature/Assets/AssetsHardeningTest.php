@@ -125,6 +125,7 @@ test('asset operations are idempotent for repeated requests after success', func
     $service->releaseAsset(new ReleaseAssetDTO(
         assetId: $asset->id,
         unitId: $unit->id,
+        patrimonyNumber: 'PAT-HARD-001',
         sectorId: $sector->id,
         actorUserId: $user->id,
     ));
@@ -132,6 +133,7 @@ test('asset operations are idempotent for repeated requests after success', func
     $service->releaseAsset(new ReleaseAssetDTO(
         assetId: $asset->id,
         unitId: $unit->id,
+        patrimonyNumber: 'PAT-HARD-001',
         sectorId: $sector->id,
         actorUserId: $user->id,
     ));

@@ -64,7 +64,7 @@
 
 
     <!-- Administração -->
-    @canany(['administration.manage.users','administration.manage.task'])
+    @canany(['administration.manage.users','administration.manage.task','administration.manage.suppliers','administration.manage.products','administration.manage.product-types','administration.manage.product-measure-units'])
         <x-sidebar.main-dropdown
             title="Administração"
             icon="fa-solid fa-gear"
@@ -80,21 +80,40 @@
                 />
             @endcan
 
-            @can('administration.manage.task')
-                <x-sidebar.dropdown
-                    title="Gestão de Tarefas"
-                    icon="fa-solid fa-list-check"
-                    :active="request()->routeIs('administration.manage.task.*')"
-                >
-                    <x-sidebar.dropdown-link
-                        href="{{ route('administration.manage.tasks.status') }}"
-                        title="Status"
-                    />
-                    <x-sidebar.dropdown-link
-                        href="{{ route('administration.manage.tasks.category') }}"
-                        title="Categorias"
-                    />
-                </x-sidebar.dropdown>
+            @can('administration.manage.suppliers')
+                <x-sidebar.dropdown-link
+                    href="{{ route('administration.manage.suppliers') }}"
+                    title="Fornecedores"
+                    icon="fa-solid fa-truck-field"
+                    :active="request()->routeIs('administration.manage.suppliers')"
+                />
+            @endcan
+
+            @can('administration.manage.products')
+                <x-sidebar.dropdown-link
+                    href="{{ route('administration.manage.products') }}"
+                    title="Produtos"
+                    icon="fa-solid fa-box-open"
+                    :active="request()->routeIs('administration.manage.products')"
+                />
+            @endcan
+
+            @can('administration.manage.product-types')
+                <x-sidebar.dropdown-link
+                    href="{{ route('administration.manage.product-types') }}"
+                    title="Tipos de Produto"
+                    icon="fa-solid fa-tags"
+                    :active="request()->routeIs('administration.manage.product-types')"
+                />
+            @endcan
+
+            @can('administration.manage.product-measure-units')
+                <x-sidebar.dropdown-link
+                    href="{{ route('administration.manage.product-measure-units') }}"
+                    title="Unidades de Medida"
+                    icon="fa-solid fa-ruler-combined"
+                    :active="request()->routeIs('administration.manage.product-measure-units')"
+                />
             @endcan
 
         </x-sidebar.main-dropdown>
@@ -137,7 +156,7 @@
 
     @canany(['assets.view','assets.invoices.manage','assets.stock.receive','assets.release','assets.transfer','assets.audit','assets.state.change','assets.return','assets.reports.view'])
         <x-sidebar.main-dropdown
-            title="Ativos"
+            title="Controle de Patrimônio"
             icon="fa-solid fa-boxes-stacked"
             :active="request()->routeIs('assets.*')"
         >

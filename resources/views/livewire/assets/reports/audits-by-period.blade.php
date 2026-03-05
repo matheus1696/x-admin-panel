@@ -1,26 +1,26 @@
 <div>
-    <x-page.header :title="__('assets.reports.audits_by_period.title')" :subtitle="__('assets.reports.audits_by_period.subtitle')" icon="fa-solid fa-camera" color="blue">
+    <x-page.header :title="'Auditorias por periodo'" :subtitle="'Volume de auditorias registradas no periodo'" icon="fa-solid fa-camera" color="blue">
         <x-slot name="button">
-            <x-button wire:click="exportCsv" :text="__('assets.reports.actions.export_csv')" icon="fa-solid fa-file-csv" variant="blue_outline" />
+            <x-button wire:click="exportCsv" :text="'Exportar CSV'" icon="fa-solid fa-file-csv" variant="blue_outline" />
         </x-slot>
     </x-page.header>
 
-    <x-page.filter :title="__('assets.reports.filters_title')" :accordion-open="true">
+    <x-page.filter :title="'Filtros do relatorio'" :accordion-open="true">
         <div class="md:col-span-4">
-            <x-form.label :value="__('assets.reports.fields.start_date')" />
+            <x-form.label :value="'Data inicial'" />
             <x-form.input type="date" wire:model.live="startDate" />
         </div>
         <div class="md:col-span-4">
-            <x-form.label :value="__('assets.reports.fields.end_date')" />
+            <x-form.label :value="'Data final'" />
             <x-form.input type="date" wire:model.live="endDate" />
         </div>
     </x-page.filter>
 
-    <x-page.table :empty-message="__('assets.reports.empty')">
+    <x-page.table :empty-message="'Nenhum dado encontrado para os filtros informados.'">
         <x-slot name="thead">
             <tr>
-                <x-page.table-th :value="__('assets.reports.audits_by_period.table.date')" />
-                <x-page.table-th class="text-center" :value="__('assets.reports.audits_by_period.table.total')" />
+                <x-page.table-th :value="'Data'" />
+                <x-page.table-th class="text-center" :value="'Auditorias'" />
             </tr>
         </x-slot>
         <x-slot name="tbody">

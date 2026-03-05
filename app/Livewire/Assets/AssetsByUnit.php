@@ -29,14 +29,14 @@ class AssetsByUnit extends Component
                 $row->unit_title,
                 (int) $row->total_assets,
                 (int) $row->in_stock_count,
-                (int) $row->released_count,
                 (int) $row->in_use_count,
                 (int) $row->maintenance_count,
+                (int) $row->unserviceable_count,
             ])->all();
 
         return $this->assetsReportService->exportCsv(
             'assets-by-unit.csv',
-            ['Unidade', 'Total', 'Em estoque', 'Liberado', 'Em uso', 'Manutencao'],
+            ['Unidade', 'Total', 'Em estoque', 'Em uso', 'Manutencao', 'Inservivel'],
             $rows
         );
     }

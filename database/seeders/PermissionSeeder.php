@@ -15,7 +15,7 @@ class PermissionSeeder extends Seeder
 
         /*
         |--------------------------------------------------------------------------
-        | PERMISSÕES
+        | Permissions
         |--------------------------------------------------------------------------
         */
 
@@ -72,6 +72,26 @@ class PermissionSeeder extends Seeder
                 'name' => 'administration.manage.users.permissions',
                 'description' => 'Gerenciar Permissões de Usuários',
                 'translation' => 'Permissões de Usuários',
+            ],
+            [
+                'name' => 'administration.manage.suppliers',
+                'description' => 'Gerenciar fornecedores',
+                'translation' => 'Gerenciar fornecedores',
+            ],
+            [
+                'name' => 'administration.manage.products',
+                'description' => 'Gerenciar produtos',
+                'translation' => 'Gerenciar produtos',
+            ],
+            [
+                'name' => 'administration.manage.product-types',
+                'description' => 'Gerenciar tipos de produto',
+                'translation' => 'Gerenciar tipos de produto',
+            ],
+            [
+                'name' => 'administration.manage.product-measure-units',
+                'description' => 'Gerenciar unidades de medida de produtos',
+                'translation' => 'Gerenciar unidades de medida de produtos',
             ],
 
             // Ativos (Patrimonio)
@@ -190,7 +210,11 @@ class PermissionSeeder extends Seeder
         $administration->givePermissionTo([
             'administration.manage.users',
             'administration.manage.users.permissions',
-            'administration.manage.task'
+            'administration.manage.task',
+            'administration.manage.suppliers',
+            'administration.manage.products',
+            'administration.manage.product-types',
+            'administration.manage.product-measure-units',
         ]);
 
         // Configuração do Sistema
@@ -213,3 +237,4 @@ class PermissionSeeder extends Seeder
         ]);
     }
 }
+

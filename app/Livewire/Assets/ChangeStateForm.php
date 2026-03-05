@@ -22,6 +22,8 @@ class ChangeStateForm extends Component
 
     public int $assetId;
 
+    public bool $iconOnly = false;
+
     public ?string $toState = null;
 
     public ?string $notes = null;
@@ -31,7 +33,7 @@ class ChangeStateForm extends Component
         $this->assetOperationService = $assetOperationService;
     }
 
-    public function mount(string $assetUuid): void
+    public function mount(string $assetUuid, bool $iconOnly = false): void
     {
         $asset = Asset::query()->where('uuid', $assetUuid)->firstOrFail();
 
@@ -39,6 +41,7 @@ class ChangeStateForm extends Component
 
         $this->assetUuid = $asset->uuid;
         $this->assetId = $asset->id;
+        $this->iconOnly = $iconOnly;
     }
 
     public function open(): void
@@ -62,7 +65,7 @@ class ChangeStateForm extends Component
             notes: $data['notes'],
         ));
 
-        $this->flashSuccess(__('assets.operations.change_state.messages.success'));
+        $this->flashSuccess('Estado do ativo atualizado com sucesso.');
 
         return redirect()->route('assets.show', $this->assetUuid);
     }
@@ -82,18 +85,21 @@ class ChangeStateForm extends Component
     private function availableStates(AssetState $currentState): array
     {
         $map = [
-            AssetState::IN_STOCK->value => [AssetState::RELEASED],
-            AssetState::RELEASED->value => [AssetState::IN_USE, AssetState::MAINTENANCE, AssetState::RETURNED_TO_PATRIMONY],
-            AssetState::IN_USE->value => [AssetState::MAINTENANCE],
-            AssetState::MAINTENANCE->value => [AssetState::RELEASED],
+            AssetState::IN_STOCK->value => [AssetState::IN_USE, AssetState::MAINTENANCE, AssetState::DAMAGED],
+            AssetState::IN_USE->value => [AssetState::IN_STOCK, AssetState::MAINTENANCE, AssetState::DAMAGED],
+            AssetState::MAINTENANCE->value => [AssetState::IN_STOCK, AssetState::IN_USE, AssetState::DAMAGED],
             AssetState::DAMAGED->value => [],
-            AssetState::RETURNED_TO_PATRIMONY->value => [],
         ];
 
         return collect($map[$currentState->value] ?? [])
             ->map(fn (AssetState $state): array => [
                 'value' => $state->value,
-                'label' => __('assets.states.'.strtolower($state->value)),
+                'label' => match ($state) {
+                    AssetState::IN_STOCK => 'Em estoque',
+                    AssetState::IN_USE => 'Em uso',
+                    AssetState::MAINTENANCE => 'Em manutencao',
+                    AssetState::DAMAGED => 'Inservivel',
+                },
             ])
             ->values()
             ->all();

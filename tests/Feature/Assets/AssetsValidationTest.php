@@ -94,13 +94,13 @@ function createAssetsValidationUnit(string $suffix): Establishment
 test('allowed state transition validator accepts valid transitions and blocks invalid ones', function () {
     $validator = app(AllowedStateTransitionValidator::class);
 
-    $validator->validateOrFail(AssetState::IN_STOCK, AssetState::RELEASED);
-    $validator->validateOrFail(AssetState::RELEASED, AssetState::IN_USE);
+    $validator->validateOrFail(AssetState::IN_STOCK, AssetState::IN_USE);
+    $validator->validateOrFail(AssetState::IN_USE, AssetState::MAINTENANCE);
 
     expect(fn () => $validator->validateOrFail(AssetState::IN_STOCK, AssetState::IN_STOCK))
         ->toThrow(AssetsValidationException::class);
 
-    expect(fn () => $validator->validateOrFail(AssetState::IN_USE, AssetState::RELEASED))
+    expect(fn () => $validator->validateOrFail(AssetState::DAMAGED, AssetState::IN_USE))
         ->toThrow(AssetsValidationException::class);
 });
 

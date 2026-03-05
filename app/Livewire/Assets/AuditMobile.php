@@ -48,7 +48,7 @@ class AuditMobile extends Component
         $this->assetId = $asset?->id;
 
         if (! $asset) {
-            $this->flashError(__('assets.audit_mobile.messages.not_found'));
+            $this->flashError('Nenhum ativo encontrado com o codigo informado.');
         }
     }
 
@@ -70,7 +70,7 @@ class AuditMobile extends Component
         ));
 
         $this->reset(['photo', 'notes', 'searchCode', 'assetId']);
-        $this->flashSuccess(__('assets.audit_mobile.messages.success'));
+        $this->flashSuccess('Auditoria registrada com sucesso.');
     }
 
     public function render(): View

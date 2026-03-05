@@ -26,6 +26,7 @@ return new class extends Migration
             $table->foreignId('task_priority_id')->nullable()->constrained('task_priorities');
             $table->foreignId('task_status_id')->nullable()->constrained('task_step_statuses');
             $table->unsignedInteger('workflow_step_order')->nullable();
+            $table->unsignedInteger('kanban_order')->nullable()->index();
             $table->boolean('is_required')->default(false);
             $table->boolean('allow_parallel')->default(false);
             $table->foreignId('created_user_id')->nullable()->constrained('users');

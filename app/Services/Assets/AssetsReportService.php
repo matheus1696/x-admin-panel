@@ -24,9 +24,9 @@ class AssetsReportService
             ->selectRaw('COALESCE(establishments.title, ?) as unit_title', ['Sem unidade'])
             ->selectRaw('COUNT(*) as total_assets')
             ->selectRaw("SUM(CASE WHEN assets.state = ? THEN 1 ELSE 0 END) as in_stock_count", [AssetState::IN_STOCK->value])
-            ->selectRaw("SUM(CASE WHEN assets.state = ? THEN 1 ELSE 0 END) as released_count", [AssetState::RELEASED->value])
             ->selectRaw("SUM(CASE WHEN assets.state = ? THEN 1 ELSE 0 END) as in_use_count", [AssetState::IN_USE->value])
             ->selectRaw("SUM(CASE WHEN assets.state = ? THEN 1 ELSE 0 END) as maintenance_count", [AssetState::MAINTENANCE->value])
+            ->selectRaw("SUM(CASE WHEN assets.state = ? THEN 1 ELSE 0 END) as unserviceable_count", [AssetState::DAMAGED->value])
             ->groupBy('establishments.title')
             ->orderBy('unit_title')
             ->get();

@@ -43,7 +43,9 @@ class AssetOperationService
             $this->canReleaseAssetValidator->validateOrFail($asset, $dto);
 
             $asset->update([
-                'state' => AssetState::RELEASED,
+                'state' => AssetState::IN_USE,
+                'code' => $dto->patrimonyNumber,
+                'patrimony_number' => $dto->patrimonyNumber,
                 'unit_id' => $dto->unitId,
                 'sector_id' => $dto->sectorId,
             ]);
@@ -52,14 +54,18 @@ class AssetOperationService
                 $asset,
                 AssetEventType::RELEASED,
                 $fromState?->value,
-                AssetState::RELEASED->value,
+                AssetState::IN_USE->value,
                 $fromUnitId,
                 $dto->unitId,
                 $fromSectorId,
                 $dto->sectorId,
                 $dto->actorUserId,
                 $dto->notes,
-                ['context' => ['service' => self::class, 'operation' => 'release']]
+                [
+                    'context' => ['service' => self::class, 'operation' => 'release'],
+                    'patrimony_number' => $dto->patrimonyNumber,
+                    'code_replaced' => true,
+                ]
             );
         });
     }
@@ -150,7 +156,7 @@ class AssetOperationService
             $this->canReturnToPatrimonyValidator->validateOrFail($asset, $dto);
 
             $asset->update([
-                'state' => AssetState::RETURNED_TO_PATRIMONY,
+                'state' => AssetState::IN_STOCK,
                 'unit_id' => config('assets.patrimony_unit_id'),
                 'sector_id' => null,
             ]);
@@ -159,7 +165,7 @@ class AssetOperationService
                 $asset,
                 AssetEventType::RETURNED_TO_PATRIMONY,
                 $fromState?->value,
-                AssetState::RETURNED_TO_PATRIMONY->value,
+                AssetState::IN_STOCK->value,
                 $fromUnitId,
                 $asset->unit_id,
                 $fromSectorId,
@@ -203,7 +209,9 @@ class AssetOperationService
     {
         $lastEvent = $asset->events()->latest('id')->first();
 
-        return $asset->state === AssetState::RELEASED
+        return $asset->state === AssetState::IN_USE
+            && (string) ($asset->patrimony_number ?? '') === $dto->patrimonyNumber
+            && (string) ($asset->code ?? '') === $dto->patrimonyNumber
             && (int) $asset->unit_id === $dto->unitId
             && (int) ($asset->sector_id ?? 0) === (int) ($dto->sectorId ?? 0)
             && $lastEvent?->type === AssetEventType::RELEASED;
@@ -222,7 +230,7 @@ class AssetOperationService
     {
         $lastEvent = $asset->events()->latest('id')->first();
 
-        return $asset->state === AssetState::RETURNED_TO_PATRIMONY
+        return $asset->state === AssetState::IN_STOCK
             && (int) ($asset->unit_id ?? 0) === (int) config('assets.patrimony_unit_id')
             && $asset->sector_id === null
             && $lastEvent?->type === AssetEventType::RETURNED_TO_PATRIMONY;

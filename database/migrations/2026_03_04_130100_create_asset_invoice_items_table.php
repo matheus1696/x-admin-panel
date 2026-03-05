@@ -18,6 +18,8 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->foreignId('asset_invoice_id')->constrained('asset_invoices')->cascadeOnDelete();
+            $table->foreignId('product_id')->nullable()->constrained('products')->nullOnDelete();
+            $table->foreignId('product_measure_unit_id')->nullable()->constrained('product_measure_units')->nullOnDelete();
             $table->string('item_code')->nullable();
             $table->string('description');
             $table->unsignedInteger('quantity')->default(1);
