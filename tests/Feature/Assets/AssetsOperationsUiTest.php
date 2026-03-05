@@ -6,7 +6,6 @@ use App\Livewire\Assets\AssetShow;
 use App\Livewire\Assets\AssetsIndex;
 use App\Livewire\Assets\AuditMobile;
 use App\Livewire\Assets\ChangeStateForm;
-use App\Livewire\Assets\ReleaseAssetForm;
 use App\Livewire\Assets\ReturnToPatrimonyForm;
 use App\Livewire\Assets\TransferAssetForm;
 use App\Models\Administration\User\User;
@@ -117,11 +116,16 @@ function createAssetsOpsSector(Establishment $unit, string $suffix): Department
     ]);
 }
 
-function createAssetsOpsAsset(AssetState $state, ?int $unitId = null, ?int $sectorId = null): Asset
+function createAssetsOpsAsset(
+    AssetState $state,
+    ?int $unitId = null,
+    ?int $sectorId = null,
+    string $description = 'Ativo operacional'
+): Asset
 {
     return Asset::create([
         'code' => 'AST-OPS-'.Str::upper(Str::random(8)),
-        'description' => 'Ativo operacional',
+        'description' => $description,
         'state' => $state,
         'unit_id' => $unitId,
         'sector_id' => $sectorId,
@@ -129,7 +133,7 @@ function createAssetsOpsAsset(AssetState $state, ?int $unitId = null, ?int $sect
 }
 
 test('assets pages render for authorized users', function () {
-    $user = createAssetsOpsUser(['assets.view', 'assets.release', 'assets.transfer', 'assets.state.change', 'assets.return']);
+    $user = createAssetsOpsUser(['assets.view', 'assets.transfer', 'assets.state.change', 'assets.return']);
     $asset = createAssetsOpsAsset(AssetState::IN_STOCK);
 
     $this->actingAs($user)
@@ -145,13 +149,13 @@ test('assets index filters by state through livewire', function () {
     $user = createAssetsOpsUser(['assets.view']);
     $this->actingAs($user);
 
-    $inStock = createAssetsOpsAsset(AssetState::IN_STOCK);
-    $inUse = createAssetsOpsAsset(AssetState::IN_USE);
+    $inStock = createAssetsOpsAsset(AssetState::IN_STOCK, description: 'Item estoque');
+    $inUse = createAssetsOpsAsset(AssetState::IN_USE, description: 'Item em uso');
 
     Livewire::test(AssetsIndex::class)
         ->set('filters.state', 'IN_USE')
-        ->assertSee($inUse->code)
-        ->assertDontSee($inStock->code);
+        ->assertSee($inUse->description)
+        ->assertDontSee($inStock->description);
 });
 
 test('assets index can be filtered by invoice item from query string', function () {
@@ -197,8 +201,23 @@ test('assets index can be filtered by invoice item from query string', function 
 
     $this->get(route('assets.index', ['invoice_uuid' => $invoice->uuid, 'invoice_item_id' => $itemA->id]))
         ->assertOk()
-        ->assertSee($assetA->code)
-        ->assertDontSee($assetB->code);
+        ->assertSee($itemA->description)
+        ->assertDontSee($itemB->description);
+});
+
+test('global item page lists only assets from selected item', function () {
+    $user = createAssetsOpsUser(['assets.view']);
+    $this->actingAs($user);
+
+    $desktopA = createAssetsOpsAsset(AssetState::IN_STOCK, description: 'Desktop');
+    $desktopB = createAssetsOpsAsset(AssetState::IN_USE, description: 'Desktop');
+    $mouse = createAssetsOpsAsset(AssetState::IN_STOCK, description: 'Mouse');
+
+    $this->get(route('assets.items.global', ['item' => 'Desktop']))
+        ->assertOk()
+        ->assertSee($desktopA->code)
+        ->assertSee($desktopB->code)
+        ->assertDontSee($mouse->code);
 });
 
 test('asset show can load more timeline items', function () {
@@ -220,8 +239,8 @@ test('asset show can load more timeline items', function () {
         ->assertSet('eventsToShow', 20);
 });
 
-test('operation components execute release transfer state change and return', function () {
-    $user = createAssetsOpsUser(['assets.release', 'assets.transfer', 'assets.state.change', 'assets.return', 'assets.view']);
+test('operation components execute transfer state change and return', function () {
+    $user = createAssetsOpsUser(['assets.transfer', 'assets.state.change', 'assets.return', 'assets.view']);
     $this->actingAs($user);
 
     $unitA = createAssetsOpsUnit('401');
@@ -231,20 +250,7 @@ test('operation components execute release transfer state change and return', fu
 
     config()->set('assets.patrimony_unit_id', $unitB->id);
 
-    $asset = createAssetsOpsAsset(AssetState::IN_STOCK);
-
-    Livewire::test(ReleaseAssetForm::class, ['assetUuid' => $asset->uuid])
-        ->call('open')
-        ->set('unitId', $unitA->id)
-        ->set('sectorId', $sectorA->id)
-        ->set('patrimonyNumber', 'PAT-OPS-401')
-        ->call('save')
-        ->assertRedirect(route('assets.show', $asset->uuid));
-
-    $asset->refresh();
-    expect($asset->state)->toBe(AssetState::IN_USE)
-        ->and($asset->code)->toBe('PAT-OPS-401')
-        ->and($asset->patrimony_number)->toBe('PAT-OPS-401');
+    $asset = createAssetsOpsAsset(AssetState::IN_USE, $unitA->id, $sectorA->id);
 
     Livewire::test(TransferAssetForm::class, ['assetUuid' => $asset->uuid])
         ->call('open')

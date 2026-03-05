@@ -4,7 +4,6 @@ use App\DTOs\Assets\AuditAssetDTO;
 use App\DTOs\Assets\ChangeAssetStateDTO;
 use App\DTOs\Assets\CreateInvoiceDTO;
 use App\DTOs\Assets\ReceiveStockDTO;
-use App\DTOs\Assets\ReleaseAssetDTO;
 use App\DTOs\Assets\ReturnToPatrimonyDTO;
 use App\DTOs\Assets\TransferAssetDTO;
 use App\DTOs\Assets\UpsertInvoiceItemDTO;
@@ -258,7 +257,53 @@ test('stock service receives one asset per quantity and prevents exceeding remai
     )))->toThrow(AssetsValidationException::class);
 });
 
-test('asset operation service releases, transfers, changes state and returns to patrimony', function () {
+test('stock service mirrors patrimony code from invoice item into code and patrimony number', function () {
+    $user = User::factory()->create();
+    $unit = createAssetsServicesUnit('102');
+
+    config()->set('assets.stock_default_unit_id', $unit->id);
+
+    $invoiceService = app(InvoiceService::class);
+    $stockService = app(StockService::class);
+
+    $invoice = $invoiceService->createInvoice(new CreateInvoiceDTO(
+        invoiceNumber: 'NF-402',
+        invoiceSeries: null,
+        supplierName: 'Fornecedor Patrimonio',
+        supplierDocument: null,
+        issueDate: '2026-03-04',
+        totalAmount: 2400,
+    ));
+
+    $product = createAssetsServiceProduct('402');
+    $measureUnit = createAssetsServiceMeasureUnit('402');
+
+    $item = $invoiceService->addOrUpdateItem(new UpsertInvoiceItemDTO(
+        assetInvoiceId: $invoice->id,
+        itemId: null,
+        productId: $product->id,
+        productMeasureUnitId: $measureUnit->id,
+        itemCode: '265963',
+        description: 'Desktop',
+        quantity: 2,
+        unitPrice: 1200,
+    ));
+
+    $assets = $stockService->receiveStock(new ReceiveStockDTO(
+        invoiceItemId: $item->id,
+        quantity: 2,
+        actorUserId: $user->id,
+        acquiredDate: '2026-03-04',
+    ));
+
+    expect($assets)->toHaveCount(2)
+        ->and($assets[0]->code)->toBe('265963')
+        ->and($assets[1]->code)->toBe('265964')
+        ->and($assets[0]->patrimony_number)->toBe('265963')
+        ->and($assets[1]->patrimony_number)->toBe('265964');
+});
+
+test('asset operation service transfers, changes state and returns to patrimony', function () {
     $user = User::factory()->create();
     $unit = createAssetsServicesUnit('201');
     $otherUnit = createAssetsServicesUnit('202');
@@ -268,24 +313,7 @@ test('asset operation service releases, transfers, changes state and returns to 
     config()->set('assets.patrimony_unit_id', $otherUnit->id);
 
     $service = app(AssetOperationService::class);
-    $asset = createAssetsServiceAsset(AssetState::IN_STOCK);
-
-    $service->releaseAsset(new ReleaseAssetDTO(
-        assetId: $asset->id,
-        unitId: $unit->id,
-        patrimonyNumber: 'PAT-SRV-201',
-        sectorId: $sector->id,
-        actorUserId: $user->id,
-        notes: 'Liberado',
-    ));
-
-    $asset->refresh();
-
-    expect($asset->state)->toBe(AssetState::IN_USE)
-        ->and($asset->code)->toBe('PAT-SRV-201')
-        ->and($asset->patrimony_number)->toBe('PAT-SRV-201')
-        ->and($asset->unit_id)->toBe($unit->id)
-        ->and($asset->sector_id)->toBe($sector->id);
+    $asset = createAssetsServiceAsset(AssetState::IN_USE, $unit->id, $sector->id);
 
     $service->transferAsset(new TransferAssetDTO(
         assetId: $asset->id,
@@ -327,23 +355,8 @@ test('asset operation service releases, transfers, changes state and returns to 
     expect($asset->state)->toBe(AssetState::IN_STOCK)
         ->and($asset->unit_id)->toBe($otherUnit->id)
         ->and($asset->sector_id)->toBeNull()
-        ->and($asset->events()->count())->toBe(6)
+        ->and($asset->events()->count())->toBe(5)
         ->and($asset->events()->latest()->first()?->type)->toBe(AssetEventType::RETURNED_TO_PATRIMONY);
-});
-
-test('asset operation service blocks invalid repeated release', function () {
-    $user = User::factory()->create();
-    $unit = createAssetsServicesUnit('301');
-    $sector = createAssetsServicesSector($unit, '301');
-    $asset = createAssetsServiceAsset(AssetState::IN_USE, $unit->id, $sector->id);
-
-    expect(fn () => app(AssetOperationService::class)->releaseAsset(new ReleaseAssetDTO(
-        assetId: $asset->id,
-        unitId: $unit->id,
-        patrimonyNumber: 'PAT-SRV-301',
-        sectorId: $sector->id,
-        actorUserId: $user->id,
-    )))->toThrow(AssetsValidationException::class);
 });
 
 test('audit service records audited event payload and rejects empty photo', function () {

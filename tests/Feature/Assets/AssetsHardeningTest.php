@@ -1,6 +1,5 @@
 <?php
 
-use App\DTOs\Assets\ReleaseAssetDTO;
 use App\DTOs\Assets\ReturnToPatrimonyDTO;
 use App\DTOs\Assets\TransferAssetDTO;
 use App\Enums\Assets\AssetEventType;
@@ -119,24 +118,10 @@ test('asset operations are idempotent for repeated requests after success', func
     $asset = Asset::create([
         'code' => 'AST-HARD-001',
         'description' => 'Ativo hardening',
-        'state' => AssetState::IN_STOCK,
+        'state' => AssetState::IN_USE,
+        'unit_id' => $unit->id,
+        'sector_id' => $sector->id,
     ]);
-
-    $service->releaseAsset(new ReleaseAssetDTO(
-        assetId: $asset->id,
-        unitId: $unit->id,
-        patrimonyNumber: 'PAT-HARD-001',
-        sectorId: $sector->id,
-        actorUserId: $user->id,
-    ));
-
-    $service->releaseAsset(new ReleaseAssetDTO(
-        assetId: $asset->id,
-        unitId: $unit->id,
-        patrimonyNumber: 'PAT-HARD-001',
-        sectorId: $sector->id,
-        actorUserId: $user->id,
-    ));
 
     $service->transferAsset(new TransferAssetDTO(
         assetId: $asset->id,
@@ -164,10 +149,9 @@ test('asset operations are idempotent for repeated requests after success', func
 
     $asset->refresh();
 
-    expect($asset->events()->count())->toBe(3)
+    expect($asset->events()->count())->toBe(2)
         ->and($asset->events()->pluck('type')->all())->toBe([
             AssetEventType::RETURNED_TO_PATRIMONY,
             AssetEventType::TRANSFERRED,
-            AssetEventType::RELEASED,
         ]);
 });

@@ -102,13 +102,14 @@ class InvoiceShow extends Component
         ]);
 
         $product = Product::query()->findOrFail((int) $data['productId']);
+        $itemCode = isset($data['itemCode']) ? trim((string) $data['itemCode']) : '';
 
         $this->invoiceService->addOrUpdateItem(new UpsertInvoiceItemDTO(
             assetInvoiceId: $this->invoiceId,
             itemId: $this->itemId,
             productId: (int) $data['productId'],
             productMeasureUnitId: (int) $data['productMeasureUnitId'],
-            itemCode: $data['itemCode'] ?: ($product->sku ?: $product->code),
+            itemCode: $itemCode !== '' ? $itemCode : null,
             description: $product->title,
             quantity: (int) $data['quantity'],
             unitPrice: $data['unitPrice'],
@@ -135,7 +136,7 @@ class InvoiceShow extends Component
     {
         try {
             $this->invoiceService->finalizeInvoice($this->invoiceId, auth()->id());
-            $this->flashSuccess('Finalizacao concluida: nota fiscal bloqueada para edicao e itens enviados ao estoque aguardando liberacao para unidade.');
+            $this->flashSuccess('Finalizacao concluida: nota fiscal bloqueada para edicao e itens enviados ao estoque.');
         } catch (AssetsValidationException $exception) {
             $this->flashWarning($exception->getMessage());
         }

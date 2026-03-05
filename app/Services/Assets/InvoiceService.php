@@ -170,8 +170,13 @@ class InvoiceService
                         'acquired_date' => optional($invoice->received_date)->toDateString() ?? now()->toDateString(),
                     ]);
 
+                    $ordinal = $receivedCount + $index + 1;
+
+                    $identity = $this->assetIdentityFor($asset, $item, $ordinal);
+
                     $asset->update([
-                        'code' => $this->assetCodeFor($asset),
+                        'code' => $identity['code'],
+                        'patrimony_number' => $identity['patrimony_number'],
                     ]);
 
                     AssetEvent::create([
@@ -209,8 +214,47 @@ class InvoiceService
         ]);
     }
 
-    private function assetCodeFor(Asset $asset): string
+    /**
+     * @return array{code: string, patrimony_number: ?string}
+     */
+    private function assetIdentityFor(Asset $asset, AssetInvoiceItem $item, int $ordinal): array
     {
-        return 'AST'.str_pad((string) $asset->id, 6, '0', STR_PAD_LEFT);
+        $itemCode = trim((string) ($item->item_code ?? ''));
+
+        if ($itemCode === '') {
+            return [
+                'code' => 'AST'.str_pad((string) $asset->id, 6, '0', STR_PAD_LEFT),
+                'patrimony_number' => null,
+            ];
+        }
+
+        if (ctype_digit($itemCode)) {
+            $candidate = (string) ((int) $itemCode + max(0, $ordinal - 1));
+
+            while (Asset::query()->where('code', $candidate)->where('id', '!=', $asset->id)->exists()) {
+                $candidate = (string) (((int) $candidate) + 1);
+            }
+
+            return [
+                'code' => $candidate,
+                'patrimony_number' => $candidate,
+            ];
+        }
+
+        $candidate = $item->quantity > 1
+            ? $itemCode.'-'.str_pad((string) $ordinal, 3, '0', STR_PAD_LEFT)
+            : $itemCode;
+
+        $exists = Asset::query()
+            ->where('code', $candidate)
+            ->where('id', '!=', $asset->id)
+            ->exists();
+
+        $code = $exists ? $candidate.'-'.$asset->id : $candidate;
+
+        return [
+            'code' => $code,
+            'patrimony_number' => $code,
+        ];
     }
 }

@@ -98,6 +98,9 @@
                                             {{ ' | '.$item->measureUnit->acronym }}
                                         @endif
                                     </span>
+                                    <span class="text-xs text-gray-500">
+                                        {{ 'Codigo patrimonial: '.($item->item_code ?: '-') }}
+                                    </span>
                                 </div>
                             </x-page.table-td>
                             <x-page.table-td class="hidden md:table-cell" :value="$item->quantity" />
@@ -170,6 +173,12 @@
                     <x-form.label :value="'Modelo'" />
                     <x-form.input type="text" wire:model="model" placeholder="Ex: Inspiron 15, ProBook 440" />
                     <x-form.error for="model" />
+                </div>
+
+                <div class="md:col-span-6">
+                    <x-form.label :value="'Codigo patrimonial'" />
+                    <x-form.input type="text" wire:model="itemCode" placeholder="Opcional" />
+                    <x-form.error for="itemCode" />
                 </div>
 
                 <div class="md:col-span-3">

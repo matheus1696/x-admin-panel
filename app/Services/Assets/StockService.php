@@ -28,6 +28,11 @@ class StockService
                 ->lockForUpdate()
                 ->findOrFail($dto->invoiceItemId);
 
+            $receivedCount = Asset::query()
+                ->where('invoice_item_id', $invoiceItem->id)
+                ->lockForUpdate()
+                ->count();
+
             $this->canReceiveStockValidator->validateOrFail($dto, $invoiceItem);
 
             $assets = [];
@@ -47,8 +52,13 @@ class StockService
                     'metadata' => $dto->metadata,
                 ]);
 
+                $ordinal = $receivedCount + $index + 1;
+
+                $identity = $this->assetIdentityFor($asset, $invoiceItem, $ordinal);
+
                 $asset->update([
-                    'code' => $this->assetCodeFor($asset),
+                    'code' => $identity['code'],
+                    'patrimony_number' => $identity['patrimony_number'],
                 ]);
 
                 AssetEvent::create([
@@ -69,8 +79,47 @@ class StockService
         });
     }
 
-    private function assetCodeFor(Asset $asset): string
+    /**
+     * @return array{code: string, patrimony_number: ?string}
+     */
+    private function assetIdentityFor(Asset $asset, AssetInvoiceItem $invoiceItem, int $ordinal): array
     {
-        return 'AST'.str_pad((string) $asset->id, 6, '0', STR_PAD_LEFT);
+        $itemCode = trim((string) ($invoiceItem->item_code ?? ''));
+
+        if ($itemCode === '') {
+            return [
+                'code' => 'AST'.str_pad((string) $asset->id, 6, '0', STR_PAD_LEFT),
+                'patrimony_number' => null,
+            ];
+        }
+
+        if (ctype_digit($itemCode)) {
+            $candidate = (string) ((int) $itemCode + max(0, $ordinal - 1));
+
+            while (Asset::query()->where('code', $candidate)->where('id', '!=', $asset->id)->exists()) {
+                $candidate = (string) (((int) $candidate) + 1);
+            }
+
+            return [
+                'code' => $candidate,
+                'patrimony_number' => $candidate,
+            ];
+        }
+
+        $candidate = $invoiceItem->quantity > 1
+            ? $itemCode.'-'.str_pad((string) $ordinal, 3, '0', STR_PAD_LEFT)
+            : $itemCode;
+
+        $exists = Asset::query()
+            ->where('code', $candidate)
+            ->where('id', '!=', $asset->id)
+            ->exists();
+
+        $code = $exists ? $candidate.'-'.$asset->id : $candidate;
+
+        return [
+            'code' => $code,
+            'patrimony_number' => $code,
+        ];
     }
 }

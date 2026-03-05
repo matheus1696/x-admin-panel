@@ -4,7 +4,6 @@ use App\DTOs\Assets\AuditAssetDTO;
 use App\DTOs\Assets\ChangeAssetStateDTO;
 use App\DTOs\Assets\CreateInvoiceDTO;
 use App\DTOs\Assets\ReceiveStockDTO;
-use App\DTOs\Assets\ReleaseAssetDTO;
 use App\DTOs\Assets\ReturnToPatrimonyDTO;
 use App\DTOs\Assets\TransferAssetDTO;
 use App\DTOs\Assets\UpsertInvoiceItemDTO;
@@ -50,15 +49,6 @@ test('assets dto classes can be instantiated with named parameters', function ()
         metadata: ['batch' => 'A'],
     );
 
-    $releaseAsset = new ReleaseAssetDTO(
-        assetId: 4,
-        unitId: 8,
-        patrimonyNumber: 'PAT-0004',
-        sectorId: 11,
-        actorUserId: 2,
-        notes: 'Liberado para uso',
-    );
-
     $transferAsset = new TransferAssetDTO(
         assetId: 4,
         unitId: 9,
@@ -93,7 +83,6 @@ test('assets dto classes can be instantiated with named parameters', function ()
         ->and($createInvoice->createdUserId)->toBe(9)
         ->and($upsertItem->metadata)->toBe(['ram' => '16GB'])
         ->and($receiveStock->quantity)->toBe(2)
-        ->and($releaseAsset->sectorId)->toBe(11)
         ->and($transferAsset->unitId)->toBe(9)
         ->and($auditAsset->photoPath)->toBe('assets/audits/foto.jpg')
         ->and($changeState->toState)->toBe(AssetState::IN_USE)

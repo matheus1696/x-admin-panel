@@ -22,7 +22,6 @@ test('asset policy allows abilities when user has the mapped permissions', funct
     grantAssetsPermission($user, 'assets.view');
     grantAssetsPermission($user, 'assets.invoices.manage');
     grantAssetsPermission($user, 'assets.stock.receive');
-    grantAssetsPermission($user, 'assets.release');
     grantAssetsPermission($user, 'assets.transfer');
     grantAssetsPermission($user, 'assets.audit');
     grantAssetsPermission($user, 'assets.state.change');
@@ -33,7 +32,6 @@ test('asset policy allows abilities when user has the mapped permissions', funct
         ->and(Gate::forUser($user)->allows('view', $asset))->toBeTrue()
         ->and(Gate::forUser($user)->allows('manageInvoices', Asset::class))->toBeTrue()
         ->and(Gate::forUser($user)->allows('receiveStock', Asset::class))->toBeTrue()
-        ->and(Gate::forUser($user)->allows('release', Asset::class))->toBeTrue()
         ->and(Gate::forUser($user)->allows('transfer', Asset::class))->toBeTrue()
         ->and(Gate::forUser($user)->allows('audit', Asset::class))->toBeTrue()
         ->and(Gate::forUser($user)->allows('changeState', Asset::class))->toBeTrue()

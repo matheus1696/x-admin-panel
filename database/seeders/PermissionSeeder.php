@@ -111,11 +111,6 @@ class PermissionSeeder extends Seeder
                 'translation' => 'Receber ativos em estoque',
             ],
             [
-                'name' => 'assets.release',
-                'description' => 'Liberar ativos',
-                'translation' => 'Liberar ativos',
-            ],
-            [
                 'name' => 'assets.transfer',
                 'description' => 'Transferir ativos',
                 'translation' => 'Transferir ativos',
@@ -237,4 +232,3 @@ class PermissionSeeder extends Seeder
         ]);
     }
 }
-

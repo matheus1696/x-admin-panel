@@ -17,18 +17,22 @@
         </x-slot>
     </x-page.header>
 
+    @php
+        $hasLocation = $asset->unit_id !== null || $asset->sector_id !== null;
+    @endphp
+
     <div class="mb-4 grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-4">
-        @can('release', \App\Models\Assets\Asset::class)
-            <livewire:assets.release-asset-form :asset-uuid="$asset->uuid" :key="'release-'.$asset->id" />
-        @endcan
+        @if ($hasLocation)
+            @can('transfer', \App\Models\Assets\Asset::class)
+                <livewire:assets.transfer-asset-form :asset-uuid="$asset->uuid" :key="'transfer-'.$asset->id" />
+            @endcan
+        @endif
 
-        @can('transfer', \App\Models\Assets\Asset::class)
-            <livewire:assets.transfer-asset-form :asset-uuid="$asset->uuid" :key="'transfer-'.$asset->id" />
-        @endcan
-
-        @can('changeState', \App\Models\Assets\Asset::class)
-            <livewire:assets.change-state-form :asset-uuid="$asset->uuid" :key="'state-'.$asset->id" />
-        @endcan
+        @if ($hasLocation)
+            @can('changeState', \App\Models\Assets\Asset::class)
+                <livewire:assets.change-state-form :asset-uuid="$asset->uuid" :key="'state-'.$asset->id" />
+            @endcan
+        @endif
 
         @can('returnToPatrimony', \App\Models\Assets\Asset::class)
             <livewire:assets.return-to-patrimony-form :asset-uuid="$asset->uuid" :key="'return-'.$asset->id" />

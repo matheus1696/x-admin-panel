@@ -258,6 +258,7 @@ test('invoice show manages invoice items through livewire', function () {
     expect($item->description)->toBe('Produto UI 003')
         ->and((int) $item->product_id)->toBe($product->id)
         ->and((int) $item->product_measure_unit_id)->toBe($measureUnit->id)
+        ->and($item->item_code)->toBe('ITEM-UI-01')
         ->and($item->asset_invoice_id)->toBe($invoice->id);
 
     $component
@@ -342,6 +343,7 @@ test('invoice finalization sends pending item quantities to stock and locks item
         ->call('createItem')
         ->set('productId', $product->id)
         ->set('productMeasureUnitId', $measureUnit->id)
+        ->set('itemCode', '265963')
         ->set('quantity', 3)
         ->set('unitPrice', '100.00')
         ->set('brand', 'Marca X')
@@ -356,6 +358,23 @@ test('invoice finalization sends pending item quantities to stock and locks item
         ->and($invoice->finalized_at)->not->toBeNull()
         ->and((int) Asset::query()->whereHas('invoiceItem', fn ($q) => $q->where('asset_invoice_id', $invoice->id))->count())->toBe(3)
         ->and(Asset::query()->whereHas('invoiceItem', fn ($q) => $q->where('asset_invoice_id', $invoice->id))->first()?->state)->toBe(AssetState::IN_STOCK);
+
+    $codes = Asset::query()
+        ->whereHas('invoiceItem', fn ($q) => $q->where('asset_invoice_id', $invoice->id))
+        ->orderBy('id')
+        ->pluck('code')
+        ->values()
+        ->all();
+
+    $patrimonyNumbers = Asset::query()
+        ->whereHas('invoiceItem', fn ($q) => $q->where('asset_invoice_id', $invoice->id))
+        ->orderBy('id')
+        ->pluck('patrimony_number')
+        ->values()
+        ->all();
+
+    expect($codes)->toBe(['265963', '265964', '265965'])
+        ->and($patrimonyNumbers)->toBe(['265963', '265964', '265965']);
 
     $component
         ->call('createItem')

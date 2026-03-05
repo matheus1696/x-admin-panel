@@ -42,7 +42,6 @@ test('assets permissions seeder creates required permissions', function () {
     expect(Permission::where('name', 'assets.view')->exists())->toBeTrue();
     expect(Permission::where('name', 'assets.invoices.manage')->exists())->toBeTrue();
     expect(Permission::where('name', 'assets.stock.receive')->exists())->toBeTrue();
-    expect(Permission::where('name', 'assets.release')->exists())->toBeTrue();
     expect(Permission::where('name', 'assets.transfer')->exists())->toBeTrue();
     expect(Permission::where('name', 'assets.audit')->exists())->toBeTrue();
     expect(Permission::where('name', 'assets.state.change')->exists())->toBeTrue();

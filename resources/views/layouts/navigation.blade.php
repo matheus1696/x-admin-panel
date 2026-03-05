@@ -154,7 +154,7 @@
         </x-sidebar.main-dropdown>
     @endcanany
 
-    @canany(['assets.view','assets.invoices.manage','assets.stock.receive','assets.release','assets.transfer','assets.audit','assets.state.change','assets.return','assets.reports.view'])
+    @canany(['assets.view','assets.invoices.manage','assets.stock.receive','assets.transfer','assets.audit','assets.state.change','assets.return','assets.reports.view'])
         <x-sidebar.main-dropdown
             title="Controle de Patrimônio"
             icon="fa-solid fa-boxes-stacked"

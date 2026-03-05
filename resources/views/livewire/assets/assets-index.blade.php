@@ -78,56 +78,34 @@
         </div>
     @endif
 
-    <x-page.table :pagination="$assets" :empty-message="'Nenhum ativo encontrado.'">
+    <x-page.table :empty-message="'Nenhum item encontrado para agrupamento.'">
         <x-slot name="thead">
             <tr>
-                <x-page.table-th :value="'Ativo'" />
-                <x-page.table-th class="hidden md:table-cell" :value="'Localizacao'" />
-                <x-page.table-th class="hidden lg:table-cell" :value="'Origem'" />
-                <x-page.table-th class="w-72 text-center" :value="'Acoes'" />
+                <x-page.table-th :value="'Item'" />
+                <x-page.table-th class="w-24 text-center" :value="'Total'" />
+                <x-page.table-th class="w-28 text-center" :value="'Em estoque'" />
+                <x-page.table-th class="w-24 text-center" :value="'Em uso'" />
+                <x-page.table-th class="w-32 text-center" :value="'Em manutencao'" />
+                <x-page.table-th class="w-28 text-center" :value="'Inserviveis'" />
             </tr>
         </x-slot>
 
         <x-slot name="tbody">
-            @foreach ($assets as $asset)
+            @foreach ($groupedItems as $groupedItem)
                 <tr>
                     <x-page.table-td>
-                        <div class="flex flex-col gap-1">
-                            <span class="font-semibold text-gray-800">{{ $asset->code }}</span>
-                        </div>
+                        <a
+                            href="{{ route('assets.items.global', ['item' => $groupedItem->item]) }}"
+                            class="text-blue-700 hover:text-blue-900 hover:underline"
+                        >
+                            {{ $groupedItem->item }}
+                        </a>
                     </x-page.table-td>
-                    <x-page.table-td class="hidden md:table-cell">
-                        <div class="flex flex-col gap-1 text-xs text-gray-600">
-                            <span>{{ $asset->unit?->title ?? 'Sem unidade' }}</span>
-                        </div>
-                    </x-page.table-td>
-                    <x-page.table-td class="hidden lg:table-cell">
-                        <div class="flex flex-col gap-1 text-xs text-gray-600">
-                            <span>{{ $asset->invoiceItem?->description ?? '-' }}</span>
-                        </div>
-                    </x-page.table-td>
-                    <x-page.table-td>
-                        <div class="flex flex-wrap items-center justify-center gap-2">
-                            <x-button
-                                :href="route('assets.show', $asset->uuid)"
-                                icon="fa-solid fa-eye"
-                                :title="'Visualizar'"
-                                variant="blue_text"
-                            />
-
-                            @can('release', \App\Models\Assets\Asset::class)
-                                <livewire:assets.release-asset-form :asset-uuid="$asset->uuid" :icon-only="true" :key="'release-index-'.$asset->id" />
-                            @endcan
-
-                            @can('transfer', \App\Models\Assets\Asset::class)
-                                <livewire:assets.transfer-asset-form :asset-uuid="$asset->uuid" :icon-only="true" :key="'transfer-index-'.$asset->id" />
-                            @endcan
-
-                            @can('changeState', \App\Models\Assets\Asset::class)
-                                <livewire:assets.change-state-form :asset-uuid="$asset->uuid" :icon-only="true" :key="'state-index-'.$asset->id" />
-                            @endcan
-                        </div>
-                    </x-page.table-td>
+                    <x-page.table-td class="text-center" :value="$groupedItem->quantity" />
+                    <x-page.table-td class="text-center" :value="$groupedItem->in_stock_count" />
+                    <x-page.table-td class="text-center" :value="$groupedItem->in_use_count" />
+                    <x-page.table-td class="text-center" :value="$groupedItem->maintenance_count" />
+                    <x-page.table-td class="text-center" :value="$groupedItem->damaged_count" />
                 </tr>
             @endforeach
         </x-slot>

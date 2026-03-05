@@ -9,6 +9,7 @@ use App\Livewire\Assets\InvoiceIndex;
 use App\Livewire\Assets\InvoiceShow;
 use App\Livewire\Assets\AssetShow;
 use App\Livewire\Assets\AssetsIndex;
+use App\Livewire\Assets\GlobalItemAssetsIndex;
 use App\Livewire\Assets\AssetsByState;
 use App\Livewire\Assets\AssetsByUnit;
 use App\Livewire\Assets\AuditsByPeriod;
@@ -92,6 +93,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     */
     Route::prefix('ativos')->name('assets.')->group(function () {
         Route::get('/lista', AssetsIndex::class)->name('index');
+        Route::get('/lista/item-global', GlobalItemAssetsIndex::class)->name('items.global');
         Route::get('/item/{uuid}', AssetShow::class)->name('show');
         Route::get('/auditoria-mobile', AuditMobile::class)->name('audit-mobile');
         Route::prefix('relatorios')->name('reports.')->middleware('can:viewReports,'.Asset::class)->group(function () {

@@ -36,11 +36,6 @@ class AssetPolicy
         return $user->can('assets.stock.receive');
     }
 
-    public function release(User $user): bool
-    {
-        return $user->can('assets.release');
-    }
-
     public function transfer(User $user): bool
     {
         return $user->can('assets.transfer');
