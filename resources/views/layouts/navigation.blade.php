@@ -80,40 +80,69 @@
                 />
             @endcan
 
-            @can('administration.manage.suppliers')
-                <x-sidebar.dropdown-link
-                    href="{{ route('administration.manage.suppliers') }}"
-                    title="Fornecedores"
-                    icon="fa-solid fa-truck-field"
-                    :active="request()->routeIs('administration.manage.suppliers')"
-                />
-            @endcan
-
-            @can('administration.manage.products')
-                <x-sidebar.dropdown-link
-                    href="{{ route('administration.manage.products') }}"
+            @canany(['administration.manage.suppliers','administration.manage.products','administration.manage.product-types','administration.manage.product-measure-units'])
+                <x-sidebar.dropdown
                     title="Produtos"
                     icon="fa-solid fa-box-open"
-                    :active="request()->routeIs('administration.manage.products')"
-                />
-            @endcan
+                    :active="request()->routeIs('administration.manage.suppliers') || request()->routeIs('administration.manage.products') || request()->routeIs('administration.manage.product-types') || request()->routeIs('administration.manage.product-measure-units')"
+                >
+                    @can('administration.manage.suppliers')
+                        <x-sidebar.dropdown-link
+                            href="{{ route('administration.manage.suppliers') }}"
+                            title="Fornecedores"
+                            icon="fa-solid fa-truck-field"
+                            :active="request()->routeIs('administration.manage.suppliers')"
+                        />
+                    @endcan
 
-            @can('administration.manage.product-types')
-                <x-sidebar.dropdown-link
-                    href="{{ route('administration.manage.product-types') }}"
-                    title="Tipos de Produto"
-                    icon="fa-solid fa-tags"
-                    :active="request()->routeIs('administration.manage.product-types')"
-                />
-            @endcan
+                    @can('administration.manage.products')
+                        <x-sidebar.dropdown-link
+                            href="{{ route('administration.manage.products') }}"
+                            title="Lista de Produtos"
+                            icon="fa-solid fa-box-open"
+                            :active="request()->routeIs('administration.manage.products')"
+                        />
+                    @endcan
 
-            @can('administration.manage.product-measure-units')
-                <x-sidebar.dropdown-link
-                    href="{{ route('administration.manage.product-measure-units') }}"
-                    title="Unidades de Medida"
-                    icon="fa-solid fa-ruler-combined"
-                    :active="request()->routeIs('administration.manage.product-measure-units')"
-                />
+                    @can('administration.manage.product-types')
+                        <x-sidebar.dropdown-link
+                            href="{{ route('administration.manage.product-types') }}"
+                            title="Tipos de Produto"
+                            icon="fa-solid fa-tags"
+                            :active="request()->routeIs('administration.manage.product-types')"
+                        />
+                    @endcan
+
+                    @can('administration.manage.product-measure-units')
+                        <x-sidebar.dropdown-link
+                            href="{{ route('administration.manage.product-measure-units') }}"
+                            title="Unidades de Medida"
+                            icon="fa-solid fa-ruler-combined"
+                            :active="request()->routeIs('administration.manage.product-measure-units')"
+                        />
+                    @endcan
+                </x-sidebar.dropdown>
+            @endcanany
+
+            @can('administration.manage.task')
+                <x-sidebar.dropdown
+                    title="Tarefas"
+                    icon="fa-solid fa-list-check"
+                    :active="request()->routeIs('administration.manage.tasks.*')"
+                >
+                    <x-sidebar.dropdown-link
+                        href="{{ route('administration.manage.tasks.status') }}"
+                        title="Status"
+                        icon="fa-solid fa-traffic-light"
+                        :active="request()->routeIs('administration.manage.tasks.status')"
+                    />
+                    <x-sidebar.dropdown-link
+                        href="{{ route('administration.manage.tasks.category') }}"
+                        title="Categorias"
+                        icon="fa-solid fa-tags"
+                        :active="request()->routeIs('administration.manage.tasks.category')"
+                    />
+                </x-sidebar.dropdown>
             @endcan
 
         </x-sidebar.main-dropdown>
@@ -129,14 +158,14 @@
             @endcan
 
             @can('configuration.manage.establishments')
-                <x-sidebar.dropdown title="Estabelecimentos" icon="fa-solid fa-hospital" :active="request()->routeIs('configuration.establishments.*')" >
+                <x-sidebar.dropdown title="Estabelecimentos" icon="fa-solid fa-hospital" :active="request()->routeIs('configuration.manage.establishments.*')" >
                     <x-sidebar.dropdown-link href="{{ route('configuration.manage.establishments.types') }}" title="Tipos" />
                     <x-sidebar.dropdown-link href="{{ route('configuration.manage.establishments.view') }}" title="Lista" />
                 </x-sidebar.dropdown>
             @endcan
 
             @can('configuration.manage.regions')
-                <x-sidebar.dropdown title="Regiões" icon="fa-solid fa-map" >
+                <x-sidebar.dropdown title="Regiões" icon="fa-solid fa-map" :active="request()->routeIs('configuration.manage.regions.*')" >
                     <x-sidebar.dropdown-link href="{{ route('configuration.manage.regions.countries') }}" title="Países" />
                     <x-sidebar.dropdown-link href="{{ route('configuration.manage.regions.states') }}" title="Estados" />
                     <x-sidebar.dropdown-link href="{{ route('configuration.manage.regions.cities') }}" title="Cidades" />
@@ -189,13 +218,13 @@
 
             @can('assets.reports.view')
                 <x-sidebar.dropdown
-                    title="Relatorios"
+                    title="Relatórios"
                     icon="fa-solid fa-chart-column"
                     :active="request()->routeIs('assets.reports.*')"
                 >
                     <x-sidebar.dropdown-link href="{{ route('assets.reports.assets-by-unit') }}" title="Ativos por Unidade" />
                     <x-sidebar.dropdown-link href="{{ route('assets.reports.assets-by-state') }}" title="Ativos por Estado" />
-                    <x-sidebar.dropdown-link href="{{ route('assets.reports.transfers-by-period') }}" title="Transferencias" />
+                    <x-sidebar.dropdown-link href="{{ route('assets.reports.transfers-by-period') }}" title="Transferências" />
                     <x-sidebar.dropdown-link href="{{ route('assets.reports.audits-by-period') }}" title="Auditorias" />
                     <x-sidebar.dropdown-link href="{{ route('assets.reports.purchases-by-period') }}" title="Compras" />
                 </x-sidebar.dropdown>
