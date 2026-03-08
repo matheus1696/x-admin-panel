@@ -18,14 +18,27 @@ function createTaskHubForTaskStepReason(User $owner, string $title, string $acro
     ]);
 }
 
+if (! function_exists('createTaskStepStatusForHub')) {
+    function createTaskStepStatusForHub(array $data): TaskStepStatus
+    {
+        $data['task_hub_id'] = $data['task_hub_id'] ?? TaskHub::query()->latest('id')->value('id');
+
+        if (! $data['task_hub_id']) {
+            throw new RuntimeException('Nenhum ambiente disponível para vincular status de etapa no teste.');
+        }
+
+        return TaskStepStatus::create($data);
+    }
+}
+
 test('moveKanbanStep stores reason metadata when provided', function () {
     $user = User::factory()->create();
     Auth::login($user);
 
     $hub = createTaskHubForTaskStepReason($user, 'Hub Step Reason', 'HUBSR');
 
-    $pending = TaskStepStatus::create(['title' => 'Pendente']);
-    $done = TaskStepStatus::create(['title' => 'Concluída']);
+    $pending = createTaskStepStatusForHub(['title' => 'Pendente']);
+    $done = createTaskStepStatusForHub(['title' => 'ConcluÃ­da']);
 
     $task = Task::create([
         'task_hub_id' => $hub->id,
@@ -47,7 +60,7 @@ test('moveKanbanStep stores reason metadata when provided', function () {
         $done->id,
         [],
         [$step->id],
-        'Finalizada com evidência',
+        'Finalizada com evidÃªncia',
         'completion'
     );
 
@@ -56,6 +69,6 @@ test('moveKanbanStep stores reason metadata when provided', function () {
         ->first();
 
     expect($activity)->not->toBeNull();
-    expect($activity->meta['reason'])->toBe('Finalizada com evidência');
+    expect($activity->meta['reason'])->toBe('Finalizada com evidÃªncia');
     expect($activity->meta['reason_type'])->toBe('completion');
 });

@@ -23,6 +23,27 @@ class TaskService
 {
     use InteractsWithSystemNotifications;
 
+    public function createHub(array $data, int $ownerId): TaskHub
+    {
+        return DB::transaction(function () use ($data, $ownerId): TaskHub {
+            $taskHub = TaskHub::create([
+                'title' => $data['title'],
+                'acronym' => strtoupper((string) $data['acronym']),
+                'description' => $data['description'] ?? null,
+                'owner_id' => $ownerId,
+            ]);
+
+            TaskHubMember::firstOrCreate([
+                'task_hub_id' => $taskHub->id,
+                'user_id' => $ownerId,
+            ]);
+
+            $this->createDefaultStatusesForHub($taskHub->id);
+
+            return $taskHub;
+        });
+    }
+
     public function availableWorkflows(): Collection
     {
         return Workflow::query()
@@ -339,6 +360,7 @@ class TaskService
             }
 
             $defaultStepStatusId = TaskStepStatus::query()
+                ->where('task_hub_id', $task->task_hub_id)
                 ->where('is_default', true)
                 ->value('id');
 
@@ -413,7 +435,7 @@ class TaskService
         $query->where('task_hub_id', $taskHub->id)
             ->whereNull('finished_at');
 
-        // Filtra pelo título
+        // Filtra pelo tÃ­tulo
         if ($filters['title']) {
             $query->where('title', 'like', '%'.$filters['title'].'%');
         }
@@ -470,11 +492,22 @@ class TaskService
     {
         $taskHub = TaskHub::where('uuid', $id)->first();
 
-        if ($data['task_status_id'] == 2) {
+        $statusId = $data['task_status_id'] ?? null;
+
+        if ($statusId === null) {
+            $statusId = TaskStatus::query()
+                ->where('task_hub_id', $taskHub->id)
+                ->where('is_default', true)
+                ->value('id');
+        }
+
+        $data['task_status_id'] = $statusId;
+
+        if ($statusId !== null && in_array((int) $statusId, $this->taskInProgressStatusIds($taskHub->id), true)) {
             $data['started_at'] = now();
         }
 
-        $data['kanban_order'] = $this->nextKanbanOrder($taskHub->id, $data['task_status_id']);
+        $data['kanban_order'] = $this->nextKanbanOrder($taskHub->id, $statusId);
         $data['task_hub_id'] = $taskHub->id;
         $data['created_user_id'] = Auth::user()->id;
         $task = Task::create($data);
@@ -502,6 +535,27 @@ class TaskService
         }
     }
 
+    public function createStepForTask(int $taskHubId, int $taskId, array $data): TaskStep
+    {
+        $task = Task::query()
+            ->where('task_hub_id', $taskHubId)
+            ->findOrFail($taskId);
+
+        $step = TaskStep::create([
+            'task_hub_id' => $taskHubId,
+            'task_id' => $task->id,
+            'title' => $data['step_title'],
+            'user_id' => $data['step_user_id'],
+            'organization_id' => $data['organization_id'],
+            'task_priority_id' => $data['step_task_priority_id'],
+            'task_status_id' => $data['task_step_status_id'],
+            'kanban_order' => $this->nextStepKanbanOrder($taskHubId, $data['task_step_status_id']),
+            'created_user_id' => Auth::id(),
+        ]);
+
+        return $step->load(['task.taskHub', 'organization.users']);
+    }
+
     public function update(int $id, array $data): void
     {
         $task = Task::findOrFail($id);
@@ -522,6 +576,209 @@ class TaskService
         $task->update([
             'updated_at' => now(),
         ]);
+    }
+
+    public function updateTaskResponsible(int $taskId, ?int $userId): Task
+    {
+        $task = Task::query()->findOrFail($taskId);
+
+        $task->update([
+            'user_id' => $userId,
+            'updated_at' => now(),
+        ]);
+
+        TaskActivity::create([
+            'task_id' => $task->id,
+            'user_id' => Auth::user()->id,
+            'type' => 'responsable_change',
+            'description' => Auth::user()->name.' alterou o responsavel',
+        ]);
+
+        return $task->refresh()->load(['taskHub', 'user']);
+    }
+
+    public function updateTaskCategory(int $taskId, ?int $categoryId): Task
+    {
+        $task = Task::query()->findOrFail($taskId);
+
+        $task->update([
+            'task_category_id' => $categoryId,
+            'updated_at' => now(),
+        ]);
+
+        TaskActivity::create([
+            'task_id' => $task->id,
+            'user_id' => Auth::user()->id,
+            'type' => 'category_change',
+            'description' => Auth::user()->name.' alterou a categoria',
+        ]);
+
+        return $task->refresh();
+    }
+
+    public function updateTaskPriority(int $taskId, ?int $priorityId): Task
+    {
+        $task = Task::query()->findOrFail($taskId);
+
+        $task->update([
+            'task_priority_id' => $priorityId,
+            'updated_at' => now(),
+        ]);
+
+        TaskActivity::create([
+            'task_id' => $task->id,
+            'user_id' => Auth::user()->id,
+            'type' => 'priority_change',
+            'description' => Auth::user()->name.' alterou a prioridade',
+        ]);
+
+        return $task->refresh();
+    }
+
+    public function updateTaskDescription(int $taskId, ?string $description): Task
+    {
+        $task = Task::query()->findOrFail($taskId);
+
+        $task->update([
+            'description' => $description,
+            'updated_at' => now(),
+        ]);
+
+        TaskActivity::create([
+            'task_id' => $task->id,
+            'user_id' => Auth::user()->id,
+            'type' => 'description_change',
+            'description' => Auth::user()->name.' alterou a descricao',
+        ]);
+
+        return $task->refresh();
+    }
+
+    public function updateTaskDeadline(int $taskId, ?string $deadlineAt): Task
+    {
+        $task = Task::query()->findOrFail($taskId);
+
+        $task->update([
+            'deadline_at' => $deadlineAt,
+            'updated_at' => now(),
+        ]);
+
+        TaskActivity::create([
+            'task_id' => $task->id,
+            'user_id' => Auth::user()->id,
+            'type' => 'deadline_change',
+            'description' => Auth::user()->name.' alterou o prazo',
+        ]);
+
+        return $task->refresh();
+    }
+
+    public function updateStepOrganizationResponsible(int $stepId, ?int $organizationId): TaskStep
+    {
+        $step = TaskStep::query()->findOrFail($stepId);
+
+        $step->update([
+            'organization_id' => $organizationId,
+            'user_id' => null,
+            'updated_at' => now(),
+        ]);
+
+        TaskStepActivity::create([
+            'task_step_id' => $step->id,
+            'user_id' => Auth::user()->id,
+            'type' => 'organization_responsable_change',
+            'description' => Auth::user()->name.' alterou o responsavel',
+        ]);
+
+        return $step->refresh()->load(['task.taskHub', 'organization.users']);
+    }
+
+    public function updateStepResponsible(int $stepId, ?int $userId): TaskStep
+    {
+        $step = TaskStep::query()->findOrFail($stepId);
+
+        $step->update([
+            'user_id' => $userId,
+            'updated_at' => now(),
+        ]);
+
+        TaskStepActivity::create([
+            'task_step_id' => $step->id,
+            'user_id' => Auth::user()->id,
+            'type' => 'responsable_change',
+            'description' => Auth::user()->name.' alterou o responsavel',
+        ]);
+
+        return $step->refresh();
+    }
+
+    public function updateStepCategory(int $stepId, ?int $categoryId): TaskStep
+    {
+        $step = TaskStep::query()->findOrFail($stepId);
+
+        $step->update([
+            'task_category_id' => $categoryId,
+            'updated_at' => now(),
+        ]);
+
+        TaskStepActivity::create([
+            'task_step_id' => $step->id,
+            'user_id' => Auth::user()->id,
+            'type' => 'category_change',
+            'description' => Auth::user()->name.' alterou a categoria',
+        ]);
+
+        return $step->refresh();
+    }
+
+    public function updateStepPriority(int $stepId, ?int $priorityId): TaskStep
+    {
+        $step = TaskStep::query()->findOrFail($stepId);
+
+        $step->update([
+            'task_priority_id' => $priorityId,
+            'updated_at' => now(),
+        ]);
+
+        TaskStepActivity::create([
+            'task_step_id' => $step->id,
+            'user_id' => Auth::user()->id,
+            'type' => 'priority_change',
+            'description' => Auth::user()->name.' alterou a prioridade',
+        ]);
+
+        return $step->refresh();
+    }
+
+    public function updateStepDescription(int $stepId, ?string $description): TaskStep
+    {
+        $step = TaskStep::query()->findOrFail($stepId);
+
+        $step->update([
+            'description' => $description,
+            'updated_at' => now(),
+        ]);
+
+        return $step->refresh();
+    }
+
+    public function updateStepDeadline(int $stepId, ?string $deadlineAt): TaskStep
+    {
+        $step = TaskStep::query()->findOrFail($stepId);
+
+        $step->update([
+            'deadline_at' => $deadlineAt,
+            'updated_at' => now(),
+        ]);
+
+        TaskStepActivity::create([
+            'task_step_id' => $step->id,
+            'user_id' => Auth::user()->id,
+            'type' => 'deadline_change',
+            'description' => Auth::user()->name.' alterou o prazo',
+        ]);
+
+        return $step->refresh();
     }
 
     /**
@@ -552,11 +809,12 @@ class TaskService
         $total = (clone $baseQuery)->count();
 
         $statusIds = TaskStatus::query()
-            ->whereIn('title', ['Em andamento', 'Concluído', 'Cancelado'])
+            ->where('task_hub_id', $taskHub->id)
+            ->whereIn('title', ['Em andamento', 'ConcluÃ­do', 'ConcluÃƒÂ­do', 'Cancelado'])
             ->pluck('id', 'title');
 
         $inProgressStatusId = $statusIds['Em andamento'] ?? null;
-        $completedStatusId = $statusIds['Concluído'] ?? null;
+        $completedStatusId = $statusIds['ConcluÃ­do'] ?? ($statusIds['ConcluÃƒÂ­do'] ?? null);
         $cancelledStatusId = $statusIds['Cancelado'] ?? null;
 
         $inProgress = $inProgressStatusId
@@ -595,7 +853,7 @@ class TaskService
                     'code' => $task->code,
                     'title' => $task->title,
                     'deadline_at' => $task->deadline_at?->format('Y-m-d'),
-                    'responsible' => $task->user?->name ?? 'Sem responsável',
+                    'responsible' => $task->user?->name ?? 'Sem responsÃ¡vel',
                 ];
             })
             ->all();
@@ -619,8 +877,8 @@ class TaskService
         $tasksByResponsible = $responsibleCounts
             ->map(function ($row) use ($users) {
                 $label = $row->user_id
-                    ? ($users[$row->user_id] ?? 'Usuário')
-                    : 'Sem responsável';
+                    ? ($users[$row->user_id] ?? 'UsuÃ¡rio')
+                    : 'Sem responsÃ¡vel';
 
                 return [
                     'label' => $label,
@@ -681,8 +939,8 @@ class TaskService
         $stepsByResponsible = $stepResponsibleCounts
             ->map(function ($row) use ($stepUsers) {
                 $label = $row->user_id
-                    ? ($stepUsers[$row->user_id] ?? 'Usuário')
-                    : 'Sem responsável';
+                    ? ($stepUsers[$row->user_id] ?? 'UsuÃ¡rio')
+                    : 'Sem responsÃ¡vel';
 
                 return [
                     'label' => $label,
@@ -730,10 +988,11 @@ class TaskService
             ->values()
             ->all();
 
-        $terminalTaskTitles = ['Concluído', 'Cancelado'];
-        $terminalStepTitles = ['Concluída', 'Cancelada'];
+        $terminalTaskTitles = ['ConcluÃ­do', 'ConcluÃƒÂ­do', 'Cancelado'];
+        $terminalStepTitles = ['ConcluÃ­da', 'ConcluÃƒÂ­da', 'Cancelada'];
 
         $taskStatuses = TaskStatus::query()
+            ->where('task_hub_id', $taskHub->id)
             ->whereNotIn('title', $terminalTaskTitles)
             ->orderBy('id')
             ->get(['id', 'title', 'color']);
@@ -758,6 +1017,7 @@ class TaskService
             ->all();
 
         $stepStatuses = TaskStepStatus::query()
+            ->where('task_hub_id', $taskHub->id)
             ->whereNotIn('title', $terminalStepTitles)
             ->orderBy('id')
             ->get(['id', 'title', 'color']);
@@ -782,6 +1042,7 @@ class TaskService
             ->all();
 
         $stepTerminalStatusIds = TaskStepStatus::query()
+            ->where('task_hub_id', $taskHub->id)
             ->whereIn('title', $terminalStepTitles)
             ->pluck('id')
             ->all();
@@ -801,7 +1062,7 @@ class TaskService
                     'code' => $step->code,
                     'title' => $step->title,
                     'deadline_at' => $step->deadline_at?->format('Y-m-d'),
-                    'responsible' => $step->user?->name ?? 'Sem responsável',
+                    'responsible' => $step->user?->name ?? 'Sem responsÃ¡vel',
                     'task_code' => $step->task?->code,
                 ];
             })
@@ -853,32 +1114,28 @@ class TaskService
             ];
         }
 
-        $baseTaskQuery = Task::query()->whereIn('task_hub_id', $hubIds);
-        $terminalStatusIds = $this->terminalStatusIds();
+        $baseTaskQuery = Task::query()->whereIn('tasks.task_hub_id', $hubIds);
         $total = (clone $baseTaskQuery)->count();
 
-        $taskStatuses = TaskStatus::query()
-            ->orderBy('id')
-            ->get(['id', 'title', 'color']);
+        $statusRows = (clone $baseTaskQuery)
+            ->leftJoin('task_statuses', 'task_statuses.id', '=', 'tasks.task_status_id')
+            ->selectRaw('task_statuses.title as title, task_statuses.color as color, count(tasks.id) as total')
+            ->whereNotNull('task_statuses.id')
+            ->groupBy('task_statuses.title', 'task_statuses.color')
+            ->orderBy('task_statuses.title')
+            ->get();
 
-        $taskStatusCounts = (clone $baseTaskQuery)
-            ->select('task_status_id', DB::raw('count(*) as total'))
-            ->groupBy('task_status_id')
-            ->get()
-            ->keyBy('task_status_id');
-
-        $statuses = $taskStatuses
-            ->map(function (TaskStatus $status) use ($taskStatusCounts) {
-                return [
-                    'label' => $status->title,
-                    'total' => (int) ($taskStatusCounts[$status->id]->total ?? 0),
-                    'color' => $this->colorToHex($status->color),
-                ];
-            })
-            ->filter(fn (array $status) => $status['total'] > 0)
+        $statuses = $statusRows
+            ->map(fn ($row) => [
+                'label' => $row->title,
+                'total' => (int) $row->total,
+                'color' => $this->colorToHex($row->color),
+            ])
             ->values();
 
-        $tasksWithoutStatus = (int) data_get($taskStatusCounts->get(null), 'total', 0);
+        $tasksWithoutStatus = (clone $baseTaskQuery)
+            ->whereNull('task_status_id')
+            ->count();
 
         if ($tasksWithoutStatus > 0) {
             $statuses->push([
@@ -892,9 +1149,10 @@ class TaskService
             ->whereNotNull('deadline_at')
             ->where('deadline_at', '<', now());
 
-        if ($terminalStatusIds !== []) {
-            $overdueQuery->whereNotIn('task_status_id', $terminalStatusIds);
-        }
+        $overdueQuery->where(function ($query): void {
+            $query->whereNull('task_status_id')
+                ->orWhereHas('taskStatus', fn ($statusQuery) => $statusQuery->whereNotIn('title', ['ConcluÃ­do', 'ConcluÃƒÂ­do', 'Cancelado']));
+        });
 
         $overdue = $overdueQuery->count();
 
@@ -937,6 +1195,7 @@ class TaskService
         $tasksByStatus = $tasks->groupBy('task_status_id');
 
         $statuses = TaskStatus::query()
+            ->where('task_hub_id', $taskHub->id)
             ->orderBy('id')
             ->get();
 
@@ -1050,6 +1309,7 @@ class TaskService
             : null;
 
         $statuses = TaskStepStatus::query()
+            ->where('task_hub_id', $taskHub->id)
             ->orderBy('id')
             ->get();
 
@@ -1133,7 +1393,7 @@ class TaskService
             $toStatusId = $toStatusId === 0 ? null : $toStatusId;
 
             $previousStatusId = $step->task_status_id;
-            $terminalStatusIds = $this->stepTerminalStatusIds();
+            $terminalStatusIds = $this->stepTerminalStatusIds($taskHub->id);
 
             if (
                 $fromStatusId !== $toStatusId
@@ -1161,7 +1421,9 @@ class TaskService
             }
 
             $toStatusLabel = $toStatusId
-                ? (TaskStepStatus::query()->find($toStatusId)?->title ?? 'Status')
+                ? (TaskStepStatus::query()
+                    ->where('task_hub_id', $taskHub->id)
+                    ->find($toStatusId)?->title ?? 'Status')
                 : 'Sem status';
 
             $description = ($this->actorName()).' moveu a etapa no kanban para '.$toStatusLabel;
@@ -1203,7 +1465,8 @@ class TaskService
     {
         $step = TaskStep::query()->findOrFail($stepId);
         $completedStatusId = TaskStepStatus::query()
-            ->where('title', 'Concluída')
+            ->where('task_hub_id', $step->task_hub_id)
+            ->whereIn('title', ['ConcluÃ­da', 'ConcluÃƒÂ­da'])
             ->value('id');
 
         if (! $completedStatusId) {
@@ -1229,7 +1492,7 @@ class TaskService
             'task_step_id' => $step->id,
             'user_id' => Auth::user()?->id,
             'type' => 'finished_change',
-            'description' => $this->actorName().' marcou a etapa como concluída',
+            'description' => $this->actorName().' marcou a etapa como concluÃ­da',
         ]);
 
         return $step->refresh();
@@ -1263,12 +1526,20 @@ class TaskService
 
     public function storeStepComment(int $stepId, string $comment): void
     {
+        $step = TaskStep::query()->findOrFail($stepId);
+
         TaskStepActivity::create([
             'task_step_id' => $stepId,
             'user_id' => Auth::user()?->id,
             'type' => 'comment',
             'description' => $comment,
         ]);
+
+        Task::query()
+            ->findOrFail($step->task_id)
+            ->update([
+                'updated_at' => now(),
+            ]);
     }
 
     public function changeStatus(int $taskId, ?int $statusId, ?string $description = null, string $type = 'status_change'): Task
@@ -1373,11 +1644,11 @@ class TaskService
             'task_status_id' => $statusId,
         ];
 
-        if ($statusId !== null && in_array($statusId, $this->stepInProgressStatusIds(), true) && $step->started_at === null) {
+        if ($statusId !== null && in_array($statusId, $this->stepInProgressStatusIds($step->task_hub_id), true) && $step->started_at === null) {
             $updates['started_at'] = now();
         }
 
-        $terminalStatusIds = $this->stepTerminalStatusIds();
+        $terminalStatusIds = $this->stepTerminalStatusIds($step->task_hub_id);
 
         if ($statusId !== null && in_array($statusId, $terminalStatusIds, true) && $step->finished_at === null) {
             $updates['finished_at'] = now();
@@ -1392,7 +1663,7 @@ class TaskService
 
     private function startingWorkflowStepIsBlocked(TaskStep $step, ?int $statusId): bool
     {
-        if ($statusId === null || ! in_array($statusId, $this->stepInProgressStatusIds(), true)) {
+        if ($statusId === null || ! in_array($statusId, $this->stepInProgressStatusIds($step->task_hub_id), true)) {
             return false;
         }
 
@@ -1424,11 +1695,11 @@ class TaskService
             'task_status_id' => $statusId,
         ];
 
-        if ($statusId === 2 && $task->started_at === null) {
+        if ($statusId !== null && in_array($statusId, $this->taskInProgressStatusIds($task->task_hub_id), true) && $task->started_at === null) {
             $updates['started_at'] = now();
         }
 
-        $terminalStatusIds = $this->terminalStatusIds();
+        $terminalStatusIds = $this->terminalStatusIds($task->task_hub_id);
 
         if ($statusId !== null && in_array($statusId, $terminalStatusIds, true) && $task->finished_at === null) {
             $updates['finished_at'] = now();
@@ -1444,10 +1715,11 @@ class TaskService
     /**
      * @return array<int>
      */
-    private function terminalStatusIds(): array
+    private function terminalStatusIds(int $taskHubId): array
     {
         return TaskStatus::query()
-            ->whereIn('title', ['Concluído', 'Cancelado'])
+            ->where('task_hub_id', $taskHubId)
+            ->whereIn('title', ['ConcluÃ­do', 'ConcluÃƒÂ­do', 'Cancelado'])
             ->pluck('id')
             ->map(fn ($id) => (int) $id)
             ->all();
@@ -1456,10 +1728,11 @@ class TaskService
     /**
      * @return array<int>
      */
-    private function stepTerminalStatusIds(): array
+    private function stepTerminalStatusIds(int $taskHubId): array
     {
         return TaskStepStatus::query()
-            ->whereIn('title', ['Concluída', 'Cancelada'])
+            ->where('task_hub_id', $taskHubId)
+            ->whereIn('title', ['ConcluÃ­da', 'ConcluÃƒÂ­da', 'Cancelada'])
             ->pluck('id')
             ->map(fn ($id) => (int) $id)
             ->all();
@@ -1468,10 +1741,24 @@ class TaskService
     /**
      * @return array<int>
      */
-    private function stepInProgressStatusIds(): array
+    private function stepInProgressStatusIds(int $taskHubId): array
     {
         return TaskStepStatus::query()
-            ->whereIn('title', ['Em andamento', 'Em execucao', 'Em execução'])
+            ->where('task_hub_id', $taskHubId)
+            ->whereIn('title', ['Em andamento', 'Em execucao', 'Em execuÃ§Ã£o'])
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+    }
+
+    /**
+     * @return array<int>
+     */
+    private function taskInProgressStatusIds(int $taskHubId): array
+    {
+        return TaskStatus::query()
+            ->where('task_hub_id', $taskHubId)
+            ->whereIn('title', ['Em andamento', 'Em execucao', 'Em execuÃ§Ã£o'])
             ->pluck('id')
             ->map(fn ($id) => (int) $id)
             ->all();
@@ -1581,6 +1868,85 @@ class TaskService
             })
             ->sortBy(fn (array $entry) => $entry['user']->name ?? '')
             ->values();
+    }
+
+    private function createDefaultStatusesForHub(int $taskHubId): void
+    {
+        $taskStatuses = [
+            [
+                'title' => 'Rascunho',
+                'color' => 'gray',
+                'color_code_tailwind' => 'bg-gray-100 text-gray-800 hover:bg-gray-200',
+                'is_default' => true,
+                'is_active' => true,
+            ],
+            [
+                'title' => 'Em andamento',
+                'color' => 'blue',
+                'color_code_tailwind' => 'bg-blue-100 text-blue-700 hover:bg-blue-200',
+                'is_default' => false,
+                'is_active' => true,
+            ],
+            [
+                'title' => 'ConcluÃ­do',
+                'color' => 'green',
+                'color_code_tailwind' => 'bg-green-100 text-green-700 hover:bg-green-200',
+                'is_default' => false,
+                'is_active' => true,
+            ],
+            [
+                'title' => 'Cancelado',
+                'color' => 'red',
+                'color_code_tailwind' => 'bg-red-100 text-red-700 hover:bg-red-200',
+                'is_default' => false,
+                'is_active' => true,
+            ],
+        ];
+
+        foreach ($taskStatuses as $status) {
+            TaskStatus::query()->firstOrCreate(
+                ['task_hub_id' => $taskHubId, 'title' => $status['title']],
+                $status
+            );
+        }
+
+        $taskStepStatuses = [
+            [
+                'title' => 'Pendente',
+                'color' => 'gray',
+                'color_code_tailwind' => 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+                'is_default' => true,
+                'is_active' => true,
+            ],
+            [
+                'title' => 'Em andamento',
+                'color' => 'blue',
+                'color_code_tailwind' => 'bg-blue-100 text-blue-700 hover:bg-blue-200',
+                'is_default' => false,
+                'is_active' => true,
+            ],
+            [
+                'title' => 'ConcluÃ­da',
+                'color' => 'green',
+                'color_code_tailwind' => 'bg-green-100 text-green-700 hover:bg-green-200',
+                'is_default' => false,
+                'is_active' => true,
+            ],
+            [
+                'title' => 'Cancelada',
+                'color' => 'red',
+                'color_code_tailwind' => 'bg-red-100 text-red-700 hover:bg-red-200',
+                'is_default' => false,
+                'is_active' => true,
+            ],
+        ];
+
+        foreach ($taskStepStatuses as $status) {
+            TaskStepStatus::query()->firstOrCreate(
+                ['task_hub_id' => $taskHubId, 'title' => $status['title']],
+                $status
+            );
+        }
     }
 
     private function colorToHex(?string $color): string

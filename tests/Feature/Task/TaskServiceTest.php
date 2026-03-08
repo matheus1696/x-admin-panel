@@ -26,6 +26,32 @@ function createTaskHubForTaskService(User $owner, string $title, string $acronym
     ]);
 }
 
+if (! function_exists('createTaskStatusForHub')) {
+    function createTaskStatusForHub(array $data): TaskStatus
+    {
+        $data['task_hub_id'] = $data['task_hub_id'] ?? TaskHub::query()->latest('id')->value('id');
+
+        if (! $data['task_hub_id']) {
+            throw new RuntimeException('Nenhum ambiente disponível para vincular status de tarefa no teste.');
+        }
+
+        return TaskStatus::create($data);
+    }
+}
+
+if (! function_exists('createTaskStepStatusForHub')) {
+    function createTaskStepStatusForHub(array $data): TaskStepStatus
+    {
+        $data['task_hub_id'] = $data['task_hub_id'] ?? TaskHub::query()->latest('id')->value('id');
+
+        if (! $data['task_hub_id']) {
+            throw new RuntimeException('Nenhum ambiente disponível para vincular status de etapa no teste.');
+        }
+
+        return TaskStepStatus::create($data);
+    }
+}
+
 test('storeComment updates task updated_at and creates activity', function () {
     $user = User::factory()->create();
     $hub = createTaskHubForTaskService($user, 'Hub Comentarios', 'HUBC');
@@ -54,7 +80,7 @@ test('index applies list filters for task page', function () {
 
     $organization = OrganizationChart::create([
         'acronym' => 'OPE',
-        'title' => 'Operações',
+        'title' => 'OperaÃ§Ãµes',
         'order' => 1,
         'hierarchy' => '1',
         'number_hierarchy' => 1,
@@ -74,7 +100,7 @@ test('index applies list filters for task page', function () {
     ]);
     $otherCategory = TaskCategory::create([
         'task_hub_id' => $hub->id,
-        'title' => 'Estratégica',
+        'title' => 'EstratÃ©gica',
         'is_active' => true,
     ]);
 
@@ -89,8 +115,8 @@ test('index applies list filters for task page', function () {
         'is_active' => true,
     ]);
 
-    $status = TaskStatus::create(['title' => 'Em andamento']);
-    $otherStatus = TaskStatus::create(['title' => 'Pendente']);
+    $status = createTaskStatusForHub(['title' => 'Em andamento']);
+    $otherStatus = createTaskStatusForHub(['title' => 'Pendente']);
 
     $matchingTask = Task::create([
         'task_hub_id' => $hub->id,
@@ -147,7 +173,7 @@ test('copyWorkflowToTask copies workflow steps with accumulated deadlines and bl
 
     $hub = createTaskHubForTaskService($owner, 'Hub Workflow Copy', 'HUWC');
 
-    $defaultStepStatus = TaskStepStatus::create([
+    $defaultStepStatus = createTaskStepStatusForHub([
         'title' => 'Pendente',
         'is_default' => true,
     ]);
@@ -162,7 +188,7 @@ test('copyWorkflowToTask copies workflow steps with accumulated deadlines and bl
 
     $organizationB = OrganizationChart::create([
         'acronym' => 'ANA',
-        'title' => 'Análise',
+        'title' => 'AnÃ¡lise',
         'order' => 2,
         'hierarchy' => '2',
         'number_hierarchy' => 2,
@@ -176,7 +202,7 @@ test('copyWorkflowToTask copies workflow steps with accumulated deadlines and bl
 
     WorkflowStep::create([
         'workflow_id' => $workflow->id,
-        'title' => 'Triar solicitação',
+        'title' => 'Triar solicitaÃ§Ã£o',
         'step_order' => 1,
         'deadline_days' => 2,
         'required' => true,
@@ -209,7 +235,7 @@ test('copyWorkflowToTask copies workflow steps with accumulated deadlines and bl
 
     expect($copied)->toBeTrue();
     expect($steps)->toHaveCount(2);
-    expect($steps[0]->title)->toBe('Triar solicitação');
+    expect($steps[0]->title)->toBe('Triar solicitaÃ§Ã£o');
     expect($steps[0]->organization_id)->toBe($organizationA->id);
     expect($steps[0]->task_status_id)->toBe($defaultStepStatus->id);
     expect($steps[0]->workflow_step_order)->toBe(1);
@@ -237,8 +263,8 @@ test('moveKanbanStep blocks starting next workflow step while previous required 
 
     $hub = createTaskHubForTaskService($user, 'Hub Workflow Sequence', 'HUWS');
 
-    $pending = TaskStepStatus::create(['title' => 'Pendente']);
-    $running = TaskStepStatus::create(['title' => 'Em andamento']);
+    $pending = createTaskStepStatusForHub(['title' => 'Pendente']);
+    $running = createTaskStepStatusForHub(['title' => 'Em andamento']);
 
     $task = Task::create([
         'task_hub_id' => $hub->id,
@@ -313,9 +339,9 @@ test('dashboard aggregates task and step metrics for a hub', function () {
     $responsible = User::factory()->create();
     $hub = createTaskHubForTaskService($owner, 'Hub Dashboard', 'HUBD');
 
-    $inProgressStatus = TaskStatus::create(['title' => 'Em andamento']);
-    $completedStatus = TaskStatus::create(['title' => 'Concluído']);
-    $cancelledStatus = TaskStatus::create(['title' => 'Cancelado']);
+    $inProgressStatus = createTaskStatusForHub(['title' => 'Em andamento']);
+    $completedStatus = createTaskStatusForHub(['title' => 'ConcluÃ­do']);
+    $cancelledStatus = createTaskStatusForHub(['title' => 'Cancelado']);
 
     $taskInProgress = Task::create([
         'task_hub_id' => $hub->id,
@@ -344,10 +370,10 @@ test('dashboard aggregates task and step metrics for a hub', function () {
         'task_status_id' => $cancelledStatus->id,
     ]);
 
-    $pending = TaskStepStatus::create(['title' => 'Pendente']);
-    $running = TaskStepStatus::create(['title' => 'Em execucao']);
-    TaskStepStatus::create(['title' => 'Concluída']);
-    TaskStepStatus::create(['title' => 'Cancelada']);
+    $pending = createTaskStepStatusForHub(['title' => 'Pendente']);
+    $running = createTaskStepStatusForHub(['title' => 'Em execucao']);
+    createTaskStepStatusForHub(['title' => 'ConcluÃ­da']);
+    createTaskStepStatusForHub(['title' => 'Cancelada']);
 
     TaskStep::create([
         'task_id' => $taskInProgress->id,
@@ -381,7 +407,7 @@ test('userOverview aggregates only hubs visible to the user', function () {
     $owner = User::factory()->create();
     $responsible = User::factory()->create();
 
-    $ownedHub = createTaskHubForTaskService($viewer, 'Hub Próprio', 'HUBP');
+    $ownedHub = createTaskHubForTaskService($viewer, 'Hub PrÃ³prio', 'HUBP');
     $sharedHub = createTaskHubForTaskService($owner, 'Hub Compartilhado', 'HUBC');
     $hiddenHub = createTaskHubForTaskService($owner, 'Hub Oculto', 'HUBO');
 
@@ -390,13 +416,13 @@ test('userOverview aggregates only hubs visible to the user', function () {
         'user_id' => $viewer->id,
     ]);
 
-    $inProgressStatus = TaskStatus::create(['title' => 'Em andamento']);
-    $completedStatus = TaskStatus::create(['title' => 'Concluído']);
-    $cancelledStatus = TaskStatus::create(['title' => 'Cancelado']);
+    $inProgressStatus = createTaskStatusForHub(['title' => 'Em andamento']);
+    $completedStatus = createTaskStatusForHub(['title' => 'ConcluÃ­do']);
+    $cancelledStatus = createTaskStatusForHub(['title' => 'Cancelado']);
 
     $ownedTask = Task::create([
         'task_hub_id' => $ownedHub->id,
-        'title' => 'Tarefa Própria',
+        'title' => 'Tarefa PrÃ³pria',
         'user_id' => $responsible->id,
         'task_status_id' => $inProgressStatus->id,
     ]);
@@ -410,7 +436,7 @@ test('userOverview aggregates only hubs visible to the user', function () {
 
     Task::create([
         'task_hub_id' => $sharedHub->id,
-        'title' => 'Tarefa Concluída',
+        'title' => 'Tarefa ConcluÃ­da',
         'user_id' => $responsible->id,
         'task_status_id' => $completedStatus->id,
     ]);
@@ -421,7 +447,7 @@ test('userOverview aggregates only hubs visible to the user', function () {
         'task_status_id' => $cancelledStatus->id,
     ]);
 
-    $pendingStepStatus = TaskStepStatus::create(['title' => 'Pendente']);
+    $pendingStepStatus = createTaskStepStatusForHub(['title' => 'Pendente']);
     $organization = OrganizationChart::create([
         'title' => 'Setor Financeiro',
         'acronym' => 'FIN',
@@ -433,7 +459,7 @@ test('userOverview aggregates only hubs visible to the user', function () {
     TaskStep::create([
         'task_id' => $sharedTask->id,
         'task_hub_id' => $sharedHub->id,
-        'title' => 'Etapa Visível',
+        'title' => 'Etapa VisÃ­vel',
         'organization_id' => $organization->id,
         'task_status_id' => $pendingStepStatus->id,
     ]);
@@ -461,7 +487,7 @@ test('moveKanbanTask updates status, ordering, and history', function () {
 
     $hub = createTaskHubForTaskService($user, 'Hub Kanban', 'HUBK');
 
-    $todo = TaskStatus::create([
+    $todo = createTaskStatusForHub([
         'title' => 'Todo',
         'color' => 'gray',
         'color_code_tailwind' => 'bg-gray-100 text-gray-800',
@@ -469,7 +495,7 @@ test('moveKanbanTask updates status, ordering, and history', function () {
         'is_active' => true,
     ]);
 
-    $doing = TaskStatus::create([
+    $doing = createTaskStatusForHub([
         'title' => 'Doing',
         'color' => 'blue',
         'color_code_tailwind' => 'bg-blue-100 text-blue-700',
@@ -541,7 +567,7 @@ test('moveKanbanTask stores reason metadata when provided', function () {
 
     $hub = createTaskHubForTaskService($user, 'Hub Kanban Reason', 'HUBR');
 
-    $todo = TaskStatus::create([
+    $todo = createTaskStatusForHub([
         'title' => 'Todo',
         'color' => 'gray',
         'color_code_tailwind' => 'bg-gray-100 text-gray-800',
@@ -549,7 +575,7 @@ test('moveKanbanTask stores reason metadata when provided', function () {
         'is_active' => true,
     ]);
 
-    $done = TaskStatus::create([
+    $done = createTaskStatusForHub([
         'title' => 'Done',
         'color' => 'green',
         'color_code_tailwind' => 'bg-green-100 text-green-700',
@@ -571,7 +597,7 @@ test('moveKanbanTask stores reason metadata when provided', function () {
         $done->id,
         [],
         [$task->id],
-        'Finalizado com evidências',
+        'Finalizado com evidÃªncias',
         'completion'
     );
 
@@ -580,7 +606,7 @@ test('moveKanbanTask stores reason metadata when provided', function () {
         ->first();
 
     expect($activity)->not->toBeNull();
-    expect($activity->meta['reason'])->toBe('Finalizado com evidências');
+    expect($activity->meta['reason'])->toBe('Finalizado com evidÃªncias');
     expect($activity->meta['reason_type'])->toBe('completion');
 });
 
@@ -590,7 +616,7 @@ test('moveKanbanTask sets finished_at for terminal status and clears on reopen',
 
     $hub = createTaskHubForTaskService($user, 'Hub Kanban Finish', 'HUBF');
 
-    $inProgress = TaskStatus::create([
+    $inProgress = createTaskStatusForHub([
         'title' => 'Em andamento',
         'color' => 'blue',
         'color_code_tailwind' => 'bg-blue-100 text-blue-700',
@@ -598,15 +624,15 @@ test('moveKanbanTask sets finished_at for terminal status and clears on reopen',
         'is_active' => true,
     ]);
 
-    $done = TaskStatus::create([
-        'title' => 'Concluído',
+    $done = createTaskStatusForHub([
+        'title' => 'ConcluÃ­do',
         'color' => 'green',
         'color_code_tailwind' => 'bg-green-100 text-green-700',
         'is_default' => false,
         'is_active' => false,
     ]);
 
-    $cancelled = TaskStatus::create([
+    $cancelled = createTaskStatusForHub([
         'title' => 'Cancelado',
         'color' => 'red',
         'color_code_tailwind' => 'bg-red-100 text-red-700',
@@ -670,8 +696,8 @@ test('moveKanbanStep updates status, ordering, and history', function () {
 
     $hub = createTaskHubForTaskService($user, 'Hub Steps', 'HUBS');
 
-    $pending = TaskStepStatus::create(['title' => 'Pendente']);
-    $running = TaskStepStatus::create(['title' => 'Em execucao']);
+    $pending = createTaskStepStatusForHub(['title' => 'Pendente']);
+    $running = createTaskStepStatusForHub(['title' => 'Em execucao']);
 
     $task = Task::create([
         'task_hub_id' => $hub->id,
@@ -751,8 +777,8 @@ test('moveKanbanStep stores completion comment and completion log in task activi
 
     $hub = createTaskHubForTaskService($user, 'Hub Step Completion', 'HUBC');
 
-    $pending = TaskStepStatus::create(['title' => 'Pendente']);
-    $done = TaskStepStatus::create(['title' => 'Concluída']);
+    $pending = createTaskStepStatusForHub(['title' => 'Pendente']);
+    $done = createTaskStepStatusForHub(['title' => 'ConcluÃ­da']);
 
     $task = Task::create([
         'task_hub_id' => $hub->id,
@@ -795,9 +821,9 @@ test('changeStepStatus fills started_at and finished_at for steps', function () 
 
     $hub = createTaskHubForTaskService($user, 'Hub Step Status Change', 'HUSC');
 
-    $pending = TaskStepStatus::create(['title' => 'Pendente']);
-    $inProgress = TaskStepStatus::create(['title' => 'Em andamento']);
-    $done = TaskStepStatus::create(['title' => 'Concluída']);
+    $pending = createTaskStepStatusForHub(['title' => 'Pendente']);
+    $inProgress = createTaskStepStatusForHub(['title' => 'Em andamento']);
+    $done = createTaskStepStatusForHub(['title' => 'ConcluÃ­da']);
 
     $task = Task::create([
         'task_hub_id' => $hub->id,
@@ -807,7 +833,7 @@ test('changeStepStatus fills started_at and finished_at for steps', function () 
     $step = TaskStep::create([
         'task_id' => $task->id,
         'task_hub_id' => $hub->id,
-        'title' => 'Etapa com mudança direta',
+        'title' => 'Etapa com mudanÃ§a direta',
         'task_status_id' => $pending->id,
     ]);
 
@@ -830,7 +856,7 @@ test('completeStep requires comment flow to write task activities', function () 
 
     $hub = createTaskHubForTaskService($user, 'Hub Complete Step', 'HUBF');
 
-    $done = TaskStepStatus::create(['title' => 'Concluída']);
+    $done = createTaskStepStatusForHub(['title' => 'ConcluÃ­da']);
 
     $task = Task::create([
         'task_hub_id' => $hub->id,
@@ -843,7 +869,7 @@ test('completeStep requires comment flow to write task activities', function () 
         'title' => 'Etapa Completa',
     ]);
 
-    app(TaskService::class)->completeStep($step->id, 'Concluída após revisão final.');
+    app(TaskService::class)->completeStep($step->id, 'ConcluÃ­da apÃ³s revisÃ£o final.');
 
     $step->refresh();
 
@@ -859,8 +885,8 @@ test('moveKanbanStep stores reopen reason and reopen log in task activities', fu
 
     $hub = createTaskHubForTaskService($user, 'Hub Step Reopen', 'HUBR');
 
-    $pending = TaskStepStatus::create(['title' => 'Pendente']);
-    $done = TaskStepStatus::create(['title' => 'Concluída']);
+    $pending = createTaskStepStatusForHub(['title' => 'Pendente']);
+    $done = createTaskStepStatusForHub(['title' => 'ConcluÃ­da']);
 
     $task = Task::create([
         'task_hub_id' => $hub->id,
@@ -883,7 +909,7 @@ test('moveKanbanStep stores reopen reason and reopen log in task activities', fu
         $pending->id,
         [$step->id],
         [$step->id],
-        'Necessário complementar a evidência.',
+        'NecessÃ¡rio complementar a evidÃªncia.',
         'reopen'
     );
 
@@ -893,7 +919,7 @@ test('moveKanbanStep stores reopen reason and reopen log in task activities', fu
 
     expect($taskActivities)->toHaveCount(2);
     expect($taskActivities[0]->type)->toBe('comment');
-    expect($taskActivities[0]->description)->toBe('Necessário complementar a evidência.');
+    expect($taskActivities[0]->description)->toBe('NecessÃ¡rio complementar a evidÃªncia.');
     expect($taskActivities[1]->type)->toBe('step_reopen_change');
     expect($taskActivities[1]->description)->toContain('reabriu a etapa Etapa Reaberta');
 });
@@ -904,8 +930,8 @@ test('moveKanbanStep stores cancellation reason and cancellation log in task act
 
     $hub = createTaskHubForTaskService($user, 'Hub Step Cancel', 'HUBX');
 
-    $pending = TaskStepStatus::create(['title' => 'Pendente']);
-    $cancelled = TaskStepStatus::create(['title' => 'Cancelada']);
+    $pending = createTaskStepStatusForHub(['title' => 'Pendente']);
+    $cancelled = createTaskStepStatusForHub(['title' => 'Cancelada']);
 
     $task = Task::create([
         'task_hub_id' => $hub->id,
@@ -927,7 +953,7 @@ test('moveKanbanStep stores cancellation reason and cancellation log in task act
         $cancelled->id,
         [],
         [$step->id],
-        'Cancelada por mudança de escopo.',
+        'Cancelada por mudanÃ§a de escopo.',
         'cancellation'
     );
 
@@ -937,7 +963,7 @@ test('moveKanbanStep stores cancellation reason and cancellation log in task act
 
     expect($taskActivities)->toHaveCount(2);
     expect($taskActivities[0]->type)->toBe('comment');
-    expect($taskActivities[0]->description)->toBe('Cancelada por mudança de escopo.');
+    expect($taskActivities[0]->description)->toBe('Cancelada por mudanÃ§a de escopo.');
     expect($taskActivities[1]->type)->toBe('step_cancellation_change');
     expect($taskActivities[1]->description)->toContain('cancelou a etapa Etapa Cancelada');
 });
@@ -948,8 +974,8 @@ test('moveKanbanStep does not allow switching directly between terminal step sta
 
     $hub = createTaskHubForTaskService($user, 'Hub Step Terminal Swap', 'HUBT');
 
-    $done = TaskStepStatus::create(['title' => 'Concluída']);
-    $cancelled = TaskStepStatus::create(['title' => 'Cancelada']);
+    $done = createTaskStepStatusForHub(['title' => 'ConcluÃ­da']);
+    $cancelled = createTaskStepStatusForHub(['title' => 'Cancelada']);
 
     $task = Task::create([
         'task_hub_id' => $hub->id,
@@ -972,7 +998,7 @@ test('moveKanbanStep does not allow switching directly between terminal step sta
         $cancelled->id,
         [$step->id],
         [$step->id],
-        'Tentativa inválida',
+        'Tentativa invÃ¡lida',
         'cancellation'
     );
 
@@ -1008,9 +1034,9 @@ test('kanban hides tasks and steps finished more than three days ago', function 
 
     $hub = createTaskHubForTaskService($user, 'Hub Kanban Aging', 'HUBA');
 
-    $inProgress = TaskStatus::create(['title' => 'Em andamento']);
-    $done = TaskStatus::create(['title' => 'Concluído']);
-    $stepDone = TaskStepStatus::create(['title' => 'Concluída']);
+    $inProgress = createTaskStatusForHub(['title' => 'Em andamento']);
+    $done = createTaskStatusForHub(['title' => 'ConcluÃ­do']);
+    $stepDone = createTaskStepStatusForHub(['title' => 'ConcluÃ­da']);
 
     $oldTask = Task::create([
         'task_hub_id' => $hub->id,
@@ -1073,7 +1099,7 @@ test('stepKanban filters steps by task, organization, and responsible user', fun
 
     $hub = createTaskHubForTaskService($owner, 'Hub Filtros', 'HUBF');
 
-    $status = TaskStepStatus::create([
+    $status = createTaskStepStatusForHub([
         'title' => 'Em andamento',
     ]);
 

@@ -5,9 +5,7 @@ namespace App\Livewire\Task;
 use App\Livewire\Traits\WithFlashMessage;
 use App\Models\Administration\Task\TaskPriority;
 use App\Models\Administration\Task\TaskStepCategory;
-use App\Models\Task\Task;
 use App\Models\Task\TaskStep;
-use App\Models\Task\TaskStepActivity;
 use App\Services\Administration\Task\TaskStepStatusService;
 use App\Services\Task\TaskService;
 use App\Support\Notifications\InteractsWithSystemNotifications;
@@ -15,8 +13,6 @@ use App\Validation\Task\TaskStepRules;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-
-use function Livewire\str;
 
 class TaskStepAside extends Component
 {
@@ -81,12 +77,11 @@ class TaskStepAside extends Component
         $this->step = null;
         $this->stepId = $stepId;
 
-        // Listas estáticas
         $this->users = collect();
         $this->organizations = collect();
         $this->taskPriorities = TaskPriority::orderBy('level')->get();
         $this->taskStepCategories = TaskStepCategory::orderBy('title')->get();
-        $this->taskStepStatuses = $this->taskStepStatusesService->index();
+        $this->taskStepStatuses = collect();
         $this->loadStep();
     }
 
@@ -102,6 +97,7 @@ class TaskStepAside extends Component
         ])->findOrFail($this->stepId);
         $this->users = $this->taskService->accessUsersByHubId($this->step->task_hub_id);
         $this->organizations = $this->taskService->organizationAccessesByHubId($this->step->task_hub_id);
+        $this->taskStepStatuses = $this->taskStepStatusesService->index($this->step->task_hub_id);
         $this->syncUsersForOrganization($this->step->organization_id);
         $this->isLoading = false;
     }
@@ -118,25 +114,16 @@ class TaskStepAside extends Component
 
         $this->responsable_id = null;
 
-        $this->step->update([
-            'organization_id' => $data['organization_responsable_id'],
-            'user_id' => null,
-            'updated_at' => now(),
-        ]);
+        $this->step = $this->taskService->updateStepOrganizationResponsible(
+            $this->step->id,
+            $data['organization_responsable_id']
+        );
 
         $this->syncUsersForOrganization($data['organization_responsable_id']);
         $this->usersKey++;
         $this->dispatch('$refresh');
 
-        TaskStepActivity::create([
-            'task_step_id' => $this->step->id,
-            'user_id' => Auth::user()->id,
-            'type' => 'organization_responsable_change',
-            'description' => Auth::user()->name.' alterou o responsável',
-        ]);
-
-        $this->flashSuccess('Responsável atualizado.');
-        $this->step->refresh()->load(['task.taskHub', 'organization.users']);
+        $this->flashSuccess('Responsavel atualizado.');
 
         if (
             $this->step->organization
@@ -162,20 +149,9 @@ class TaskStepAside extends Component
 
         $data = $this->validate(TaskStepRules::responsable($allowedUserIds));
 
-        $this->step->update([
-            'user_id' => $data['responsable_id'],
-            'updated_at' => now(),
-        ]);
+        $this->step = $this->taskService->updateStepResponsible($this->step->id, $data['responsable_id']);
 
-        TaskStepActivity::create([
-            'task_step_id' => $this->step->id,
-            'user_id' => Auth::user()->id,
-            'type' => 'responsable_change',
-            'description' => Auth::user()->name.' alterou o responsável',
-        ]);
-
-        $this->flashSuccess('Responsável atualizado.');
-        $this->step->refresh();
+        $this->flashSuccess('Responsavel atualizado.');
     }
 
     private function resolveAllowedUserIds(): array
@@ -248,39 +224,18 @@ class TaskStepAside extends Component
     {
         $data = $this->validate(TaskStepRules::category());
 
-        $this->step->update([
-            'task_category_id' => $data['list_category_id'],
-            'updated_at' => now(),
-        ]);
-
-        TaskStepActivity::create([
-            'task_step_id' => $this->step->id,
-            'user_id' => Auth::user()->id,
-            'type' => 'category_change',
-            'description' => Auth::user()->name.' alterou a categoria',
-        ]);
+        $this->step = $this->taskService->updateStepCategory($this->step->id, $data['list_category_id']);
 
         $this->flashSuccess('Categoria atualizada.');
-        $this->step->refresh();
     }
 
     public function updatedListPriorityId()
     {
         $data = $this->validate(TaskStepRules::priority());
 
-        $this->step->update([
-            'task_priority_id' => $data['list_priority_id'],
-        ]);
-
-        TaskStepActivity::create([
-            'task_step_id' => $this->step->id,
-            'user_id' => Auth::user()->id,
-            'type' => 'priority_change',
-            'description' => Auth::user()->name.' alterou a prioridade',
-        ]);
+        $this->step = $this->taskService->updateStepPriority($this->step->id, $data['list_priority_id']);
 
         $this->flashSuccess('Prioridade atualizada.');
-        $this->step->refresh();
     }
 
     public function updatedListStatusId()
@@ -295,7 +250,7 @@ class TaskStepAside extends Component
 
         if (! $updatedStep) {
             $this->step->refresh();
-            $this->flashError('Não é possível iniciar esta etapa enquanto a etapa anterior obrigatória do fluxo estiver aberta.');
+            $this->flashError('Nao e possivel iniciar esta etapa enquanto a etapa anterior obrigatoria do fluxo estiver aberta.');
 
             return;
         }
@@ -309,13 +264,13 @@ class TaskStepAside extends Component
     public function enableDescriptionEdit()
     {
         $this->isEditingDescription = true;
-        $this->description = TaskStep::findOrFail($this->stepId)->description;
+        $this->description = $this->step->description;
     }
 
     public function cancelDescriptionEdit()
     {
         $this->isEditingDescription = false;
-        $this->description = TaskStep::findOrFail($this->stepId)->description;
+        $this->description = $this->step->description;
         $this->savingDescription = false;
     }
 
@@ -327,16 +282,12 @@ class TaskStepAside extends Component
 
         $this->savingDescription = true;
 
-        TaskStep::findOrFail($this->stepId)->update([
-            'description' => str($this->description)->trim(),
-            'updated_at' => now(),
-        ]);
+        $this->step = $this->taskService->updateStepDescription($this->step->id, trim((string) $this->description));
 
         $this->isEditingDescription = false;
         $this->savingDescription = false;
 
-        $this->flashSuccess('Descrição atualizado.');
-        $this->step->refresh();
+        $this->flashSuccess('Descricao atualizada.');
     }
 
     public function enableDeadlineEdit()
@@ -358,22 +309,11 @@ class TaskStepAside extends Component
 
         $this->savingDeadline = true;
 
-        $this->step->update([
-            'deadline_at' => $data['deadline_at'],
-            'updated_at' => now(),
-        ]);
-
-        TaskStepActivity::create([
-            'task_step_id' => $this->step->id,
-            'user_id' => Auth::user()->id,
-            'type' => 'deadline_change',
-            'description' => Auth::user()->name.' alterou o prazo',
-        ]);
+        $this->step = $this->taskService->updateStepDeadline($this->step->id, $data['deadline_at']);
 
         $this->isEditingDeadline = false;
         $this->savingDeadline = false;
 
-        $this->step->refresh();
         $this->flashSuccess('Prazo atualizado.');
     }
 
@@ -381,18 +321,7 @@ class TaskStepAside extends Component
     {
         $data = $this->validate(TaskStepRules::storeComment());
 
-        $task = Task::findOrFail($this->step->task_id);
-
-        $data['task_step_id'] = $this->step->id;
-        $data['user_id'] = Auth::user()->id;
-        $data['type'] = 'comment';
-        $data['description'] = $data['comment'];
-
-        TaskStepActivity::create($data);
-
-        $task->update([
-            'update_at' => now(),
-        ]);
+        $this->taskService->storeStepComment($this->step->id, $data['comment']);
 
         $this->comment = '';
         $this->step->refresh();
@@ -405,7 +334,7 @@ class TaskStepAside extends Component
         $this->taskService->completeStep($this->step->id, $data['comment']);
 
         $this->comment = '';
-        $this->flashSuccess('Etapa marcada como concluída.');
+        $this->flashSuccess('Etapa marcada como concluida.');
         $this->step->refresh();
     }
 

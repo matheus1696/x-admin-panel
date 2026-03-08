@@ -4,7 +4,6 @@ namespace App\Livewire\Task;
 
 use App\Livewire\Traits\WithFlashMessage;
 use App\Models\Administration\Task\TaskPriority;
-use App\Models\Task\TaskActivity;
 use App\Services\Administration\Task\TaskStatusService;
 use App\Services\Task\TaskCategoryService;
 use App\Services\Task\TaskService;
@@ -70,8 +69,7 @@ class TaskAside extends Component
         TaskService $taskService,
         TaskCategoryService $taskCategoryService,
         TaskStatusService $taskStatusService
-    )
-    {
+    ) {
         $this->taskService = $taskService;
         $this->taskCategoryService = $taskCategoryService;
         $this->taskStatusService = $taskStatusService;
@@ -83,11 +81,10 @@ class TaskAside extends Component
         $this->task = null;
         $this->taskId = $taskId;
 
-        // Listas estáticas
         $this->users = collect();
         $this->taskPriorities = TaskPriority::orderBy('level')->get();
         $this->taskCategories = collect();
-        $this->taskStatuses = $this->taskStatusService->index();
+        $this->taskStatuses = collect();
         $this->workflows = $this->taskService->availableWorkflows();
         $this->workflow_id = $this->workflows->first()?->id;
 
@@ -99,6 +96,7 @@ class TaskAside extends Component
         $this->task = $this->taskService->find($this->taskId);
         $this->users = $this->taskService->accessUsersByHubId($this->task->task_hub_id);
         $this->taskCategories = $this->taskCategoryService->visibleForHub($this->task->task_hub_id, true);
+        $this->taskStatuses = $this->taskStatusService->index($this->task->task_hub_id);
         $this->isLoading = false;
     }
 
@@ -112,19 +110,7 @@ class TaskAside extends Component
 
         $data = $this->validate(TaskStepRules::responsable($allowedUserIds));
 
-        $this->task->update([
-            'user_id' => $data['responsable_id'],
-            'updated_at' => now(),
-        ]);
-
-        TaskActivity::create([
-            'task_id' => $this->task->id,
-            'user_id' => Auth::user()->id,
-            'type' => 'responsable_change',
-            'description' => Auth::user()->name.' alterou o responsável',
-        ]);
-
-        $this->task->refresh()->load(['taskHub', 'user']);
+        $this->task = $this->taskService->updateTaskResponsible($this->task->id, $data['responsable_id']);
 
         if ($this->task->user && (int) $this->task->user->id !== $previousResponsibleId) {
             $this->notifyUsers(
@@ -139,7 +125,7 @@ class TaskAside extends Component
             );
         }
 
-        $this->flashSuccess('Responsável atualizado.');
+        $this->flashSuccess('Responsavel atualizado.');
     }
 
     public function updatedListCategoryId()
@@ -153,18 +139,7 @@ class TaskAside extends Component
             'list_category_id' => ['nullable', Rule::in($availableCategoryIds)],
         ]);
 
-        $this->task->update([
-            'task_category_id' => $data['list_category_id'],
-        ]);
-
-        TaskActivity::create([
-            'task_id' => $this->task->id,
-            'user_id' => Auth::user()->id,
-            'type' => 'category_change',
-            'description' => Auth::user()->name.' alterou a categoria',
-        ]);
-
-        $this->task->refresh();
+        $this->task = $this->taskService->updateTaskCategory($this->task->id, $data['list_category_id']);
         $this->flashSuccess('Categoria atualizada.');
     }
 
@@ -172,24 +147,20 @@ class TaskAside extends Component
     {
         $data = $this->validate(TaskStepRules::priority());
 
-        $this->task->update([
-            'task_priority_id' => $data['list_priority_id'],
-        ]);
-
-        TaskActivity::create([
-            'task_id' => $this->task->id,
-            'user_id' => Auth::user()->id,
-            'type' => 'priority_change',
-            'description' => Auth::user()->name.' alterou a prioridade',
-        ]);
-
-        $this->task->refresh();
+        $this->task = $this->taskService->updateTaskPriority($this->task->id, $data['list_priority_id']);
         $this->flashSuccess('Prioridade atualizada.');
     }
 
     public function updatedListStatusId()
     {
-        $data = $this->validate(TaskStepRules::status());
+        $availableStatusIds = $this->taskStatuses
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+
+        $data = $this->validate([
+            'list_status_id' => ['nullable', Rule::in($availableStatusIds)],
+        ]);
 
         $this->taskService->changeStatus($this->task->id, $data['list_status_id']);
 
@@ -216,20 +187,12 @@ class TaskAside extends Component
 
         $this->savingDescription = true;
 
-        $this->task->update($data);
-
-        TaskActivity::create([
-            'task_id' => $this->task->id,
-            'user_id' => Auth::user()->id,
-            'type' => 'description_change',
-            'description' => Auth::user()->name.' alterou a descrição',
-        ]);
+        $this->task = $this->taskService->updateTaskDescription($this->task->id, $data['description'] ?? null);
 
         $this->isEditingDescription = false;
         $this->savingDescription = false;
 
-        $this->task->refresh();
-        $this->flashSuccess('Descrição atualizada.');
+        $this->flashSuccess('Descricao atualizada.');
     }
 
     public function enableDeadlineEdit()
@@ -247,26 +210,15 @@ class TaskAside extends Component
 
     public function saveDeadline()
     {
-        $data = $this->validate(TaskStepRules::deadlineAt($this->taskId));
+        $data = $this->validate(TaskStepRules::deadlineAt());
 
         $this->savingDeadline = true;
 
-        $this->task->update([
-            'deadline_at' => $data['deadline_at'],
-            'updated_at' => now(),
-        ]);
-
-        TaskActivity::create([
-            'task_id' => $this->task->id,
-            'user_id' => Auth::user()->id,
-            'type' => 'deadline_change',
-            'description' => Auth::user()->name.' alterou o prazo',
-        ]);
+        $this->task = $this->taskService->updateTaskDeadline($this->task->id, $data['deadline_at']);
 
         $this->isEditingDeadline = false;
         $this->savingDeadline = false;
 
-        $this->task->refresh();
         $this->flashSuccess('Prazo atualizado.');
     }
 
@@ -295,7 +247,7 @@ class TaskAside extends Component
 
         if (! $copied) {
             $this->loadTask();
-            $this->flashError('Não foi possível copiar o fluxo. Esta tarefa já possui etapas ou o fluxo selecionado está inválido.');
+            $this->flashError('Nao foi possivel copiar o fluxo. Esta tarefa ja possui etapas ou o fluxo selecionado esta invalido.');
 
             return;
         }
@@ -309,11 +261,11 @@ class TaskAside extends Component
         $this->taskService->changeStatus(
             $this->task->id,
             4,
-            Auth::user()->name.' marcou a tarefa como concluída',
+            Auth::user()->name.' marcou a tarefa como concluida',
             'finished_change'
         );
 
-        $this->flashSuccess('Tarefa marcada como concluída.');
+        $this->flashSuccess('Tarefa marcada como concluida.');
         $this->task->refresh();
     }
 

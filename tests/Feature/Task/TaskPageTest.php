@@ -18,14 +18,27 @@ function createTaskHubForTaskPage(User $owner, string $title, string $acronym): 
     ]);
 }
 
+if (! function_exists('createTaskStepStatusForHub')) {
+    function createTaskStepStatusForHub(array $data): TaskStepStatus
+    {
+        $data['task_hub_id'] = $data['task_hub_id'] ?? TaskHub::query()->latest('id')->value('id');
+
+        if (! $data['task_hub_id']) {
+            throw new RuntimeException('Nenhum ambiente disponível para vincular status de etapa no teste.');
+        }
+
+        return TaskStepStatus::create($data);
+    }
+}
+
 test('moves a step to another kanban column from task page', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
 
     $hub = createTaskHubForTaskPage($user, 'Hub Step Kanban', 'HUBS');
 
-    $todo = TaskStepStatus::create(['title' => 'Pendente']);
-    $doing = TaskStepStatus::create(['title' => 'Em andamento']);
+    $todo = createTaskStepStatusForHub(['title' => 'Pendente']);
+    $doing = createTaskStepStatusForHub(['title' => 'Em andamento']);
 
     $task = Task::create([
         'task_hub_id' => $hub->id,
@@ -65,7 +78,7 @@ test('reorders steps inside the same kanban column from task page', function () 
 
     $hub = createTaskHubForTaskPage($user, 'Hub Step Reorder', 'HUBR');
 
-    $todo = TaskStepStatus::create(['title' => 'Pendente']);
+    $todo = createTaskStepStatusForHub(['title' => 'Pendente']);
 
     $task = Task::create([
         'task_hub_id' => $hub->id,
@@ -104,8 +117,8 @@ test('requires comment when completing a step from task page kanban', function (
 
     $hub = createTaskHubForTaskPage($user, 'Hub Step Complete UI', 'HUBC');
 
-    $todo = TaskStepStatus::create(['title' => 'Pendente']);
-    $done = TaskStepStatus::create(['title' => 'Concluída']);
+    $todo = createTaskStepStatusForHub(['title' => 'Pendente']);
+    $done = createTaskStepStatusForHub(['title' => 'ConcluÃ­da']);
 
     $task = Task::create([
         'task_hub_id' => $hub->id,
@@ -148,8 +161,8 @@ test('requires reason when reopening a step from task page kanban', function () 
 
     $hub = createTaskHubForTaskPage($user, 'Hub Step Reopen UI', 'HUBR');
 
-    $todo = TaskStepStatus::create(['title' => 'Pendente']);
-    $done = TaskStepStatus::create(['title' => 'Concluída']);
+    $todo = createTaskStepStatusForHub(['title' => 'Pendente']);
+    $done = createTaskStepStatusForHub(['title' => 'ConcluÃ­da']);
 
     $task = Task::create([
         'task_hub_id' => $hub->id,
@@ -195,8 +208,8 @@ test('requires reason when cancelling a step from task page kanban', function ()
 
     $hub = createTaskHubForTaskPage($user, 'Hub Step Cancel UI', 'HUBX');
 
-    $todo = TaskStepStatus::create(['title' => 'Pendente']);
-    $cancelled = TaskStepStatus::create(['title' => 'Cancelada']);
+    $todo = createTaskStepStatusForHub(['title' => 'Pendente']);
+    $cancelled = createTaskStepStatusForHub(['title' => 'Cancelada']);
 
     $task = Task::create([
         'task_hub_id' => $hub->id,
@@ -224,7 +237,7 @@ test('requires reason when cancelling a step from task page kanban', function ()
 
     Livewire::test(TaskPage::class, ['uuid' => $hub->uuid])
         ->call('requestStepKanbanDrop', $step->id, $todo->id, $cancelled->id, [$step->id])
-        ->set('stepCompletionComment', 'Cancelada por redefinição de prioridade.')
+        ->set('stepCompletionComment', 'Cancelada por redefiniÃ§Ã£o de prioridade.')
         ->call('confirmStepCompletionMove');
 
     $step->refresh();
@@ -241,8 +254,8 @@ test('does not allow swapping directly between terminal step statuses from task 
 
     $hub = createTaskHubForTaskPage($user, 'Hub Step Terminal UI', 'HUBT');
 
-    $done = TaskStepStatus::create(['title' => 'Concluída']);
-    $cancelled = TaskStepStatus::create(['title' => 'Cancelada']);
+    $done = createTaskStepStatusForHub(['title' => 'ConcluÃ­da']);
+    $cancelled = createTaskStepStatusForHub(['title' => 'Cancelada']);
 
     $task = Task::create([
         'task_hub_id' => $hub->id,
