@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Rotas Públicas
+| Rotas PÃºblicas
 |--------------------------------------------------------------------------
 */
 Route::get('/', fn () => redirect()->route('login'));
@@ -50,7 +50,7 @@ Route::get('/contatos', ContactPage::class)->name('public.contacts.index');
 
 /*
 |--------------------------------------------------------------------------
-| Rotas de Autenticação (já incluídas pelo Breeze/Jetstream)
+| Rotas de AutenticaÃ§Ã£o (jÃ¡ incluÃ­das pelo Breeze/Jetstream)
 |--------------------------------------------------------------------------
 */
 require __DIR__.'/auth.php';
@@ -125,21 +125,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/senha', [ProfileController::class, 'passwordUpdate'])->name('password.update');
     });
 
+    // Backward-compatible profile endpoints used by legacy tests and tooling.
+    Route::get('/profile', [ProfileController::class, 'edit']);
+    Route::patch('/profile', [ProfileController::class, 'update']);
+    Route::delete('/profile', [ProfileController::class, 'destroy']);
+
     /*
     |--------------------------------------------------------------------------
-    | Administração
+    | AdministraÃ§Ã£o
     |--------------------------------------------------------------------------
     */
     Route::prefix('administracao')->name('administration.manage.')->group(function () {
 
-        /* Usuários & Acessos */
+        /* UsuÃ¡rios & Acessos */
         Route::get('/usuarios', UserPage::class)->middleware('can:administration.manage.users')->name('users');
         Route::get('/fornecedores', SupplierPage::class)->middleware('can:administration.manage.suppliers')->name('suppliers');
         Route::get('/produtos', ProductPage::class)->middleware('can:administration.manage.products')->name('products');
         Route::get('/tipos-produto', ProductTypePage::class)->middleware('can:administration.manage.product-types')->name('product-types');
         Route::get('/unidades-medida', ProductMeasureUnitPage::class)->middleware('can:administration.manage.product-measure-units')->name('product-measure-units');
 
-        /* Status / Execução de Tasks */
+        /* Status / ExecuÃ§Ã£o de Tasks */
         Route::prefix('tasks')->name('tasks.')->group(function () {
             Route::get('/status', TaskStatusPage::class)->middleware('can:administration.manage.task')->name('status');
             Route::get('/categorias', TaskStatusPage::class)->middleware('can:administration.manage.task')->name('category');
@@ -148,7 +153,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Configurações do Sistema
+    | ConfiguraÃ§Ãµes do Sistema
     |--------------------------------------------------------------------------
     */
     Route::prefix('configuracao')->name('configuration.manage.')->group(function () {
@@ -163,7 +168,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
 
         /*
-        | Ocupações (CBO)
+        | OcupaÃ§Ãµes (CBO)
         */
         Route::get('/ocupacoes', OccupationPage::class)
             ->middleware('can:configuration.manage.occupations')
@@ -177,7 +182,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->name('financial.blocks');
 
         /*
-        | Regiões
+        | RegiÃµes
         */
         Route::prefix('regioes')->middleware('can:configuration.manage.regions')->name('regions.')
             ->group(function () {
@@ -189,7 +194,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Organização
+    | OrganizaÃ§Ã£o
     |--------------------------------------------------------------------------
     */
     Route::prefix('organizacao')->name('organization.manage.')->group(function () {

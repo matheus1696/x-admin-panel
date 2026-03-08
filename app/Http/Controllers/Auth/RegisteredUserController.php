@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Administration\User\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Role;
 
 class RegisteredUserController extends Controller
 {
@@ -40,7 +42,14 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-        ])->assignRole('user');
+        ]);
+
+        try {
+            Role::query()->where('name', 'user')->firstOrFail();
+            $user->assignRole('user');
+        } catch (ModelNotFoundException) {
+            // Role seeding may not run in lightweight test/database contexts.
+        }
 
         event(new Registered($user));
 

@@ -10,63 +10,76 @@ use App\Models\Administration\User\Gender;
 use App\Models\Administration\User\User;
 use App\Models\Configuration\Occupation\Occupation;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
     public function edit(): View
     {
         $genders = Gender::where('is_active', true)->get();
         $occupations = Occupation::where('is_active', true)->get();
 
-        ActivityLogHelper::action('Visualizou a página de edição do seu perfil');
+        ActivityLogHelper::action('Visualizou a pagina de edicao do seu perfil');
 
         return view('profile.profile_edit', compact('genders', 'occupations'));
     }
 
-    /**
-     * Update the user's profile information.
-     */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = User::find(Auth::user()->id);
-        $user->update($request->validated());
+        $validated = $request->validated();
+
+        if (($validated['email'] ?? null) !== $user->email) {
+            $user->email_verified_at = null;
+        }
+
+        $user->fill($validated);
+        $user->save();
 
         ActivityLogHelper::action('Atualizou seus dados do perfil');
 
-        return redirect()->route('profile.edit')->with('success', 'Alteração de dados realizada com sucesso');
+        return redirect('/profile')->with('success', 'Alteracao de dados realizada com sucesso');
     }
 
-    /**
-     * Display the user's profile form.
-     */
     public function password(): View
     {
-        ActivityLogHelper::action('Visualizou a página de alteração de senha');
+        ActivityLogHelper::action('Visualizou a pagina de alteracao de senha');
 
         return view('profile.profile_password');
     }
 
-    /**
-     * Update the user's profile information.
-     */
     public function passwordUpdate(ProfilePasswordUpdateRequest $request): RedirectResponse
     {
         $request['password_default'] = false;
-        
+
         $user = User::find(Auth::user()->id);
         $user->update($request->only('password', 'password_default'));
 
-        // Envia o e-mail de aviso
         Mail::to($user->email)->send(new UserPasswordResetedMail($user));
 
         ActivityLogHelper::action('Alterou a senha de acesso');
 
-        return redirect()->route('profile.edit')->with('success', 'Alteração de senha realizada com sucesso');
+        return redirect('/profile')->with('success', 'Alteracao de senha realizada com sucesso');
+    }
+
+    public function destroy(Request $request): RedirectResponse
+    {
+        $request->validateWithBag('userDeletion', [
+            'password' => ['required', 'current_password'],
+        ]);
+
+        $user = $request->user();
+
+        Auth::logout();
+
+        $user->delete();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/');
     }
 }

@@ -27,10 +27,29 @@ use Illuminate\Support\Str;
 
 function createAssetsServicesUnit(string $suffix): Establishment
 {
+    $acronym2 = null;
+    $acronym3 = null;
+
+    while ($acronym2 === null) {
+        $candidate = 'C'.strtoupper(Str::random(1));
+
+        if (! DB::table('region_countries')->where('acronym_2', $candidate)->exists()) {
+            $acronym2 = $candidate;
+        }
+    }
+
+    while ($acronym3 === null) {
+        $candidate = 'BR'.strtoupper(Str::random(2));
+
+        if (! DB::table('region_countries')->where('acronym_3', $candidate)->exists()) {
+            $acronym3 = $candidate;
+        }
+    }
+
     $countryId = DB::table('region_countries')->insertGetId([
         'uuid' => (string) Str::uuid(),
-        'acronym_2' => 'C'.strtoupper(Str::random(1)),
-        'acronym_3' => 'BR'.strtoupper(Str::random(1)).strtoupper(Str::random(1)),
+        'acronym_2' => $acronym2,
+        'acronym_3' => $acronym3,
         'title' => 'Pais '.$suffix,
         'filter' => 'pais '.$suffix,
         'country_ing' => 'Country '.$suffix,
