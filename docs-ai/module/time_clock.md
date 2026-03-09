@@ -26,7 +26,7 @@ You are implementing a NEW MODULE inside an EXISTING Laravel 12 system.
 - UI name: Controle de Ponto
 
 ### Required folder locations
-Create/Use these locations (adjust only if docs-ai/system has different canonical paths):
+Create/Use these locations (adjust only if system docs define different canonical paths):
 - Services: `app/Services/TimeClock/`
 - Validations: `app/Validations/TimeClock/`
 - DTOs: `app/DTOs/TimeClock/`

@@ -25,7 +25,7 @@ You are implementing a NEW MODULE inside an EXISTING Laravel 12 system.
 - Module name: Assets
 
 ### Required folder locations
-Create/Use these locations (adjust only if docs-ai/system has different canonical paths):
+Create/Use these locations (adjust only if system docs define different canonical paths):
 - Services: `app/Services/Assets/`
 - Validations: `app/Validations/Assets/`
 - DTOs: `app/DTOs/Assets/`

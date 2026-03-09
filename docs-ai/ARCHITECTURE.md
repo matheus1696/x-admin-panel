@@ -62,7 +62,7 @@ Fluxo esperado:
 
 ## Leitura Recomendada
 
-1. `docs-ai/SYSTEM_GUIDE.md`
-2. `docs-ai/domains/ORGANIZATION.md`
-3. `docs-ai/domains/TASK.md`
-4. `docs-ai/domains/ADMINISTRATION.md`
+1. `SYSTEM_GUIDE.md`
+2. `domains/ORGANIZATION.md`
+3. `domains/TASK.md`
+4. `domains/ADMINISTRATION.md`

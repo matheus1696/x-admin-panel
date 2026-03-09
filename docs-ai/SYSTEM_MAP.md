@@ -3,12 +3,12 @@
 ## 1. Precedencia Documental
 
 1. `AGENTS.md`
-2. `docs-ai/SYSTEM_GUIDE.md`
-3. `docs-ai/ARCHITECTURE.md`
-4. `docs-ai/DOMAINS.md`
-5. `docs-ai/domains/*.md`
-6. `docs-ai/CONVENTIONS.md`
-7. `docs-ai/README.md`
+2. `SYSTEM_GUIDE.md`
+3. `ARCHITECTURE.md`
+4. `DOMAINS.md`
+5. `domains/*.md`
+6. `CONVENTIONS.md`
+7. `README.md`
 
 Em conflito, o item de maior precedencia vence.
 

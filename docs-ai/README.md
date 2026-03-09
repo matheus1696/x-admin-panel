@@ -11,31 +11,31 @@ Atualizado em: 2026-03-08.
 
 ## Ordem De Leitura
 
-1. `docs-ai/DOMAINS.md`
-2. `docs-ai/ARCHITECTURE.md`
-3. `docs-ai/SYSTEM_GUIDE.md`
-4. `docs-ai/CONVENTIONS.md`
-5. `docs-ai/domains/<MODULO>.md`
-6. `docs-ai/SYSTEM_MAP.md`
+1. `DOMAINS.md`
+2. `ARCHITECTURE.md`
+3. `SYSTEM_GUIDE.md`
+4. `CONVENTIONS.md`
+5. `domains/<MODULO>.md`
+6. `SYSTEM_MAP.md`
 
 ## Quando Ler Cada Arquivo
 
-`docs-ai/DOMAINS.md`
+`DOMAINS.md`
 - Escolher rapidamente o dominio correto da mudanca.
 
-`docs-ai/ARCHITECTURE.md`
+`ARCHITECTURE.md`
 - Entender dependencias entre modulos e fluxo entre camadas.
 
-`docs-ai/SYSTEM_GUIDE.md`
+`SYSTEM_GUIDE.md`
 - Validar invariantes, limites de modulo e checklist de revisao.
 
-`docs-ai/CONVENTIONS.md`
+`CONVENTIONS.md`
 - Aplicar padrao real de implementacao (Controllers, Services, Livewire, testes).
 
-`docs-ai/domains/*.md`
+`domains/*.md`
 - Ler regras e riscos locais do dominio afetado.
 
-`docs-ai/SYSTEM_MAP.md`
+`SYSTEM_MAP.md`
 - Resolver conflito entre documentos e orientar leitura por tipo de mudanca.
 
 ## Atalhos
