@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Assets;
 
+use App\Enums\Assets\AssetState;
 use App\Models\Assets\Asset;
 use App\Models\Configuration\Establishment\Establishment\Department;
 use App\Models\Configuration\Establishment\Establishment\Establishment;
@@ -54,7 +55,6 @@ class AssetsIndex extends Component
             ->leftJoin('asset_invoice_items', 'asset_invoice_items.id', '=', 'assets.invoice_item_id')
             ->selectRaw("COALESCE(asset_invoice_items.description, assets.description, 'Sem item') as item")
             ->selectRaw('COUNT(*) as quantity')
-            ->selectRaw("SUM(CASE WHEN assets.state = 'IN_STOCK' THEN 1 ELSE 0 END) as in_stock_count")
             ->selectRaw("SUM(CASE WHEN assets.state = 'IN_USE' THEN 1 ELSE 0 END) as in_use_count")
             ->selectRaw("SUM(CASE WHEN assets.state = 'MAINTENANCE' THEN 1 ELSE 0 END) as maintenance_count")
             ->selectRaw("SUM(CASE WHEN assets.state = 'DAMAGED' THEN 1 ELSE 0 END) as damaged_count")
@@ -73,6 +73,7 @@ class AssetsIndex extends Component
     private function buildFilteredQuery(): Builder
     {
         return Asset::query()
+            ->where('assets.state', '!=', AssetState::IN_STOCK->value)
             ->when($this->filters['search'], function ($query): void {
                 $search = trim($this->filters['search']);
 

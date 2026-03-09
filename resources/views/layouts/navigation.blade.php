@@ -61,32 +61,62 @@
         </x-sidebar.main-dropdown>
     @endcanany
 
-    <!-- Controle de Patrimônio -->
+    <!-- Controle de Ativos -->
     @canany(['assets.view','assets.invoices.manage','assets.stock.receive','assets.transfer','assets.audit','assets.state.change','assets.return','assets.reports.view'])
         <x-sidebar.main-dropdown
-            title="Controle de Patrimônio"
+            title="Controle de Ativos"
             icon="fa-solid fa-boxes-stacked"
             :active="request()->routeIs('assets.*')"
         >
+            @canany(['assets.view','assets.invoices.manage'])
+                <x-sidebar.dropdown
+                    title="Estoque de Ativos"
+                    icon="fa-solid fa-boxes-stacked"
+                    :active="request()->routeIs('assets.stock.index') || request()->routeIs('assets.invoices.*') || request()->routeIs('assets.release-orders.*')"
+                >
+                    @can('assets.view')
+                        <x-sidebar.dropdown-link
+                            href="{{ route('assets.stock.index') }}"
+                            title="Itens em Estoque"
+                            :active="request()->routeIs('assets.stock.index')"
+                        />
+                    @endcan
+
+                    @can('assets.invoices.manage')
+                        <x-sidebar.dropdown-link
+                            href="{{ route('assets.invoices.index') }}"
+                            title="Entrada de Ativos"
+                            :active="request()->routeIs('assets.invoices.*')"
+                        />
+                    @endcan
+
+                    @can('assets.transfer')
+                        <x-sidebar.dropdown-link
+                            href="{{ route('assets.release-orders.index') }}"
+                            title="Liberacao de Ativos"
+                            :active="request()->routeIs('assets.release-orders.*')"
+                        />
+                    @endcan
+                </x-sidebar.dropdown>
+            @endcanany
+
             @can('assets.view')
                 <x-sidebar.dropdown-link
                     href="{{ route('assets.index') }}"
-                    title="Lista de Ativos"
+                    title="Ativos Operacionais"
                     icon="fa-solid fa-box-archive"
                     :active="request()->routeIs('assets.index') || request()->routeIs('assets.show')"
                 />
             @endcan
 
-            @can('assets.invoices.manage')
-                <x-sidebar.dropdown-link
-                    href="{{ route('assets.invoices.index') }}"
-                    title="Notas Fiscais"
-                    icon="fa-solid fa-file-invoice-dollar"
-                    :active="request()->routeIs('assets.invoices.*')"
-                />
-            @endcan
-
             @can('assets.audit')
+                <x-sidebar.dropdown-link
+                    href="{{ route('assets.audits.campaigns.index') }}"
+                    title="Campanhas de Auditoria"
+                    icon="fa-solid fa-clipboard-check"
+                    :active="request()->routeIs('assets.audits.campaigns.*')"
+                />
+
                 <x-sidebar.dropdown-link
                     href="{{ route('assets.audit-mobile') }}"
                     title="Auditoria Mobile"

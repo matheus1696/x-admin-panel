@@ -2,8 +2,8 @@
     <x-alert.flash />
 
     <x-page.header
-        :title="'Lista de Ativos'"
-        :subtitle="'Consulte o patrimonio por estado, unidade e setor'"
+        :title="'Ativos Operacionais'"
+        :subtitle="'Consulte ativos liberados por estado, unidade e setor'"
         icon="fa-solid fa-boxes-stacked"
     />
 
@@ -24,7 +24,6 @@
                 name="filters.state"
                 :options="[
                     ['value' => 'all', 'label' => 'Todos'],
-                    ['value' => 'IN_STOCK', 'label' => 'Em estoque'],
                     ['value' => 'IN_USE', 'label' => 'Em uso'],
                     ['value' => 'MAINTENANCE', 'label' => 'Em manutencao'],
                     ['value' => 'DAMAGED', 'label' => 'Inservivel'],
@@ -83,7 +82,6 @@
             <tr>
                 <x-page.table-th :value="'Item'" />
                 <x-page.table-th class="w-24 text-center" :value="'Total'" />
-                <x-page.table-th class="w-28 text-center" :value="'Em estoque'" />
                 <x-page.table-th class="w-24 text-center" :value="'Em uso'" />
                 <x-page.table-th class="w-32 text-center" :value="'Em manutencao'" />
                 <x-page.table-th class="w-28 text-center" :value="'Inserviveis'" />
@@ -102,7 +100,6 @@
                         </a>
                     </x-page.table-td>
                     <x-page.table-td class="text-center" :value="$groupedItem->quantity" />
-                    <x-page.table-td class="text-center" :value="$groupedItem->in_stock_count" />
                     <x-page.table-td class="text-center" :value="$groupedItem->in_use_count" />
                     <x-page.table-td class="text-center" :value="$groupedItem->maintenance_count" />
                     <x-page.table-td class="text-center" :value="$groupedItem->damaged_count" />

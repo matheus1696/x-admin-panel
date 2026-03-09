@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Assets;
 
+use App\Enums\Assets\AssetState;
 use App\Models\Assets\Asset;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Request;
@@ -30,6 +31,7 @@ class GlobalItemAssetsIndex extends Component
     {
         $assets = Asset::query()
             ->with(['unit', 'sector', 'invoiceItem.invoice'])
+            ->where('assets.state', '!=', AssetState::IN_STOCK->value)
             ->where(function ($query): void {
                 $query->where('assets.description', $this->item)
                     ->orWhereHas('invoiceItem', fn ($invoiceItemQuery) => $invoiceItemQuery->where('description', $this->item));

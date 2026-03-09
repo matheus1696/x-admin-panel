@@ -20,7 +20,13 @@
         <form wire:submit.prevent="save" class="grid grid-cols-1 gap-4 md:grid-cols-12">
             <div class="md:col-span-4">
                 <x-form.label :value="'Numero da nota'" />
-                <x-form.input type="text" wire:model="invoiceNumber" placeholder="Ex.: 12345" />
+                <x-form.input
+                    type="text"
+                    wire:model="invoiceNumber"
+                    placeholder="Ex.: 256, 1.658, 25.526"
+                    data-mask="invoiceNumber"
+                    maxlength="15"
+                />
                 <x-form.error for="invoiceNumber" />
             </div>
 
@@ -32,7 +38,13 @@
 
             <div class="md:col-span-3">
                 <x-form.label :value="'Ordem de fornecimento'" />
-                <x-form.input type="text" wire:model="supplyOrder" placeholder="00000-0000 ou 0000-0000" maxlength="10" />
+                <x-form.input
+                    type="text"
+                    wire:model="supplyOrder"
+                    placeholder="0000-0000 ou 00000-0000"
+                    data-mask="supplyOrder"
+                    maxlength="10"
+                />
                 <x-form.error for="supplyOrder" />
             </div>
 

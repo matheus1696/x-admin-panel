@@ -3,7 +3,7 @@
 
     <x-page.header
         :title="'Detalhamento do Item: '.$item"
-        :subtitle="'Listagem do detalhamento dos ativos deste item'"
+        :subtitle="'Listagem dos ativos liberados deste item'"
         icon="fa-solid fa-layer-group"
     >
         <x-slot name="button">

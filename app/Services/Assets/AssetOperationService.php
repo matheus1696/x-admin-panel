@@ -7,11 +7,13 @@ use App\DTOs\Assets\ReturnToPatrimonyDTO;
 use App\DTOs\Assets\TransferAssetDTO;
 use App\Enums\Assets\AssetEventType;
 use App\Enums\Assets\AssetState;
+use App\Exceptions\Assets\AssetsValidationException;
 use App\Models\Assets\Asset;
 use App\Models\Assets\AssetEvent;
 use App\Validation\Assets\CanChangeStateValidator;
 use App\Validation\Assets\CanReturnToPatrimonyValidator;
 use App\Validation\Assets\CanTransferAssetValidator;
+use App\Validation\Assets\SectorBelongsToUnitValidator;
 use Illuminate\Support\Facades\DB;
 
 class AssetOperationService
@@ -20,7 +22,46 @@ class AssetOperationService
         private readonly CanTransferAssetValidator $canTransferAssetValidator,
         private readonly CanChangeStateValidator $canChangeStateValidator,
         private readonly CanReturnToPatrimonyValidator $canReturnToPatrimonyValidator,
+        private readonly SectorBelongsToUnitValidator $sectorBelongsToUnitValidator,
     ) {}
+
+    public function releaseFromStock(TransferAssetDTO $dto): void
+    {
+        DB::transaction(function () use ($dto): void {
+            $asset = Asset::query()
+                ->lockForUpdate()
+                ->findOrFail($dto->assetId);
+
+            if ($asset->state !== AssetState::IN_STOCK) {
+                throw new AssetsValidationException('Somente ativos em estoque podem ser liberados.');
+            }
+
+            $this->sectorBelongsToUnitValidator->validateOrFail($dto->unitId, $dto->sectorId);
+
+            $fromUnitId = $asset->unit_id;
+            $fromSectorId = $asset->sector_id;
+
+            $asset->update([
+                'state' => AssetState::IN_USE,
+                'unit_id' => $dto->unitId,
+                'sector_id' => $dto->sectorId,
+            ]);
+
+            $this->recordEvent(
+                $asset,
+                AssetEventType::RELEASED,
+                AssetState::IN_STOCK->value,
+                AssetState::IN_USE->value,
+                $fromUnitId,
+                $dto->unitId,
+                $fromSectorId,
+                $dto->sectorId,
+                $dto->actorUserId,
+                $dto->notes,
+                ['context' => ['service' => self::class, 'operation' => 'release_from_stock']]
+            );
+        });
+    }
 
     public function transferAsset(TransferAssetDTO $dto): void
     {

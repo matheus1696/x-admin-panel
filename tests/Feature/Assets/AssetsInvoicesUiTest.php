@@ -282,6 +282,93 @@ test('invoice show manages invoice items through livewire', function () {
         ->and((float) $invoice->total_amount)->toBe(0.0);
 });
 
+test('invoice index view modal allows adding item to selected invoice', function () {
+    $user = createAssetsInvoicesManager();
+    $this->actingAs($user);
+
+    $invoice = AssetInvoice::create([
+        'invoice_number' => 'NF-UI-MODAL-001',
+        'supplier_name' => 'Fornecedor Modal',
+        'issue_date' => now()->toDateString(),
+        'total_amount' => 0,
+    ]);
+
+    $product = createAssetsInvoicesProduct('MODAL');
+    $measureUnit = createAssetsInvoicesMeasureUnit('MODAL');
+
+    Livewire::test(InvoiceIndex::class)
+        ->call('openViewInvoice', $invoice->uuid)
+        ->set('itemProductId', $product->id)
+        ->set('itemProductMeasureUnitId', $measureUnit->id)
+        ->set('itemCode', 'ITEM-MODAL-01')
+        ->set('itemQuantity', 2)
+        ->set('itemUnitPrice', '80.00')
+        ->set('itemBrand', 'Marca Modal')
+        ->set('itemModel', 'Modelo Modal')
+        ->call('saveViewInvoiceItem')
+        ->assertHasNoErrors();
+
+    $invoice->refresh();
+    $item = $invoice->items()->first();
+
+    expect($invoice->items()->count())->toBe(1)
+        ->and((float) $invoice->total_amount)->toBe(160.0)
+        ->and($invoice->items()->first()?->item_code)->toBe('ITEM-MODAL-01');
+
+    Livewire::test(InvoiceIndex::class)
+        ->call('openViewInvoice', $invoice->uuid)
+        ->call('editViewInvoiceItem', $item->id)
+        ->set('itemQuantity', 3)
+        ->set('itemUnitPrice', '90.00')
+        ->call('saveViewInvoiceItem')
+        ->assertHasNoErrors();
+
+    $invoice->refresh();
+
+    expect($invoice->items()->count())->toBe(1)
+        ->and((float) $invoice->total_amount)->toBe(270.0);
+
+    Livewire::test(InvoiceIndex::class)
+        ->call('openViewInvoice', $invoice->uuid)
+        ->call('deleteViewInvoiceItem', $item->id)
+        ->assertHasNoErrors();
+
+    $invoice->refresh();
+
+    expect($invoice->items()->count())->toBe(0)
+        ->and((float) $invoice->total_amount)->toBe(0.0);
+});
+
+test('invoice index view modal can finalize invoice after item registration', function () {
+    $user = createAssetsInvoicesManager();
+    $this->actingAs($user);
+
+    $invoice = AssetInvoice::create([
+        'invoice_number' => 'NF-UI-MODAL-FIN-001',
+        'supplier_name' => 'Fornecedor Finalizacao Modal',
+        'issue_date' => now()->toDateString(),
+        'total_amount' => 0,
+    ]);
+
+    $product = createAssetsInvoicesProduct('MODAL-FIN');
+    $measureUnit = createAssetsInvoicesMeasureUnit('MODAL-FIN');
+
+    Livewire::test(InvoiceIndex::class)
+        ->call('openViewInvoice', $invoice->uuid)
+        ->set('itemProductId', $product->id)
+        ->set('itemProductMeasureUnitId', $measureUnit->id)
+        ->set('itemQuantity', 1)
+        ->set('itemUnitPrice', '150.00')
+        ->call('saveViewInvoiceItem')
+        ->call('finalizeViewInvoice')
+        ->assertHasNoErrors();
+
+    $invoice->refresh();
+
+    expect($invoice->is_finalized)->toBeTrue()
+        ->and($invoice->finalized_at)->not->toBeNull();
+});
+
 test('receive stock form creates assets from invoice item inside invoice show flow', function () {
     $user = createAssetsInvoicesManager();
     Permission::findOrCreate('assets.stock.receive', 'web');

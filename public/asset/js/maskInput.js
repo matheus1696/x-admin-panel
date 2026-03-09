@@ -80,6 +80,23 @@ window.Mask = {
         value = value.replace(/\D/g, '').slice(0, 8)
         value = value.replace(/(\d{5})(\d)/, '$1-$2')
         return value
+    },
+
+    supplyOrder(value = '') {
+        value = value.replace(/\D/g, '').slice(0, 9)
+
+        if (value.length <= 4) return value
+        if (value.length <= 8) return value.replace(/^(\d{4})(\d+)/, '$1-$2')
+
+        return value.replace(/^(\d{5})(\d+)/, '$1-$2')
+    },
+
+    invoiceNumber(value = '') {
+        value = value.replace(/\D/g, '').slice(0, 12)
+
+        if (value.length === 0) return ''
+
+        return value.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     }
 }
 
@@ -99,4 +116,3 @@ document.addEventListener('input', (event) => {
 
     input.setSelectionRange(cursor + diff, cursor + diff)
 })
-

@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Audit\LogController;
+use App\Http\Controllers\Assets\AuditCampaignPdfController;
+use App\Http\Controllers\Assets\ReleaseOrderPdfController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
@@ -9,11 +11,18 @@ use App\Livewire\Assets\InvoiceIndex;
 use App\Livewire\Assets\InvoiceShow;
 use App\Livewire\Assets\AssetShow;
 use App\Livewire\Assets\AssetsIndex;
+use App\Livewire\Assets\AssetsStockIndex;
+use App\Livewire\Assets\ReleaseOrderCreate;
+use App\Livewire\Assets\ReleaseOrderIndex;
+use App\Livewire\Assets\ReleaseOrderShow;
 use App\Livewire\Assets\GlobalItemAssetsIndex;
 use App\Livewire\Assets\AssetsByState;
 use App\Livewire\Assets\AssetsByUnit;
 use App\Livewire\Assets\AuditsByPeriod;
 use App\Livewire\Assets\AuditMobile;
+use App\Livewire\Assets\AuditCampaignCreate;
+use App\Livewire\Assets\AuditCampaignIndex;
+use App\Livewire\Assets\AuditCampaignShow;
 use App\Livewire\Assets\PurchasesByPeriod;
 use App\Livewire\Assets\TransfersByPeriod;
 use App\Livewire\Administration\Task\TaskStatusPage;
@@ -92,10 +101,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::prefix('ativos')->name('assets.')->group(function () {
+        Route::get('/estoque', AssetsStockIndex::class)->name('stock.index');
         Route::get('/lista', AssetsIndex::class)->name('index');
         Route::get('/lista/item-global', GlobalItemAssetsIndex::class)->name('items.global');
         Route::get('/item/{uuid}', AssetShow::class)->name('show');
         Route::get('/auditoria-mobile', AuditMobile::class)->name('audit-mobile');
+        Route::prefix('/auditorias/campanhas')->name('audits.campaigns.')->middleware('can:audit,'.Asset::class)->group(function () {
+            Route::get('/', AuditCampaignIndex::class)->name('index');
+            Route::get('/nova', AuditCampaignCreate::class)->name('create');
+            Route::get('/{uuid}', AuditCampaignShow::class)->name('show');
+            Route::get('/{uuid}/pdf', AuditCampaignPdfController::class)->name('pdf');
+        });
         Route::prefix('relatorios')->name('reports.')->middleware('can:viewReports,'.Asset::class)->group(function () {
             Route::get('/ativos-por-unidade', AssetsByUnit::class)->name('assets-by-unit');
             Route::get('/ativos-por-estado', AssetsByState::class)->name('assets-by-state');
@@ -104,11 +120,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/compras', PurchasesByPeriod::class)->name('purchases-by-period');
         });
 
-        Route::prefix('notas')->name('invoices.')->middleware('can:manageInvoices,'.Asset::class)->group(function () {
+        Route::prefix('estoque/notas')->name('invoices.')->middleware('can:manageInvoices,'.Asset::class)->group(function () {
             Route::get('/', InvoiceIndex::class)->name('index');
             Route::get('/nova', InvoiceForm::class)->name('create');
             Route::get('/{uuid}', InvoiceShow::class)->name('show');
             Route::get('/{uuid}/editar', InvoiceForm::class)->name('edit');
+        });
+
+        Route::prefix('estoque/liberacoes')->name('release-orders.')->middleware('can:transfer,'.Asset::class)->group(function () {
+            Route::get('/', ReleaseOrderIndex::class)->name('index');
+            Route::get('/novo', ReleaseOrderCreate::class)->name('create');
+            Route::get('/{uuid}/pdf', ReleaseOrderPdfController::class)->name('pdf');
+            Route::get('/{uuid}', ReleaseOrderShow::class)->name('show');
         });
     });
 
