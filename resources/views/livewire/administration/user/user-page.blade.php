@@ -96,8 +96,8 @@
                             <div class="flex items-center justify-center gap-2">
                                 <x-button wire:click="status({{ $user->id }})" icon="fa-solid fa-toggle-on" title="Alterar Status" variant="green_text"/>
                                 <x-button wire:click="edit({{ $user->id }})" icon="fa-solid fa-pen" title="Editar Usuário" variant="green_text" />
-                                @can('user.permissions')
-                                    <x-button wire:click="permission({{ $user->id }})" icon="fa-solid fa-key" title="Editar Permissões do Usuário" variant="green_text" />
+                                @can('administration.manage.users.permissions')
+                                    <x-button :href="route('administration.manage.users.permissions', $user->id)" icon="fa-solid fa-key" title="Editar Permissões do Usuário" variant="green_text" />
                                 @endcan
                             </div>
                         @endif
@@ -129,18 +129,6 @@
 
             <form wire:submit.prevent="update" class="space-y-4">
                 @include('livewire.administration.user._partials.user-form')
-                <div class="flex justify-end gap-2 pt-4">
-                    <x-button type="submit" text="Atualizar" variant="sky"/>
-                </div>
-            </form>
-        @endif
-        @if ($modalKey === 'modal-form-user-permission')
-            <x-slot name="header">
-                <h2 class="text-sm font-semibold text-gray-700 uppercase">Editar Usuário</h2>
-            </x-slot>
-
-            <form wire:submit.prevent="permissionUpdate" class="space-y-4">
-                @include('livewire.administration.user._partials.user-permission')
                 <div class="flex justify-end gap-2 pt-4">
                     <x-button type="submit" text="Atualizar" variant="sky"/>
                 </div>

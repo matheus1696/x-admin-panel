@@ -207,27 +207,6 @@
                 </x-sidebar.dropdown>
             @endcanany
 
-            @can('administration.manage.task')
-                <x-sidebar.dropdown
-                    title="Tarefas"
-                    icon="fa-solid fa-list-check"
-                    :active="request()->routeIs('administration.manage.tasks.*')"
-                >
-                    <x-sidebar.dropdown-link
-                        href="{{ route('administration.manage.tasks.status') }}"
-                        title="Status"
-                        icon="fa-solid fa-traffic-light"
-                        :active="request()->routeIs('administration.manage.tasks.status')"
-                    />
-                    <x-sidebar.dropdown-link
-                        href="{{ route('administration.manage.tasks.category') }}"
-                        title="Categorias"
-                        icon="fa-solid fa-tags"
-                        :active="request()->routeIs('administration.manage.tasks.category')"
-                    />
-                </x-sidebar.dropdown>
-            @endcan
-
         </x-sidebar.main-dropdown>
     @endcanany
 

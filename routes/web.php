@@ -29,6 +29,7 @@ use App\Livewire\Administration\Product\ProductPage;
 use App\Livewire\Administration\Product\ProductTypePage;
 use App\Livewire\Administration\Supplier\SupplierPage;
 use App\Livewire\Administration\User\UserPage;
+use App\Livewire\Administration\User\UserPermissionPage;
 use App\Livewire\Configuration\Establishment\Establishment\EstablishmentList;
 use App\Livewire\Configuration\Establishment\Establishment\EstablishmentShow;
 use App\Livewire\Configuration\Establishment\EstablishmentType\EstablishmentTypePage;
@@ -157,6 +158,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         /* UsuÃ¡rios & Acessos */
         Route::get('/usuarios', UserPage::class)->middleware('can:administration.manage.users')->name('users');
+        Route::get('/usuarios/{id}/permissoes', UserPermissionPage::class)->middleware('can:administration.manage.users.permissions')->name('users.permissions');
         Route::get('/fornecedores', SupplierPage::class)->middleware('can:administration.manage.suppliers')->name('suppliers');
         Route::get('/produtos', ProductPage::class)->middleware('can:administration.manage.products')->name('products');
         Route::get('/tipos-produto', ProductTypePage::class)->middleware('can:administration.manage.product-types')->name('product-types');

@@ -11,7 +11,6 @@ use App\Validation\Administration\User\UserRules;
 use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Spatie\Permission\Models\Role;
 
 class UserPage extends Component
 {
@@ -39,7 +38,6 @@ class UserPage extends Component
     public ?int $gender_id = null;
     public ?string $phone_personal = null;
     public ?string $phone_work = null;
-    public array $permissions = [];
 
     public function boot(UserService $userService)
     {
@@ -53,7 +51,7 @@ class UserPage extends Component
 
     public function resetForm(): void
     {
-        $this->reset(['userId', 'matriculation', 'cpf', 'name', 'email', 'occupation_id', 'birth_date', 'gender_id', 'phone_personal', 'phone_work', 'permissions']);
+        $this->reset(['userId', 'matriculation', 'cpf', 'name', 'email', 'occupation_id', 'birth_date', 'gender_id', 'phone_personal', 'phone_work']);
     }
 
     /* CREATE */
@@ -100,28 +98,6 @@ class UserPage extends Component
         $this->closeModal();
     }
     
-    /* EDIT */
-    public function permission(int $id): void
-    {
-        $user = $this->userService->find($id);
-
-        $this->userId          = $user->id;
-        $this->name            = $user->name;
-        $this->email           = $user->email;
-        $this->permissions     = $user->getPermissionNames()->toArray();
-
-        $this->openModal('modal-form-user-permission');
-    }
-
-    public function permissionUpdate(): void
-    {
-        $data = $this->validate(UserRules::permissionUpdate());
-        $this->userService->permissionUpdate($this->userId, ['permissions' => $this->permissions]);
-        $this->resetForm();
-        $this->flashSuccess('Permissões atualizadas com sucesso.');
-        $this->closeModal();
-    }
-
     public function status(int $id): void
     {
         $this->userService->status($id);
@@ -136,7 +112,6 @@ class UserPage extends Component
             'users' => $users,
             'occupations' => Occupation::where('is_active', true)->orderBy('title')->get(),
             'genders' => Gender::where('is_active', true)->orderBy('title')->get(),
-            'roles' => Role::where('name', '!=', 'super-admin')->orderBy('type')->with('permissions')->get(),
         ])->layout('layouts.app');
     }
 }

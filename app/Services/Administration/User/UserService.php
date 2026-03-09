@@ -5,6 +5,7 @@ namespace App\Services\Administration\User;
 use App\Models\Administration\User\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
 
 class UserService
 {
@@ -15,33 +16,30 @@ class UserService
 
     public function index(array $filters): LengthAwarePaginator
     {
-        // Consulta base
         $query = User::query();
 
-        // Filtro de nome
-        if ($filters['name']) { $query->where('name_filter', 'like', '%' . strtolower($filters['name']) . '%'); }
+        if ($filters['name']) {
+            $query->where('name_filter', 'like', '%'.strtolower($filters['name']).'%');
+        }
 
-        // Filtro de email
-        if ($filters['email']) { $query->where('email', 'like', '%' . $filters['email'] . '%'); }
+        if ($filters['email']) {
+            $query->where('email', 'like', '%'.$filters['email'].'%');
+        }
 
-        // Filtro de status
-        if ($filters['status'] !== 'all') { $query->where('is_active', $filters['status']); }
+        if ($filters['status'] !== 'all') {
+            $query->where('is_active', $filters['status']);
+        }
 
-        // Ordenação
         switch ($filters['sort']) {
-            // Nome asc
             case 'name_asc':
                 $query->orderBy('name', 'asc');
                 break;
-            // Nome desc
             case 'name_desc':
                 $query->orderBy('name', 'desc');
                 break;
-            // Email asc
             case 'email_asc':
                 $query->orderBy('email', 'asc');
                 break;
-            // Email desc
             case 'email_desc':
                 $query->orderBy('email', 'desc');
                 break;
@@ -52,8 +50,8 @@ class UserService
 
     public function store(array $data): void
     {
-        $password = 'Senha123';
-        $data['password'] = $password;
+        $data['password'] = 'Senha123';
+
         User::create($data);
     }
 
@@ -67,16 +65,41 @@ class UserService
     {
         $user = User::findOrFail($id);
 
-        // Sincroniza as permissões do usuário
-        $user->syncPermissions($data);
+        $roles = collect($data['roles'] ?? [])
+            ->map(fn ($role) => (string) $role)
+            ->filter()
+            ->unique()
+            ->values();
 
-        // Logout de todas as sessões do usuário
-        DB::table('sessions')->where('user_id', $user->id)->delete();
+        $permissions = collect($data['permissions'] ?? [])
+            ->map(fn ($permission) => (string) $permission)
+            ->filter()
+            ->unique()
+            ->values();
+
+        $rolePermissions = $roles->isEmpty()
+            ? collect()
+            : Permission::query()
+                ->whereHas('roles', fn ($query) => $query->whereIn('name', $roles->all()))
+                ->pluck('name')
+                ->unique()
+                ->values();
+
+        // Keep as direct permissions only what is not already granted by selected roles.
+        $directPermissions = $permissions->diff($rolePermissions)->values();
+
+        DB::transaction(function () use ($user, $roles, $directPermissions): void {
+            $user->syncRoles($roles->all());
+            $user->syncPermissions($directPermissions->all());
+            DB::table('sessions')->where('user_id', $user->id)->delete();
+        });
     }
 
     public function status(int $id): User
     {
         $user = User::findOrFail($id);
+
         return $user->toggleStatus();
     }
 }
+
