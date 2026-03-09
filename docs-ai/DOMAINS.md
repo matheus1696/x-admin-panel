@@ -6,6 +6,7 @@ Mapa rapido dos dominios reais do sistema.
 
 - [Organization](domains/ORGANIZATION.md): organograma e workflow
 - [Task](domains/TASK.md): hubs, tarefas, etapas e kanban
+- [Assets](domains/ASSETS.md): patrimonio, estoque, liberacoes e auditoria de ativos
 - [Administration](domains/ADMINISTRATION.md): usuarios, permissoes e catalogos de task
 - [Configuration](domains/CONFIGURATION.md): cadastros base
 
@@ -26,6 +27,7 @@ Mapa rapido dos dominios reais do sistema.
 
 - Hierarquia ou workflow: `Organization`
 - Execucao operacional e kanban: `Task`
+- Patrimonio, estoque e auditoria de ativos: `Assets`
 - Usuarios, permissoes e status: `Administration`
 - Cadastros base: `Configuration`
 - Autenticacao: `Auth`

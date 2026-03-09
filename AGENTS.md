@@ -39,6 +39,7 @@ Language and stack:
 - backend code stays in English
 - Laravel 12 + PHP 8.2+
 - Blade + Livewire v3 + AlpineJS
+- Spatie Permission as the RBAC source of truth (roles/permissions)
 
 ## 3. Layer Model
 
@@ -133,6 +134,24 @@ Must not:
 - become a business-logic hub
 - absorb heavy structural or operational logic
 
+### Assets
+
+Patrimony operational layer.
+
+Must:
+
+- preserve stock and operational list separation
+- keep invoice finalization as stock entry trigger
+- keep release and transfer flows in Services
+- record asset events for state/unit/sector changes
+- keep invoice/item lock rules after finalization
+
+Must not:
+
+- reintroduce parallel legacy invoice flows
+- allow stock assets to appear in operational list
+- push stock/release business rules into Blade or ad-hoc Livewire logic
+
 ## 6. Decision Rules
 
 When changing the system:
@@ -188,19 +207,22 @@ Read in this order:
 1. `docs-ai/README.md`
 2. `docs-ai/DOMAINS.md`
 3. `docs-ai/ARCHITECTURE.md`
-4. `docs-ai/CONVENTIONS.md`
-5. `docs-ai/domains/<MODULO>.md`
-6. `docs-ai/SYSTEM_MAP.md` for cross-document navigation
+4. `docs-ai/SYSTEM_GUIDE.md`
+5. `docs-ai/CONVENTIONS.md`
+6. `docs-ai/domains/<MODULO>.md`
+7. `docs-ai/SYSTEM_MAP.md` for cross-document navigation
 
 What each file is for:
 
 - `docs-ai/README.md`: entry index
 - `docs-ai/DOMAINS.md`: quick module selection
 - `docs-ai/ARCHITECTURE.md`: system-wide relationships and flow
+- `docs-ai/SYSTEM_GUIDE.md`: invariants, module limits, review checklist
 - `docs-ai/CONVENTIONS.md`: how this codebase writes code
 - `docs-ai/SYSTEM_MAP.md`: document precedence, reading flow, module dependency, risk map
 - `docs-ai/domains/ORGANIZATION.md`: hierarchy and workflow scope
 - `docs-ai/domains/TASK.md`: execution, hubs, kanban, steps
+- `docs-ai/domains/ASSETS.md`: patrimony, stock, release, asset audits and reports
 - `docs-ai/domains/ADMINISTRATION.md`: users, permissions, task catalogs
 - `docs-ai/domains/CONFIGURATION.md`: base reference data
 - `docs-ai/domains/AUDIT.md`: system-wide logging
@@ -213,6 +235,7 @@ Lookup by task:
 
 - hierarchy or workflow changes: `ARCHITECTURE.md`, `SYSTEM_MAP.md`, `domains/ORGANIZATION.md`
 - task execution changes: `ARCHITECTURE.md`, `domains/TASK.md`, `domains/ADMINISTRATION.md`
+- assets stock/release/audit changes: `SYSTEM_GUIDE.md`, `domains/ASSETS.md`, `domains/ADMINISTRATION.md`, `domains/CONFIGURATION.md`
 - access or identity changes: `domains/AUTH.md`, `domains/PROFILE.md`, `domains/ADMINISTRATION.md`
 - coding style decisions: `CONVENTIONS.md`
 

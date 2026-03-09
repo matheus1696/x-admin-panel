@@ -30,6 +30,8 @@ Cadeia principal observada:
 Dependencias de suporte:
 
 - `Administration -> Configuration`
+- `Assets -> Administration`
+- `Assets -> Configuration`
 - `Auth/Profile -> Administration`
 - `Profile/Public -> Configuration`
 - `Dashboard/Profile -> Audit`
@@ -49,6 +51,12 @@ Mudanca de execucao em Task:
 3. `domains/ORGANIZATION.md`
 4. `domains/ADMINISTRATION.md`
 
+Mudanca de patrimonio/estoque/auditoria de ativos:
+1. `SYSTEM_GUIDE.md`
+2. `domains/ASSETS.md`
+3. `domains/ADMINISTRATION.md`
+4. `domains/CONFIGURATION.md`
+
 Mudanca de acesso e identidade:
 1. `domains/AUTH.md`
 2. `domains/PROFILE.md`
@@ -58,6 +66,7 @@ Mudanca de acesso e identidade:
 
 - Integridade da hierarquia em `OrganizationChart`
 - Acoplamento remanescente em `TaskPage`
+- Separacao estoque x lista operacional em `Assets`
 - Regras terminais baseadas em status
 - Duplicacao de autorizacao entre rota e componente
 - Coerencia de catalogos por hub (`task_hub_id`)

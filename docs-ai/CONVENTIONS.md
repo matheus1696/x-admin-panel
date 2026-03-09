@@ -75,6 +75,7 @@ Sinal de problema tipico:
 - `name()` semantico
 - `middleware('can:...')` na borda
 - policy para autorizacao contextual
+- fonte de verdade para RBAC: Spatie Permission (`roles` e `permissions`)
 
 Compatibilidade atual:
 - endpoints legados `/profile` permanecem ativos para testes e integracoes existentes.

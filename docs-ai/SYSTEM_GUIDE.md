@@ -53,6 +53,15 @@ Atualizado em: 2026-03-08.
 - perfil atua sobre usuario autenticado
 - mudanca de email invalida verificacao (`email_verified_at = null`)
 - rotas legadas `/profile` mantidas por compatibilidade
+- autorizacao de roles/permissoes baseada em Spatie Permission
+
+### 1.8 Assets
+
+- `Asset` em estoque usa estado `IN_STOCK`
+- ativos em estoque nao aparecem na lista operacional
+- finalizacao de nota gera ativos pendentes em estoque
+- nota finalizada bloqueia alteracao de itens
+- mudanca de estado/unidade/setor registra `asset_event`
 
 ## 2. Fluxos Criticos
 
@@ -83,11 +92,20 @@ Atualizado em: 2026-03-08.
 2. Evitar duplicacao de membro no pivot
 3. Preservar ownership
 
+### 2.5 Entrada E Liberacao De Ativos
+
+1. Cadastrar nota e itens
+2. Finalizar nota com item e valor total > 0
+3. Gerar ativos em estoque para saldo pendente
+4. Liberar unitario ou por pedido em lote
+5. Registrar evento de movimentacao para cada mutacao
+
 ## 3. Limites Por Modulo
 
 - `Organization`: dono da hierarquia e estrutura
 - `Workflow`: dono do template de execucao
 - `Task`: dono da execucao operacional
+- `Assets`: dono do patrimonio operacional
 - `Administration`: dono de usuarios, permissoes e catalogos
 - `Configuration`: dono de referencias base
 - `Auth/Profile/Public/Dashboard/Audit`: borda e suporte
@@ -96,6 +114,8 @@ Atualizado em: 2026-03-08.
 
 - `Organization -> Task` por `organization_id`
 - `Task -> Administration` por usuarios e catalogos
+- `Assets -> Administration` por usuarios, fornecedores e produtos
+- `Assets -> Configuration` por unidade, setor e bloco financeiro
 - `Profile/Auth -> Administration` por identidade
 - `Profile/Public -> Configuration`
 

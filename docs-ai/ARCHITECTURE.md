@@ -6,6 +6,7 @@ X-AdminPanel e uma aplicacao Laravel 12 + Livewire 3 organizada por dominio.
 
 - `Organization`: estrutura (organograma e workflow)
 - `Task`: execucao (hubs, tarefas, etapas, kanban)
+- `Assets`: patrimonio (estoque, liberacoes, auditoria, relatorios)
 - `Administration`: identidade, permissoes e catalogos administrativos
 - `Configuration`: cadastros base
 - `Audit/Auth/Profile/Public/Dashboard`: dominios de borda e suporte
@@ -41,6 +42,12 @@ Fluxo esperado:
 - `Task` depende de usuarios, permissoes e catalogos (status/prioridade/categorias).
 - Permissoes entram na borda por middleware/policy e sao reforcadas no contexto quando necessario.
 
+### Assets -> Administration/Configuration
+
+- `Assets` depende de usuarios/permissoes, fornecedores e produtos em `Administration`.
+- `Assets` depende de unidade, setor e bloco financeiro em `Configuration`.
+- Escritas criticas (nota, liberacao, retorno, auditoria) devem ficar em services transacionais.
+
 ### Profile/Auth -> Administration
 
 - `User` e a identidade central.
@@ -57,7 +64,7 @@ Fluxo esperado:
 
 - Maximo: `Organization`
 - Alto: `Task`
-- Medio: `Administration`, `Auth`, `Profile`, `Configuration`
+- Medio: `Assets`, `Administration`, `Auth`, `Profile`, `Configuration`
 - Suporte: `Audit`, `Dashboard`, `Public`
 
 ## Leitura Recomendada
@@ -65,4 +72,5 @@ Fluxo esperado:
 1. `SYSTEM_GUIDE.md`
 2. `domains/ORGANIZATION.md`
 3. `domains/TASK.md`
-4. `domains/ADMINISTRATION.md`
+4. `domains/ASSETS.md`
+5. `domains/ADMINISTRATION.md`

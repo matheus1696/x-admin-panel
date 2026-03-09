@@ -42,6 +42,7 @@ Atualizado em: 2026-03-08.
 
 - Hierarquia e workflow: `ARCHITECTURE.md`, `SYSTEM_GUIDE.md`, `domains/ORGANIZATION.md`
 - Execucao de tarefas e kanban: `SYSTEM_GUIDE.md`, `domains/TASK.md`, `CONVENTIONS.md`
+- Estoque, notas, liberacoes e auditoria de ativos: `domains/ASSETS.md`, `ARCHITECTURE.md`
 - Usuarios e permissoes: `domains/ADMINISTRATION.md`, `domains/AUTH.md`, `domains/PROFILE.md`
 - Cadastros base e contatos: `domains/CONFIGURATION.md`, `domains/PUBLIC.md`
 - Rastreabilidade: `domains/AUDIT.md`
