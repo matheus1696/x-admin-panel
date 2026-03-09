@@ -8,10 +8,10 @@ class WorkflowStepRules
     {
         return [
             'title' => ['required', 'string', 'max:255'],
-            'deadline_days' => ['required', 'min:1'],
-            'organization_id' => ['nullable'],
-            'required' => ['nullable'],
-            'allow_parallel' => ['nullable'],
+            'deadline_days' => ['required', 'integer', 'min:1'],
+            'organization_id' => ['nullable', 'integer', 'exists:organization_charts,id'],
+            'required' => ['nullable', 'boolean'],
+            'allow_parallel' => ['nullable', 'boolean'],
         ];
     }
 
@@ -19,10 +19,10 @@ class WorkflowStepRules
     {
         return [
             'title' => ['required', 'string', 'max:255'],
-            'deadline_days' => ['required', 'min:1'],
-            'organization_id' => ['nullable'],
-            'required' => ['nullable'],
-            'allow_parallel' => ['nullable'],
+            'deadline_days' => ['required', 'integer', 'min:1'],
+            'organization_id' => ['nullable', 'integer', 'exists:organization_charts,id'],
+            'required' => ['nullable', 'boolean'],
+            'allow_parallel' => ['nullable', 'boolean'],
         ];
     }
 }

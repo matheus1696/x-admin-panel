@@ -21,8 +21,10 @@ use App\Validation\Task\TaskRules;
 use App\Validation\Task\TaskStepRules;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -315,7 +317,7 @@ class TaskPage extends Component
         );
 
         if (! $category) {
-            $this->flashError('Apenas o proprietÃ¡rio pode gerenciar as categorias deste ambiente.');
+            $this->flashError('Apenas o proprietário pode gerenciar as categorias deste ambiente.');
 
             return;
         }
@@ -359,7 +361,7 @@ class TaskPage extends Component
         );
 
         if (! $updated) {
-            $this->flashError('Apenas o proprietÃ¡rio pode gerenciar as categorias deste ambiente.');
+            $this->flashError('Apenas o proprietário pode gerenciar as categorias deste ambiente.');
 
             return;
         }
@@ -378,7 +380,7 @@ class TaskPage extends Component
         );
 
         if (! $updated) {
-            $this->flashError('Apenas o proprietÃ¡rio pode gerenciar as categorias deste ambiente.');
+            $this->flashError('Apenas o proprietário pode gerenciar as categorias deste ambiente.');
 
             return;
         }
@@ -390,7 +392,7 @@ class TaskPage extends Component
     public function createTaskStatus(): void
     {
         if (! $this->canManageEnvironmentSettings()) {
-            $this->flashError('Apenas o proprietÃ¡rio pode gerenciar os status deste ambiente.');
+            $this->flashError('Apenas o proprietário pode gerenciar os status deste ambiente.');
 
             return;
         }
@@ -403,7 +405,7 @@ class TaskPage extends Component
     public function storeTaskStatus(): void
     {
         if (! $this->canManageEnvironmentSettings()) {
-            $this->flashError('Apenas o proprietÃ¡rio pode gerenciar os status deste ambiente.');
+            $this->flashError('Apenas o proprietário pode gerenciar os status deste ambiente.');
 
             return;
         }
@@ -457,7 +459,7 @@ class TaskPage extends Component
         $status = $this->taskStatusService->find($this->taskHubTaskStatusId, $this->taskHubInternalId);
 
         if ($this->isTaskTerminalStatus($status->title)) {
-            $this->flashError('Status de conclusÃ£o e cancelamento nÃ£o podem ser alterados.');
+            $this->flashError('Status de conclusão e cancelamento não podem ser alterados.');
 
             return;
         }
@@ -491,7 +493,7 @@ class TaskPage extends Component
     public function toggleTaskStatus(int $id): void
     {
         if (! $this->canManageEnvironmentSettings()) {
-            $this->flashError('Apenas o proprietÃ¡rio pode gerenciar os status deste ambiente.');
+            $this->flashError('Apenas o proprietário pode gerenciar os status deste ambiente.');
 
             return;
         }
@@ -499,7 +501,7 @@ class TaskPage extends Component
         $status = $this->taskStatusService->find($id, $this->taskHubInternalId);
 
         if ($this->isTaskTerminalStatus($status->title)) {
-            $this->flashError('Status de conclusÃ£o e cancelamento nÃ£o podem ser inativados.');
+            $this->flashError('Status de conclusão e cancelamento não podem ser inativados.');
 
             return;
         }
@@ -515,7 +517,7 @@ class TaskPage extends Component
     public function setTaskStatusDefault(int $id): void
     {
         if (! $this->canManageEnvironmentSettings()) {
-            $this->flashError('Apenas o proprietÃ¡rio pode gerenciar os status deste ambiente.');
+            $this->flashError('Apenas o proprietário pode gerenciar os status deste ambiente.');
 
             return;
         }
@@ -523,7 +525,7 @@ class TaskPage extends Component
         $status = $this->taskStatusService->find($id, $this->taskHubInternalId);
 
         if ($this->isTaskTerminalStatus($status->title)) {
-            $this->flashError('Status de conclusÃ£o e cancelamento nÃ£o podem ser padrÃ£o.');
+            $this->flashError('Status de conclusão e cancelamento não podem ser padrão.');
 
             return;
         }
@@ -531,13 +533,13 @@ class TaskPage extends Component
         $this->taskStatusService->setDefaultForHub($this->taskHubInternalId, $status->id);
 
         $this->refreshTaskStatuses();
-        $this->flashSuccess('Status padrÃ£o de tarefa atualizado com sucesso.');
+        $this->flashSuccess('Status padrão de tarefa atualizado com sucesso.');
     }
 
     public function createTaskStepStatus(): void
     {
         if (! $this->canManageEnvironmentSettings()) {
-            $this->flashError('Apenas o proprietÃ¡rio pode gerenciar os status deste ambiente.');
+            $this->flashError('Apenas o proprietário pode gerenciar os status deste ambiente.');
 
             return;
         }
@@ -550,7 +552,7 @@ class TaskPage extends Component
     public function storeTaskStepStatus(): void
     {
         if (! $this->canManageEnvironmentSettings()) {
-            $this->flashError('Apenas o proprietÃ¡rio pode gerenciar os status deste ambiente.');
+            $this->flashError('Apenas o proprietário pode gerenciar os status deste ambiente.');
 
             return;
         }
@@ -604,7 +606,7 @@ class TaskPage extends Component
         $status = $this->taskStepStatusService->find($this->taskHubTaskStepStatusId, $this->taskHubInternalId);
 
         if ($this->isTaskStepTerminalStatus($status->title)) {
-            $this->flashError('Status de conclusÃ£o e cancelamento nÃ£o podem ser alterados.');
+            $this->flashError('Status de conclusão e cancelamento não podem ser alterados.');
 
             return;
         }
@@ -638,7 +640,7 @@ class TaskPage extends Component
     public function toggleTaskStepStatus(int $id): void
     {
         if (! $this->canManageEnvironmentSettings()) {
-            $this->flashError('Apenas o proprietÃ¡rio pode gerenciar os status deste ambiente.');
+            $this->flashError('Apenas o proprietário pode gerenciar os status deste ambiente.');
 
             return;
         }
@@ -646,7 +648,7 @@ class TaskPage extends Component
         $status = $this->taskStepStatusService->find($id, $this->taskHubInternalId);
 
         if ($this->isTaskStepTerminalStatus($status->title)) {
-            $this->flashError('Status de conclusÃ£o e cancelamento nÃ£o podem ser inativados.');
+            $this->flashError('Status de conclusão e cancelamento não podem ser inativados.');
 
             return;
         }
@@ -662,7 +664,7 @@ class TaskPage extends Component
     public function setTaskStepStatusDefault(int $id): void
     {
         if (! $this->canManageEnvironmentSettings()) {
-            $this->flashError('Apenas o proprietÃ¡rio pode gerenciar os status deste ambiente.');
+            $this->flashError('Apenas o proprietário pode gerenciar os status deste ambiente.');
 
             return;
         }
@@ -670,7 +672,7 @@ class TaskPage extends Component
         $status = $this->taskStepStatusService->find($id, $this->taskHubInternalId);
 
         if ($this->isTaskStepTerminalStatus($status->title)) {
-            $this->flashError('Status de conclusÃ£o e cancelamento nÃ£o podem ser padrÃ£o.');
+            $this->flashError('Status de conclusão e cancelamento não podem ser padrão.');
 
             return;
         }
@@ -678,7 +680,7 @@ class TaskPage extends Component
         $this->taskStepStatusService->setDefaultForHub($this->taskHubInternalId, $status->id);
 
         $this->refreshTaskStatuses();
-        $this->flashSuccess('Status padrÃ£o de etapa atualizado com sucesso.');
+        $this->flashSuccess('Status padrão de etapa atualizado com sucesso.');
     }
 
     public function openAsideTask(int $id): void
@@ -752,11 +754,13 @@ class TaskPage extends Component
         $this->flashSuccess('Etapa criada com sucesso.');
     }
 
+    #[On('task-aside-close')]
     public function closedAsideTask(): void
     {
         $this->selectedTaskId = null;
     }
 
+    #[On('task-step-aside-close')]
     public function closedAsideTaskStep(): void
     {
         $this->selectedStepId = null;
@@ -787,7 +791,7 @@ class TaskPage extends Component
             ->all();
 
         if (in_array((int) $data['member_user_id'], $accessUserIds, true)) {
-            $this->flashError('Este usuÃ¡rio jÃ¡ possui acesso ao ambiente.');
+            $this->flashError('Este usuário já possui acesso ao ambiente.');
 
             return;
         }
@@ -799,7 +803,7 @@ class TaskPage extends Component
         );
 
         if (! $added) {
-            $this->flashError('Apenas o proprietÃ¡rio pode gerenciar os membros do ambiente.');
+            $this->flashError('Apenas o proprietário pode gerenciar os membros do ambiente.');
 
             return;
         }
@@ -822,13 +826,13 @@ class TaskPage extends Component
         );
 
         if ($addedCount === 0) {
-            $this->flashError('Nenhum usuÃ¡rio novo foi adicionado para este setor.');
+            $this->flashError('Nenhum usuário novo foi adicionado para este setor.');
 
             return;
         }
 
         $this->member_organization_id = null;
-        $this->flashSuccess($addedCount.' usuÃ¡rio(s) adicionados ao ambiente.');
+        $this->flashSuccess($addedCount.' usuário(s) adicionados ao ambiente.');
     }
 
     public function addOrganizationAccess(): void
@@ -844,7 +848,7 @@ class TaskPage extends Component
         );
 
         if (! $added) {
-            $this->flashError('NÃ£o foi possÃ­vel compartilhar este setor.');
+            $this->flashError('Não foi possível compartilhar este setor.');
 
             return;
         }
@@ -863,7 +867,7 @@ class TaskPage extends Component
         );
 
         if (! $removed) {
-            $this->flashError('NÃ£o foi possÃ­vel remover este setor do compartilhamento.');
+            $this->flashError('Não foi possível remover este setor do compartilhamento.');
 
             return;
         }
@@ -896,7 +900,7 @@ class TaskPage extends Component
         );
 
         if (! $removed) {
-            $this->flashError('NÃ£o foi possÃ­vel remover este membro do ambiente.');
+            $this->flashError('Não foi possível remover este membro do ambiente.');
 
             return;
         }
@@ -913,7 +917,7 @@ class TaskPage extends Component
         }
 
         if ($this->isInvalidStepTerminalSwap($fromStatusId, $toStatusId)) {
-            $this->flashError('NÃ£o Ã© permitido mover uma etapa cancelada para concluÃ­da ou uma etapa concluÃ­da para cancelada.');
+            $this->flashError('Não é permitido mover uma etapa cancelada para concluída ou uma etapa concluída para cancelada.');
 
             return;
         }
@@ -954,7 +958,7 @@ class TaskPage extends Component
         $completionComment = $completionComment !== null ? trim($completionComment) : null;
 
         if ($this->isInvalidStepTerminalSwap($fromStatusId, $toStatusId)) {
-            $this->flashError('NÃ£o Ã© permitido mover uma etapa cancelada para concluÃ­da ou uma etapa concluÃ­da para cancelada.');
+            $this->flashError('Não é permitido mover uma etapa cancelada para concluída ou uma etapa concluída para cancelada.');
 
             return;
         }
@@ -968,7 +972,7 @@ class TaskPage extends Component
         ) {
             $this->flashError(
                 match ($reasonType) {
-                    'completion' => 'Informe um comentÃ¡rio para concluir a etapa.',
+                    'completion' => 'Informe um comentário para concluir a etapa.',
                     'cancellation' => 'Informe o motivo para cancelar a etapa.',
                     'reopen' => 'Informe o motivo para reabrir a etapa.',
                     default => 'Informe um motivo para continuar.',
@@ -1029,7 +1033,7 @@ class TaskPage extends Component
         );
 
         if (! $moved && $fromStatusId !== $toStatusId && in_array($toStatusId, $this->stepInProgressStatusIds(), true)) {
-            $this->flashError('NÃ£o Ã© possÃ­vel iniciar esta etapa enquanto a etapa anterior obrigatÃ³ria do fluxo estiver aberta.');
+            $this->flashError('Não é possível iniciar esta etapa enquanto a etapa anterior obrigatória do fluxo estiver aberta.');
         }
     }
 
@@ -1068,52 +1072,21 @@ class TaskPage extends Component
         $this->resetPendingStepMove();
     }
 
-    /**
-     * @return array<int>
-     */
-    private function stepCompletionStatusIds(): array
+    public function silentRefresh(): void
     {
-        return TaskStepStatus::query()
-            ->where('task_hub_id', $this->taskHubInternalId)
-            ->whereIn('title', ['ConcluÃ­da', 'ConcluÃƒÂ­da'])
-            ->pluck('id')
-            ->map(fn ($id): int => (int) $id)
-            ->all();
+        // Polling hook: keeps the component state and refreshes render data.
     }
-
-    /**
-     * @return array<int>
-     */
-    private function stepCancellationStatusIds(): array
-    {
-        return TaskStepStatus::query()
-            ->where('task_hub_id', $this->taskHubInternalId)
-            ->where('title', 'Cancelada')
-            ->pluck('id')
-            ->map(fn ($id): int => (int) $id)
-            ->all();
-    }
-
-    /**
-     * @return array<int>
-     */
-    private function stepTerminalStatusIds(): array
-    {
-        return TaskStepStatus::query()
-            ->where('task_hub_id', $this->taskHubInternalId)
-            ->whereIn('title', ['ConcluÃ­da', 'ConcluÃƒÂ­da', 'Cancelada'])
-            ->pluck('id')
-            ->map(fn ($id): int => (int) $id)
-            ->all();
-    }
-
     /**
      * @return array<int>
      */
     private function stepInProgressStatusIds(): array
     {
         return $this->taskStepStatuses
-            ->filter(fn ($status): bool => in_array($status->title, ['Em andamento', 'Em execucao', 'Em execuÃ§Ã£o'], true))
+            ->filter(function ($status): bool {
+                $normalized = (string) Str::of((string) $status->title)->lower()->ascii();
+
+                return str_contains($normalized, 'andamento') || str_contains($normalized, 'execu');
+            })
             ->pluck('id')
             ->map(fn ($id): int => (int) $id)
             ->all();
@@ -1121,36 +1094,36 @@ class TaskPage extends Component
 
     private function stepReasonTypeForTransition(int $fromStatusId, int $toStatusId): ?string
     {
-        if ($fromStatusId === $toStatusId) {
-            return null;
-        }
-
-        if (in_array($toStatusId, $this->stepCompletionStatusIds(), true)) {
-            return 'completion';
-        }
-
-        if (in_array($toStatusId, $this->stepCancellationStatusIds(), true)) {
-            return 'cancellation';
-        }
-
-        if (
-            in_array($fromStatusId, $this->stepTerminalStatusIds(), true)
-            && ! in_array($toStatusId, $this->stepTerminalStatusIds(), true)
-        ) {
-            return 'reopen';
-        }
-
-        return null;
+        return $this->taskService->stepReasonTypeForTransition(
+            $this->taskHubInternalId,
+            $fromStatusId === 0 ? null : $fromStatusId,
+            $toStatusId === 0 ? null : $toStatusId
+        );
     }
 
     private function isInvalidStepTerminalSwap(int $fromStatusId, int $toStatusId): bool
     {
-        if ($fromStatusId === $toStatusId) {
-            return false;
-        }
+        return $this->taskService->isInvalidStepTerminalSwap(
+            $this->taskHubInternalId,
+            $fromStatusId === 0 ? null : $fromStatusId,
+            $toStatusId === 0 ? null : $toStatusId
+        );
+    }
 
-        return in_array($fromStatusId, $this->stepTerminalStatusIds(), true)
-            && in_array($toStatusId, $this->stepTerminalStatusIds(), true);
+    /**
+     * @return array<int>
+     */
+    private function stepCompletionStatusIds(): array
+    {
+        return $this->taskStepStatuses
+            ->filter(function ($status): bool {
+                $normalized = (string) Str::of((string) $status->title)->lower()->ascii();
+
+                return str_contains($normalized, 'conclu') || str_contains($normalized, 'finaliz');
+            })
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
     }
 
     private function performStepKanbanDrop(
@@ -1214,12 +1187,16 @@ class TaskPage extends Component
 
     private function isTaskTerminalStatus(string $title): bool
     {
-        return in_array($title, ['ConcluÃ­do', 'ConcluÃƒÂ­do', 'Cancelado'], true);
+        $normalized = (string) Str::of($title)->lower()->ascii();
+
+        return str_contains($normalized, 'conclu') || str_contains($normalized, 'cancel');
     }
 
     private function isTaskStepTerminalStatus(string $title): bool
     {
-        return in_array($title, ['ConcluÃ­da', 'ConcluÃƒÂ­da', 'Cancelada'], true);
+        $normalized = (string) Str::of($title)->lower()->ascii();
+
+        return str_contains($normalized, 'conclu') || str_contains($normalized, 'cancel');
     }
 
     public function render()
@@ -1270,6 +1247,7 @@ class TaskPage extends Component
             'organizationAccesses' => $organizationAccesses,
             'accessibleOrganizations' => $organizationAccesses,
             'stepFormUsers' => $stepFormUsers,
+            'canManageSettings' => $this->canManageEnvironmentSettings(),
             'canManageMembers' => $this->taskHubOwnerId === (int) Auth::id(),
             'availableMemberUsers' => $this->users
                 ->reject(fn (User $user): bool => in_array((int) $user->id, $memberUserIds, true))
@@ -1281,3 +1259,5 @@ class TaskPage extends Component
         ]);
     }
 }
+
+

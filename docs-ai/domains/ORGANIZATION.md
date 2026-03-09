@@ -2,42 +2,40 @@
 
 ## Responsabilidade
 
-`Organization` mantém a estrutura organizacional (`OrganizationChart`) e o modelo de processo (`Workflow` e `WorkflowStep`). É o domínio estrutural do sistema: fornece a hierarquia usada na visualização e também o vínculo organizacional consumido por workflows e etapas de tarefas.
+Dominio estrutural do sistema.
+Mantem organograma (`OrganizationChart`) e template de processo (`Workflow` e `WorkflowStep`).
 
 ## Entidades Principais
 
 - `OrganizationChart`
 - `Workflow`
 - `WorkflowStep`
-- Regras: `OrganizationChartRules`, `WorkflowStoreRequest`, `WorkflowUpdateRequest`, `WorkflowStepRules`
+- `OrganizationChartService`
+- `WorkflowStepService`
 
-## Fluxos Críticos
+## Fluxos Criticos
 
-- Criar e editar setores via `OrganizationChartConfigPage` e `OrganizationChartService`
-- Recalcular a hierarquia via `OrganizationChartService::reorder()`
-- Criar workflows em `WorkflowProcessesPage`
-- Manter etapas, ordem e prazo em `WorkflowSteps` e `WorkflowStepService`
-- Propagar `organization_id` para execução quando um workflow é copiado para task
+- Criar/editar setor
+- Validar parent e evitar ciclo
+- Reordenar hierarquia apos mutacao
+- Criar/editar workflow e etapas
+- Manter ordem e prazo acumulado das etapas
 
-## Invariantes / Regras
+## Invariantes
 
-- `hierarchy` aponta para o pai; raízes usam `0`
-- mudanças estruturais exigem recálculo de `order` e `number_hierarchy`
-- `order` é derivado, não manual
-- `children()` retorna apenas nós ativos
-- `WorkflowStep` sempre pertence a `Workflow`
-- `WorkflowStep.organization_id`, quando preenchido, referencia `OrganizationChart`
-- `Workflow.total_estimated_days` acompanha as etapas
-- `step_order` precisa ser coerente dentro do workflow
+- raiz usa `hierarchy = 0`
+- no filho deve apontar para pai valido
+- proibido auto-relacionamento e ciclo
+- `step_order` coerente no workflow
+- `total_estimated_days` coerente com etapas
 
-## Integrações
+## Integracoes
 
-- `Task`: `TaskPage` copia `WorkflowStep` para `TaskStep`
-- `Administration`: rotas do módulo são protegidas por permissão
+- `Task`: copia de workflow para task step
+- `Administration`: autorizacao por permissao nas rotas
 
-## Riscos / Armadilhas
+## Riscos
 
-- alterar `hierarchy` sem `reorder()` quebra a leitura da árvore
-- duplicar lógica de árvore fora do service cria resultados diferentes
-- mover ou desativar nós usados por workflows afeta a execução derivada
-- tratar workflow como cadastro simples ignora seu papel de template operacional
+- quebrar reorder compromete leitura da arvore
+- duplicar traversal fora do service central gera divergencia
+- alterar no usado por workflow afeta execucao derivada

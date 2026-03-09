@@ -2,7 +2,7 @@
 
 ## Responsabilidade
 
-`Profile` mantém os dados do próprio usuário autenticado: edição cadastral e troca de senha. É um fluxo de autoatendimento com auditoria explícita.
+Autoatendimento do usuario autenticado: dados cadastrais e senha.
 
 ## Entidades Principais
 
@@ -12,34 +12,35 @@
 - `User`
 - `Gender`
 - `Occupation`
-- `UserPasswordResetedMail`
 
-## Fluxos Críticos
+## Fluxos Criticos
 
-- Exibir a tela de edição
-- Atualizar os dados do usuário autenticado
-- Exibir a tela de senha
-- Trocar senha e marcar `password_default = false`
-- Enviar e-mail após troca
-- Registrar auditoria das ações
+- Exibir tela de edicao
+- Atualizar perfil do usuario autenticado
+- Exibir tela de senha
+- Atualizar senha e remover `password_default`
+- Enviar email de aviso apos troca de senha
 
-## Invariantes / Regras
+## Invariantes
 
-- o módulo sempre atua sobre `Auth::user()`
-- atualização cadastral usa `ProfileUpdateRequest`
-- atualização de senha usa `ProfilePasswordUpdateRequest`
-- troca de senha ajusta `password_default`
-- troca de senha envia e-mail
+- operacao sempre no usuario autenticado
+- update de perfil usa `ProfileUpdateRequest`
+- update de senha usa `ProfilePasswordUpdateRequest`
+- alteracao de email invalida verificacao (`email_verified_at = null`)
 
-## Integrações
+## Compatibilidade
 
-- `Administration`: usa `User` e `Gender`
-- `Configuration`: usa `Occupation`
-- `Audit`: registra as ações
-- `Auth`: depende de sessão válida
+- endpoints legados `/profile` (GET/PATCH/DELETE) estao mantidos para compatibilidade de testes e fluxos existentes.
 
-## Riscos / Armadilhas
+## Integracoes
 
-- usar um `id` arbitrário em vez do usuário autenticado
-- trocar senha sem atualizar `password_default`
-- remover o e-mail de aviso
+- `Administration`: `User`, `Gender`
+- `Configuration`: `Occupation`
+- `Audit`: registro de acoes
+- `Auth`: sessao valida
+
+## Riscos
+
+- atualizar perfil por id arbitrario
+- alterar senha sem ajustar flags de seguranca
+- remover notificacao de troca de senha

@@ -49,12 +49,14 @@ class OrganizationChartService
 
     public function store(array $data): void
     {
+        $this->assertValidHierarchy((int) ($data['hierarchy'] ?? 0));
         OrganizationChart::create($data);
         $this->reorder();
     }
 
     public function update(int $id, array $data): void
     {
+        $this->assertValidHierarchy((int) ($data['hierarchy'] ?? 0), $id);
         $organizationChart = OrganizationChart::findOrFail($id);
         $organizationChart->update($data);
         $this->reorder();
@@ -94,7 +96,7 @@ class OrganizationChartService
                 $predecessor = $organizations[$organization->hierarchy] ?? null;
 
                 if (! $predecessor) {
-                    continue;
+                    throw new \RuntimeException('Setor com hierarquia invalida detectado durante reorder.');
                 }
 
                 $order = $predecessor->order.$organization->id.$organization->acronym;
@@ -104,5 +106,43 @@ class OrganizationChartService
                 $organization->save();
             }
         });
+    }
+
+    private function assertValidHierarchy(int $hierarchyId, ?int $currentId = null): void
+    {
+        if ($hierarchyId === 0) {
+            return;
+        }
+
+        if ($currentId !== null && $hierarchyId === $currentId) {
+            throw new \RuntimeException('Um setor nao pode ser pai dele mesmo.');
+        }
+
+        $parent = OrganizationChart::query()->find($hierarchyId);
+
+        if (! $parent) {
+            throw new \RuntimeException('Setor pai nao encontrado.');
+        }
+
+        if ($currentId === null) {
+            return;
+        }
+
+        $visited = [];
+        $cursor = $parent;
+
+        while ($cursor && $cursor->hierarchy !== 0) {
+            if (in_array($cursor->id, $visited, true)) {
+                throw new \RuntimeException('Ciclo de hierarquia detectado.');
+            }
+
+            $visited[] = $cursor->id;
+
+            if ($cursor->hierarchy === $currentId) {
+                throw new \RuntimeException('A hierarquia nao pode apontar para um setor descendente.');
+            }
+
+            $cursor = OrganizationChart::query()->find($cursor->hierarchy);
+        }
     }
 }

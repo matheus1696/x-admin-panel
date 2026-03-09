@@ -2,6 +2,7 @@
 
 namespace App\Validation\Organization\OrganizationChart;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 /**
@@ -30,7 +31,22 @@ class OrganizationChartRules
                 'max:10',
                 Rule::unique('organization_charts', 'acronym'),
             ],
-            'hierarchy' => 'required|integer',
+            'hierarchy' => [
+                'required',
+                'integer',
+                'min:0',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $hierarchyId = (int) $value;
+
+                    if ($hierarchyId === 0) {
+                        return;
+                    }
+
+                    if (! DB::table('organization_charts')->where('id', $hierarchyId)->exists()) {
+                        $fail('O setor pai informado nao existe.');
+                    }
+                },
+            ],
             'responsible_user_id' => 'nullable|integer|exists:users,id',
         ];
     }
@@ -47,7 +63,28 @@ class OrganizationChartRules
                 Rule::unique('organization_charts', 'acronym')
                     ->ignore($chartId),
             ],
-            'hierarchy' => 'required|integer',
+            'hierarchy' => [
+                'required',
+                'integer',
+                'min:0',
+                function (string $attribute, mixed $value, \Closure $fail) use ($chartId): void {
+                    $hierarchyId = (int) $value;
+
+                    if ($hierarchyId === 0) {
+                        return;
+                    }
+
+                    if ($chartId !== null && $hierarchyId === $chartId) {
+                        $fail('Um setor nao pode ser pai dele mesmo.');
+
+                        return;
+                    }
+
+                    if (! DB::table('organization_charts')->where('id', $hierarchyId)->exists()) {
+                        $fail('O setor pai informado nao existe.');
+                    }
+                },
+            ],
             'responsible_user_id' => [
                 'nullable',
                 'integer',

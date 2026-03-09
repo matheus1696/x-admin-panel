@@ -2,8 +2,6 @@
     <x-alert.flash />
 
     <div x-data="{
-        openAsideTask: false,
-        openAsideStep: false,
         tab: 'dashboard',
         expandedTaskId: null,
         stepFormTaskId: null,
@@ -240,7 +238,7 @@
 
                             <div class="space-y-2">
                                 @forelse (($dashboard['overdue_tasks'] ?? []) as $item)
-                                    <button type="button" wire:click="openAsideTask({{ $item['id'] }})" @click="openAsideStep = false; openAsideTask = true" class="w-full rounded-2xl border border-rose-100 bg-white px-4 py-3 text-left transition hover:border-rose-200 hover:bg-rose-50/40">
+                                    <button type="button" wire:click="openAsideTask({{ $item['id'] }})" class="w-full rounded-2xl border border-rose-100 bg-white px-4 py-3 text-left transition hover:border-rose-200 hover:bg-rose-50/40">
                                         <div class="flex items-center justify-between gap-3">
                                             <div class="min-w-0">
                                                 <p class="truncate text-xs font-semibold text-gray-900">
@@ -381,7 +379,7 @@
 
                             <div class="space-y-2">
                                 @forelse (($dashboard['overdue_steps'] ?? []) as $item)
-                                    <button type="button" wire:click="openAsideTaskStep({{ $item['id'] }})" @click="openAsideTask = false; openAsideStep = true" class="w-full rounded-2xl border border-rose-100 bg-white px-4 py-3 text-left transition hover:border-rose-200 hover:bg-rose-50/40">
+                                    <button type="button" wire:click="openAsideTaskStep({{ $item['id'] }})" class="w-full rounded-2xl border border-rose-100 bg-white px-4 py-3 text-left transition hover:border-rose-200 hover:bg-rose-50/40">
                                         <div class="flex items-center justify-between gap-3">
                                             <div class="min-w-0">
                                                 <p class="truncate text-xs font-semibold text-gray-900">
@@ -527,12 +525,11 @@
                                                 <button
                                                     type="button"
                                                     wire:click="openAsideTask({{ $task->id }})"
-                                                    @click="openAsideStep = false; openAsideTask = true"
                                                     class="w-full text-left"
                                                 >
                                                     <p class="truncate text-xs font-semibold text-gray-900">
                                                         <span class="font-mono text-xs uppercase text-emerald-700">{{ $task->code }}</span>
-                                                        <span class="mx-2 text-gray-300">•</span>
+                                                        <span class="mx-2 text-gray-300">-</span>
                                                         <span class="text-xs">{{ $task->title }}</span>
                                                     </p>
                                                 </button>
@@ -613,10 +610,10 @@
                                             <div class="rounded-2xl border border-amber-200 bg-white px-4 py-4 shadow-sm">
                                                 <div class="space-y-3">
                                                     <div class="min-w-0">
-                                                        <x-button type="button" variant="yellow_text" wire:click="openAsideTaskStep({{ $step->id }})" @click="openAsideTask = false; openAsideStep = true">
+                                                        <x-button type="button" variant="yellow_text" wire:click="openAsideTaskStep({{ $step->id }})">
                                                             <div class="line-clamp-1 text-left">
                                                                 <span class="text-[11px] font-mono font-medium text-amber-700">{{ $step->code }}</span>
-                                                                <span class="mx-1 text-gray-300">•</span>
+                                                                <span class="mx-1 text-gray-300">-</span>
                                                                 <span class="text-xs font-medium text-gray-800" title="{{ $step->title }}">{{ $step->title }}</span>
                                                             </div>
                                                         </x-button>
@@ -884,14 +881,14 @@
                                                     dragOverInsertBeforeId = null;
                                                  ">
                                             <div class="flex items-start justify-between gap-3">
-                                                <button type="button" wire:click="openAsideTaskStep({{ $step->id }})" @click="openAsideTask = false; openAsideStep = true" class="min-w-0 flex-1 text-left">
+                                                <button type="button" wire:click="openAsideTaskStep({{ $step->id }})" class="min-w-0 flex-1 text-left">
                                                     <p class="truncate text-xs font-semibold text-gray-900">
                                                         <span class="font-mono {{ $columnTheme['code'] }}">{{ $step->code }}</span>
-                                                        <span class="mx-1 text-gray-300">•</span>
+                                                        <span class="mx-1 text-gray-300">-</span>
                                                         <span>{{ $step->title }}</span>
                                                     </p>
                                                     <p class="mt-1 truncate text-[11px] text-gray-500">
-                                                        {{ $step->task?->code ? $step->task->code.' • ' : '' }}{{ $step->task?->title ?? 'Sem tarefa vinculada' }}
+                                                        {{ $step->task?->code ? $step->task->code.' - ' : '' }}{{ $step->task?->title ?? 'Sem tarefa vinculada' }}
                                                     </p>
                                                 </button>
 
@@ -1270,23 +1267,19 @@
             />
         </div>
 
-        <div>
-            <div x-show="openAsideTask" x-transition:enter="transition-opacity duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" wire:click="closedAsideTask()" @click="openAsideTask = false" class="fixed inset-0 z-30 bg-black/50"></div>
-
-            <div x-show="openAsideTask" x-transition:enter="transform transition duration-300" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transform transition duration-300" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" class="fixed top-0 right-0 z-40 h-screen w-full overflow-hidden border-l border-gray-200 bg-white shadow-xl md:w-3/5">
-                @if ($selectedTaskId)
-                    <livewire:task.task-aside :taskId="$selectedTaskId" :key="'aside-task-' . $selectedTaskId" />
-                @endif
+        @if ($selectedTaskId)
+            <div wire:click="closedAsideTask()" class="fixed inset-0 z-30 bg-black/50"></div>
+            <div class="fixed top-0 right-0 z-40 h-screen w-full overflow-hidden border-l border-gray-200 bg-white shadow-xl md:w-3/5">
+                <livewire:task.task-aside :taskId="$selectedTaskId" wire:key="aside-task-{{ $selectedTaskId }}" />
             </div>
+        @endif
 
-            <div x-show="openAsideStep" x-transition:enter="transition-opacity duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" wire:click="closedAsideTaskStep()" @click="openAsideStep = false" class="fixed inset-0 z-30 bg-black/50"></div>
-
-            <div x-show="openAsideStep" x-transition:enter="transform transition duration-300" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transform transition duration-300" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" class="fixed top-0 right-0 z-40 h-screen w-full overflow-hidden border-l border-gray-200 bg-white shadow-xl md:w-3/5">
-                @if ($selectedStepId)
-                    <livewire:task.task-step-aside :stepId="$selectedStepId" :key="'aside-step-' . $selectedStepId" />
-                @endif
+        @if ($selectedStepId)
+            <div wire:click="closedAsideTaskStep()" class="fixed inset-0 z-30 bg-black/50"></div>
+            <div class="fixed top-0 right-0 z-40 h-screen w-full overflow-hidden border-l border-gray-200 bg-white shadow-xl md:w-3/5">
+                <livewire:task.task-step-aside :stepId="$selectedStepId" wire:key="aside-step-{{ $selectedStepId }}" />
             </div>
-        </div>
+        @endif
 
         <x-modal :show="$showModal">
             @if ($modalKey === 'modal-task-create')

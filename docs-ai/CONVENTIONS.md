@@ -1,179 +1,96 @@
 # Conventions
 
-Padrões observados neste repositório.
+Padroes praticos do repositorio.
 
-## Organização
+## Linguagem
 
-O código é agrupado por contexto de negócio:
+- UI: PT-BR
+- Documentacao e arquivos: UTF-8
+- Backend (PHP, classes, metodos, regras): Ingles
+
+Regra obrigatoria para texto de UI:
+- Ao editar Blade/Livewire com acentos, validar que nao existe mojibake antes de finalizar.
+- Comando de checagem: `rg -n "Ã|Â|�|â|Å" resources/views app/Livewire`.
+
+## Organizacao Por Dominio
+
+Pastas seguem contexto de negocio em `Models`, `Services`, `Livewire` e `Validation`.
 
 - `Organization`
 - `Task`
 - `Administration`
 - `Configuration`
-- `Audit`
-
-Esse recorte aparece em `Models`, `Services`, `Livewire`, `Validation` e parte de `Http/Requests`.
+- `Audit` e dominios de suporte
 
 ## Controllers
 
-Controllers são usados em fluxos HTTP clássicos:
+Controllers devem permanecer finos.
 
-- auth
-- profile
-- dashboard
-- audit
-
-Padrão recorrente:
-
-- métodos curtos
-- `view()` ou `redirect()` direto
-- `FormRequest` para validação
-- logging explícito quando o fluxo é auditável
-
-Exemplo:
-
-```php
-public function update(ProfileUpdateRequest $request): RedirectResponse
-{
-    $user = User::find(Auth::user()->id);
-    $user->update($request->validated());
-
-    return redirect()->route('profile.edit');
-}
-```
+- receber request
+- validar com FormRequest
+- chamar service quando houver regra de negocio
+- retornar `view()` ou `redirect()`
 
 ## Services
 
-Services concentram mutação e consistência.
+Services sao a fonte principal de consistencia.
 
-Padrão recorrente:
-
-- uma classe por subdomínio
-- métodos como `find`, `index`, `create/store`, `update`, `status`, `delete`
-- filtros simples em `index`
-- transação quando há reorder ou atualização coordenada
-
-Exemplo:
-
-```php
-public function update(int $id, array $data): void
-{
-    $organizationChart = OrganizationChart::findOrFail($id);
-    $organizationChart->update($data);
-    $this->reorder();
-}
-```
-
-O projeto não usa `Actions`, DTOs ou repositories como padrão.
+- concentrar escrita de dominio
+- encapsular transacao quando necessario
+- registrar historico operacional quando o fluxo exige
+- evitar espalhar regra entre Livewire e Model
 
 ## Livewire
 
-Livewire é a interface principal dos módulos internos.
+Livewire orquestra interface, nao regra de dominio.
 
-Padrão recorrente:
+- `boot()` injeta services
+- `mount()` carrega contexto inicial
+- validacoes de entrada em classes de validacao
+- mutacoes via services
 
-- propriedades públicas para filtros e formulário
-- `boot()` para injeção de service
-- `mount()` para contexto inicial
-- `updatedFilters()` chama `resetPage()`
-- `create`, `edit`, `store`, `update`, `status`
-- `render()` retorna view com `layouts.app`
-- traits `Modal` e `WithFlashMessage`
+Observacao atual do projeto:
+- `TaskPage` ainda concentra parte da orquestracao do modulo e deve ser tratado como acoplamento conhecido.
 
-Exemplo:
+### Alpine Em Paginas Grandes
 
-```php
-public function store(): void
-{
-    $data = $this->validate(UserRules::store());
-    $this->userService->store($data);
-}
-```
+- Evitar objetos complexos inline em `x-data="{ ... }"` quando a pagina tiver muitos binds Alpine/Livewire.
+- Preferir `x-data="nomeDoEstado($wire)"` com estado/metodos definidos em funcao JS dedicada.
+- Isso reduz falhas silenciosas de parsing/hidratacao em componentes extensos.
 
-Padrão de consulta:
-
-- dataset principal via service
-- listas auxiliares podem vir direto do model
-
-## Validação
-
-Dois formatos aparecem no projeto:
-
-- `FormRequest` em controllers
-- classes em `app/Validation/...` para Livewire
-
-Exemplos:
-
-```php
-$data = $this->validate(UserRules::store());
-```
-
-```php
-public function update(ProfileUpdateRequest $request)
-```
+Sinal de problema tipico:
+- erros no browser log como `Alpine Expression Error` e variaveis `undefined` (`tab`, `openAsideTask`, `draggedStepId`).
+- efeitos colaterais: modal nao abre, select-livewire trava/interfere, aside abre sem carregar corretamente.
 
 ## Models
 
-Padrão recorrente:
+- `fillable` explicito
+- `casts` coerente com datas/flags
+- relacoes em ingles
+- evitar logica de negocio pesada em eventos de model
 
-- `fillable` explícito
-- `casts` para datas e flags
-- relacionamentos em inglês
-- traits internas como `HasUuid`, `HasActive`, `HasTitleFilter`
-- `booted()` para campos derivados simples
+## Rotas E Permissoes
 
-Exemplo:
-
-```php
-static::created(function ($task) {
-    $taskCount = $task->taskHub->tasks()->count();
-    $task->update(['code' => $task->taskHub->acronym . str_pad($taskCount, 5, '0', STR_PAD_LEFT)]);
-});
-```
-
-## Rotas E Permissões
-
-Padrão recorrente:
-
-- prefixos em PT-BR
-- agrupamento por contexto
-- `name()` semântico
+- prefixos de URL em PT-BR quando ja padronizados no sistema
+- `name()` semantico
 - `middleware('can:...')` na borda
-- páginas Livewire ligadas direto na rota
+- policy para autorizacao contextual
 
-Exemplo:
+Compatibilidade atual:
+- endpoints legados `/profile` permanecem ativos para testes e integracoes existentes.
 
-```php
-Route::get('/organizacao/workflow', WorkflowProcessesPage::class)
-    ->middleware('can:organization.manage.workflow');
-```
+## Testes
 
-## Pest
+Padrao Pest com `RefreshDatabase` em `Feature`.
 
-Padrão observado:
+- HTTP: `actingAs()`
+- Service: login explicito quando necessario
+- Livewire: `Livewire::test()`
+- asserts com `expect()` ou asserts HTTP
 
-- `tests/Pest.php` aplica `Tests\TestCase`
-- `RefreshDatabase` entra automaticamente em `Feature`
-- testes usam `test('...', function () {})`
-- helpers locais por arquivo são comuns
-- `actingAs()` para HTTP
-- `Auth::login()` para service
-- `Livewire::test()` para componentes
-- `expect(...)` para asserts
+## Anti-Padroes
 
-Exemplo:
-
-```php
-test('users cannot access task hubs they do not own or share', function () {
-    $this->actingAs($user)
-        ->get('/tarefas/' . $privateHub->uuid)
-        ->assertNotFound();
-});
-```
-
-## Observações Práticas
-
-- UI usa PT-BR; classes e métodos usam inglês.
-- Mensagens de sucesso e erro costumam sair da camada de UI.
-- O projeto favorece nomes diretos, como `store`, `update` e `status`.
-- Em `Task`, parte da regra ainda está em `TaskPage`; não assuma service puro em todos os fluxos.
+- regra de negocio em Blade
+- escrita direta de dominio em Livewire quando ja existe service
+- duplicacao de permissao com comportamento divergente
+- logica de hierarquia fora do service central

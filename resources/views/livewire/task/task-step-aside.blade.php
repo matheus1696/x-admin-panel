@@ -112,7 +112,7 @@
                         </div>
 
                         <!-- Botão Fechar -->
-                        <button @click="openAsideStep = false" class="relative group shrink-0 text-gray-400 hover:text-gray-600 transition-all duration-300">
+                        <button type="button" wire:click="$dispatch('task-step-aside-close')" class="relative group shrink-0 text-gray-400 hover:text-gray-600 transition-all duration-300">
                             <div class="absolute inset-0 bg-gray-100/80 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300"></div>
                             <div class="relative px-4 py-2">
                                 <i class="fas fa-times text-lg transition-all duration-500 group-hover:rotate-180"></i>
@@ -221,7 +221,7 @@
                     @endif
                 </section>
                 
-                <!-- INFORMAÇÕES - Card Detalhado Premium (IGUAL AO TASK) -->
+                <!-- INFORMACOES - Card Detalhado Premium (IGUAL AO TASK) -->
                 <section class="p-6 border-b border-gray-100/80 bg-gradient-to-br from-white/40 to-gray-50/20">
                     <div class="flex items-center gap-3 mb-5">
                         <div class="flex items-center justify-center size-10 bg-gradient-to-br from-blue-50 to-sky-100/80 rounded-xl shadow-sm">
@@ -250,7 +250,7 @@
                                 </div>
                             @else
                                 <span class="text-xs font-semibold text-gray-900 bg-gray-100/80 px-3 py-1.5 rounded-lg">
-                                    {{ $step->organization?->acronym ?? $step->organization?->title ?? '—' }}
+                                    {{ $step->organization?->acronym ?? $step->organization?->title ?? '-' }}
                                 </span>
                             @endif
                         </div>
@@ -272,7 +272,7 @@
                                 </div>
                             @else
                                 <span class="text-xs font-semibold text-gray-900 bg-gray-100/80 px-3 py-1.5 rounded-lg">
-                                    {{ $step->user?->name ?? '—' }}
+                                    {{ $step->user?->name ?? '-' }}
                                 </span>
                             @endif
                         </div>
@@ -293,7 +293,7 @@
                                 </div>
                             @else
                                 <span class="text-xs font-medium px-3 py-1.5 rounded-lg {!! $step->taskPriority->color_code_tailwind ?? 'bg-gray-100/80 text-gray-900' !!}">
-                                    {{ $step->taskPriority->title ?? '—' }}
+                                    {{ $step->taskPriority->title ?? '-' }}
                                 </span>
                             @endif
                         </div>
@@ -314,7 +314,7 @@
                                 </div>
                             @else
                                 <span class="text-xs font-medium px-3 py-1.5 rounded-lg {!! $step->taskStepStatus->color_code_tailwind ?? 'bg-gray-100/80 text-gray-900' !!}">
-                                    {{ $step->taskStepStatus->title ?? '—' }}
+                                    {{ $step->taskStepStatus->title ?? '-' }}
                                 </span>
                             @endif
                         </div>
@@ -348,11 +348,11 @@
                                 Data de Início
                             </span>
                             <span class="text-xs font-semibold text-gray-900 bg-gray-100/80 px-3 py-1.5 rounded-lg">
-                                {{ $step->started_at?->format('d/m/Y') ?? '—' }}
+                                {{ $step->started_at?->format('d/m/Y') ?? '-' }}
                             </span>
                         </div>
                         
-                        <!-- Prazo Final (IDÊNTICO AO TASK) -->
+                        <!-- Prazo Final (IDENTICO AO TASK) -->
                         <div class="flex items-center justify-between p-3 rounded-xl border shadow-sm transition-all duration-300 col-span-1 group {{ $step->deadline_at && $step->deadline_at->isPast() && !$step->finished_at ? 'bg-gradient-to-br from-rose-50/90 to-rose-100/70 border-rose-200/80 text-rose-700' : 'bg-white/90 border-gray-200/80 text-gray-500 hover:border-gray-200/80' }}">
                             
                             <!-- Label com ícone animado -->
@@ -381,7 +381,7 @@
                                 <div class="flex items-center group/edit" wire:click="enableDeadlineEdit" wire:key="deadline-view-{{ $step->id }}">
                                     
                                     @if (!$step->finished_at)
-                                        <!-- Ícone de edição (aparece no hover) -->
+                                        <!-- Icone de edicao (aparece no hover) -->
                                         <i class="fas fa-pencil-alt text-[10px] text-gray-400 opacity-0 group-hover/edit:opacity-100 transition-opacity duration-300 {{ $step->deadline_at && $step->deadline_at->isPast() ? 'hover:text-rose-600' : 'hover:text-emerald-600' }}"></i>
                                     @endif
                                     
@@ -423,7 +423,7 @@
                     </div>
                 </section>
 
-                <!-- ATIVIDADES - IDÊNTICO AO TASK -->
+                <!-- ATIVIDADES - IDENTICO AO TASK -->
                 <section class="p-6 bg-white/30">
                     <div class="flex items-center justify-between mb-6">
                         <div class="flex items-center gap-3">
@@ -468,7 +468,7 @@
                                         <div class="flex items-center justify-between mb-2">
                                             <div class="flex items-center gap-2">
                                                 <span class="text-xs font-semibold text-gray-900">{{ $stepActivity->user?->name ?? 'Sistema' }}</span>
-                                                <span class="text-[10px] text-gray-400">•</span>
+                                                <span class="text-[10px] text-gray-400">-</span>
                                                 <span class="text-[10px] text-gray-500">{{ $stepActivity->created_at->format('d/m/Y') }}</span>
                                             </div>
                                             <span class="px-2 py-1 bg-gray-100/80 text-[10px] font-medium text-gray-600 rounded-full border border-gray-200">
@@ -483,7 +483,7 @@
                             @else
                                 <div class="text-center">
                                     <span class="px-2 py-1 bg-gray-100/80 text-[10px] font-medium text-gray-600 rounded-full border border-gray-200">
-                                        Ação • {{ $stepActivity->created_at->format('d/m/Y') }} • {{ $stepActivity->description }}
+                                        Ação - {{ $stepActivity->created_at->format('d/m/Y') }} - {{ $stepActivity->description }}
                                     </span>
                                 </div>
                             @endif
@@ -506,7 +506,8 @@
                     <div class="flex items-center justify-end gap-3">
                         
                         <div class="flex items-center gap-2">
-                            <x-button @click="openAsideStep = false" 
+                            <x-button type="button"
+                                wire:click="$dispatch('task-step-aside-close')"
                                 variant="gray_outline"
                                     icon="fas fa-times" 
                                     text="Fechar"  />

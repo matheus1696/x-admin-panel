@@ -16,7 +16,7 @@
                         <div class="w-24 h-24 rounded-full border-4 border-emerald-100 border-t-emerald-600 border-r-emerald-600 animate-spin"></div>
                     </div>
                     
-                    <!-- Ícone central com pulse -->
+                    <!-- Icone central com pulse -->
                     <div class="relative flex items-center justify-center w-24 h-24">
                         <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-green-500/20 rounded-full animate-ping opacity-75"></div>
                         <div class="relative bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl w-16 h-16 flex items-center justify-center shadow-xl shadow-emerald-500/20">
@@ -123,7 +123,7 @@
                         </div>
 
                         <!-- Botão Fechar -->
-                        <button @click="openAsideTask = false"  class="relative group shrink-0 text-gray-400 hover:text-gray-600 transition-all duration-300">
+                        <button type="button" wire:click="$dispatch('task-aside-close')" class="relative group shrink-0 text-gray-400 hover:text-gray-600 transition-all duration-300">
                             <div class="absolute inset-0 bg-gray-100/80 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300"></div>
                             <div class="relative px-4 py-2">
                                 <i class="fas fa-times text-lg transition-all duration-500 group-hover:rotate-180"></i>
@@ -274,7 +274,7 @@
                     @endif
                 </section>
                 
-                <!-- INFORMAÇÕES - Card Detalhado Premium -->
+                <!-- INFORMACOES - Card Detalhado Premium -->
                 <section class="p-6 border-b border-gray-100/80 bg-gradient-to-br from-white/40 to-gray-50/20">
                     <div class="flex items-center gap-3 mb-5">
                         <div class="flex items-center justify-center size-10 bg-gradient-to-br from-blue-50 to-sky-100/80 rounded-xl shadow-sm">
@@ -395,7 +395,7 @@
                                 Início
                             </span>
                             <span class="text-xs font-semibold text-gray-900 bg-gray-100/80 px-3 py-1.5 rounded-lg">
-                                {{ $task->started_at?->format('d/m/Y') ?? '—' }}
+                                {{ $task->started_at?->format('d/m/Y') ?? '-' }}
                             </span>
                         </div>
                         
@@ -427,7 +427,7 @@
                                 <div class="flex items-center group/edit" wire:click="enableDeadlineEdit" wire:key="deadline-view-{{ $task->id }}">
                                     
                                     @if (!$task->finished_at)
-                                        <!-- Ícone de edição (aparece no hover) -->
+                                        <!-- Icone de edicao (aparece no hover) -->
                                         <i class="fas fa-pencil-alt text-[10px] text-gray-400 opacity-0 group-hover/edit:opacity-100 transition-opacity duration-300 {{ $task->deadline_at && $task->deadline_at->isPast() ? 'hover:text-rose-600' : 'hover:text-emerald-600' }}"></i>
                                     @endif
                                     
@@ -506,7 +506,7 @@
                                         <div class="flex items-center justify-between mb-2">
                                             <div class="flex items-center gap-2">
                                                 <span class="text-xs font-semibold text-gray-900">{{ $taskActivity->user->name}}</span>
-                                                <span class="text-[10px] text-gray-400">•</span>
+                                                <span class="text-[10px] text-gray-400">-</span>
                                                 <span class="text-[10px] text-gray-500">{{ $taskActivity->created_at->format('d/m/Y')}}</span>
                                             </div>
                                             <span class="px-2 py-1 bg-gray-100/80 text-[10px] font-medium text-gray-600 rounded-full border border-gray-200">
@@ -521,7 +521,7 @@
                             @else 
                                 <div class="text-center">
                                     <span class="px-2 py-1 bg-gray-100/80 text-[10px] font-medium text-gray-600 rounded-full border border-gray-200">
-                                        Aviso • {{ $taskActivity->created_at->format('d/m/Y')}} • {{ $taskActivity->description}}
+                                        Aviso - {{ $taskActivity->created_at->format('d/m/Y')}} - {{ $taskActivity->description}}
                                     </span>                                
                                 </div>   
                             @endif
@@ -536,7 +536,8 @@
                     <div class="flex items-center justify-end gap-3">
                         
                         <div class="flex items-center gap-2">
-                            <x-button @click="openAsideTask = false" 
+                            <x-button type="button"
+                                    wire:click="$dispatch('task-aside-close')"
                                     variant="gray_outline"
                                     icon="fas fa-times" 
                                     text="Fechar"  />

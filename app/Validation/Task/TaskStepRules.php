@@ -23,7 +23,7 @@ class TaskStepRules
         return [
             'title' => 'required|min:4',
             'user_id' => 'nullable|exists:users,id',
-            'task_category_id' => 'nullable|exists:task_categories,id',
+            'task_category_id' => 'nullable|exists:task_step_categories,id',
             'task_priority_id' => 'nullable|exists:task_priorities,id',
             'task_step_status_id' => 'nullable|exists:task_step_statuses,id',
         ];
@@ -71,7 +71,7 @@ class TaskStepRules
     public static function category(): array
     {
         return [
-            'list_category_id' => 'nullable|exists:task_categories,id',
+            'list_category_id' => 'nullable|exists:task_step_categories,id',
         ];
     }
 
@@ -87,7 +87,7 @@ class TaskStepRules
         return [
             'list_status_id' => 'nullable|exists:task_step_statuses,id',
         ];
-    } 
+    }
 
     public static function startedAt(): array
     {

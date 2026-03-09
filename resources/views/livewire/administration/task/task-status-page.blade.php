@@ -1,11 +1,24 @@
-<div>
+﻿<div>
 
     <!-- Flash Message -->
     <x-alert.flash />
 
     <!-- Header -->
     <x-page.header title="Gestão de Status" subtitle="Gerencie os status de execução dos fluxos e etapas" icon="fa-solid fa-diagram-project" />
-       
+
+    <div class="mb-4 rounded-2xl border border-gray-200 bg-white p-4">
+        <x-form.label value="Ambiente de Tarefas" />
+        <x-form.select-livewire
+            wire:model.live="taskHubId"
+            name="taskHubId"
+            :collection="$taskHubs"
+            value-field="id"
+            label-field="title"
+            placeholder="Selecione um ambiente"
+        />
+        <x-form.error for="taskHubId" />
+    </div>
+
     <div>
         <div class="flex items-center justify-between pl-3 mb-4">
             <h2 class="flex-1 text-sm font-semibold uppercase text-gray-600">Status do Processo</h2>
@@ -27,7 +40,7 @@
                 @foreach ($taskStatuses as $taskStatus)
                     <tr>
                         <x-page.table-td class="text-center">
-                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium  {{ $taskStatus->color }}">
+                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $taskStatus->color_code_tailwind }}">
                                {{ $taskStatus->title }}
                             </span>
                         </x-page.table-td>
@@ -68,7 +81,7 @@
                 @foreach ($taskStepStatuses as $taskStepStatus)
                     <tr>
                         <x-page.table-td class="text-center">
-                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $taskStepStatus->color }}">
+                            <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium {{ $taskStepStatus->color_code_tailwind }}">
                                 {{ $taskStepStatus->title }}
                             </span>
                         </x-page.table-td>

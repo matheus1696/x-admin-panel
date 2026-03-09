@@ -9,9 +9,6 @@ use Database\Seeders\Administration\Product\ProductSeeder;
 use Database\Seeders\Administration\Product\ProductTypeSeeder;
 use Database\Seeders\Administration\Supplier\SupplierSeeder;
 use Database\Seeders\Administration\Task\TaskPrioritySeeder;
-use Database\Seeders\Administration\Task\TaskStatusSeeder;
-use Database\Seeders\Administration\Task\TaskStepCategorySeeder;
-use Database\Seeders\Administration\Task\TaskStepStatusSeeder;
 use Database\Seeders\Configuration\Establishment\Establishment\DepartmentSeeder;
 use Database\Seeders\Configuration\Establishment\Establishment\EstablishmentSeeder;
 use Database\Seeders\Configuration\Establishment\EstablishmentType\EstablishmentTypesSeeder;
@@ -52,9 +49,6 @@ class DatabaseSeeder extends Seeder
             OrganizationChartSeeder::class,
             WorkflowProcessSeeder::class,
             WorkflowStepSeeder::class,
-            TaskStatusSeeder::class,
-            TaskStepStatusSeeder::class,
-            TaskStepCategorySeeder::class,
             TaskPrioritySeeder::class,
         ]);
 

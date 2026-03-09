@@ -2,7 +2,7 @@
 
 ## Responsabilidade
 
-`Auth` cobre entrada e recuperação de acesso: login, logout, registro, reset de senha, confirmação de senha e verificação de e-mail.
+Entrada e recuperacao de acesso: login, logout, registro, reset, confirmacao e verificacao de email.
 
 ## Entidades Principais
 
@@ -10,37 +10,29 @@
 - `RegisteredUserController`
 - `PasswordResetLinkController`
 - `NewPasswordController`
-- `PasswordController`
-- `ConfirmablePasswordController`
-- `EmailVerificationPromptController`
-- `EmailVerificationNotificationController`
 - `VerifyEmailController`
 - `LoginRequest`
 - `User`
 
-## Fluxos Críticos
+## Invariantes
 
-- Registrar novo usuário
-- Abrir e encerrar sessão
-- Solicitar e executar reset de senha
-- Confirmar senha em fluxo protegido
-- Verificar e-mail e reenviar notificação
-
-## Invariantes / Regras
-
-- login, registro e reset rodam sob `guest`
-- verificação, confirmação e logout rodam sob `auth`
-- verificação de e-mail usa assinatura e throttle
+- fluxos de login/registro/reset sob middleware `guest`
+- fluxos autenticados sob middleware `auth`
+- verificacao de email com assinatura e throttle
 - `User` implementa `MustVerifyEmail`
 
-## Integrações
+## Estado Atual
 
-- `Administration`: usa `User`
-- `Profile`: depende de sessão autenticada
-- `Dashboard`: é acessado após autenticação
+- Registro tenta vincular role `user` quando disponivel.
+- Se role ainda nao existir no ambiente, o fluxo de registro nao deve quebrar.
 
-## Riscos / Armadilhas
+## Integracoes
 
-- alterar middleware de auth muda a fronteira de todo o sistema
-- customizar fluxo sem alinhar verificação de e-mail abre acesso em estado inconsistente
-- acoplar regra de negócio a controllers de auth
+- `Administration`: entidade `User` e permissoes
+- `Profile`: depende de sessao autenticada
+- `Dashboard`: rota pos-login
+
+## Riscos
+
+- alterar middleware de auth muda fronteira de todo sistema
+- acoplar regra de negocio em controllers de auth

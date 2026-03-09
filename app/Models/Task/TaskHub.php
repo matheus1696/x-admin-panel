@@ -4,6 +4,8 @@ namespace App\Models\Task;
 
 use App\Models\Administration\User\User;
 use App\Models\Administration\Task\TaskCategory;
+use App\Models\Administration\Task\TaskStatus;
+use App\Models\Administration\Task\TaskStepStatus;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Traits\HasTitleFilter;
 use App\Models\Traits\HasUuid;
@@ -33,6 +35,16 @@ class TaskHub extends Model
     public function taskCategories(): HasMany
     {
         return $this->hasMany(TaskCategory::class, 'task_hub_id');
+    }
+
+    public function taskStatuses(): HasMany
+    {
+        return $this->hasMany(TaskStatus::class, 'task_hub_id');
+    }
+
+    public function taskStepStatuses(): HasMany
+    {
+        return $this->hasMany(TaskStepStatus::class, 'task_hub_id');
     }
 
     public function taskSteps(): HasMany

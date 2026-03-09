@@ -89,10 +89,8 @@ class TaskStep extends Model
     protected static function booted()
     {
         static::created(function ($step) {
-            $taskStepCount = $step->taskHub->taskSteps()->count();
-
             $step->update([
-                'code' => $step->taskHub->acronym.str_pad($taskStepCount, 5, '0', STR_PAD_LEFT),
+                'code' => $step->taskHub->acronym.str_pad((string) $step->id, 7, '0', STR_PAD_LEFT),
             ]);
         });
     }

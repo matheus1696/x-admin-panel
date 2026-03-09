@@ -66,7 +66,13 @@ class OrganizationChartConfigPage extends Component
             return;
         }
 
-        $this->organizationChartService->store($data);
+        try {
+            $this->organizationChartService->store($data);
+        } catch (\RuntimeException $exception) {
+            $this->addError('hierarchy', $exception->getMessage());
+
+            return;
+        }
         $this->reset();
         $this->flashSuccess('Setor adicionado no organograma com sucesso.');
         $this->closeModal();
@@ -96,7 +102,13 @@ class OrganizationChartConfigPage extends Component
 
         $data = $this->validate(OrganizationChartRules::update($this->chartId));
 
-        $this->organizationChartService->update($this->chartId, $data);
+        try {
+            $this->organizationChartService->update($this->chartId, $data);
+        } catch (\RuntimeException $exception) {
+            $this->addError('hierarchy', $exception->getMessage());
+
+            return;
+        }
 
         $this->reset();
         $this->flashSuccess('Setor alterado no organograma com sucesso.');

@@ -81,10 +81,8 @@ class Task extends Model
     protected static function booted()
     {
         static::created(function ($task) {
-            $taskCount = $task->taskHub->tasks()->count();
-
             $task->update([
-                'code' => $task->taskHub->acronym.str_pad($taskCount, 5, '0', STR_PAD_LEFT),
+                'code' => $task->taskHub->acronym.str_pad((string) $task->id, 7, '0', STR_PAD_LEFT),
             ]);
         });
     }

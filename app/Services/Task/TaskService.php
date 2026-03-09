@@ -18,6 +18,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class TaskService
 {
@@ -435,7 +436,7 @@ class TaskService
         $query->where('task_hub_id', $taskHub->id)
             ->whereNull('finished_at');
 
-        // Filtra pelo tÃ­tulo
+        // Filtra pelo título
         if ($filters['title']) {
             $query->where('title', 'like', '%'.$filters['title'].'%');
         }
@@ -810,12 +811,26 @@ class TaskService
 
         $statusIds = TaskStatus::query()
             ->where('task_hub_id', $taskHub->id)
-            ->whereIn('title', ['Em andamento', 'ConcluÃ­do', 'ConcluÃƒÂ­do', 'Cancelado'])
-            ->pluck('id', 'title');
+            ->get()
+            ->reduce(function (array $carry, TaskStatus $status): array {
+                if ($this->isInProgressStatusTitle($status->title) && $carry['in_progress'] === null) {
+                    $carry['in_progress'] = (int) $status->id;
+                }
 
-        $inProgressStatusId = $statusIds['Em andamento'] ?? null;
-        $completedStatusId = $statusIds['ConcluÃ­do'] ?? ($statusIds['ConcluÃƒÂ­do'] ?? null);
-        $cancelledStatusId = $statusIds['Cancelado'] ?? null;
+                if ($this->isCompletedStatusTitle($status->title) && $carry['completed'] === null) {
+                    $carry['completed'] = (int) $status->id;
+                }
+
+                if ($this->isCancelledStatusTitle($status->title) && $carry['cancelled'] === null) {
+                    $carry['cancelled'] = (int) $status->id;
+                }
+
+                return $carry;
+            }, ['in_progress' => null, 'completed' => null, 'cancelled' => null]);
+
+        $inProgressStatusId = $statusIds['in_progress'];
+        $completedStatusId = $statusIds['completed'];
+        $cancelledStatusId = $statusIds['cancelled'];
 
         $inProgress = $inProgressStatusId
             ? (clone $baseQuery)->where('task_status_id', $inProgressStatusId)->count()
@@ -853,7 +868,7 @@ class TaskService
                     'code' => $task->code,
                     'title' => $task->title,
                     'deadline_at' => $task->deadline_at?->format('Y-m-d'),
-                    'responsible' => $task->user?->name ?? 'Sem responsÃ¡vel',
+                    'responsible' => $task->user?->name ?? 'Sem responsável',
                 ];
             })
             ->all();
@@ -877,8 +892,8 @@ class TaskService
         $tasksByResponsible = $responsibleCounts
             ->map(function ($row) use ($users) {
                 $label = $row->user_id
-                    ? ($users[$row->user_id] ?? 'UsuÃ¡rio')
-                    : 'Sem responsÃ¡vel';
+                    ? ($users[$row->user_id] ?? 'Usuário')
+                    : 'Sem responsável';
 
                 return [
                     'label' => $label,
@@ -939,8 +954,8 @@ class TaskService
         $stepsByResponsible = $stepResponsibleCounts
             ->map(function ($row) use ($stepUsers) {
                 $label = $row->user_id
-                    ? ($stepUsers[$row->user_id] ?? 'UsuÃ¡rio')
-                    : 'Sem responsÃ¡vel';
+                    ? ($stepUsers[$row->user_id] ?? 'Usuário')
+                    : 'Sem responsável';
 
                 return [
                     'label' => $label,
@@ -988,14 +1003,12 @@ class TaskService
             ->values()
             ->all();
 
-        $terminalTaskTitles = ['ConcluÃ­do', 'ConcluÃƒÂ­do', 'Cancelado'];
-        $terminalStepTitles = ['ConcluÃ­da', 'ConcluÃƒÂ­da', 'Cancelada'];
-
         $taskStatuses = TaskStatus::query()
             ->where('task_hub_id', $taskHub->id)
-            ->whereNotIn('title', $terminalTaskTitles)
             ->orderBy('id')
-            ->get(['id', 'title', 'color']);
+            ->get(['id', 'title', 'color'])
+            ->reject(fn (TaskStatus $status): bool => $this->isCompletedStatusTitle($status->title) || $this->isCancelledStatusTitle($status->title))
+            ->values();
 
         $taskStatusCounts = Task::query()
             ->where('task_hub_id', $taskHub->id)
@@ -1018,9 +1031,10 @@ class TaskService
 
         $stepStatuses = TaskStepStatus::query()
             ->where('task_hub_id', $taskHub->id)
-            ->whereNotIn('title', $terminalStepTitles)
             ->orderBy('id')
-            ->get(['id', 'title', 'color']);
+            ->get(['id', 'title', 'color'])
+            ->reject(fn (TaskStepStatus $status): bool => $this->isCompletedStatusTitle($status->title) || $this->isCancelledStatusTitle($status->title))
+            ->values();
 
         $stepStatusCountsActive = TaskStep::query()
             ->where('task_hub_id', $taskHub->id)
@@ -1043,7 +1057,8 @@ class TaskService
 
         $stepTerminalStatusIds = TaskStepStatus::query()
             ->where('task_hub_id', $taskHub->id)
-            ->whereIn('title', $terminalStepTitles)
+            ->get()
+            ->filter(fn (TaskStepStatus $status): bool => $this->isCompletedStatusTitle($status->title) || $this->isCancelledStatusTitle($status->title))
             ->pluck('id')
             ->all();
 
@@ -1062,7 +1077,7 @@ class TaskService
                     'code' => $step->code,
                     'title' => $step->title,
                     'deadline_at' => $step->deadline_at?->format('Y-m-d'),
-                    'responsible' => $step->user?->name ?? 'Sem responsÃ¡vel',
+                    'responsible' => $step->user?->name ?? 'Sem responsável',
                     'task_code' => $step->task?->code,
                 ];
             })
@@ -1151,7 +1166,7 @@ class TaskService
 
         $overdueQuery->where(function ($query): void {
             $query->whereNull('task_status_id')
-                ->orWhereHas('taskStatus', fn ($statusQuery) => $statusQuery->whereNotIn('title', ['ConcluÃ­do', 'ConcluÃƒÂ­do', 'Cancelado']));
+                ->orWhereHas('taskStatus', fn ($statusQuery) => $statusQuery->whereNotIn('id', $this->terminalStatusIdsForQuery()));
         });
 
         $overdue = $overdueQuery->count();
@@ -1197,7 +1212,19 @@ class TaskService
         $statuses = TaskStatus::query()
             ->where('task_hub_id', $taskHub->id)
             ->orderBy('id')
-            ->get();
+            ->get()
+            ->sortBy(function (TaskStatus $status): int {
+                if ($this->isCancelledStatusTitle($status->title)) {
+                    return 2;
+                }
+
+                if ($this->isCompletedStatusTitle($status->title)) {
+                    return 1;
+                }
+
+                return 0;
+            })
+            ->values();
 
         $columns = collect();
 
@@ -1233,10 +1260,10 @@ class TaskService
         array $targetOrder,
         ?string $reason = null,
         ?string $reasonType = null
-    ): void {
+    ): bool {
         $taskHub = TaskHub::where('uuid', $hubUuid)->firstOrFail();
 
-        DB::transaction(function () use ($taskHub, $taskId, $fromStatusId, $toStatusId, $sourceOrder, $targetOrder, $reason, $reasonType) {
+        return DB::transaction(function () use ($taskHub, $taskId, $fromStatusId, $toStatusId, $sourceOrder, $targetOrder, $reason, $reasonType): bool {
             $task = Task::query()
                 ->where('task_hub_id', $taskHub->id)
                 ->lockForUpdate()
@@ -1244,6 +1271,28 @@ class TaskService
 
             $fromStatusId = $fromStatusId === 0 ? null : $fromStatusId;
             $toStatusId = $toStatusId === 0 ? null : $toStatusId;
+            $reason = $reason !== null ? trim($reason) : null;
+
+            if ($this->isInvalidTaskTerminalSwap($taskHub->id, $fromStatusId, $toStatusId)) {
+                return false;
+            }
+
+            $expectedReasonType = $this->taskReasonTypeForTransition($taskHub->id, $fromStatusId, $toStatusId);
+            if ($expectedReasonType !== null && ($reason === null || $reason === '')) {
+                return false;
+            }
+
+            if ($reasonType !== null && $expectedReasonType !== null && $reasonType !== $expectedReasonType) {
+                return false;
+            }
+
+            if ($expectedReasonType !== null) {
+                $reasonType = $expectedReasonType;
+            }
+
+            if ($reasonType === 'completion' && ! $this->canMarkTaskAsCompleted($task)) {
+                return false;
+            }
 
             $previousStatusId = $task->task_status_id;
 
@@ -1282,6 +1331,8 @@ class TaskService
                     'reason_type' => $reasonType,
                 ]
             );
+
+            return true;
         });
     }
 
@@ -1311,7 +1362,19 @@ class TaskService
         $statuses = TaskStepStatus::query()
             ->where('task_hub_id', $taskHub->id)
             ->orderBy('id')
-            ->get();
+            ->get()
+            ->sortBy(function (TaskStepStatus $status): int {
+                if ($this->isCancelledStatusTitle($status->title)) {
+                    return 2;
+                }
+
+                if ($this->isCompletedStatusTitle($status->title)) {
+                    return 1;
+                }
+
+                return 0;
+            })
+            ->values();
 
         $stepsQuery = TaskStep::query()
             ->where('task_hub_id', $taskHub->id)
@@ -1391,18 +1454,25 @@ class TaskService
 
             $fromStatusId = $fromStatusId === 0 ? null : $fromStatusId;
             $toStatusId = $toStatusId === 0 ? null : $toStatusId;
+            $reason = $reason !== null ? trim($reason) : null;
 
             $previousStatusId = $step->task_status_id;
-            $terminalStatusIds = $this->stepTerminalStatusIds($taskHub->id);
 
-            if (
-                $fromStatusId !== $toStatusId
-                && $fromStatusId !== null
-                && $toStatusId !== null
-                && in_array($fromStatusId, $terminalStatusIds, true)
-                && in_array($toStatusId, $terminalStatusIds, true)
-            ) {
+            if ($this->isInvalidStepTerminalSwap($taskHub->id, $fromStatusId, $toStatusId)) {
                 return false;
+            }
+
+            $expectedReasonType = $this->stepReasonTypeForTransition($taskHub->id, $fromStatusId, $toStatusId);
+            if ($expectedReasonType !== null && ($reason === null || $reason === '')) {
+                return false;
+            }
+
+            if ($reasonType !== null && $expectedReasonType !== null && $reasonType !== $expectedReasonType) {
+                return false;
+            }
+
+            if ($expectedReasonType !== null) {
+                $reasonType = $expectedReasonType;
             }
 
             if ($this->startingWorkflowStepIsBlocked($step, $toStatusId)) {
@@ -1430,16 +1500,19 @@ class TaskService
             if ($reason && $reasonType === 'completion') {
                 $description = ($this->actorName()).' concluiu a etapa: '.$reason;
                 $this->recordTaskCommentForCompletedStep($step, $reason);
+                $this->recordStepComment($step, $reason);
                 $this->recordTaskStepCompletionActivity($step);
             }
             if ($reason && $reasonType === 'cancellation') {
                 $description = ($this->actorName()).' cancelou a etapa: '.$reason;
                 $this->recordTaskCommentForCancelledStep($step, $reason);
+                $this->recordStepComment($step, $reason);
                 $this->recordTaskStepCancellationActivity($step);
             }
             if ($reason && $reasonType === 'reopen') {
                 $description = ($this->actorName()).' reabriu a etapa: '.$reason;
                 $this->recordTaskCommentForReopenedStep($step, $reason);
+                $this->recordStepComment($step, $reason);
                 $this->recordTaskStepReopenActivity($step);
             }
 
@@ -1466,8 +1539,9 @@ class TaskService
         $step = TaskStep::query()->findOrFail($stepId);
         $completedStatusId = TaskStepStatus::query()
             ->where('task_hub_id', $step->task_hub_id)
-            ->whereIn('title', ['ConcluÃ­da', 'ConcluÃƒÂ­da'])
-            ->value('id');
+            ->get()
+            ->first(fn (TaskStepStatus $status): bool => $this->isCompletedStatusTitle($status->title))
+            ?->id;
 
         if (! $completedStatusId) {
             return $step;
@@ -1492,7 +1566,7 @@ class TaskService
             'task_step_id' => $step->id,
             'user_id' => Auth::user()?->id,
             'type' => 'finished_change',
-            'description' => $this->actorName().' marcou a etapa como concluÃ­da',
+            'description' => $this->actorName().' marcou a etapa como concluída',
         ]);
 
         return $step->refresh();
@@ -1546,6 +1620,11 @@ class TaskService
     {
         $task = Task::findOrFail($taskId);
         $previousStatusId = $task->task_status_id;
+        $reasonType = $this->taskReasonTypeForTransition($task->task_hub_id, $previousStatusId, $statusId);
+
+        if ($reasonType === 'completion' && ! $this->canMarkTaskAsCompleted($task)) {
+            return $task->refresh();
+        }
 
         $this->applyStatusUpdate($task, $statusId);
 
@@ -1628,6 +1707,16 @@ class TaskService
         ]);
     }
 
+    private function recordStepComment(TaskStep $step, string $reason): void
+    {
+        TaskStepActivity::create([
+            'task_step_id' => $step->id,
+            'user_id' => Auth::user()?->id,
+            'type' => 'comment',
+            'description' => $reason,
+        ]);
+    }
+
     private function recordTaskStepReopenActivity(TaskStep $step): void
     {
         TaskActivity::create([
@@ -1686,7 +1775,17 @@ class TaskService
             return false;
         }
 
-        return $previousStep->finished_at === null;
+        if ($previousStep->finished_at !== null) {
+            return false;
+        }
+
+        $previousStatusId = $previousStep->task_status_id;
+
+        if ($previousStatusId !== null && in_array((int) $previousStatusId, $this->stepTerminalStatusIds($step->task_hub_id), true)) {
+            return false;
+        }
+
+        return true;
     }
 
     private function applyStatusUpdate(Task $task, ?int $statusId): void
@@ -1719,7 +1818,8 @@ class TaskService
     {
         return TaskStatus::query()
             ->where('task_hub_id', $taskHubId)
-            ->whereIn('title', ['ConcluÃ­do', 'ConcluÃƒÂ­do', 'Cancelado'])
+            ->get()
+            ->filter(fn (TaskStatus $status): bool => $this->isCompletedStatusTitle($status->title) || $this->isCancelledStatusTitle($status->title))
             ->pluck('id')
             ->map(fn ($id) => (int) $id)
             ->all();
@@ -1732,7 +1832,8 @@ class TaskService
     {
         return TaskStepStatus::query()
             ->where('task_hub_id', $taskHubId)
-            ->whereIn('title', ['ConcluÃ­da', 'ConcluÃƒÂ­da', 'Cancelada'])
+            ->get()
+            ->filter(fn (TaskStepStatus $status): bool => $this->isCompletedStatusTitle($status->title) || $this->isCancelledStatusTitle($status->title))
             ->pluck('id')
             ->map(fn ($id) => (int) $id)
             ->all();
@@ -1745,7 +1846,8 @@ class TaskService
     {
         return TaskStepStatus::query()
             ->where('task_hub_id', $taskHubId)
-            ->whereIn('title', ['Em andamento', 'Em execucao', 'Em execuÃ§Ã£o'])
+            ->get()
+            ->filter(fn (TaskStepStatus $status): bool => $this->isInProgressStatusTitle($status->title))
             ->pluck('id')
             ->map(fn ($id) => (int) $id)
             ->all();
@@ -1758,9 +1860,23 @@ class TaskService
     {
         return TaskStatus::query()
             ->where('task_hub_id', $taskHubId)
-            ->whereIn('title', ['Em andamento', 'Em execucao', 'Em execuÃ§Ã£o'])
+            ->get()
+            ->filter(fn (TaskStatus $status): bool => $this->isInProgressStatusTitle($status->title))
             ->pluck('id')
             ->map(fn ($id) => (int) $id)
+            ->all();
+    }
+
+    /**
+     * @return array<int>
+     */
+    private function terminalStatusIdsForQuery(): array
+    {
+        return TaskStatus::query()
+            ->get(['id', 'title'])
+            ->filter(fn (TaskStatus $status): bool => $this->isCompletedStatusTitle($status->title) || $this->isCancelledStatusTitle($status->title))
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
             ->all();
     }
 
@@ -1870,6 +1986,167 @@ class TaskService
             ->values();
     }
 
+    public function stepReasonTypeForTransition(int $taskHubId, ?int $fromStatusId, ?int $toStatusId): ?string
+    {
+        if ($fromStatusId === $toStatusId) {
+            return null;
+        }
+
+        $toStatus = $toStatusId ? TaskStepStatus::query()->where('task_hub_id', $taskHubId)->find($toStatusId) : null;
+        $fromStatus = $fromStatusId ? TaskStepStatus::query()->where('task_hub_id', $taskHubId)->find($fromStatusId) : null;
+
+        if ($toStatus && $this->isCompletedStatusTitle($toStatus->title)) {
+            return 'completion';
+        }
+
+        if ($toStatus && $this->isCancelledStatusTitle($toStatus->title)) {
+            return 'cancellation';
+        }
+
+        if (
+            $fromStatus
+            && ($this->isCompletedStatusTitle($fromStatus->title) || $this->isCancelledStatusTitle($fromStatus->title))
+            && ($toStatus === null || (! $this->isCompletedStatusTitle($toStatus->title) && ! $this->isCancelledStatusTitle($toStatus->title)))
+        ) {
+            return 'reopen';
+        }
+
+        return null;
+    }
+
+    public function taskReasonTypeForTransition(int $taskHubId, ?int $fromStatusId, ?int $toStatusId): ?string
+    {
+        if ($fromStatusId === $toStatusId) {
+            return null;
+        }
+
+        $toStatus = $toStatusId ? TaskStatus::query()->where('task_hub_id', $taskHubId)->find($toStatusId) : null;
+        $fromStatus = $fromStatusId ? TaskStatus::query()->where('task_hub_id', $taskHubId)->find($fromStatusId) : null;
+
+        if ($toStatus && $this->isCompletedStatusTitle($toStatus->title)) {
+            return 'completion';
+        }
+
+        if ($toStatus && $this->isCancelledStatusTitle($toStatus->title)) {
+            return 'cancellation';
+        }
+
+        if (
+            $fromStatus
+            && ($this->isCompletedStatusTitle($fromStatus->title) || $this->isCancelledStatusTitle($fromStatus->title))
+            && ($toStatus === null || (! $this->isCompletedStatusTitle($toStatus->title) && ! $this->isCancelledStatusTitle($toStatus->title)))
+        ) {
+            return 'reopen';
+        }
+
+        return null;
+    }
+
+    public function isInvalidStepTerminalSwap(int $taskHubId, ?int $fromStatusId, ?int $toStatusId): bool
+    {
+        if ($fromStatusId === $toStatusId || $fromStatusId === null || $toStatusId === null) {
+            return false;
+        }
+
+        $fromStatus = TaskStepStatus::query()->where('task_hub_id', $taskHubId)->find($fromStatusId);
+        $toStatus = TaskStepStatus::query()->where('task_hub_id', $taskHubId)->find($toStatusId);
+
+        if (! $fromStatus || ! $toStatus) {
+            return false;
+        }
+
+        return ($this->isCompletedStatusTitle($fromStatus->title) && $this->isCancelledStatusTitle($toStatus->title))
+            || ($this->isCancelledStatusTitle($fromStatus->title) && $this->isCompletedStatusTitle($toStatus->title));
+    }
+
+    public function isInvalidTaskTerminalSwap(int $taskHubId, ?int $fromStatusId, ?int $toStatusId): bool
+    {
+        if ($fromStatusId === $toStatusId || $fromStatusId === null || $toStatusId === null) {
+            return false;
+        }
+
+        $fromStatus = TaskStatus::query()->where('task_hub_id', $taskHubId)->find($fromStatusId);
+        $toStatus = TaskStatus::query()->where('task_hub_id', $taskHubId)->find($toStatusId);
+
+        if (! $fromStatus || ! $toStatus) {
+            return false;
+        }
+
+        return ($this->isCompletedStatusTitle($fromStatus->title) && $this->isCancelledStatusTitle($toStatus->title))
+            || ($this->isCancelledStatusTitle($fromStatus->title) && $this->isCompletedStatusTitle($toStatus->title));
+    }
+
+    private function normalizeStatusTitle(?string $title): string
+    {
+        return (string) Str::of((string) $title)
+            ->lower()
+            ->ascii()
+            ->replaceMatches('/[^a-z0-9]+/u', ' ')
+            ->squish();
+    }
+
+    private function isCompletedStatusTitle(?string $title): bool
+    {
+        $normalized = $this->normalizeStatusTitle($title);
+
+        return str_contains($normalized, 'conclu') || str_contains($normalized, 'finaliz');
+    }
+
+    private function isCancelledStatusTitle(?string $title): bool
+    {
+        return str_contains($this->normalizeStatusTitle($title), 'cancel');
+    }
+
+    private function isInProgressStatusTitle(?string $title): bool
+    {
+        $normalized = $this->normalizeStatusTitle($title);
+
+        return str_contains($normalized, 'andamento')
+            || str_contains($normalized, 'execucao')
+            || str_contains($normalized, 'execu');
+    }
+
+    private function canMarkTaskAsCompleted(Task $task): bool
+    {
+        $totalSteps = TaskStep::query()
+            ->where('task_id', $task->id)
+            ->count();
+
+        if ($totalSteps === 0) {
+            return true;
+        }
+
+        $completionStatusIds = $this->taskStepCompletionStatusIds($task->task_hub_id);
+
+        if ($completionStatusIds === []) {
+            return false;
+        }
+
+        $openOrNonCompletedSteps = TaskStep::query()
+            ->where('task_id', $task->id)
+            ->where(function ($query) use ($completionStatusIds): void {
+                $query->whereNull('task_status_id')
+                    ->orWhereNotIn('task_status_id', $completionStatusIds);
+            })
+            ->count();
+
+        return $openOrNonCompletedSteps === 0;
+    }
+
+    /**
+     * @return array<int>
+     */
+    private function taskStepCompletionStatusIds(int $taskHubId): array
+    {
+        return TaskStepStatus::query()
+            ->where('task_hub_id', $taskHubId)
+            ->get(['id', 'title'])
+            ->filter(fn (TaskStepStatus $status): bool => $this->isCompletedStatusTitle($status->title))
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+    }
+
     private function createDefaultStatusesForHub(int $taskHubId): void
     {
         $taskStatuses = [
@@ -1888,7 +2165,7 @@ class TaskService
                 'is_active' => true,
             ],
             [
-                'title' => 'ConcluÃ­do',
+                'title' => 'Concluído',
                 'color' => 'green',
                 'color_code_tailwind' => 'bg-green-100 text-green-700 hover:bg-green-200',
                 'is_default' => false,
@@ -1926,7 +2203,7 @@ class TaskService
                 'is_active' => true,
             ],
             [
-                'title' => 'ConcluÃ­da',
+                'title' => 'Concluída',
                 'color' => 'green',
                 'color_code_tailwind' => 'bg-green-100 text-green-700 hover:bg-green-200',
                 'is_default' => false,

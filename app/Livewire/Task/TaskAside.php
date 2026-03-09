@@ -65,6 +65,14 @@ class TaskAside extends Component
 
     public $isLoading = true;
 
+    public bool $showStatusReasonModal = false;
+
+    public ?int $pendingTaskStatusToId = null;
+
+    public ?string $pendingTaskStatusReasonType = null;
+
+    public string $taskStatusTransitionReason = '';
+
     public function boot(
         TaskService $taskService,
         TaskCategoryService $taskCategoryService,
@@ -97,6 +105,7 @@ class TaskAside extends Component
         $this->users = $this->taskService->accessUsersByHubId($this->task->task_hub_id);
         $this->taskCategories = $this->taskCategoryService->visibleForHub($this->task->task_hub_id, true);
         $this->taskStatuses = $this->taskStatusService->index($this->task->task_hub_id);
+        $this->list_status_id = $this->task->task_status_id;
         $this->isLoading = false;
     }
 
@@ -162,10 +171,119 @@ class TaskAside extends Component
             'list_status_id' => ['nullable', Rule::in($availableStatusIds)],
         ]);
 
-        $this->taskService->changeStatus($this->task->id, $data['list_status_id']);
+        $fromStatusId = (int) ($this->task->task_status_id ?? 0);
+        $toStatusId = (int) ($data['list_status_id'] ?? 0);
 
-        $this->task->refresh();
+        if ($this->taskService->isInvalidTaskTerminalSwap(
+            $this->task->task_hub_id,
+            $fromStatusId === 0 ? null : $fromStatusId,
+            $toStatusId === 0 ? null : $toStatusId
+        )) {
+            $this->list_status_id = $this->task->task_status_id;
+            $this->flashError('Não é permitido mover uma tarefa concluída para cancelada ou cancelada para concluída.');
+
+            return;
+        }
+
+        $reasonType = $this->taskService->taskReasonTypeForTransition(
+            $this->task->task_hub_id,
+            $fromStatusId === 0 ? null : $fromStatusId,
+            $toStatusId === 0 ? null : $toStatusId
+        );
+
+        if ($fromStatusId !== $toStatusId && $reasonType !== null) {
+            $this->pendingTaskStatusToId = $toStatusId;
+            $this->pendingTaskStatusReasonType = $reasonType;
+            $this->taskStatusTransitionReason = '';
+            $this->showStatusReasonModal = true;
+            $this->list_status_id = $this->task->task_status_id;
+
+            return;
+        }
+
+        $this->applyTaskStatusChange($toStatusId);
+    }
+
+    public function confirmTaskStatusTransitionReason(): void
+    {
+        $this->validate([
+            'taskStatusTransitionReason' => ['required', 'string', 'max:2000'],
+        ]);
+
+        if ($this->pendingTaskStatusToId === null) {
+            $this->cancelTaskStatusTransitionReason();
+
+            return;
+        }
+
+        $this->applyTaskStatusChange(
+            $this->pendingTaskStatusToId,
+            trim($this->taskStatusTransitionReason),
+            $this->pendingTaskStatusReasonType
+        );
+
+        $this->resetPendingTaskStatusTransition();
+    }
+
+    public function cancelTaskStatusTransitionReason(): void
+    {
+        $this->resetPendingTaskStatusTransition();
+        $this->list_status_id = $this->task->task_status_id;
+    }
+
+    private function applyTaskStatusChange(int $toStatusId, ?string $reason = null, ?string $reasonType = null): void
+    {
+        $fromStatusId = (int) ($this->task->task_status_id ?? 0);
+        $columns = collect($this->taskService->kanban($this->task->taskHub->uuid));
+        $sourceColumn = $columns->firstWhere('status_id', $fromStatusId);
+        $targetColumn = $columns->firstWhere('status_id', $toStatusId);
+
+        $sourceOrder = collect($sourceColumn['tasks'] ?? [])
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->reject(fn (int $id): bool => $id === (int) $this->task->id)
+            ->values()
+            ->all();
+
+        $targetOrder = collect($targetColumn['tasks'] ?? [])
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->reject(fn (int $id): bool => $id === (int) $this->task->id)
+            ->push((int) $this->task->id)
+            ->unique()
+            ->values()
+            ->all();
+
+        $moved = $this->taskService->moveKanbanTask(
+            $this->task->taskHub->uuid,
+            (int) $this->task->id,
+            $fromStatusId,
+            $toStatusId,
+            $sourceOrder,
+            $targetOrder,
+            $reason,
+            $reasonType
+        );
+
+        if (! $moved) {
+            $this->loadTask();
+            $this->list_status_id = $this->task->task_status_id;
+            $this->flashError('A tarefa só pode ser concluída quando todas as etapas estiverem concluídas.');
+
+            return;
+        }
+
+        $this->loadTask();
         $this->flashSuccess('Status atualizado.');
+    }
+
+    private function resetPendingTaskStatusTransition(): void
+    {
+        $this->showStatusReasonModal = false;
+        $this->pendingTaskStatusToId = null;
+        $this->pendingTaskStatusReasonType = null;
+        $this->taskStatusTransitionReason = '';
+        $this->resetValidation();
     }
 
     public function enableDescriptionEdit()
@@ -258,6 +376,8 @@ class TaskAside extends Component
 
     public function taskFinished()
     {
+        $previousStatusId = (int) ($this->task->task_status_id ?? 0);
+
         $this->taskService->changeStatus(
             $this->task->id,
             4,
@@ -265,8 +385,15 @@ class TaskAside extends Component
             'finished_change'
         );
 
-        $this->flashSuccess('Tarefa marcada como concluida.');
         $this->task->refresh();
+
+        if ((int) ($this->task->task_status_id ?? 0) === $previousStatusId) {
+            $this->flashError('A tarefa só pode ser concluída quando todas as etapas estiverem concluídas.');
+
+            return;
+        }
+
+        $this->flashSuccess('Tarefa marcada como concluida.');
     }
 
     public function render()

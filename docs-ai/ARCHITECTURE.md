@@ -1,108 +1,68 @@
 # Architecture
 
-## Visão Geral
+## Visao Geral
 
-O sistema é uma aplicação Laravel 12 com interface baseada em Livewire 3. O código está organizado por contexto de negócio:
+X-AdminPanel e uma aplicacao Laravel 12 + Livewire 3 organizada por dominio.
 
-- `Organization`: organograma e workflow
-- `Task`: hubs, tarefas, etapas e histórico operacional
-- `Administration`: usuários e catálogos usados por tasks
+- `Organization`: estrutura (organograma e workflow)
+- `Task`: execucao (hubs, tarefas, etapas, kanban)
+- `Administration`: identidade, permissoes e catalogos administrativos
 - `Configuration`: cadastros base
-- `Audit`: histórico geral do sistema
+- `Audit/Auth/Profile/Public/Dashboard`: dominios de borda e suporte
 
-O eixo estrutural é `Organization`. `OrganizationChart` alimenta `WorkflowStep.organization_id` e `TaskStep.organization_id`. Por isso, estrutura organizacional, modelagem de processo e execução não são módulos isolados.
+O eixo estrutural e `Organization`. O eixo operacional e `Task`.
 
-## Camadas
+## Modelo De Camadas
 
-### Services
+Fluxo esperado:
 
-Services concentram mutações e consistência:
+`Services -> Controllers/Livewire -> Blade`
 
-- `OrganizationChartService` recalcula a hierarquia
-- `WorkflowStepService` mantém ordem e `total_estimated_days`
-- `TaskService` controla criação, métricas, kanban, status e histórico
+- `Services`: regras de negocio, consistencia e escrita em dados
+- `Controllers`: fluxos HTTP classicos
+- `Livewire`: estado de tela, validacao de entrada e orquestracao
+- `Blade`: camada declarativa
 
-Services administrativos e de configuração cobrem CRUD e filtros mais simples.
+## Estado Atual Relevante
 
-### Livewire
+- Escritas operacionais de `TaskAside` e `TaskStepAside` foram consolidadas em `TaskService`.
+- `TaskPage` ainda concentra orquestracao importante do modulo (realidade atual), mas os fluxos criticos de escrita avancaram para service.
+- Status e categorias de task sao contextualizados por hub (`task_hub_id`).
 
-Livewire é a camada principal de interface:
+## Fluxos Criticos Entre Modulos
 
-- carrega contexto e coleções
-- controla modais
-- valida entrada
-- chama services
+### Organization -> Task
 
-`TaskPage` é a principal exceção: além de orquestrar UI, também concentra parte da regra de execução, como cópia de workflow, validação de motivo e criação direta de `TaskStep`.
+- `WorkflowStep.organization_id` e `TaskStep.organization_id` conectam estrutura com execucao.
+- Copia de workflow para task deve preservar ordem e coerencia de prazo.
 
-### Models
+### Task -> Administration
 
-Models definem relacionamentos e alguns campos derivados:
+- `Task` depende de usuarios, permissoes e catalogos (status/prioridade/categorias).
+- Permissoes entram na borda por middleware/policy e sao reforcadas no contexto quando necessario.
 
-- `OrganizationChart` é autorreferenciado por `hierarchy`
-- `Workflow` agrega `WorkflowStep`
-- `TaskHub` agrega `Task` e `TaskStep`
-- `Task` e `TaskStep` geram `code` no evento `created`
+### Profile/Auth -> Administration
 
-### Controllers E Rotas
+- `User` e a identidade central.
+- Fluxos legados de profile (`/profile`) estao mantidos para compatibilidade de testes e tooling.
 
-Controllers ficam nos fluxos HTTP clássicos:
+## Regras Estruturais
 
-- auth
-- profile
-- dashboard
-- audit
+- Organograma nao pode gerar ciclo.
+- Reordenacao estrutural e obrigatoria apos mutacao de hierarquia.
+- Regras de dominio nao devem ser movidas para Blade.
+- Evitar duplicacao de traversal de hierarquia fora de `OrganizationChartService`.
 
-Rotas agrupam os contextos e aplicam autorização na borda com `can:`.
+## Risco Arquitetural
 
-## Fluxo Entre Módulos
+- Maximo: `Organization`
+- Alto: `Task`
+- Medio: `Administration`, `Auth`, `Profile`, `Configuration`
+- Suporte: `Audit`, `Dashboard`, `Public`
 
-### Estrutura
+## Leitura Recomendada
 
-`OrganizationChartConfigPage` grava setores via `OrganizationChartService`. Depois de criar ou alterar um nó, `reorder()` recalcula `order` e `number_hierarchy`. A renderização do organograma depende desse resultado.
-
-### Processo
-
-`WorkflowProcessesPage` mantém o cabeçalho do processo. `WorkflowSteps` e `WorkflowStepService` mantêm:
-
-- `step_order`
-- `deadline_days`
-- `total_estimated_days`
-- vínculo opcional com `OrganizationChart`
-
-### Execução
-
-`TaskHub` define o ambiente. `TaskPage` carrega o hub apenas para owner ou membro. A execução passa por `TaskService` para:
-
-- criar tarefas
-- montar listas, dashboard e kanban
-- mover tarefas e etapas
-- registrar histórico
-
-Há um fluxo derivado importante: `TaskPage::copyWorkflowSteps()` transforma `WorkflowStep` em `TaskStep`, preserva `organization_id` e converte `deadline_days` em `deadline_at`.
-
-### Governança E Apoio
-
-`Administration` fornece:
-
-- usuários
-- permissões
-- status, categorias e prioridades de tasks
-
-`Configuration` fornece:
-
-- estabelecimentos e departamentos
-- regiões
-- ocupações
-- blocos financeiros
-
-`Audit` registra eventos gerais em `ActivityLog`. O histórico operacional de execução continua em `TaskActivity` e `TaskStepActivity`.
-
-## Leitura Rápida
-
-Para entender impacto real:
-1. leia `Organization`
-2. depois `Task`
-3. só então os módulos de suporte
-
-O comportamento mais sensível está no encontro entre estrutura e execução.
+1. `docs-ai/SYSTEM_GUIDE.md`
+2. `docs-ai/domains/ORGANIZATION.md`
+3. `docs-ai/domains/TASK.md`
+4. `docs-ai/domains/ADMINISTRATION.md`

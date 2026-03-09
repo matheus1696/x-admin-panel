@@ -23,7 +23,7 @@ $responsibleUser = $node->responsibleUser;
         <div class="h-10 w-0.5 bg-emerald-800"></div>
     @endif
 
-    <div class="relative w-96 rounded-2xl bg-white shadow-md hover:shadow-xl border border-emerald-100 hover:border-emerald-300 transition-all duration-300 hover:-translate-y-1 group" title="{{ $node->acronym }} - {{ $node->title }}" @click="open = !open">
+    <div class="relative w-72 rounded-2xl bg-white shadow-md hover:shadow-xl border border-emerald-100 hover:border-emerald-300 transition-all duration-300 hover:-translate-y-1 group" title="{{ $node->acronym }} - {{ $node->title }}" @click="open = !open">
         
         {{-- Botão de expandir com design melhorado --}}
         @if($node->children->isNotEmpty())
@@ -40,39 +40,41 @@ $responsibleUser = $node->responsibleUser;
         <div class="absolute left-0 top-0 h-full w-1.5 rounded-l-2xl bg-gradient-to-b {{ $levelData['color'] }}"></div>
 
         <div class="py-5 pl-5 pr-4">
-            {{-- Card do responsável com layout refinado --}}
-            <div class="flex flex-col items-center mb-4">
-                {{-- Container da foto com efeito de moldura --}}
-                <div class="relative mb-3">
-                    <div class="absolute inset-0 bg-emerald-100 rounded-full blur-md opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                    <img
-                        src="{{ $responsibleUser?->avatar ? asset('storage/' . $responsibleUser->avatar) : 'https://tse4.mm.bing.net/th/id/OIP.dDKYQqVBsG1tIt2uJzEJHwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3' }}"
-                        alt="{{ $responsibleUser?->name ?? '-' }}"
-                        class="relative size-24 rounded-full border-2 border-white shadow-md object-cover transition-transform duration-300"
-                    />
-                </div>
+            @if ($responsibleUser)
+                {{-- Card do responsável com layout refinado --}}
+                <div class="flex flex-col items-center mb-4">
+                        {{-- Container da foto com efeito de moldura --}}
+                        <div class="relative mb-3">
+                            <div class="absolute inset-0 bg-emerald-100 rounded-full blur-md opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                            <img
+                                src="{{ $responsibleUser?->avatar ? asset('storage/' . $responsibleUser->avatar) : asset('asset/img/favicon-infosaude-150-150.png') }}"
+                                alt="{{ $responsibleUser?->name ?? '-' }}"
+                                class="relative size-24 rounded-full border-2 border-white shadow-md object-cover transition-transform duration-300"
+                            />
+                        </div>
 
-                {{-- Informações do responsável com design melhorado --}}
-                <div class="text-center space-y-1">
-                    <div class="text-sm font-semibold text-slate-800 px-2">
-                        {{ $responsibleUser?->name ?? 'Responsável não definido' }}
+                    {{-- Informações do responsável com design melhorado --}}
+                    <div class="text-center space-y-1">
+                        <div class="text-sm font-semibold text-slate-800 px-2">
+                            {{ $responsibleUser?->name ?? 'Responsável não definido' }}
+                        </div>
+
+                        @if($responsibleUser?->phone_work || $responsibleUser?->phone_personal)
+                            <div class="flex items-center justify-center gap-1.5 text-xs text-slate-600">
+                                <i class="fa-solid fa-phone text-emerald-500 text-[10px]"></i>
+                                <span>{{ $responsibleUser->phone_work ?? $responsibleUser->phone_personal }}</span>
+                            </div>
+                        @endif
+
+                        @if($responsibleUser?->email)
+                            <div class="flex items-center justify-center gap-1.5 text-xs text-slate-600">
+                                <i class="fa-solid fa-envelope text-emerald-500 text-[10px]"></i>
+                                <span class="truncate max-w-[180px]">{{ $responsibleUser->email }}</span>
+                            </div>
+                        @endif
                     </div>
-
-                    @if($responsibleUser?->phone_work || $responsibleUser?->phone_personal)
-                        <div class="flex items-center justify-center gap-1.5 text-xs text-slate-600">
-                            <i class="fa-solid fa-phone text-emerald-500 text-[10px]"></i>
-                            <span>{{ $responsibleUser->phone_work ?? $responsibleUser->phone_personal }}</span>
-                        </div>
-                    @endif
-
-                    @if($responsibleUser?->email)
-                        <div class="flex items-center justify-center gap-1.5 text-xs text-slate-600">
-                            <i class="fa-solid fa-envelope text-emerald-500 text-[10px]"></i>
-                            <span class="truncate max-w-[180px]">{{ $responsibleUser->email }}</span>
-                        </div>
-                    @endif
                 </div>
-            </div>
+            @endif
 
             {{-- Divisor elegante --}}
             <div class="relative my-3">
