@@ -1,7 +1,7 @@
 <div>
     <x-alert.flash />
 
-    <div x-data="{
+    <div wire:poll.30s="silentRefresh" x-data="{
         tab: 'dashboard',
         expandedTaskId: null,
         stepFormTaskId: null,
@@ -73,12 +73,14 @@
                     </span>
                 </button>
 
-                <button type="button" class="relative flex min-w-[112px] items-center justify-center rounded-xl px-3 py-2.5 text-[11px] font-medium whitespace-nowrap transition-all duration-200 sm:min-w-0 sm:px-6 sm:text-xs" :class="tab === 'settings' ? 'bg-gradient-to-r from-sky-700 via-cyan-700 to-sky-900 text-white shadow-md' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'" @click="tab = 'settings'">
-                    <span class="flex flex-col items-center gap-1 sm:flex-row sm:gap-2">
-                        <i class="fa-solid fa-sliders" :class="tab === 'settings' ? 'text-white' : 'text-gray-400'"></i>
-                        <span>Configurações</span>
-                    </span>
-                </button>
+                @if ($canManageSettings)
+                    <button type="button" class="relative flex min-w-[112px] items-center justify-center rounded-xl px-3 py-2.5 text-[11px] font-medium whitespace-nowrap transition-all duration-200 sm:min-w-0 sm:px-6 sm:text-xs" :class="tab === 'settings' ? 'bg-gradient-to-r from-sky-700 via-cyan-700 to-sky-900 text-white shadow-md' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'" @click="tab = 'settings'">
+                        <span class="flex flex-col items-center gap-1 sm:flex-row sm:gap-2">
+                            <i class="fa-solid fa-sliders" :class="tab === 'settings' ? 'text-white' : 'text-gray-400'"></i>
+                            <span>Configurações</span>
+                        </span>
+                    </button>
+                @endif
             </div>
         </div>
         <!-- Dashboard -->
@@ -744,15 +746,10 @@
                         />
                     </div>
 
-                    @if ($stepKanbanFiltersActive)
-                        <div class="mt-3 rounded-2xl border border-amber-200 bg-white px-4 py-3 text-xs text-amber-800">
-                            Filtros ativos no kanban. A reorganizacao por arraste fica bloqueada para preservar a ordem real das etapas.
-                        </div>
-                    @endif
                 </div>
 
                 <div class="overflow-x-auto px-4 py-5 md:px-6">
-                    <div class="grid min-w-[1080px] grid-flow-col auto-cols-[minmax(300px,1fr)] gap-5">
+                    <div class="grid min-w-[980px] grid-flow-col auto-cols-[minmax(250px,1fr)] gap-4">
                         @forelse (($stepKanban ?? []) as $column)
                             @php
                                 $columnStepIds = $column['steps']
@@ -868,8 +865,8 @@
                                             </div>
                                         </div>
 
-                                        <article class="rounded-2xl border {{ $columnTheme['card'] }} bg-white p-4 shadow-sm transition hover:shadow-md {{ $stepKanbanFiltersActive ? 'cursor-default' : 'cursor-grab active:cursor-grabbing' }}"
-                                                 draggable="{{ $stepKanbanFiltersActive ? 'false' : 'true' }}"
+                                        <article class="rounded-2xl border {{ $columnTheme['card'] }} bg-white p-3 shadow-sm transition hover:shadow-md cursor-grab active:cursor-grabbing"
+                                                 draggable="true"
                                                  @dragstart="
                                                      draggedStepId = {{ $step->id }};
                                                      draggedFromStatusId = {{ (int) $column['status_id'] }};
@@ -899,7 +896,7 @@
                                                 @endif
                                             </div>
 
-                                            <div class="mt-3 grid grid-cols-1 gap-2 text-[11px] text-gray-600">
+                                            <div class="mt-2 grid grid-cols-1 gap-1.5 text-[11px] text-gray-600">
                                                 <div class="rounded-xl bg-gray-50 px-3 py-2">
                                                     <span class="font-semibold uppercase tracking-[0.2em] text-[10px] text-gray-400">Setor</span>
                                                     <p class="mt-1 truncate font-medium text-gray-700">{{ $step->organization?->acronym ?? $step->organization?->title ?? 'Sem setor' }}</p>
@@ -910,12 +907,6 @@
                                                     <p class="mt-1 truncate font-medium text-gray-700">{{ $step->user?->name ?? 'Sem responsável' }}</p>
                                                 </div>
 
-                                                <div class="rounded-xl bg-gray-50 px-3 py-2">
-                                                    <span class="font-semibold uppercase tracking-[0.2em] text-[10px] text-gray-400">Prazo</span>
-                                                    <p class="mt-1 truncate font-medium {{ $step->deadline_at && $step->deadline_at->isPast() && ! $step->finished_at ? 'text-rose-700' : 'text-gray-700' }}">
-                                                        {{ $step->deadline_at?->format('d/m/Y') ?? 'Sem prazo' }}
-                                                    </p>
-                                                </div>
                                             </div>
                                         </article>
                                     @empty
@@ -950,6 +941,7 @@
             </section>
         </div>
 
+        @if ($canManageSettings)
         <div x-show="tab === 'settings'" x-cloak>
             <div class="space-y-6">
                 <section class="overflow-hidden rounded-3xl border border-sky-800 bg-white shadow-sm">
@@ -1057,6 +1049,86 @@
                                 </div>
                             </aside>
                         </div>
+                    </div>
+                </section>
+
+                <section class="overflow-hidden rounded-3xl border border-sky-800 bg-white shadow-sm">
+                    <div class="border-b border-sky-200 bg-gradient-to-r from-sky-700 via-sky-700 to-sky-900 px-6 py-5 text-white">
+                        <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                            <div>
+                                <p class="text-xs font-semibold uppercase">Status do Ambiente</p>
+                                <p class="mt-1 text-xs text-white/80">Gerencie os status de tarefas e etapas usados no fluxo deste ambiente.</p>
+                            </div>
+                            <span class="rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-semibold">
+                                {{ $taskHubTaskStatuses->count() + $taskHubTaskStepStatuses->count() }} status
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-6 p-6 xl:grid-cols-2">
+                        <section class="space-y-4 rounded-2xl border border-sky-100 bg-sky-50/30 p-5">
+                            <div class="flex items-start justify-between gap-3">
+                                <div>
+                                    <p class="text-[11px] font-semibold uppercase tracking-[0.25em] text-sky-700">Tarefas</p>
+                                    <h4 class="mt-2 text-xs font-semibold text-gray-900">Status de Tarefa</h4>
+                                </div>
+                                <x-button type="button" text="Novo" icon="fa-solid fa-plus" variant="gray_outline" wire:click="createTaskStatus" />
+                            </div>
+
+                            <div class="space-y-2">
+                                @forelse ($taskHubTaskStatuses as $status)
+                                    <div class="flex items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-3 py-3">
+                                        <div class="min-w-0">
+                                            <p class="truncate text-xs font-semibold text-gray-900">{{ $status->title }}</p>
+                                            <p class="mt-1 text-[11px] text-gray-500">
+                                                {{ $status->is_default ? 'Padrão' : 'Opcional' }} - {{ $status->is_active ? 'Ativo' : 'Inativo' }}
+                                            </p>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <x-button type="button" icon="fa-solid fa-pen-to-square" variant="gray_outline" wire:click="editTaskStatus({{ (int) $status->id }})" />
+                                            <x-button type="button" icon="{{ $status->is_default ? 'fa-solid fa-star' : 'fa-regular fa-star' }}" variant="gray_outline" wire:click="setTaskStatusDefault({{ (int) $status->id }})" />
+                                            <x-button type="button" icon="{{ $status->is_active ? 'fa-solid fa-toggle-on' : 'fa-solid fa-toggle-off' }}" variant="gray_outline" wire:click="toggleTaskStatus({{ (int) $status->id }})" />
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-4 py-6 text-center text-xs text-gray-400">
+                                        Nenhum status de tarefa cadastrado.
+                                    </div>
+                                @endforelse
+                            </div>
+                        </section>
+
+                        <section class="space-y-4 rounded-2xl border border-sky-100 bg-sky-50/30 p-5">
+                            <div class="flex items-start justify-between gap-3">
+                                <div>
+                                    <p class="text-[11px] font-semibold uppercase tracking-[0.25em] text-sky-700">Etapas</p>
+                                    <h4 class="mt-2 text-xs font-semibold text-gray-900">Status de Etapa</h4>
+                                </div>
+                                <x-button type="button" text="Novo" icon="fa-solid fa-plus" variant="gray_outline" wire:click="createTaskStepStatus" />
+                            </div>
+
+                            <div class="space-y-2">
+                                @forelse ($taskHubTaskStepStatuses as $status)
+                                    <div class="flex items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-white px-3 py-3">
+                                        <div class="min-w-0">
+                                            <p class="truncate text-xs font-semibold text-gray-900">{{ $status->title }}</p>
+                                            <p class="mt-1 text-[11px] text-gray-500">
+                                                {{ $status->is_default ? 'Padrão' : 'Opcional' }} - {{ $status->is_active ? 'Ativo' : 'Inativo' }}
+                                            </p>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <x-button type="button" icon="fa-solid fa-pen-to-square" variant="gray_outline" wire:click="editTaskStepStatus({{ (int) $status->id }})" />
+                                            <x-button type="button" icon="{{ $status->is_default ? 'fa-solid fa-star' : 'fa-regular fa-star' }}" variant="gray_outline" wire:click="setTaskStepStatusDefault({{ (int) $status->id }})" />
+                                            <x-button type="button" icon="{{ $status->is_active ? 'fa-solid fa-toggle-on' : 'fa-solid fa-toggle-off' }}" variant="gray_outline" wire:click="toggleTaskStepStatus({{ (int) $status->id }})" />
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-4 py-6 text-center text-xs text-gray-400">
+                                        Nenhum status de etapa cadastrado.
+                                    </div>
+                                @endforelse
+                            </div>
+                        </section>
                     </div>
                 </section>
 
@@ -1257,6 +1329,7 @@
                 </section>
             </div>
         </div>
+        @endif
 
         <div x-show="tab === 'list' || tab === 'dashboard' || tab === 'step-kanban'" x-cloak class="fixed right-4 bottom-4 z-20 md:right-6 md:bottom-6">
             <x-button

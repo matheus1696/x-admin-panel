@@ -1,4 +1,4 @@
-<div class="relative h-full">
+<div wire:poll.30s class="relative h-full">
 
     <!-- Flash Message -->
     <x-alert.flash />
@@ -481,8 +481,17 @@
                                     </div>
                                 </div>
                             @else
+                                @php
+                                    $reasonType = data_get($stepActivity->meta, 'reason_type');
+                                    $eventTone = match (true) {
+                                        $reasonType === 'completion', $stepActivity->type === 'finished_change' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                        $reasonType === 'cancellation' => 'bg-rose-50 text-rose-700 border-rose-200',
+                                        $reasonType === 'reopen' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                        default => 'bg-gray-100/80 text-gray-600 border-gray-200',
+                                    };
+                                @endphp
                                 <div class="text-center">
-                                    <span class="px-2 py-1 bg-gray-100/80 text-[10px] font-medium text-gray-600 rounded-full border border-gray-200">
+                                    <span class="px-2 py-1 text-[10px] font-medium rounded-full border {{ $eventTone }}">
                                         Ação - {{ $stepActivity->created_at->format('d/m/Y') }} - {{ $stepActivity->description }}
                                     </span>
                                 </div>

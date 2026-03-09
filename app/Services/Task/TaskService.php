@@ -1475,7 +1475,7 @@ class TaskService
                 $reasonType = $expectedReasonType;
             }
 
-            if ($this->startingWorkflowStepIsBlocked($step, $toStatusId)) {
+            if ($this->blockedByPreviousRequiredWorkflowStep($step, $fromStatusId, $toStatusId)) {
                 return false;
             }
 
@@ -1547,6 +1547,10 @@ class TaskService
             return $step;
         }
 
+        if ($this->blockedByPreviousRequiredWorkflowStep($step, $step->task_status_id, $completedStatusId)) {
+            return $step->refresh();
+        }
+
         $step->update([
             'task_status_id' => $completedStatusId,
             'finished_at' => now(),
@@ -1576,7 +1580,7 @@ class TaskService
     {
         $step = TaskStep::query()->findOrFail($stepId);
 
-        if ($this->startingWorkflowStepIsBlocked($step, $statusId)) {
+        if ($this->blockedByPreviousRequiredWorkflowStep($step, $step->task_status_id, $statusId)) {
             return null;
         }
 
@@ -1750,9 +1754,12 @@ class TaskService
         $step->update($updates);
     }
 
-    private function startingWorkflowStepIsBlocked(TaskStep $step, ?int $statusId): bool
+    private function blockedByPreviousRequiredWorkflowStep(TaskStep $step, ?int $fromStatusId, ?int $toStatusId): bool
     {
-        if ($statusId === null || ! in_array($statusId, $this->stepInProgressStatusIds($step->task_hub_id), true)) {
+        $fromStatusId = $fromStatusId === 0 ? null : $fromStatusId;
+        $toStatusId = $toStatusId === 0 ? null : $toStatusId;
+
+        if ($fromStatusId === $toStatusId || $toStatusId === null) {
             return false;
         }
 
@@ -1775,13 +1782,15 @@ class TaskService
             return false;
         }
 
-        if ($previousStep->finished_at !== null) {
-            return false;
+        $completionStatusIds = $this->taskStepCompletionStatusIds($step->task_hub_id);
+
+        if ($completionStatusIds === []) {
+            return true;
         }
 
         $previousStatusId = $previousStep->task_status_id;
 
-        if ($previousStatusId !== null && in_array((int) $previousStatusId, $this->stepTerminalStatusIds($step->task_hub_id), true)) {
+        if ($previousStatusId !== null && in_array((int) $previousStatusId, $completionStatusIds, true)) {
             return false;
         }
 

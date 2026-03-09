@@ -265,6 +265,7 @@ test('moveKanbanStep blocks starting next workflow step while previous required 
 
     $pending = createTaskStepStatusForHub(['title' => 'Pendente']);
     $running = createTaskStepStatusForHub(['title' => 'Em andamento']);
+    $done = createTaskStepStatusForHub(['title' => 'Conclu?da']);
 
     $task = Task::create([
         'task_hub_id' => $hub->id,
@@ -311,7 +312,7 @@ test('moveKanbanStep blocks starting next workflow step while previous required 
     expect($stepTwo->started_at)->toBeNull();
 
     $stepOne->update([
-        'task_status_id' => $running->id,
+        'task_status_id' => $done->id,
         'started_at' => now()->subDay(),
         'finished_at' => now(),
     ]);
@@ -334,7 +335,7 @@ test('moveKanbanStep blocks starting next workflow step while previous required 
     expect($stepTwo->started_at)->not->toBeNull();
 });
 
-test('moveKanbanStep allows starting next workflow step when previous required step is terminal even without finished_at', function () {
+test('moveKanbanStep allows starting next workflow step when previous required step is completed', function () {
     $user = User::factory()->create();
     Auth::login($user);
 
@@ -744,6 +745,62 @@ test('moveKanbanTask sets finished_at for terminal status and clears on reopen',
 
     $task->refresh();
     expect($task->finished_at)->not->toBeNull();
+});
+
+test('moveKanbanStep blocks transition when previous required step is cancelled', function () {
+    $user = User::factory()->create();
+    Auth::login($user);
+
+    $hub = createTaskHubForTaskService($user, 'Hub Workflow Cancelled Previous', 'HWCP');
+
+    $pending = createTaskStepStatusForHub(['title' => 'Pendente']);
+    $running = createTaskStepStatusForHub(['title' => 'Em andamento']);
+    $done = createTaskStepStatusForHub(['title' => 'Conclu?da']);
+    $cancelled = createTaskStepStatusForHub(['title' => 'Cancelada']);
+
+    $task = Task::create([
+        'task_hub_id' => $hub->id,
+        'title' => 'Task com etapa anterior cancelada',
+    ]);
+
+    $stepOne = TaskStep::create([
+        'task_id' => $task->id,
+        'task_hub_id' => $hub->id,
+        'title' => 'Etapa 1',
+        'task_status_id' => $cancelled->id,
+        'workflow_step_order' => 1,
+        'is_required' => true,
+        'allow_parallel' => false,
+        'kanban_order' => 1,
+    ]);
+
+    $stepTwo = TaskStep::create([
+        'task_id' => $task->id,
+        'task_hub_id' => $hub->id,
+        'title' => 'Etapa 2',
+        'task_status_id' => $pending->id,
+        'workflow_step_order' => 2,
+        'is_required' => true,
+        'allow_parallel' => false,
+        'kanban_order' => 2,
+    ]);
+
+    $moved = app(TaskService::class)->moveKanbanStep(
+        $hub->uuid,
+        $stepTwo->id,
+        $pending->id,
+        $running->id,
+        [$stepOne->id],
+        [$stepTwo->id],
+        null,
+        null
+    );
+
+    $stepTwo->refresh();
+
+    expect($moved)->toBeFalse();
+    expect($stepTwo->task_status_id)->toBe($pending->id);
+    expect($stepTwo->started_at)->toBeNull();
 });
 
 test('moveKanbanTask does not conclude task when there are steps not concluded', function () {

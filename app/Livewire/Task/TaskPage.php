@@ -910,12 +910,6 @@ class TaskPage extends Component
 
     public function requestStepKanbanDrop(int $stepId, int $fromStatusId, int $toStatusId, array $targetOrder): void
     {
-        if ($this->stepKanbanHasActiveFilters()) {
-            $this->flashError('Limpe os filtros do kanban para reorganizar etapas com seguranca.');
-
-            return;
-        }
-
         if ($this->isInvalidStepTerminalSwap($fromStatusId, $toStatusId)) {
             $this->flashError('Não é permitido mover uma etapa cancelada para concluída ou uma etapa concluída para cancelada.');
 
@@ -949,12 +943,6 @@ class TaskPage extends Component
         array $targetOrder,
         ?string $completionComment = null
     ): void {
-        if ($this->stepKanbanHasActiveFilters()) {
-            $this->flashError('Limpe os filtros do kanban para reorganizar etapas com seguranca.');
-
-            return;
-        }
-
         $completionComment = $completionComment !== null ? trim($completionComment) : null;
 
         if ($this->isInvalidStepTerminalSwap($fromStatusId, $toStatusId)) {
@@ -983,15 +971,23 @@ class TaskPage extends Component
         }
 
         $columns = collect($this->taskService->stepKanban($this->taskHubId));
+        $fullColumns = collect($this->taskService->stepKanban($this->taskHubId, []));
 
-        $sourceColumn = $columns->firstWhere('status_id', $fromStatusId);
-        $targetColumn = $columns->firstWhere('status_id', $toStatusId);
+        $sourceColumn = $fullColumns->firstWhere('status_id', $fromStatusId);
+        $targetColumn = $fullColumns->firstWhere('status_id', $toStatusId);
 
         if (! $sourceColumn || ! $targetColumn) {
             return;
         }
 
         $sourceOrder = $sourceColumn['steps']
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->reject(fn (int $id): bool => $id === $stepId)
+            ->values()
+            ->all();
+
+        $visibleTargetIds = ($columns->firstWhere('status_id', $toStatusId)['steps'] ?? collect())
             ->pluck('id')
             ->map(fn ($id): int => (int) $id)
             ->reject(fn (int $id): bool => $id === $stepId)
@@ -1007,7 +1003,7 @@ class TaskPage extends Component
 
         $allowedIds = [...$targetIds, $stepId];
 
-        $normalizedTargetOrder = collect($targetOrder)
+        $normalizedTargetOrder = collect($targetOrder === [] ? $visibleTargetIds : $targetOrder)
             ->map(fn ($id): int => (int) $id)
             ->filter(fn (int $id): bool => in_array($id, $allowedIds, true))
             ->unique()
@@ -1032,8 +1028,8 @@ class TaskPage extends Component
             $completionComment !== null && $fromStatusId !== $toStatusId ? $reasonType : null
         );
 
-        if (! $moved && $fromStatusId !== $toStatusId && in_array($toStatusId, $this->stepInProgressStatusIds(), true)) {
-            $this->flashError('Não é possível iniciar esta etapa enquanto a etapa anterior obrigatória do fluxo estiver aberta.');
+        if (! $moved && $fromStatusId !== $toStatusId) {
+            $this->flashError('Não é possível mover esta etapa enquanto a etapa anterior obrigatória do fluxo não estiver concluída.');
         }
     }
 

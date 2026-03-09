@@ -35,6 +35,7 @@ Controla ambientes (`TaskHub`), tarefas, etapas, kanban e historico operacional.
 ## Regras Kanban (Task + Step)
 
 - mover etapa no kanban sempre atualiza `task_status_id`, `started_at`/`finished_at`, reorder e historico
+- movimentacao de etapa no kanban (para qualquer status) so pode ocorrer quando a etapa anterior obrigatoria do fluxo estiver em status de conclusao
 - colunas terminais (`Concluida` e `Cancelada`) ficam no final do kanban, mesmo com novos status
 - transicao para `Concluida` ou `Cancelada` exige motivo obrigatorio
 - motivo obrigatorio deve gerar comentario e atividade de auditoria (`kanban_move` + evento de dominio)
@@ -42,6 +43,7 @@ Controla ambientes (`TaskHub`), tarefas, etapas, kanban e historico operacional.
 - e proibido mover diretamente `Concluida -> Cancelada` ou `Cancelada -> Concluida`
 - os motivos de conclusao/cancelamento/reabertura devem aparecer com destaque visual por cor no historico
 - as mesmas regras devem ser aplicadas em `TaskPage`, `TaskAside` e `TaskStepAside`
+- filtros ativos no kanban nao bloqueiam a movimentacao de status; a ordenacao deve manter consistencia considerando os itens fora do filtro
 
 ## Estado Atual
 
@@ -66,4 +68,4 @@ Controla ambientes (`TaskHub`), tarefas, etapas, kanban e historico operacional.
 - asides de task e step devem ser controlados por estado Livewire (`selectedTaskId` e `selectedStepId`), evitando estado de abertura em Alpine para esses paines
 - fechamento de `task-aside` e `task-step-aside` deve ocorrer por eventos Livewire (`task-aside-close` e `task-step-aside-close`)
 - manter `wire:key` estavel nos componentes filhos de aside para evitar erros de snapshot (`Could not find Livewire component in DOM tree`)
-- em UI PT-BR, evitar caracteres mojibake em views (`Ã`, `â€¢`, `â€”`, `Â`)
+- em UI PT-BR, evitar caracteres mojibake em views (ex.: sequencias corrompidas de acentuacao).

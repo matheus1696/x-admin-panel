@@ -111,6 +111,37 @@ test('reorders steps inside the same kanban column from task page', function () 
     expect($stepA->kanban_order)->toBe(2);
 });
 
+test('allows moving step in kanban even with active filters', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $hub = createTaskHubForTaskPage($user, 'Hub Step Filter Move', 'HSFM');
+
+    $todo = createTaskStepStatusForHub(['title' => 'Pendente']);
+    $doing = createTaskStepStatusForHub(['title' => 'Em andamento']);
+
+    $task = Task::create([
+        'task_hub_id' => $hub->id,
+        'title' => 'Task Filtrada',
+    ]);
+
+    $step = TaskStep::create([
+        'task_id' => $task->id,
+        'task_hub_id' => $hub->id,
+        'title' => 'Etapa Filtrada',
+        'task_status_id' => $todo->id,
+        'kanban_order' => 1,
+    ]);
+
+    Livewire::test(TaskPage::class, ['uuid' => $hub->uuid])
+        ->set('stepKanbanFilters.task_id', (string) $task->id)
+        ->call('reorderStepKanbanCard', $step->id, $todo->id, $doing->id, [$step->id]);
+
+    $step->refresh();
+
+    expect($step->task_status_id)->toBe($doing->id);
+});
+
 test('requires comment when completing a step from task page kanban', function () {
     $user = User::factory()->create();
     $this->actingAs($user);

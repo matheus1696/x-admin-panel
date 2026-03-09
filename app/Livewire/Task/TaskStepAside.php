@@ -349,11 +349,7 @@ class TaskStepAside extends Component
             $this->step->refresh();
             $this->list_status_id = $this->step->task_status_id;
 
-            if (in_array($toStatusId, $this->stepInProgressStatusIds(), true)) {
-                $this->flashError('Não é possível iniciar esta etapa enquanto a etapa anterior obrigatória do fluxo estiver aberta.');
-            } else {
-                $this->flashError('Não foi possível atualizar o status da etapa.');
-            }
+            $this->flashError('Não é possível mover esta etapa enquanto a etapa anterior obrigatória do fluxo não estiver concluída.');
 
             return;
         }
