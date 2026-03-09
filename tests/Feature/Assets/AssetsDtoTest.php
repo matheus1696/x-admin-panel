@@ -3,7 +3,6 @@
 use App\DTOs\Assets\AuditAssetDTO;
 use App\DTOs\Assets\ChangeAssetStateDTO;
 use App\DTOs\Assets\CreateInvoiceDTO;
-use App\DTOs\Assets\ReceiveStockDTO;
 use App\DTOs\Assets\ReturnToPatrimonyDTO;
 use App\DTOs\Assets\TransferAssetDTO;
 use App\DTOs\Assets\UpsertInvoiceItemDTO;
@@ -36,17 +35,6 @@ test('assets dto classes can be instantiated with named parameters', function ()
         brand: 'Dell',
         model: 'Latitude',
         metadata: ['ram' => '16GB'],
-    );
-
-    $receiveStock = new ReceiveStockDTO(
-        invoiceItemId: 15,
-        quantity: 2,
-        description: 'Notebook corporativo',
-        brand: 'Dell',
-        model: 'Latitude',
-        acquiredDate: '2026-03-06',
-        actorUserId: 3,
-        metadata: ['batch' => 'A'],
     );
 
     $transferAsset = new TransferAssetDTO(
@@ -82,7 +70,6 @@ test('assets dto classes can be instantiated with named parameters', function ()
         ->and($createInvoice->supplyOrder)->toBe('12345-6789')
         ->and($createInvoice->createdUserId)->toBe(9)
         ->and($upsertItem->metadata)->toBe(['ram' => '16GB'])
-        ->and($receiveStock->quantity)->toBe(2)
         ->and($transferAsset->unitId)->toBe(9)
         ->and($auditAsset->photoPath)->toBe('assets/audits/foto.jpg')
         ->and($changeState->toState)->toBe(AssetState::IN_USE)

@@ -1,15 +1,10 @@
 <?php
 
-use App\DTOs\Assets\ReceiveStockDTO;
 use App\Enums\Assets\AssetState;
 use App\Exceptions\Assets\AssetsValidationException;
-use App\Models\Assets\Asset;
-use App\Models\Assets\AssetInvoice;
-use App\Models\Assets\AssetInvoiceItem;
 use App\Models\Configuration\Establishment\Establishment\Department;
 use App\Models\Configuration\Establishment\Establishment\Establishment;
 use App\Validation\Assets\AllowedStateTransitionValidator;
-use App\Validation\Assets\CanReceiveStockValidator;
 use App\Validation\Assets\SectorBelongsToUnitValidator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -119,46 +114,4 @@ test('sector belongs to unit validator allows nullable sector and blocks mismatc
 
     expect(fn () => $validator->validateOrFail($otherUnit->id, $sector->id))
         ->toThrow(AssetsValidationException::class);
-});
-
-test('can receive stock validator respects remaining item balance', function () {
-    $invoice = AssetInvoice::create([
-        'invoice_number' => 'NF-300',
-        'supplier_name' => 'Fornecedor Teste',
-        'issue_date' => now()->toDateString(),
-        'total_amount' => 3000,
-    ]);
-
-    $item = AssetInvoiceItem::create([
-        'asset_invoice_id' => $invoice->id,
-        'description' => 'Monitor',
-        'quantity' => 3,
-        'unit_price' => 1000,
-        'total_price' => 3000,
-    ]);
-
-    Asset::create([
-        'invoice_item_id' => $item->id,
-        'code' => 'AST-VALID-001',
-        'description' => 'Monitor',
-        'state' => AssetState::IN_STOCK,
-    ]);
-
-    $validator = app(CanReceiveStockValidator::class);
-
-    $validator->validateOrFail(
-        new ReceiveStockDTO(
-            invoiceItemId: $item->id,
-            quantity: 2,
-        ),
-        $item
-    );
-
-    expect(fn () => $validator->validateOrFail(
-        new ReceiveStockDTO(
-            invoiceItemId: $item->id,
-            quantity: 3,
-        ),
-        $item
-    ))->toThrow(AssetsValidationException::class);
 });

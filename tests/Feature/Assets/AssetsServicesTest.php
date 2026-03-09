@@ -3,7 +3,6 @@
 use App\DTOs\Assets\AuditAssetDTO;
 use App\DTOs\Assets\ChangeAssetStateDTO;
 use App\DTOs\Assets\CreateInvoiceDTO;
-use App\DTOs\Assets\ReceiveStockDTO;
 use App\DTOs\Assets\ReturnToPatrimonyDTO;
 use App\DTOs\Assets\TransferAssetDTO;
 use App\DTOs\Assets\UpsertInvoiceItemDTO;
@@ -14,14 +13,12 @@ use App\Models\Administration\Product\Product;
 use App\Models\Administration\Product\ProductMeasureUnit;
 use App\Models\Administration\User\User;
 use App\Models\Assets\Asset;
-use App\Models\Assets\AssetEvent;
 use App\Models\Assets\AssetInvoiceItem;
 use App\Models\Configuration\Establishment\Establishment\Department;
 use App\Models\Configuration\Establishment\Establishment\Establishment;
 use App\Services\Assets\AssetOperationService;
 use App\Services\Assets\AuditService;
 use App\Services\Assets\InvoiceService;
-use App\Services\Assets\StockService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -223,103 +220,6 @@ test('invoice service creates, updates and deletes invoice items', function () {
     expect($invoice->refresh()->created_user_id)->toBe($user->id)
         ->and($invoice->items()->count())->toBe(0)
         ->and((float) $invoice->total_amount)->toBe(0.0);
-});
-
-test('stock service receives one asset per quantity and prevents exceeding remaining balance', function () {
-    $user = User::factory()->create();
-    $unit = createAssetsServicesUnit('101');
-
-    config()->set('assets.stock_default_unit_id', $unit->id);
-
-    $invoiceService = app(InvoiceService::class);
-    $stockService = app(StockService::class);
-
-    $invoice = $invoiceService->createInvoice(new CreateInvoiceDTO(
-        invoiceNumber: 'NF-401',
-        invoiceSeries: null,
-        supplierName: 'Fornecedor Estoque',
-        supplierDocument: null,
-        issueDate: '2026-03-04',
-        totalAmount: 1800,
-    ));
-
-    $product = createAssetsServiceProduct('401');
-    $measureUnit = createAssetsServiceMeasureUnit('401');
-
-    $item = $invoiceService->addOrUpdateItem(new UpsertInvoiceItemDTO(
-        assetInvoiceId: $invoice->id,
-        itemId: null,
-        productId: $product->id,
-        productMeasureUnitId: $measureUnit->id,
-        itemCode: null,
-        description: 'Monitor',
-        quantity: 2,
-        unitPrice: 900,
-    ));
-
-    $assets = $stockService->receiveStock(new ReceiveStockDTO(
-        invoiceItemId: $item->id,
-        quantity: 2,
-        actorUserId: $user->id,
-        acquiredDate: '2026-03-04',
-    ));
-
-    expect($assets)->toHaveCount(2)
-        ->and($assets[0]->state)->toBe(AssetState::IN_STOCK)
-        ->and($assets[0]->unit_id)->toBe($unit->id)
-        ->and(AssetEvent::where('type', AssetEventType::STOCK_RECEIVED->value)->count())->toBe(2);
-
-    expect(fn () => $stockService->receiveStock(new ReceiveStockDTO(
-        invoiceItemId: $item->id,
-        quantity: 1,
-        actorUserId: $user->id,
-    )))->toThrow(AssetsValidationException::class);
-});
-
-test('stock service mirrors patrimony code from invoice item into code and patrimony number', function () {
-    $user = User::factory()->create();
-    $unit = createAssetsServicesUnit('102');
-
-    config()->set('assets.stock_default_unit_id', $unit->id);
-
-    $invoiceService = app(InvoiceService::class);
-    $stockService = app(StockService::class);
-
-    $invoice = $invoiceService->createInvoice(new CreateInvoiceDTO(
-        invoiceNumber: 'NF-402',
-        invoiceSeries: null,
-        supplierName: 'Fornecedor Patrimonio',
-        supplierDocument: null,
-        issueDate: '2026-03-04',
-        totalAmount: 2400,
-    ));
-
-    $product = createAssetsServiceProduct('402');
-    $measureUnit = createAssetsServiceMeasureUnit('402');
-
-    $item = $invoiceService->addOrUpdateItem(new UpsertInvoiceItemDTO(
-        assetInvoiceId: $invoice->id,
-        itemId: null,
-        productId: $product->id,
-        productMeasureUnitId: $measureUnit->id,
-        itemCode: '265963',
-        description: 'Desktop',
-        quantity: 2,
-        unitPrice: 1200,
-    ));
-
-    $assets = $stockService->receiveStock(new ReceiveStockDTO(
-        invoiceItemId: $item->id,
-        quantity: 2,
-        actorUserId: $user->id,
-        acquiredDate: '2026-03-04',
-    ));
-
-    expect($assets)->toHaveCount(2)
-        ->and($assets[0]->code)->toBe('265963')
-        ->and($assets[1]->code)->toBe('265964')
-        ->and($assets[0]->patrimony_number)->toBe('265963')
-        ->and($assets[1]->patrimony_number)->toBe('265964');
 });
 
 test('asset operation service transfers, changes state and returns to patrimony', function () {

@@ -278,52 +278,6 @@ test('stock page lists only in stock assets and release moves item out of stock'
         ->and($stockAsset->events()->latest('id')->first()?->type)->toBe(AssetEventType::RELEASED);
 });
 
-test('stock page creates invoice via modal form without leaving page', function () {
-    $user = createAssetsOpsUser(['assets.view', 'assets.invoices.manage']);
-    $this->actingAs($user);
-
-    $this->get(route('assets.stock.index'))
-        ->assertOk();
-
-    $financialBlockId = DB::table('financial_blocks')->insertGetId([
-        'uuid' => (string) Str::uuid(),
-        'title' => 'Bloco estoque',
-        'filter' => 'bloco estoque',
-        'acronym' => 'BE',
-        'color' => '#123456',
-        'is_active' => true,
-        'created_at' => now(),
-        'updated_at' => now(),
-    ]);
-
-    $supplierId = DB::table('suppliers')->insertGetId([
-        'uuid' => (string) Str::uuid(),
-        'title' => 'Fornecedor Estoque',
-        'filter' => 'fornecedor estoque',
-        'document' => '12345678000190',
-        'email' => 'fornecedor@estoque.test',
-        'phone' => '62999990000',
-        'is_active' => true,
-        'created_at' => now(),
-        'updated_at' => now(),
-    ]);
-
-    Livewire::test(AssetsStockIndex::class)
-        ->call('openInvoiceForm')
-        ->set('invoiceNumber', 'NF-EST-001')
-        ->set('invoiceSeries', 'A1')
-        ->set('financialBlockId', $financialBlockId)
-        ->set('supplierId', $supplierId)
-        ->set('issueDate', now()->toDateString())
-        ->set('receivedDate', now()->toDateString())
-        ->set('invoiceNotes', 'Cadastro via modal de estoque')
-        ->call('saveInvoice');
-
-    expect(\App\Models\Assets\AssetInvoice::query()
-        ->where('invoice_number', 'NF-EST-001')
-        ->exists())->toBeTrue();
-});
-
 test('release order creates batch release and renders cover sheet', function () {
     $user = createAssetsOpsUser(['assets.view', 'assets.transfer']);
     $this->actingAs($user);

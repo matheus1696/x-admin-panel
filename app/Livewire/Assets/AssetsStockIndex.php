@@ -2,20 +2,16 @@
 
 namespace App\Livewire\Assets;
 
-use App\DTOs\Assets\CreateInvoiceDTO;
 use App\DTOs\Assets\TransferAssetDTO;
 use App\Enums\Assets\AssetState;
 use App\Exceptions\Assets\AssetsValidationException;
 use App\Livewire\Traits\Modal;
 use App\Livewire\Traits\WithFlashMessage;
-use App\Models\Administration\Supplier\Supplier;
 use App\Models\Assets\Asset;
-use App\Models\Assets\AssetInvoice;
 use App\Models\Configuration\FinancialBlock\FinancialBlock;
 use App\Models\Configuration\Establishment\Establishment\Department;
 use App\Models\Configuration\Establishment\Establishment\Establishment;
 use App\Services\Assets\AssetOperationService;
-use App\Services\Assets\InvoiceService;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -26,7 +22,6 @@ class AssetsStockIndex extends Component
     use Modal, WithFlashMessage, WithPagination;
 
     protected AssetOperationService $assetOperationService;
-    protected InvoiceService $invoiceService;
 
     public array $filters = [
         'search' => '',
@@ -42,32 +37,12 @@ class AssetsStockIndex extends Component
 
     public ?string $notes = null;
 
-    public string $invoiceNumber = '';
-
-    public ?string $invoiceSeries = null;
-
-    public ?int $financialBlockId = null;
-
-    public ?int $supplierId = null;
-
-    public ?string $supplyOrder = null;
-
-    public string $issueDate = '';
-
-    public ?string $receivedDate = null;
-
-    public ?string $invoiceNotes = null;
-
     public ?string $selectedStockItem = null;
     public ?int $selectedStockInvoiceId = null;
 
-    public function boot(
-        AssetOperationService $assetOperationService,
-        InvoiceService $invoiceService,
-    ): void
+    public function boot(AssetOperationService $assetOperationService): void
     {
         $this->assetOperationService = $assetOperationService;
-        $this->invoiceService = $invoiceService;
     }
 
     public function mount(): void
@@ -119,14 +94,6 @@ class AssetsStockIndex extends Component
         $this->openModal('stock-item-invoice-assets');
     }
 
-    public function openInvoiceForm(): void
-    {
-        Gate::authorize('manageInvoices', Asset::class);
-
-        $this->resetInvoiceForm();
-        $this->openModal('invoice-form');
-    }
-
     public function release(): void
     {
         Gate::authorize('transfer', Asset::class);
@@ -155,41 +122,6 @@ class AssetsStockIndex extends Component
         $this->flashSuccess('Ativo liberado do estoque com sucesso.');
         $this->closeModal();
         $this->reset(['assetId', 'unitId', 'sectorId', 'notes']);
-    }
-
-    public function saveInvoice()
-    {
-        Gate::authorize('manageInvoices', Asset::class);
-
-        $data = $this->validate([
-            'invoiceNumber' => ['required', 'string', 'max:255'],
-            'invoiceSeries' => ['nullable', 'string', 'max:255'],
-            'financialBlockId' => ['required', 'integer', 'exists:financial_blocks,id'],
-            'supplierId' => ['required', 'integer', 'exists:suppliers,id'],
-            'supplyOrder' => ['nullable', 'regex:/^\d{4,5}-\d{4}$/'],
-            'issueDate' => ['required', 'date', 'before_or_equal:today'],
-            'receivedDate' => ['nullable', 'date', 'before_or_equal:today'],
-            'invoiceNotes' => ['nullable', 'string'],
-        ]);
-
-        $supplier = Supplier::query()->findOrFail((int) $data['supplierId']);
-
-        $invoice = $this->invoiceService->createInvoice(new CreateInvoiceDTO(
-            invoiceNumber: $data['invoiceNumber'],
-            invoiceSeries: $data['invoiceSeries'],
-            financialBlockId: (int) $data['financialBlockId'],
-            supplierName: $supplier->title,
-            supplierDocument: $supplier->document,
-            supplyOrder: $data['supplyOrder'],
-            issueDate: $data['issueDate'],
-            receivedDate: $data['receivedDate'],
-            totalAmount: 0,
-            notes: $data['invoiceNotes'],
-            createdUserId: auth()->id(),
-        ));
-
-        $this->flashSuccess('Nota fiscal cadastrada com sucesso.');
-        return redirect()->route('assets.invoices.show', $invoice->uuid);
     }
 
     public function render(): View
@@ -267,39 +199,13 @@ class AssetsStockIndex extends Component
                 ->get()
             : collect();
 
-        $invoices = AssetInvoice::query()
-            ->withCount('items')
-            ->orderByDesc('issue_date')
-            ->orderByDesc('id')
-            ->limit(10)
-            ->get();
-
         return view('livewire.assets.assets-stock-index', [
             'groupedStockItems' => $groupedStockItems,
             'selectedItemInvoices' => $selectedItemInvoices,
             'selectedItemAssets' => $selectedItemAssets,
-            'invoices' => $invoices,
             'units' => Establishment::query()->orderBy('title')->get(),
             'sectors' => Department::query()->orderBy('title')->get(),
-            'suppliers' => Supplier::query()->where('is_active', true)->orderBy('title')->get(),
             'financialBlocks' => FinancialBlock::query()->where('is_active', true)->orderBy('title')->get(),
         ])->layout('layouts.app');
-    }
-
-    private function resetInvoiceForm(): void
-    {
-        $this->reset([
-            'invoiceNumber',
-            'invoiceSeries',
-            'financialBlockId',
-            'supplierId',
-            'supplyOrder',
-            'issueDate',
-            'receivedDate',
-            'invoiceNotes',
-        ]);
-
-        $this->issueDate = '';
-        $this->receivedDate = now()->toDateString();
     }
 }

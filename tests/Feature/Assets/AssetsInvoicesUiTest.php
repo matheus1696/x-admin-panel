@@ -1,17 +1,13 @@
 <?php
 
 use App\Enums\Assets\AssetState;
-use App\Livewire\Assets\InvoiceForm;
 use App\Livewire\Assets\InvoiceIndex;
-use App\Livewire\Assets\InvoiceShow;
-use App\Livewire\Assets\ReceiveStockForm;
 use App\Models\Administration\Product\Product;
 use App\Models\Administration\Product\ProductMeasureUnit;
 use App\Models\Administration\Supplier\Supplier;
 use App\Models\Administration\User\User;
 use App\Models\Assets\Asset;
 use App\Models\Assets\AssetInvoice;
-use App\Models\Assets\AssetInvoiceItem;
 use App\Models\Configuration\Establishment\Establishment\Establishment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -123,57 +119,18 @@ function createAssetsInvoicesMeasureUnit(string $suffix, int $baseQuantity = 1):
     ]);
 }
 
-test('invoice pages render for authorized users', function () {
+test('invoice index page renders for authorized users', function () {
     $user = createAssetsInvoicesManager();
-    $invoice = AssetInvoice::create([
-        'invoice_number' => 'NF-UI-001',
-        'supplier_name' => 'Fornecedor UI',
-        'issue_date' => now()->toDateString(),
-        'total_amount' => 1000,
-    ]);
 
     $this->actingAs($user)
         ->get(route('assets.invoices.index'))
         ->assertOk();
-
-    $this->actingAs($user)
-        ->get(route('assets.invoices.create'))
-        ->assertOk();
-
-    $this->actingAs($user)
-        ->get(route('assets.invoices.show', $invoice->uuid))
-        ->assertOk();
 });
 
-test('invoice show no longer exposes direct link to assets filtered by invoice item', function () {
-    $user = createAssetsInvoicesManager();
-    Permission::findOrCreate('assets.view', 'web');
-    $user->givePermissionTo('assets.view');
-
-    $invoice = AssetInvoice::create([
-        'invoice_number' => 'NF-UI-LINK',
-        'supplier_name' => 'Fornecedor Link',
-        'issue_date' => now()->toDateString(),
-        'total_amount' => 100,
-    ]);
-
-    $item = AssetInvoiceItem::create([
-        'asset_invoice_id' => $invoice->id,
-        'description' => 'Headset',
-        'quantity' => 1,
-        'unit_price' => 100,
-        'total_price' => 100,
-    ]);
-
-    $this->actingAs($user)
-        ->get(route('assets.invoices.show', $invoice->uuid))
-        ->assertOk()
-        ->assertDontSee(str_replace('&', '&amp;', route('assets.index', ['invoice_uuid' => $invoice->uuid, 'invoice_item_id' => $item->id])), false);
-});
-
-test('invoice form creates and updates invoices through livewire', function () {
+test('invoice index modal creates and updates invoices through livewire', function () {
     $user = createAssetsInvoicesManager();
     $this->actingAs($user);
+
     $financialBlock = DB::table('financial_blocks')->insertGetId([
         'uuid' => (string) Str::uuid(),
         'title' => 'Bloco Nota UI',
@@ -184,18 +141,21 @@ test('invoice form creates and updates invoices through livewire', function () {
         'created_at' => now(),
         'updated_at' => now(),
     ]);
+
     $supplierOne = Supplier::query()->create([
         'title' => 'Fornecedor UI',
         'document' => '11.111.111/0001-11',
         'is_active' => true,
     ]);
+
     $supplierTwo = Supplier::query()->create([
         'title' => 'Fornecedor Atualizado',
         'document' => '22.222.222/0001-22',
         'is_active' => true,
     ]);
 
-    Livewire::test(InvoiceForm::class)
+    Livewire::test(InvoiceIndex::class)
+        ->call('openCreateInvoice')
         ->set('invoiceNumber', 'NF-UI-002')
         ->set('invoiceSeries', 'A')
         ->set('financialBlockId', $financialBlock)
@@ -204,7 +164,7 @@ test('invoice form creates and updates invoices through livewire', function () {
         ->set('issueDate', now()->toDateString())
         ->set('receivedDate', now()->toDateString())
         ->set('notes', 'Criada no teste')
-        ->call('save')
+        ->call('saveInvoice')
         ->assertHasNoErrors();
 
     $invoice = AssetInvoice::query()->firstOrFail();
@@ -212,11 +172,12 @@ test('invoice form creates and updates invoices through livewire', function () {
     expect($invoice->invoice_number)->toBe('NF-UI-002')
         ->and($invoice->created_user_id)->toBe($user->id);
 
-    Livewire::test(InvoiceForm::class, ['uuid' => $invoice->uuid])
+    Livewire::test(InvoiceIndex::class)
+        ->call('openEditInvoice', $invoice->uuid)
         ->set('financialBlockId', $financialBlock)
         ->set('supplierId', $supplierTwo->id)
         ->set('supplyOrder', '1234-5678')
-        ->call('save')
+        ->call('saveInvoice')
         ->assertHasNoErrors();
 
     $invoice->refresh();
@@ -227,62 +188,7 @@ test('invoice form creates and updates invoices through livewire', function () {
         ->and((float) $invoice->total_amount)->toBe(0.0);
 });
 
-test('invoice show manages invoice items through livewire', function () {
-    $user = createAssetsInvoicesManager();
-    $this->actingAs($user);
-
-    $invoice = AssetInvoice::create([
-        'invoice_number' => 'NF-UI-003',
-        'supplier_name' => 'Fornecedor Itens',
-        'issue_date' => now()->toDateString(),
-        'total_amount' => 500,
-    ]);
-    $product = createAssetsInvoicesProduct('003');
-    $measureUnit = createAssetsInvoicesMeasureUnit('003');
-
-    $component = Livewire::test(InvoiceShow::class, ['uuid' => $invoice->uuid])
-        ->call('createItem')
-        ->set('productId', $product->id)
-        ->set('productMeasureUnitId', $measureUnit->id)
-        ->set('itemCode', 'ITEM-UI-01')
-        ->set('quantity', 2)
-        ->set('unitPrice', '50.00')
-        ->set('brand', 'Logi')
-        ->set('model', 'M100')
-        ->call('saveItem')
-        ->assertHasNoErrors()
-        ->assertSet('showModal', false);
-
-    $item = AssetInvoiceItem::query()->firstOrFail();
-
-    expect($item->description)->toBe('Produto UI 003')
-        ->and((int) $item->product_id)->toBe($product->id)
-        ->and((int) $item->product_measure_unit_id)->toBe($measureUnit->id)
-        ->and($item->item_code)->toBe('ITEM-UI-01')
-        ->and($item->asset_invoice_id)->toBe($invoice->id);
-
-    $component
-        ->call('editItem', $item->id)
-        ->set('quantity', 3)
-        ->set('unitPrice', '40.00')
-        ->call('saveItem')
-        ->assertHasNoErrors();
-
-    $item->refresh();
-    $invoice->refresh();
-
-    expect($item->description)->toBe('Produto UI 003')
-        ->and((float) $item->total_price)->toBe(120.0);
-    expect((float) $invoice->total_amount)->toBe(120.0);
-
-    $component->call('deleteItem', $item->id);
-    $invoice->refresh();
-
-    expect(AssetInvoiceItem::count())->toBe(0)
-        ->and((float) $invoice->total_amount)->toBe(0.0);
-});
-
-test('invoice index view modal allows adding item to selected invoice', function () {
+test('invoice index modal manages items through livewire', function () {
     $user = createAssetsInvoicesManager();
     $this->actingAs($user);
 
@@ -327,86 +233,6 @@ test('invoice index view modal allows adding item to selected invoice', function
 
     expect($invoice->items()->count())->toBe(1)
         ->and((float) $invoice->total_amount)->toBe(270.0);
-
-    Livewire::test(InvoiceIndex::class)
-        ->call('openViewInvoice', $invoice->uuid)
-        ->call('deleteViewInvoiceItem', $item->id)
-        ->assertHasNoErrors();
-
-    $invoice->refresh();
-
-    expect($invoice->items()->count())->toBe(0)
-        ->and((float) $invoice->total_amount)->toBe(0.0);
-});
-
-test('invoice index view modal can finalize invoice after item registration', function () {
-    $user = createAssetsInvoicesManager();
-    $this->actingAs($user);
-
-    $invoice = AssetInvoice::create([
-        'invoice_number' => 'NF-UI-MODAL-FIN-001',
-        'supplier_name' => 'Fornecedor Finalizacao Modal',
-        'issue_date' => now()->toDateString(),
-        'total_amount' => 0,
-    ]);
-
-    $product = createAssetsInvoicesProduct('MODAL-FIN');
-    $measureUnit = createAssetsInvoicesMeasureUnit('MODAL-FIN');
-
-    Livewire::test(InvoiceIndex::class)
-        ->call('openViewInvoice', $invoice->uuid)
-        ->set('itemProductId', $product->id)
-        ->set('itemProductMeasureUnitId', $measureUnit->id)
-        ->set('itemQuantity', 1)
-        ->set('itemUnitPrice', '150.00')
-        ->call('saveViewInvoiceItem')
-        ->call('finalizeViewInvoice')
-        ->assertHasNoErrors();
-
-    $invoice->refresh();
-
-    expect($invoice->is_finalized)->toBeTrue()
-        ->and($invoice->finalized_at)->not->toBeNull();
-});
-
-test('receive stock form creates assets from invoice item inside invoice show flow', function () {
-    $user = createAssetsInvoicesManager();
-    Permission::findOrCreate('assets.stock.receive', 'web');
-    $user->givePermissionTo('assets.stock.receive');
-
-    $this->actingAs($user);
-
-    $unit = createAssetsInvoicesUnit('501');
-    config()->set('assets.stock_default_unit_id', $unit->id);
-
-    $invoice = AssetInvoice::create([
-        'invoice_number' => 'NF-UI-004',
-        'supplier_name' => 'Fornecedor Estoque UI',
-        'issue_date' => now()->toDateString(),
-        'total_amount' => 1500,
-    ]);
-
-    $item = AssetInvoiceItem::create([
-        'asset_invoice_id' => $invoice->id,
-        'description' => 'Teclado',
-        'quantity' => 2,
-        'unit_price' => 750,
-        'total_price' => 1500,
-    ]);
-
-    Livewire::test(ReceiveStockForm::class, ['assetInvoiceItemId' => $item->id])
-        ->call('open')
-        ->set('quantity', 2)
-        ->set('acquiredDate', '2026-03-04')
-        ->set('description', 'Teclado mecanico')
-        ->set('brand', 'Keyco')
-        ->set('model', 'K100')
-        ->call('save')
-        ->assertRedirect(route('assets.invoices.show', $invoice->uuid));
-
-    expect(Asset::count())->toBe(2)
-        ->and(Asset::query()->first()?->state)->toBe(AssetState::IN_STOCK)
-        ->and(Asset::query()->first()?->unit_id)->toBe($unit->id);
 });
 
 test('invoice finalization sends pending item quantities to stock and locks item editing', function () {
@@ -426,18 +252,18 @@ test('invoice finalization sends pending item quantities to stock and locks item
     $product = createAssetsInvoicesProduct('005');
     $measureUnit = createAssetsInvoicesMeasureUnit('005');
 
-    $component = Livewire::test(InvoiceShow::class, ['uuid' => $invoice->uuid])
-        ->call('createItem')
-        ->set('productId', $product->id)
-        ->set('productMeasureUnitId', $measureUnit->id)
+    $component = Livewire::test(InvoiceIndex::class)
+        ->call('openViewInvoice', $invoice->uuid)
+        ->set('itemProductId', $product->id)
+        ->set('itemProductMeasureUnitId', $measureUnit->id)
         ->set('itemCode', '265963')
-        ->set('quantity', 3)
-        ->set('unitPrice', '100.00')
-        ->set('brand', 'Marca X')
-        ->set('model', 'Modelo Y')
-        ->call('saveItem')
+        ->set('itemQuantity', 3)
+        ->set('itemUnitPrice', '100.00')
+        ->set('itemBrand', 'Marca X')
+        ->set('itemModel', 'Modelo Y')
+        ->call('saveViewInvoiceItem')
         ->assertHasNoErrors()
-        ->call('finalizeInvoice');
+        ->call('finalizeViewInvoice');
 
     $invoice->refresh();
 
@@ -463,7 +289,18 @@ test('invoice finalization sends pending item quantities to stock and locks item
     expect($codes)->toBe(['265963', '265964', '265965'])
         ->and($patrimonyNumbers)->toBe(['265963', '265964', '265965']);
 
+    $beforeItemsCount = $invoice->items()->count();
+
     $component
-        ->call('createItem')
-        ->assertSet('showModal', false);
+        ->call('openViewInvoice', $invoice->uuid)
+        ->set('itemProductId', $product->id)
+        ->set('itemProductMeasureUnitId', $measureUnit->id)
+        ->set('itemQuantity', 1)
+        ->set('itemUnitPrice', '50.00')
+        ->call('saveViewInvoiceItem');
+
+    $invoice->refresh();
+
+    expect($invoice->items()->count())->toBe($beforeItemsCount);
 });
+

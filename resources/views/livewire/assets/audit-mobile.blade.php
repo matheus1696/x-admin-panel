@@ -2,8 +2,8 @@
     <x-alert.flash />
 
     <x-page.header
-        :title="'Auditoria mobile'"
-        :subtitle="'Busque o ativo, capture a foto e registre a auditoria'"
+        :title="'Auditoria individual'"
+        :subtitle="'Busque o ativo, envie a foto e registre a auditoria'"
         icon="fa-solid fa-camera"
         color="blue"
     >

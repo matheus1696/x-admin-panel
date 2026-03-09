@@ -31,11 +31,6 @@ class AssetPolicy
         return $user->can('assets.invoices.manage');
     }
 
-    public function receiveStock(User $user): bool
-    {
-        return $user->can('assets.stock.receive');
-    }
-
     public function transfer(User $user): bool
     {
         return $user->can('assets.transfer');

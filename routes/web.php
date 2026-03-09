@@ -6,9 +6,7 @@ use App\Http\Controllers\Assets\ReleaseOrderPdfController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
-use App\Livewire\Assets\InvoiceForm;
 use App\Livewire\Assets\InvoiceIndex;
-use App\Livewire\Assets\InvoiceShow;
 use App\Livewire\Assets\AssetShow;
 use App\Livewire\Assets\AssetsIndex;
 use App\Livewire\Assets\AssetsStockIndex;
@@ -122,9 +120,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::prefix('estoque/notas')->name('invoices.')->middleware('can:manageInvoices,'.Asset::class)->group(function () {
             Route::get('/', InvoiceIndex::class)->name('index');
-            Route::get('/nova', InvoiceForm::class)->name('create');
-            Route::get('/{uuid}', InvoiceShow::class)->name('show');
-            Route::get('/{uuid}/editar', InvoiceForm::class)->name('edit');
         });
 
         Route::prefix('estoque/liberacoes')->name('release-orders.')->middleware('can:transfer,'.Asset::class)->group(function () {

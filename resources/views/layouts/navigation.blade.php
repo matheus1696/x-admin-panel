@@ -62,7 +62,7 @@
     @endcanany
 
     <!-- Controle de Ativos -->
-    @canany(['assets.view','assets.invoices.manage','assets.stock.receive','assets.transfer','assets.audit','assets.state.change','assets.return','assets.reports.view'])
+    @canany(['assets.view','assets.invoices.manage','assets.transfer','assets.audit','assets.state.change','assets.return','assets.reports.view'])
         <x-sidebar.main-dropdown
             title="Controle de Ativos"
             icon="fa-solid fa-boxes-stacked"
@@ -100,30 +100,35 @@
                 </x-sidebar.dropdown>
             @endcanany
 
-            @can('assets.view')
-                <x-sidebar.dropdown-link
-                    href="{{ route('assets.index') }}"
-                    title="Ativos Operacionais"
-                    icon="fa-solid fa-box-archive"
-                    :active="request()->routeIs('assets.index') || request()->routeIs('assets.show')"
-                />
-            @endcan
-
-            @can('assets.audit')
-                <x-sidebar.dropdown-link
-                    href="{{ route('assets.audits.campaigns.index') }}"
-                    title="Campanhas de Auditoria"
+            @canany(['assets.audit', 'assets.view'])
+                <x-sidebar.dropdown
+                    title="Auditoria"
                     icon="fa-solid fa-clipboard-check"
-                    :active="request()->routeIs('assets.audits.campaigns.*')"
-                />
+                    :active="request()->routeIs('assets.index') || request()->routeIs('assets.show') || request()->routeIs('assets.audits.campaigns.*') || request()->routeIs('assets.audit-mobile')"
+                >
+                    @can('assets.view')
+                        <x-sidebar.dropdown-link
+                            href="{{ route('assets.index') }}"
+                            title="Ativos Operacionais"
+                            :active="request()->routeIs('assets.index') || request()->routeIs('assets.show')"
+                        />
+                    @endcan
 
-                <x-sidebar.dropdown-link
-                    href="{{ route('assets.audit-mobile') }}"
-                    title="Auditoria Mobile"
-                    icon="fa-solid fa-camera"
-                    :active="request()->routeIs('assets.audit-mobile')"
-                />
-            @endcan
+                    @can('assets.audit')
+                        <x-sidebar.dropdown-link
+                            href="{{ route('assets.audits.campaigns.index') }}"
+                            title="Campanhas de Auditoria"
+                            :active="request()->routeIs('assets.audits.campaigns.*')"
+                        />
+
+                        <x-sidebar.dropdown-link
+                            href="{{ route('assets.audit-mobile') }}"
+                            title="Auditoria Individual"
+                            :active="request()->routeIs('assets.audit-mobile')"
+                        />
+                    @endcan
+                </x-sidebar.dropdown>
+            @endcanany
 
             @can('assets.reports.view')
                 <x-sidebar.dropdown

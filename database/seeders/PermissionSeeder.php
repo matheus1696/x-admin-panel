@@ -106,11 +106,6 @@ class PermissionSeeder extends Seeder
                 'translation' => 'Gerenciar notas de ativos',
             ],
             [
-                'name' => 'assets.stock.receive',
-                'description' => 'Receber ativos em estoque',
-                'translation' => 'Receber ativos em estoque',
-            ],
-            [
                 'name' => 'assets.transfer',
                 'description' => 'Transferir ativos',
                 'translation' => 'Transferir ativos',
