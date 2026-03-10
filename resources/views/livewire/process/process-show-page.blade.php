@@ -128,22 +128,29 @@
             @if ($canRetreatStep || $canAdvanceStep)
                 <div class="flex items-center justify-end gap-2">
                     @if ($canRetreatStep)
-                        <x-button
+                        <button
                             type="button"
                             wire:click="retreatStep"
-                            text="Retroceder Etapa"
-                            icon="fa-solid fa-backward-step"
-                            variant="gray_outline"
-                        />
+                            wire:loading.attr="disabled"
+                            wire:target="retreatStep"
+                            class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                        >
+                            <i class="fa-solid fa-backward-step"></i>
+                            <span>Retroceder Etapa</span>
+                        </button>
                     @endif
 
                     @if ($canAdvanceStep)
-                        <x-button
+                        <button
                             type="button"
                             wire:click="advanceStep"
-                            text="Avancar Etapa"
-                            icon="fa-solid fa-forward-step"
-                        />
+                            wire:loading.attr="disabled"
+                            wire:target="advanceStep"
+                            class="inline-flex items-center gap-2 rounded-lg border border-emerald-700 bg-emerald-700 px-3 py-2 text-xs font-medium text-white hover:bg-emerald-800 disabled:opacity-50"
+                        >
+                            <i class="fa-solid fa-forward-step"></i>
+                            <span>Avancar Etapa</span>
+                        </button>
                     @endif
                 </div>
             @endif
