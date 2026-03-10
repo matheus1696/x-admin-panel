@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             PermissionSeeder::class,
+            TimeClockPermissionsSeeder::class,
             ProductDepartmentSeeder::class,
             ProductTypeSeeder::class,
             ProductMeasureUnitSeeder::class,

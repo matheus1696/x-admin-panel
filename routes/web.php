@@ -47,8 +47,16 @@ use App\Livewire\Process\ProcessIndexPage;
 use App\Livewire\Process\ProcessShowPage;
 use App\Livewire\Task\TaskHubPage;
 use App\Livewire\Task\TaskPage;
+use App\Livewire\TimeClock\EntriesIndex;
+use App\Livewire\TimeClock\EntryShow;
+use App\Livewire\TimeClock\LocationsIndex;
+use App\Livewire\TimeClock\MyEntries;
+use App\Livewire\TimeClock\RegisterEntry;
+use App\Livewire\TimeClock\ReportsIndex;
 use App\Models\Assets\Asset;
 use App\Models\Process\Process;
+use App\Models\TimeClock\TimeClockEntry;
+use App\Models\TimeClock\TimeClockLocation;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -105,6 +113,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('processos')->name('process.')->group(function () {
         Route::get('/', ProcessIndexPage::class)->middleware('can:viewAny,'.Process::class)->name('index');
         Route::get('/{uuid}', ProcessShowPage::class)->middleware('can:viewAny,'.Process::class)->name('show');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Controle de Ponto
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('controle-de-ponto')->name('time-clock.')->group(function () {
+        Route::get('/registrar', RegisterEntry::class)->middleware('can:register,'.TimeClockEntry::class)->name('register');
+        Route::get('/meus-registros', MyEntries::class)->middleware('can:viewOwn,'.TimeClockEntry::class)->name('my-entries');
+        Route::get('/registros', EntriesIndex::class)->middleware('can:viewAny,'.TimeClockEntry::class)->name('entries.index');
+        Route::get('/registros/{uuid}', EntryShow::class)->name('entries.show');
+        Route::get('/locais', LocationsIndex::class)->middleware('can:manage,'.TimeClockLocation::class)->name('locations.index');
+        Route::get('/relatorios', ReportsIndex::class)->middleware('can:viewReports,'.TimeClockEntry::class)->name('reports.index');
     });
 
     /*

@@ -6,11 +6,13 @@ namespace App\Models\Administration\User;
 
 use App\Models\Configuration\Occupation\Occupation;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
+use App\Models\TimeClock\TimeClockEntry;
 use App\Models\Traits\HasUuid;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -77,6 +79,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(OrganizationChart::class, 'organization_chart_user', 'user_id', 'organization_chart_id')
             ->withTimestamps();
+    }
+
+    public function timeClockEntries(): HasMany
+    {
+        return $this->hasMany(TimeClockEntry::class, 'user_id');
     }
 
     // Criação do Filter Name

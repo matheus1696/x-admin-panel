@@ -1,0 +1,89 @@
+<?php
+
+namespace App\Livewire\TimeClock;
+
+use App\DTOs\TimeClock\RegisterTimeClockEntryDTO;
+use App\Enums\TimeClock\TimeClockEntryStatus;
+use App\Livewire\Traits\WithFlashMessage;
+use App\Models\TimeClock\TimeClockEntry;
+use App\Models\TimeClock\TimeClockLocation;
+use App\Services\TimeClock\TimeClockEntryService;
+use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\View\View;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+use Livewire\WithFileUploads;
+
+#[Layout('layouts.app')]
+class RegisterEntry extends Component
+{
+    use WithFileUploads;
+    use WithFlashMessage;
+
+    protected TimeClockEntryService $entryService;
+
+    public $photo = null;
+
+    public ?float $latitude = null;
+
+    public ?float $longitude = null;
+
+    public ?float $accuracy = null;
+
+    public ?int $locationId = null;
+
+    public function boot(TimeClockEntryService $entryService): void
+    {
+        $this->entryService = $entryService;
+    }
+
+    public function mount(): void
+    {
+        Gate::authorize('register', TimeClockEntry::class);
+    }
+
+    public function register(): void
+    {
+        $data = $this->validate([
+            'photo' => ['nullable', 'image', 'max:5120'],
+            'latitude' => ['nullable', 'numeric'],
+            'longitude' => ['nullable', 'numeric'],
+            'accuracy' => ['nullable', 'numeric'],
+            'locationId' => ['nullable', 'integer', 'exists:time_clock_locations,id'],
+        ]);
+
+        $entry = $this->entryService->register(new RegisterTimeClockEntryDTO(
+            userId: (int) auth()->id(),
+            occurredAt: CarbonImmutable::now(),
+            photo: $data['photo'] ?? null,
+            latitude: isset($data['latitude']) ? (float) $data['latitude'] : null,
+            longitude: isset($data['longitude']) ? (float) $data['longitude'] : null,
+            accuracy: isset($data['accuracy']) ? (float) $data['accuracy'] : null,
+            deviceMeta: [
+                'ip' => request()->ip(),
+                'user_agent' => (string) request()->userAgent(),
+            ],
+            status: TimeClockEntryStatus::OK->value,
+            locationId: $data['locationId'] ?? null,
+        ));
+
+        $this->reset(['photo', 'latitude', 'longitude', 'accuracy', 'locationId']);
+
+        if ($entry->status === TimeClockEntryStatus::OK->value) {
+            $this->flashSuccess('Registro de ponto realizado com sucesso.');
+
+            return;
+        }
+
+        $this->flashError('Registro salvo com pendencias de captura.');
+    }
+
+    public function render(): View
+    {
+        return view('livewire.time-clock.register-entry', [
+            'locations' => TimeClockLocation::query()->where('active', true)->orderBy('name')->get(),
+            'recentEntries' => $this->entryService->paginateOwn((int) auth()->id(), ['perPage' => 5]),
+        ]);
+    }
+}

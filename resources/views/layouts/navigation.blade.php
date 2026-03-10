@@ -31,6 +31,59 @@
                 :active="request()->routeIs('process.*')"
             />
         @endcan
+
+        @canany(['time_clock.register', 'time_clock.view_own', 'time_clock.view_any', 'time_clock.reports.view', 'time_clock.locations.manage'])
+            <x-sidebar.main-dropdown
+                title="Controle de Ponto"
+                icon="fa-solid fa-clock"
+                :active="request()->routeIs('time-clock.*')"
+            >
+                @can('time_clock.register')
+                    <x-sidebar.dropdown-link
+                        href="{{ route('time-clock.register') }}"
+                        title="Registrar Ponto"
+                        icon="fa-solid fa-camera"
+                        :active="request()->routeIs('time-clock.register')"
+                    />
+                @endcan
+
+                @can('time_clock.view_own')
+                    <x-sidebar.dropdown-link
+                        href="{{ route('time-clock.my-entries') }}"
+                        title="Meus Registros"
+                        icon="fa-solid fa-user-clock"
+                        :active="request()->routeIs('time-clock.my-entries')"
+                    />
+                @endcan
+
+                @can('time_clock.view_any')
+                    <x-sidebar.dropdown-link
+                        href="{{ route('time-clock.entries.index') }}"
+                        title="Registros"
+                        icon="fa-solid fa-table-list"
+                        :active="request()->routeIs('time-clock.entries.*')"
+                    />
+                @endcan
+
+                @can('time_clock.reports.view')
+                    <x-sidebar.dropdown-link
+                        href="{{ route('time-clock.reports.index') }}"
+                        title="Relatorios"
+                        icon="fa-solid fa-chart-column"
+                        :active="request()->routeIs('time-clock.reports.index')"
+                    />
+                @endcan
+
+                @can('time_clock.locations.manage')
+                    <x-sidebar.dropdown-link
+                        href="{{ route('time-clock.locations.index') }}"
+                        title="Locais"
+                        icon="fa-solid fa-location-dot"
+                        :active="request()->routeIs('time-clock.locations.index')"
+                    />
+                @endcan
+            </x-sidebar.main-dropdown>
+        @endcanany
     @endauth
 
     <!-- Contatos (Acesso Geral) -->
