@@ -32,6 +32,31 @@ class PermissionSeeder extends Seeder
                 'description' => 'Gerenciar Fluxo de Trabalho',
                 'translation' => 'Fluxo de Trabalho',
             ],
+            [
+                'name' => 'process.view',
+                'description' => 'Visualizar processos',
+                'translation' => 'Visualizar processos',
+            ],
+            [
+                'name' => 'process.create',
+                'description' => 'Criar processos',
+                'translation' => 'Criar processos',
+            ],
+            [
+                'name' => 'process.manage',
+                'description' => 'Gerenciar processos',
+                'translation' => 'Gerenciar processos',
+            ],
+            [
+                'name' => 'process.close',
+                'description' => 'Encerrar processos',
+                'translation' => 'Encerrar processos',
+            ],
+            [
+                'name' => 'process.timeline.view',
+                'description' => 'Visualizar timeline de processos',
+                'translation' => 'Timeline de processos',
+            ],
 
             // Configuração do Sistema (Cadastros Mestres)
             [
@@ -219,6 +244,11 @@ class PermissionSeeder extends Seeder
         $organization->givePermissionTo([
             'organization.manage.chart',
             'organization.manage.workflow',
+            'process.view',
+            'process.create',
+            'process.manage',
+            'process.close',
+            'process.timeline.view',
         ]);
 
         // Auditoria

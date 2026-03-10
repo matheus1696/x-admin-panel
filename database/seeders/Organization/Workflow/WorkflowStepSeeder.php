@@ -11,6 +11,7 @@ class WorkflowStepSeeder extends Seeder
     {
         WorkflowStep::create([
             'workflow_id' => 1,
+            'organization_id' => 42,
             'title' => 'Elaboração do documento de formalização da demanda - DFD',
             'step_order' => 1,
             'deadline_days' => 2,
@@ -18,6 +19,7 @@ class WorkflowStepSeeder extends Seeder
 
         WorkflowStep::create([
             'workflow_id' => 1,
+            'organization_id' => 37,
             'title' => 'Elaboração de cotação',
             'step_order' => 2,
             'deadline_days' => 30,
@@ -25,6 +27,7 @@ class WorkflowStepSeeder extends Seeder
 
         WorkflowStep::create([
             'workflow_id' => 1,
+            'organization_id' => 42,
             'title' => 'Elaboração de estudo técnico',
             'step_order' => 3,
             'deadline_days' => 3,
@@ -32,6 +35,7 @@ class WorkflowStepSeeder extends Seeder
 
         WorkflowStep::create([
             'workflow_id' => 1,
+            'organization_id' => 42,
             'title' => 'Elaboração do termo de referência',
             'step_order' => 4,
             'deadline_days' => 3,
@@ -39,6 +43,7 @@ class WorkflowStepSeeder extends Seeder
 
         WorkflowStep::create([
             'workflow_id' => 1,
+            'organization_id' => 1,
             'title' => 'Autorização do(a) ordenador(a) de despesa',
             'step_order' => 5,
             'deadline_days' => 2,
@@ -46,6 +51,7 @@ class WorkflowStepSeeder extends Seeder
 
         WorkflowStep::create([
             'workflow_id' => 1,
+            'organization_id' => 51,
             'title' => 'Cadastramento no sistema SIAFIC',
             'step_order' => 6,
             'deadline_days' => 2,
@@ -53,6 +59,7 @@ class WorkflowStepSeeder extends Seeder
 
         WorkflowStep::create([
             'workflow_id' => 1,
+            'organization_id' => 51,
             'title' => 'Elaboração de edital',
             'step_order' => 7,
             'deadline_days' => 3,
@@ -67,6 +74,7 @@ class WorkflowStepSeeder extends Seeder
 
         WorkflowStep::create([
             'workflow_id' => 1,
+            'organization_id' => 51,
             'title' => 'Publicação do edital',
             'step_order' => 9,
             'deadline_days' => 5,
@@ -102,6 +110,7 @@ class WorkflowStepSeeder extends Seeder
 
         WorkflowStep::create([
             'workflow_id' => 1,
+            'organization_id' => 51,
             'title' => 'Elaboração/Emissão de atas de registro de preços / contratos',
             'step_order' => 14,
             'deadline_days' => 3,

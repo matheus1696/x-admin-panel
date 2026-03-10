@@ -22,6 +22,15 @@
             title="Atividades"
             :active="request()->routeIs('tasks.index')"
         />
+
+        @can('viewAny', \App\Models\Process\Process::class)
+            <x-sidebar.main-link
+                href="{{ route('process.index') }}"
+                icon="fa-solid fa-folder-tree"
+                title="Processos"
+                :active="request()->routeIs('process.*')"
+            />
+        @endcan
     @endauth
 
     <!-- Contatos (Acesso Geral) -->

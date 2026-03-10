@@ -43,9 +43,12 @@ use App\Livewire\Organization\OrganizationChart\OrganizationChartDashboardFullPa
 use App\Livewire\Organization\OrganizationChart\OrganizationChartDashboardPage;
 use App\Livewire\Organization\Workflow\WorkflowProcessesPage;
 use App\Livewire\Public\Contact\ContactPage;
+use App\Livewire\Process\ProcessIndexPage;
+use App\Livewire\Process\ProcessShowPage;
 use App\Livewire\Task\TaskHubPage;
 use App\Livewire\Task\TaskPage;
 use App\Models\Assets\Asset;
+use App\Models\Process\Process;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -93,6 +96,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     */
     Route::get('/tarefas', TaskHubPage::class)->name('tasks.index');
     Route::get('/tarefas/{uuid}', TaskPage::class)->name('tasks.show');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Processos
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('processos')->name('process.')->group(function () {
+        Route::get('/', ProcessIndexPage::class)->middleware('can:viewAny,'.Process::class)->name('index');
+        Route::get('/{uuid}', ProcessShowPage::class)->middleware('can:viewAny,'.Process::class)->name('show');
+    });
 
     /*
     |--------------------------------------------------------------------------

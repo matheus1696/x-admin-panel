@@ -83,6 +83,7 @@
                 @endif
             </div>
         </div>
+
         <!-- Dashboard -->
         <div x-show="tab === 'dashboard'" x-cloak class="space-y-6">
             @php
@@ -822,7 +823,7 @@
                                 };
                             @endphp
                             <section class="flex h-full flex-col overflow-hidden rounded-3xl border {{ $columnTheme['border'] }} bg-gradient-to-b {{ $columnTheme['surface'] }} shadow-sm">
-                                <header class="border-b border-white/70 px-4 py-4">
+                                <header class="border-b border-white/70 px-4 pt-4">
                                     <div class="flex items-center justify-between gap-3">
                                         <div class="min-w-0">
                                             <p class="text-[10px] font-semibold uppercase tracking-[0.25em] text-gray-400">Status</p>
@@ -836,7 +837,7 @@
                                     </div>
                                 </header>
 
-                                <div class="flex-1 space-y-2 p-3"
+                                <div class="flex-1 space-y-0.5 p-3"
                                      @dragover.prevent="
                                         dragOverStatusId = {{ (int) $column['status_id'] }};
                                         dragOverInsertBeforeId = null;
@@ -858,7 +859,7 @@
                                              @drop.prevent="dropStepOnColumn({{ (int) $column['status_id'] }}, @js($columnStepIds), {{ $step->id }})"></div>
 
                                         <div class="overflow-hidden rounded-xl transition-all duration-150"
-                                             :class="draggedStepId !== null && dragOverStatusId === {{ (int) $column['status_id'] }} && dragOverInsertBeforeId === {{ $step->id }} ? 'max-h-14 opacity-100 mb-2' : 'max-h-0 opacity-0'">
+                                             :class="draggedStepId !== null && dragOverStatusId === {{ (int) $column['status_id'] }} && dragOverInsertBeforeId === {{ $step->id }} ? 'max-h-14 opacity-100 mb-1' : 'max-h-0 opacity-0'">
                                             <div class="flex items-center gap-2 rounded-xl border-2 border-dashed px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] {{ $columnTheme['placeholder'] }}">
                                                 <i class="fa-solid fa-down-long"></i>
                                                 <span>Solte aqui</span>
@@ -888,25 +889,18 @@
                                                         {{ $step->task?->code ? $step->task->code.' - ' : '' }}{{ $step->task?->title ?? 'Sem tarefa vinculada' }}
                                                     </p>
                                                 </button>
-
-                                                @if ($step->taskPriority)
-                                                    <span class="inline-flex items-center rounded-full px-2 py-1 text-[11px] font-medium {{ $step->taskPriority->color_code_tailwind ?? 'bg-gray-100 text-gray-700' }}">
-                                                        {{ $step->taskPriority->title }}
-                                                    </span>
-                                                @endif
                                             </div>
 
-                                            <div class="mt-2 grid grid-cols-1 gap-1.5 text-[11px] text-gray-600">
-                                                <div class="rounded-xl bg-gray-50 px-3 py-2">
-                                                    <span class="font-semibold uppercase tracking-[0.2em] text-[10px] text-gray-400">Setor</span>
-                                                    <p class="mt-1 truncate font-medium text-gray-700">{{ $step->organization?->acronym ?? $step->organization?->title ?? 'Sem setor' }}</p>
+                                            <div class="grid grid-cols-3 gap-2">
+                                                <div class="flex items-center gap-1 mt-1 truncate text-[11px] text-gray-500">
+                                                    <span>Setor:</span>
+                                                    <p>{{ $step->organization?->acronym ?? $step->organization?->title ?? 'Sem setor' }}</p>
                                                 </div>
 
-                                                <div class="rounded-xl bg-gray-50 px-3 py-2">
-                                                    <span class="font-semibold uppercase tracking-[0.2em] text-[10px] text-gray-400">Responsável</span>
-                                                    <p class="mt-1 truncate font-medium text-gray-700">{{ $step->user?->name ?? 'Sem responsável' }}</p>
+                                                <div class="col-span-2 flex items-center gap-1 mt-1 truncate text-[11px] text-gray-500">
+                                                    <span>Responsável:</span>
+                                                    <p>{{ $step->user?->name ?? 'Sem responsável' }}</p>
                                                 </div>
-
                                             </div>
                                         </article>
                                     @empty
