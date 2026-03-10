@@ -44,7 +44,7 @@ class ProcessIndexPage extends Component
 
     public function mount(): void
     {
-        $this->authorize('viewAny', \App\Models\Process\Process::class);
+        $this->authorize('process.view');
     }
 
     public function updatedFilters(): void
@@ -54,19 +54,23 @@ class ProcessIndexPage extends Component
 
     public function create(): void
     {
-        $this->authorize('create', \App\Models\Process\Process::class);
+        $this->authorize('process.create');
         $this->resetForm();
         $this->openModal('modal-process-create');
     }
 
     public function store(): void
     {
-        $this->authorize('create', \App\Models\Process\Process::class);
+        $this->authorize('process.create');
         $data = $this->validate(ProcessRules::store());
 
-        $this->processService->open($data, (int) Auth::id());
+        $process = $this->processService->open($data, (int) Auth::id());
 
-        $this->flashSuccess('Processo criado com sucesso.');
+        $this->flashSuccess(
+            $process->started_at !== null
+                ? 'Processo criado, setor atual definido pela primeira etapa e iniciado com sucesso.'
+                : 'Processo criado com sucesso.'
+        );
         $this->closeModal();
     }
 

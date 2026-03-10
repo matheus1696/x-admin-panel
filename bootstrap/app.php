@@ -15,22 +15,19 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        // Captura "403 | Ação não autorizada"
-        $exceptions->render(function (Throwable $e, Illuminate\Http\Request $request) {
-            // Caso seja uma exceção de autorização (Gate / Policy)
+        $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
             if ($e instanceof AuthorizationException) {
                 return redirect()
                     ->route('dashboard')
-                    ->with('error', 'Usuário sem acesso para esta ação.');
+                    ->with('error', 'Usuario sem acesso para esta acao.');
             }
 
-            // Caso seja uma exceção genérica HTTP 403
             if ($e instanceof HttpExceptionInterface && $e->getStatusCode() === 403) {
                 return redirect()
                     ->route('dashboard')
-                    ->with('error', 'Usuário sem acesso para esta página.');
+                    ->with('error', 'Usuario sem acesso para esta pagina.');
             }
 
-            return null; // deixa o Laravel cuidar do resto
+            return null;
         });
     })->create();

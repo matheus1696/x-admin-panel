@@ -3,7 +3,7 @@
 
     <x-page.header title="Gestao de Processos" subtitle="Acompanhe o ciclo de vida e a rastreabilidade dos processos" icon="fa-solid fa-folder-tree">
         <x-slot name="button">
-            @can('create', \App\Models\Process\Process::class)
+            @can('process.create')
                 <x-button text="Novo Processo" icon="fa-solid fa-plus" wire:click="create" />
             @endcan
         </x-slot>
@@ -109,4 +109,3 @@
         @endif
     </x-modal>
 </div>
-

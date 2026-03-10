@@ -7,7 +7,7 @@
 
     <div class="md:col-span-12">
         <x-form.label value="Descricao" />
-        <x-form.textarea wire:model.defer="description" name="description" rows="3" placeholder="Detalhes do processo (opcional)" />
+        <x-form.textarea wire:model.defer="description" name="description" rows="3" placeholder="Detalhes do processo" />
         <x-form.error for="description" />
     </div>
 

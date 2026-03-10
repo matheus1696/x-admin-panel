@@ -54,7 +54,6 @@ use App\Livewire\TimeClock\MyEntries;
 use App\Livewire\TimeClock\RegisterEntry;
 use App\Livewire\TimeClock\ReportsIndex;
 use App\Models\Assets\Asset;
-use App\Models\Process\Process;
 use App\Models\TimeClock\TimeClockEntry;
 use App\Models\TimeClock\TimeClockLocation;
 use Illuminate\Support\Facades\Route;
@@ -111,8 +110,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::prefix('processos')->name('process.')->group(function () {
-        Route::get('/', ProcessIndexPage::class)->middleware('can:viewAny,'.Process::class)->name('index');
-        Route::get('/{uuid}', ProcessShowPage::class)->middleware('can:viewAny,'.Process::class)->name('show');
+        Route::get('/', ProcessIndexPage::class)->middleware('can:process.view')->name('index');
+        Route::get('/{uuid}', ProcessShowPage::class)->middleware('can:process.view')->name('show');
     });
 
     /*

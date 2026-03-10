@@ -19,15 +19,15 @@
         <x-sidebar.main-link
             href="{{ route('tasks.index') }}"
             icon="fa-solid fa-list-check"
-            title="Atividades"
+            title="Gestão de Projetos"
             :active="request()->routeIs('tasks.index')"
         />
 
-        @can('viewAny', \App\Models\Process\Process::class)
+        @can('process.view')
             <x-sidebar.main-link
                 href="{{ route('process.index') }}"
                 icon="fa-solid fa-folder-tree"
-                title="Processos"
+                title="Gestão de Processos"
                 :active="request()->routeIs('process.*')"
             />
         @endcan

@@ -24,6 +24,8 @@ test('process enums contain required values', function () {
     expect(collect(ProcessEventType::cases())->pluck('value')->all())->toContain(
         'PROCESS_CREATED',
         'PROCESS_STARTED',
+        'PROCESS_FORWARDED',
+        'PROCESS_RETURNED',
         'PROCESS_CLOSED',
         'PROCESS_CANCELLED',
     );

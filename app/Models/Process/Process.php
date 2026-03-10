@@ -60,6 +60,11 @@ class Process extends Model
         return $this->hasMany(ProcessEvent::class)->orderByDesc('created_at');
     }
 
+    public function steps(): HasMany
+    {
+        return $this->hasMany(ProcessStep::class)->orderBy('step_order');
+    }
+
     protected static function booted(): void
     {
         static::created(function (self $process): void {

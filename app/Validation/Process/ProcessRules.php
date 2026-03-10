@@ -11,8 +11,8 @@ class ProcessRules
     {
         return [
             'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'workflow_id' => ['nullable', 'integer', 'exists:workflows,id'],
+            'description' => ['required', 'string'],
+            'workflow_id' => ['required', 'integer', 'exists:workflows,id'],
         ];
     }
 
