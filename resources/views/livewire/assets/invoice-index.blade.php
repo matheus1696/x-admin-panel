@@ -1,5 +1,4 @@
 <div>
-    <x-alert.flash />
 
     <x-page.header :title="'Entrada de Ativos'" :subtitle="'Gerencie notas fiscais dentro do fluxo de estoque'" icon="fa-solid fa-file-invoice-dollar">
         <x-slot name="button">

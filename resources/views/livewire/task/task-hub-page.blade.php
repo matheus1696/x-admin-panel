@@ -1,7 +1,6 @@
 <div>
 
     <!-- Flash Message -->
-    <x-alert.flash />
 
     <!-- Header Padronizado -->
     <x-page.header

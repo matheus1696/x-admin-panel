@@ -1,7 +1,6 @@
 <div>
     
     <!-- Flash Message -->
-    <x-alert.flash />
 
     <!-- Header -->
     <x-page.header  title="Organograma" subtitle="Organograma da Secretária de Saúde de Caruaru" icon="fa-solid fa-sitemap">

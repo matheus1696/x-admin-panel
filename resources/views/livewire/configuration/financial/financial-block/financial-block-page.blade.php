@@ -1,7 +1,6 @@
 <div>
     
     <!-- Flash Message -->
-    <x-alert.flash />
 
     <!-- Header -->
     <x-page.header icon="fa-solid fa-coins" title="Blocos de Financiamento" subtitle="Gerencie os blocos de financiamento" />    

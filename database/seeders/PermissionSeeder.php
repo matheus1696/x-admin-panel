@@ -6,12 +6,14 @@ use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
+use Illuminate\Support\Facades\DB;
 
 class PermissionSeeder extends Seeder
 {
     public function run(): void
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
+        $this->cleanupDeprecatedProcessPermissions();
 
         /*
         |--------------------------------------------------------------------------
@@ -41,21 +43,6 @@ class PermissionSeeder extends Seeder
                 'name' => 'process.create',
                 'description' => 'Criar processos',
                 'translation' => 'Criar processos',
-            ],
-            [
-                'name' => 'process.manage',
-                'description' => 'Gerenciar processos',
-                'translation' => 'Gerenciar processos',
-            ],
-            [
-                'name' => 'process.close',
-                'description' => 'Encerrar processos',
-                'translation' => 'Encerrar processos',
-            ],
-            [
-                'name' => 'process.timeline.view',
-                'description' => 'Visualizar timeline de processos',
-                'translation' => 'Timeline de processos',
             ],
 
             // Configuração do Sistema (Cadastros Mestres)
@@ -246,14 +233,40 @@ class PermissionSeeder extends Seeder
             'organization.manage.workflow',
             'process.view',
             'process.create',
-            'process.manage',
-            'process.close',
-            'process.timeline.view',
         ]);
 
         // Auditoria
         $audit->givePermissionTo([
             'audit.logs.view',
         ]);
+    }
+
+    private function cleanupDeprecatedProcessPermissions(): void
+    {
+        $deprecatedPermissions = [
+            'process.manage',
+            'process.close',
+            'process.timeline.view',
+        ];
+
+        $permissionIds = Permission::query()
+            ->whereIn('name', $deprecatedPermissions)
+            ->pluck('id');
+
+        if ($permissionIds->isEmpty()) {
+            return;
+        }
+
+        DB::table('role_has_permissions')
+            ->whereIn('permission_id', $permissionIds)
+            ->delete();
+
+        DB::table('model_has_permissions')
+            ->whereIn('permission_id', $permissionIds)
+            ->delete();
+
+        Permission::query()
+            ->whereIn('id', $permissionIds)
+            ->delete();
     }
 }

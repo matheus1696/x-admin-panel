@@ -1,5 +1,4 @@
 <div>
-    <x-alert.flash />
 
     <x-page.header
         :title="'Execucao da Campanha de Auditoria'"

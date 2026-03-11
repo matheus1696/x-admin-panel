@@ -1,5 +1,4 @@
 <div>
-    <x-alert.flash />
 
     <x-page.header title="Locais de Registro" subtitle="Configure os pontos de referencia do controle de ponto" icon="fa-solid fa-location-dot">
         <x-slot name="button">

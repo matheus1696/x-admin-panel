@@ -1,5 +1,4 @@
 <div>
-    <x-alert.flash />
 
     <div wire:poll.30s="silentRefresh" x-data="{
         tab: 'dashboard',

@@ -1,7 +1,6 @@
 <div>
     
     <!-- Flash Message -->
-    <x-alert.flash />
 
     <x-page.header icon="fa-solid fa-flag-usa" title="Configuração de Estados" subtitle="Lista das estados cadastrada no sistema" />
     

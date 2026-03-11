@@ -1,6 +1,5 @@
 <div>
     <!-- Flash Message -->
-    <x-alert.flash />
 
     <div  class="sticky top-0 z-20 bg-white">
         {{-- Formulário --}}

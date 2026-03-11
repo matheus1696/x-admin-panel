@@ -1,6 +1,4 @@
-﻿<div>
-    <x-alert.flash />
-
+<div>
     <x-page.header title="Detalhes do Processo" subtitle="{{ $process->title }}" icon="fa-solid fa-folder-open">
         <x-slot name="button">
             <x-button href="{{ route('process.index') }}" text="Voltar" icon="fa-solid fa-arrow-left" variant="gray_outline" />
@@ -16,7 +14,7 @@
                         <div class="flex items-start">
                             @php
                                 $stepState = (string) ($timelineStep['state'] ?? '');
-                                $isCompleted = in_array($stepState, ['ConcluÃ­da', 'Concluida'], true);
+                                $isCompleted = $stepState === 'Concluida';
                                 $isInProgress = $stepState === 'Em andamento';
 
                                 $stateClass = $isCompleted
@@ -124,37 +122,15 @@
             </div>
         </div>
 
-        @can('process.manage')
-            @if ($canRetreatStep || $canAdvanceStep)
-                <div class="flex items-center justify-end gap-2">
-                    @if ($canRetreatStep)
-                        <button
-                            type="button"
-                            wire:click="retreatStep"
-                            wire:loading.attr="disabled"
-                            wire:target="retreatStep"
-                            class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                        >
-                            <i class="fa-solid fa-backward-step"></i>
-                            <span>Retroceder Etapa</span>
-                        </button>
-                    @endif
-
-                    @if ($canAdvanceStep)
-                        <button
-                            type="button"
-                            wire:click="advanceStep"
-                            wire:loading.attr="disabled"
-                            wire:target="advanceStep"
-                            class="inline-flex items-center gap-2 rounded-lg border border-emerald-700 bg-emerald-700 px-3 py-2 text-xs font-medium text-white hover:bg-emerald-800 disabled:opacity-50"
-                        >
-                            <i class="fa-solid fa-forward-step"></i>
-                            <span>Avancar Etapa</span>
-                        </button>
-                    @endif
-                </div>
-            @endif
-        @endcan
-
+        <div class="flex justify-end">
+            <form method="POST" action="{{ route('process.advance', $process->uuid) }}">
+                @csrf
+                <x-button
+                    type="submit"
+                    text="Avancar etapa"
+                    icon="fa-solid fa-arrow-right"
+                />
+            </form>
+        </div>
     </div>
 </div>

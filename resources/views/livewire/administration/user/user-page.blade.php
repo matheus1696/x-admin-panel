@@ -1,7 +1,6 @@
 <div>
     
     <!-- Flash Message -->
-    <x-alert.flash />
 
     <x-page.header title="Gerenciar Usuários" subtitle="Gerencie os usuários do sistema" icon="fa-solid fa-users">
         <x-slot name="button">

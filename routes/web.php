@@ -3,6 +3,7 @@
 use App\Http\Controllers\Audit\LogController;
 use App\Http\Controllers\Assets\AuditCampaignPdfController;
 use App\Http\Controllers\Assets\ReleaseOrderPdfController;
+use App\Http\Controllers\Process\ProcessFlowController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
@@ -111,6 +112,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     */
     Route::prefix('processos')->name('process.')->group(function () {
         Route::get('/', ProcessIndexPage::class)->middleware('can:process.view')->name('index');
+        Route::post('/{uuid}/avancar', [ProcessFlowController::class, 'advance'])->middleware('can:process.view')->name('advance');
         Route::get('/{uuid}', ProcessShowPage::class)->middleware('can:process.view')->name('show');
     });
 

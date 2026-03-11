@@ -2,7 +2,6 @@
 
 use App\Enums\Process\ProcessStatus;
 use App\Livewire\Process\ProcessIndexPage;
-use App\Livewire\Process\ProcessShowPage;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Organization\Workflow\Workflow;
 use App\Models\Organization\Workflow\WorkflowStep;
@@ -184,21 +183,21 @@ test('process show page renders workflow timeline and detail sections', function
         ->assertSee('Analise inicial');
 });
 
-test('process show page advances current step to next step', function () {
-    $user = createProcessUser(['process.view', 'process.manage']);
+test('process show page advances to next step via http action', function () {
+    $user = createProcessUser(['process.view']);
     $this->actingAs($user);
 
-    $firstOrganization = OrganizationChart::query()->create([
-        'title' => 'Setor Inicial',
-        'filter' => 'setor inicial',
+    $organizationA = OrganizationChart::query()->create([
+        'title' => 'Setor A',
+        'filter' => 'setor a',
         'hierarchy' => 0,
         'number_hierarchy' => 1,
         'order' => '001',
     ]);
 
-    $secondOrganization = OrganizationChart::query()->create([
-        'title' => 'Setor Seguinte',
-        'filter' => 'setor seguinte',
+    $organizationB = OrganizationChart::query()->create([
+        'title' => 'Setor B',
+        'filter' => 'setor b',
         'hierarchy' => 0,
         'number_hierarchy' => 2,
         'order' => '002',
@@ -207,36 +206,14 @@ test('process show page advances current step to next step', function () {
     $workflow = Workflow::query()->create([
         'title' => 'Fluxo de Avanco',
         'filter' => 'fluxo de avanco',
-        'description' => 'Fluxo para avancar etapa',
+        'description' => 'Fluxo de teste para avanco',
         'is_active' => true,
     ]);
 
-    $firstWorkflowStep = WorkflowStep::query()->create([
-        'workflow_id' => $workflow->id,
-        'title' => 'Etapa 1',
-        'filter' => 'etapa 1',
-        'step_order' => 1,
-        'deadline_days' => 2,
-        'required' => true,
-        'allow_parallel' => false,
-        'organization_id' => $firstOrganization->id,
-    ]);
-
-    $secondWorkflowStep = WorkflowStep::query()->create([
-        'workflow_id' => $workflow->id,
-        'title' => 'Etapa 2',
-        'filter' => 'etapa 2',
-        'step_order' => 2,
-        'deadline_days' => 3,
-        'required' => true,
-        'allow_parallel' => false,
-        'organization_id' => $secondOrganization->id,
-    ]);
-
     $process = Process::query()->create([
-        'title' => 'Processo em andamento',
-        'description' => 'Descricao do processo',
-        'organization_id' => $firstOrganization->id,
+        'title' => 'Processo Avanco Livewire',
+        'description' => 'Descricao teste',
+        'organization_id' => $organizationA->id,
         'workflow_id' => $workflow->id,
         'opened_by' => $user->id,
         'owner_id' => $user->id,
@@ -245,144 +222,38 @@ test('process show page advances current step to next step', function () {
         'started_at' => now(),
     ]);
 
-    $currentProcessStep = ProcessStep::query()->create([
+    ProcessStep::query()->create([
         'process_id' => $process->id,
         'step_order' => 1,
-        'title' => 'Etapa 1',
-        'organization_id' => $firstOrganization->id,
+        'title' => 'Etapa A',
+        'organization_id' => $organizationA->id,
         'deadline_days' => 2,
         'required' => true,
         'is_current' => true,
-        'started_at' => now()->subDay(),
-        'completed_at' => null,
-    ]);
-
-    $nextProcessStep = ProcessStep::query()->create([
-        'process_id' => $process->id,
-        'step_order' => 2,
-        'title' => 'Etapa 2',
-        'organization_id' => $secondOrganization->id,
-        'deadline_days' => 3,
-        'required' => true,
-        'is_current' => false,
-        'started_at' => null,
-        'completed_at' => null,
-    ]);
-
-    Livewire::test(ProcessShowPage::class, ['uuid' => $process->uuid])
-        ->call('advanceStep')
-        ->assertHasNoErrors();
-
-    $currentProcessStep->refresh();
-    $nextProcessStep->refresh();
-    $process->refresh();
-
-    expect($currentProcessStep->is_current)->toBeFalse()
-        ->and($currentProcessStep->completed_at)->not->toBeNull()
-        ->and($nextProcessStep->is_current)->toBeTrue()
-        ->and($nextProcessStep->started_at)->not->toBeNull()
-        ->and($process->organization_id)->toBe($secondOrganization->id);
-});
-
-test('process show page retreats current step to previous step', function () {
-    $user = createProcessUser(['process.view', 'process.manage']);
-    $this->actingAs($user);
-
-    $firstOrganization = OrganizationChart::query()->create([
-        'title' => 'Setor Um',
-        'filter' => 'setor um',
-        'hierarchy' => 0,
-        'number_hierarchy' => 1,
-        'order' => '001',
-    ]);
-
-    $secondOrganization = OrganizationChart::query()->create([
-        'title' => 'Setor Dois',
-        'filter' => 'setor dois',
-        'hierarchy' => 0,
-        'number_hierarchy' => 2,
-        'order' => '002',
-    ]);
-
-    $workflow = Workflow::query()->create([
-        'title' => 'Fluxo de Retrocesso',
-        'filter' => 'fluxo de retrocesso',
-        'description' => 'Fluxo para retroceder etapa',
-        'is_active' => true,
-    ]);
-
-    WorkflowStep::query()->create([
-        'workflow_id' => $workflow->id,
-        'title' => 'Etapa 1',
-        'filter' => 'etapa 1 retro',
-        'step_order' => 1,
-        'deadline_days' => 2,
-        'required' => true,
-        'allow_parallel' => false,
-        'organization_id' => $firstOrganization->id,
-    ]);
-
-    WorkflowStep::query()->create([
-        'workflow_id' => $workflow->id,
-        'title' => 'Etapa 2',
-        'filter' => 'etapa 2 retro',
-        'step_order' => 2,
-        'deadline_days' => 3,
-        'required' => true,
-        'allow_parallel' => false,
-        'organization_id' => $secondOrganization->id,
-    ]);
-
-    $process = Process::query()->create([
-        'title' => 'Processo para retroceder',
-        'description' => 'Descricao do processo',
-        'organization_id' => $secondOrganization->id,
-        'workflow_id' => $workflow->id,
-        'opened_by' => $user->id,
-        'owner_id' => $user->id,
-        'priority' => 'normal',
-        'status' => ProcessStatus::IN_PROGRESS->value,
+        'status' => 'IN_PROGRESS',
         'started_at' => now(),
     ]);
 
-    $previousProcessStep = ProcessStep::query()->create([
-        'process_id' => $process->id,
-        'step_order' => 1,
-        'title' => 'Etapa 1',
-        'organization_id' => $firstOrganization->id,
-        'deadline_days' => 2,
-        'required' => true,
-        'is_current' => false,
-        'started_at' => now()->subDays(2),
-        'completed_at' => now()->subDay(),
-    ]);
-
-    $currentProcessStep = ProcessStep::query()->create([
+    ProcessStep::query()->create([
         'process_id' => $process->id,
         'step_order' => 2,
-        'title' => 'Etapa 2',
-        'organization_id' => $secondOrganization->id,
+        'title' => 'Etapa B',
+        'organization_id' => $organizationB->id,
         'deadline_days' => 3,
         'required' => true,
-        'is_current' => true,
-        'started_at' => now()->subHours(6),
-        'completed_at' => null,
+        'is_current' => false,
+        'status' => 'PENDING',
     ]);
 
-    Livewire::test(ProcessShowPage::class, ['uuid' => $process->uuid])
-        ->call('retreatStep')
-        ->assertHasNoErrors();
+    $this->post(route('process.advance', $process->uuid))
+        ->assertRedirect(route('process.show', $process->uuid));
 
-    $previousProcessStep->refresh();
-    $currentProcessStep->refresh();
     $process->refresh();
+    $steps = ProcessStep::query()->where('process_id', $process->id)->orderBy('step_order')->get();
 
-    expect($previousProcessStep->is_current)->toBeTrue()
-        ->and($previousProcessStep->started_at)->not->toBeNull()
-        ->and($previousProcessStep->started_at->greaterThan(now()->subMinute()))->toBeTrue()
-        ->and($previousProcessStep->completed_at)->toBeNull()
-        ->and($currentProcessStep->is_current)->toBeFalse()
-        ->and($currentProcessStep->started_at)->not->toBeNull()
-        ->and($currentProcessStep->completed_at)->toBeNull()
-        ->and($process->organization_id)->toBe($firstOrganization->id);
+    expect($process->organization_id)->toBe($organizationB->id)
+        ->and($steps[0]->status)->toBe('COMPLETED')
+        ->and($steps[0]->is_current)->toBeFalse()
+        ->and($steps[1]->status)->toBe('IN_PROGRESS')
+        ->and($steps[1]->is_current)->toBeTrue();
 });

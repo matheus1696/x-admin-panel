@@ -1,7 +1,6 @@
 <div>
     
     <!-- Flash Message -->
-    <x-alert.flash />
 
     <x-page.header icon="fa-solid fa-earth-americas" title="Configuração de Paises" subtitle="Lista das paises cadastrada no sistema" />
 

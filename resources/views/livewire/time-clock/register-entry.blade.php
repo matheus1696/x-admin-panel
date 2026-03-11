@@ -1,5 +1,4 @@
 <div class="space-y-4">
-    <x-alert.flash />
 
     <x-page.header title="Registrar Ponto" subtitle="Controle de Ponto" icon="fa-solid fa-clock" />
 

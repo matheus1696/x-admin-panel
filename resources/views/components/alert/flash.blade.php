@@ -1,75 +1,62 @@
-@if (session('success') || session('error') || session('warning') || session('info'))
-<div class="fixed bottom-5 right-5 z-50 space-y-2">
-    {{-- Mensagem de Sucesso --}}
-    @if (session('success'))
-        <div class="group relative flex items-center gap-3 min-w-[320px] max-w-md bg-emerald-50 border-l-4 border-emerald-500 text-emerald-800 px-4 py-3.5 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden">
-            <!-- Gradiente de fundo -->
-            <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-transparent"></div>
-            
-            <!-- Ícone com fundo -->
-            <div class="relative flex items-center justify-center w-8 h-8 bg-emerald-100 rounded-full">
-                <i class="fa-solid fa-circle-check text-emerald-500 text-base"></i>
-            </div>
-            
-            <!-- Mensagem -->
-            <span class="relative flex-1 text-sm font-medium">{{ session('success') }}</span>
-            
-            <!-- Botão fechar -->
-            <button type="button" class="relative w-6 h-6 flex items-center justify-center text-emerald-400 hover:text-emerald-600 hover:bg-emerald-100 rounded-full transition-all duration-200">
-                <i class="fa-solid fa-xmark text-xs"></i>
-            </button>
-            
-            <!-- Barra de progresso -->
-            <div class="absolute bottom-0 left-0 h-0.5 bg-emerald-500 animate-shrink"></div>
-        </div>
-    @endif
+@php
+    $initialToasts = collect(['success', 'error', 'warning', 'info'])
+        ->filter(fn (string $type): bool => session()->has($type))
+        ->map(fn (string $type): array => [
+            'type' => $type,
+            'message' => (string) session($type),
+        ])
+        ->values()
+        ->all();
+@endphp
 
-    {{-- Mensagem de Erro --}}
-    @if (session('error'))
-        <div class="group relative flex items-center gap-3 min-w-[320px] max-w-md bg-red-50 border-l-4 border-red-500 text-red-800 px-4 py-3.5 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-r from-red-500/5 to-transparent"></div>
-            <div class="relative flex items-center justify-center w-8 h-8 bg-red-100 rounded-full">
-                <i class="fa-solid fa-circle-exclamation text-red-500 text-base"></i>
+<div
+    x-data="{
+        toasts: [],
+        seed: 0,
+        boot(initial) {
+            initial.forEach((toast) => this.enqueue(toast.type, toast.message));
+        },
+        enqueue(type, message) {
+            const id = ++this.seed;
+            this.toasts.push({ id, type, message });
+            setTimeout(() => this.remove(id), 4000);
+        },
+        remove(id) {
+            this.toasts = this.toasts.filter((toast) => toast.id !== id);
+        },
+        classes(type) {
+            if (type === 'success') return 'bg-emerald-50 border-emerald-500 text-emerald-800';
+            if (type === 'error') return 'bg-red-50 border-red-500 text-red-800';
+            if (type === 'warning') return 'bg-yellow-50 border-amber-500 text-amber-800';
+            return 'bg-sky-50 border-sky-500 text-sky-800';
+        },
+        icon(type) {
+            if (type === 'success') return 'fa-solid fa-circle-check text-emerald-500';
+            if (type === 'error') return 'fa-solid fa-circle-exclamation text-red-500';
+            if (type === 'warning') return 'fa-solid fa-triangle-exclamation text-amber-500';
+            return 'fa-solid fa-circle-info text-sky-500';
+        }
+    }"
+    x-init='boot(@json($initialToasts))'
+    x-on:app-flash.window="enqueue($event.detail.type, $event.detail.message)"
+    class="fixed bottom-5 right-5 z-50 space-y-2"
+>
+    <template x-for="toast in toasts" :key="toast.id">
+        <div x-show="true" x-transition class="group relative flex items-center gap-3 min-w-[320px] max-w-md border-l-4 px-4 py-3.5 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden" :class="classes(toast.type)">
+            <div class="relative flex items-center justify-center w-8 h-8 rounded-full bg-white/70">
+                <i class="text-base" :class="icon(toast.type)"></i>
             </div>
-            <span class="relative flex-1 text-sm font-medium">{{ session('error') }}</span>
-            <button type="button" class="relative w-6 h-6 flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-100 rounded-full transition-all duration-200">
-                <i class="fa-solid fa-xmark text-xs"></i>
-            </button>
-            <div class="absolute bottom-0 left-0 h-0.5 bg-red-500 animate-shrink"></div>
-        </div>
-    @endif
 
-    {{-- Mensagem de Alerta --}}
-    @if (session('warning'))
-        <div class="group relative flex items-center gap-3 min-w-[320px] max-w-md bg-yellow-50 border-l-4 border-amber-500 text-amber-800 px-4 py-3.5 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-r from-amber-500/5 to-transparent"></div>
-            <div class="relative flex items-center justify-center w-8 h-8 bg-amber-100 rounded-full">
-                <i class="fa-solid fa-triangle-exclamation text-amber-500 text-base"></i>
-            </div>
-            <span class="relative flex-1 text-sm font-medium">{{ session('warning') }}</span>
-            <button type="button" class="relative w-6 h-6 flex items-center justify-center text-amber-400 hover:text-amber-600 hover:bg-amber-100 rounded-full transition-all duration-200">
-                <i class="fa-solid fa-xmark text-xs"></i>
-            </button>
-            <div class="absolute bottom-0 left-0 h-0.5 bg-amber-500 animate-shrink"></div>
-        </div>
-    @endif
+            <span class="relative flex-1 text-sm font-medium" x-text="toast.message"></span>
 
-    {{-- Mensagem de Informação --}}
-    @if (session('info'))
-        <div class="group relative flex items-center gap-3 min-w-[320px] max-w-md bg-sky-50 border-l-4 border-sky-500 text-sky-800 px-4 py-3.5 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-r from-sky-500/5 to-transparent"></div>
-            <div class="relative flex items-center justify-center w-8 h-8 bg-sky-100 rounded-full">
-                <i class="fa-solid fa-circle-info text-sky-500 text-base"></i>
-            </div>
-            <span class="relative flex-1 text-sm font-medium">{{ session('info') }}</span>
-            <button type="button" class="relative w-6 h-6 flex items-center justify-center text-sky-400 hover:text-sky-600 hover:bg-sky-100 rounded-full transition-all duration-200">
+            <button type="button" x-on:click="remove(toast.id)" class="relative w-6 h-6 flex items-center justify-center rounded-full transition-all duration-200 hover:bg-white/70">
                 <i class="fa-solid fa-xmark text-xs"></i>
             </button>
-            <div class="absolute bottom-0 left-0 h-0.5 bg-sky-500 animate-shrink"></div>
+
+            <div class="absolute bottom-0 left-0 h-0.5 bg-current animate-shrink"></div>
         </div>
-    @endif
+    </template>
 </div>
-@endif
 
 @push('styles')
 <style>

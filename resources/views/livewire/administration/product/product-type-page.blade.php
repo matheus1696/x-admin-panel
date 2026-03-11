@@ -1,5 +1,4 @@
 <div>
-    <x-alert.flash />
 
     <x-page.header title="Tipos de Produto" subtitle="Gerencie as categorias de produto" icon="fa-solid fa-tags">
         <x-slot name="button">

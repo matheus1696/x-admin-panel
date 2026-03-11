@@ -1,5 +1,4 @@
 <div>
-    <x-alert.flash />
 
     <x-page.header :title="'Folha de rosto da liberacao'" :subtitle="'Documento para conferencia e assinatura do recebimento dos ativos'" icon="fa-solid fa-file-signature">
         <x-slot name="button">

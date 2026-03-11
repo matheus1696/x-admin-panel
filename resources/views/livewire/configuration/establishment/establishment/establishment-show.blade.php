@@ -1,7 +1,6 @@
 <div>
     
     <!-- Flash Message -->
-    <x-alert.flash />
 
     <x-page.header icon="fa-solid fa-layer-group" title="Estabelecimento" subtitle="Dados da Unidade">
         <x-slot name="button">

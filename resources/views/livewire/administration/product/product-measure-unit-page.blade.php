@@ -1,5 +1,4 @@
 <div>
-    <x-alert.flash />
 
     <x-page.header title="Unidades de Medida" subtitle="Gerencie unidades para base de calculo dos produtos" icon="fa-solid fa-ruler-combined">
         <x-slot name="button">

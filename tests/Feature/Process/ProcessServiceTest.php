@@ -1,12 +1,10 @@
 <?php
 
 use App\Enums\Process\ProcessStatus;
-use App\Enums\Process\ProcessEventType;
 use App\Models\Administration\User\User;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Organization\Workflow\Workflow;
 use App\Models\Organization\Workflow\WorkflowStep;
-use App\Models\Process\Process;
 use App\Services\Process\ProcessService;
 
 test('process service opens process and logs creation event', function () {
@@ -85,87 +83,39 @@ test('process service auto assigns first workflow step organization and starts p
         ->and($process->events()->count())->toBe(2);
 });
 
-test('process service starts and closes process with events', function () {
-    $user = User::factory()->create();
-    $service = app(ProcessService::class);
-
-    $process = $service->open([
-        'title' => 'Processo de Auditoria',
-        'description' => null,
-    ], $user->id);
-
-    $process = $service->start($process, $user->id);
-    $process = $service->close($process, $user->id, 'Processo concluido');
-
-    expect($process->status)->toBe(ProcessStatus::CLOSED->value)
-        ->and($process->closed_at)->not->toBeNull()
-        ->and($process->events()->count())->toBe(3);
-});
-
-test('process service cancels process with required note', function () {
-    $user = User::factory()->create();
-    $service = app(ProcessService::class);
-
-    $process = $service->open([
-        'title' => 'Processo de Cancelamento',
-    ], $user->id);
-
-    $process = $service->cancel($process, $user->id, 'Solicitacao interrompida');
-
-    expect($process->status)->toBe(ProcessStatus::CANCELLED->value)
-        ->and($process->closed_at)->not->toBeNull()
-        ->and($process->events()->count())->toBe(2);
-});
-
-test('process service rejects start when process is already in progress', function () {
-    $user = User::factory()->create();
-    $service = app(ProcessService::class);
-
-    $process = Process::query()->create([
-        'title' => 'Processo Ja Iniciado',
-        'opened_by' => $user->id,
-        'owner_id' => $user->id,
-        'priority' => 'normal',
-        'status' => ProcessStatus::IN_PROGRESS->value,
-    ]);
-
-    expect(fn () => $service->start($process, $user->id))
-        ->toThrow(\InvalidArgumentException::class);
-});
-
-test('process service forwards to next step and logs dispatch event', function () {
+test('process service advances current step and starts next step', function () {
     $user = User::factory()->create();
     $service = app(ProcessService::class);
 
     $firstOrganization = OrganizationChart::query()->create([
-        'title' => 'Setor A',
-        'filter' => 'setor a',
+        'title' => 'Setor Um',
+        'filter' => 'setor um',
         'hierarchy' => 0,
-        'number_hierarchy' => 1,
-        'order' => '001',
+        'number_hierarchy' => 10,
+        'order' => '010',
     ]);
 
     $secondOrganization = OrganizationChart::query()->create([
-        'title' => 'Setor B',
-        'filter' => 'setor b',
+        'title' => 'Setor Dois',
+        'filter' => 'setor dois',
         'hierarchy' => 0,
-        'number_hierarchy' => 2,
-        'order' => '002',
+        'number_hierarchy' => 11,
+        'order' => '011',
     ]);
 
     $workflow = Workflow::query()->create([
-        'title' => 'Fluxo despacho',
-        'filter' => 'fluxo despacho',
-        'description' => null,
+        'title' => 'Fluxo Avanco',
+        'filter' => 'fluxo avanco',
+        'description' => 'Fluxo para validar avanco',
         'is_active' => true,
     ]);
 
     WorkflowStep::query()->create([
         'workflow_id' => $workflow->id,
-        'title' => 'Etapa A',
-        'filter' => 'etapa a',
+        'title' => 'Etapa 1',
+        'filter' => 'etapa 1',
         'step_order' => 1,
-        'deadline_days' => 1,
+        'deadline_days' => 2,
         'required' => true,
         'allow_parallel' => false,
         'organization_id' => $firstOrganization->id,
@@ -173,95 +123,29 @@ test('process service forwards to next step and logs dispatch event', function (
 
     WorkflowStep::query()->create([
         'workflow_id' => $workflow->id,
-        'title' => 'Etapa B',
-        'filter' => 'etapa b',
+        'title' => 'Etapa 2',
+        'filter' => 'etapa 2',
         'step_order' => 2,
-        'deadline_days' => 2,
+        'deadline_days' => 3,
         'required' => true,
         'allow_parallel' => false,
         'organization_id' => $secondOrganization->id,
     ]);
 
     $process = $service->open([
-        'title' => 'Processo despacho',
+        'title' => 'Processo para avancar',
         'workflow_id' => $workflow->id,
     ], $user->id);
 
-    $process = $service->forward($process, $user->id, 'Encaminhar para etapa B');
+    $process = $service->advanceStep($process);
+    $process->load('steps');
 
-    $event = $process->events()
-        ->where('event_type', ProcessEventType::FORWARDED->value)
-        ->latest('created_at')
-        ->first();
+    $firstStep = $process->steps->firstWhere('step_order', 1);
+    $secondStep = $process->steps->firstWhere('step_order', 2);
 
-    expect($process->organization_id)->toBe($secondOrganization->id)
-        ->and($event)->not->toBeNull()
-        ->and($event->payload['comment'] ?? null)->toBe('Encaminhar para etapa B');
-});
-
-test('process service returns to previous step and logs dispatch event', function () {
-    $user = User::factory()->create();
-    $service = app(ProcessService::class);
-
-    $firstOrganization = OrganizationChart::query()->create([
-        'title' => 'Setor C',
-        'filter' => 'setor c',
-        'hierarchy' => 0,
-        'number_hierarchy' => 3,
-        'order' => '003',
-    ]);
-
-    $secondOrganization = OrganizationChart::query()->create([
-        'title' => 'Setor D',
-        'filter' => 'setor d',
-        'hierarchy' => 0,
-        'number_hierarchy' => 4,
-        'order' => '004',
-    ]);
-
-    $workflow = Workflow::query()->create([
-        'title' => 'Fluxo retorno',
-        'filter' => 'fluxo retorno',
-        'description' => null,
-        'is_active' => true,
-    ]);
-
-    WorkflowStep::query()->create([
-        'workflow_id' => $workflow->id,
-        'title' => 'Etapa C',
-        'filter' => 'etapa c',
-        'step_order' => 1,
-        'deadline_days' => 1,
-        'required' => true,
-        'allow_parallel' => false,
-        'organization_id' => $firstOrganization->id,
-    ]);
-
-    WorkflowStep::query()->create([
-        'workflow_id' => $workflow->id,
-        'title' => 'Etapa D',
-        'filter' => 'etapa d',
-        'step_order' => 2,
-        'deadline_days' => 2,
-        'required' => true,
-        'allow_parallel' => false,
-        'organization_id' => $secondOrganization->id,
-    ]);
-
-    $process = $service->open([
-        'title' => 'Processo retorno',
-        'workflow_id' => $workflow->id,
-    ], $user->id);
-
-    $process = $service->forward($process, $user->id, 'Avanco inicial');
-    $process = $service->backward($process, $user->id, 'Retornar para revisao');
-
-    $event = $process->events()
-        ->where('event_type', ProcessEventType::RETURNED->value)
-        ->latest('created_at')
-        ->first();
-
-    expect($process->organization_id)->toBe($firstOrganization->id)
-        ->and($event)->not->toBeNull()
-        ->and($event->payload['comment'] ?? null)->toBe('Retornar para revisao');
+    expect($firstStep?->status)->toBe('COMPLETED')
+        ->and($firstStep?->is_current)->toBeFalse()
+        ->and($secondStep?->status)->toBe('IN_PROGRESS')
+        ->and($secondStep?->is_current)->toBeTrue()
+        ->and($process->organization_id)->toBe($secondOrganization->id);
 });

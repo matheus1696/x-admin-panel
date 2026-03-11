@@ -1,5 +1,4 @@
 <div>
-    <x-alert.flash />
 
     <x-page.header title="Produtos" subtitle="Gerencie o cadastro de produtos/equipamentos" icon="fa-solid fa-box-open">
         <x-slot name="button">

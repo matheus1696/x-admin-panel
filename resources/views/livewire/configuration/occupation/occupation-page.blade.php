@@ -1,7 +1,6 @@
 <div>
     
     <!-- Flash Message -->
-    <x-alert.flash />
 
     <x-page.header icon="fa-solid fa-briefcase" title="Configuração das Ocupações" subtitle="Lista de ocupações no sistema" />
 

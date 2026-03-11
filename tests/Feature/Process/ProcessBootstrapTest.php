@@ -35,8 +35,5 @@ test('process permissions are created by permission seeder', function () {
     $this->seed(PermissionSeeder::class);
 
     expect(Permission::query()->where('name', 'process.view')->exists())->toBeTrue()
-        ->and(Permission::query()->where('name', 'process.create')->exists())->toBeTrue()
-        ->and(Permission::query()->where('name', 'process.manage')->exists())->toBeTrue()
-        ->and(Permission::query()->where('name', 'process.close')->exists())->toBeTrue()
-        ->and(Permission::query()->where('name', 'process.timeline.view')->exists())->toBeTrue();
+        ->and(Permission::query()->where('name', 'process.create')->exists())->toBeTrue();
 });

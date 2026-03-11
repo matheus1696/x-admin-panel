@@ -1,7 +1,6 @@
 <div wire:poll.30s class="relative h-full">
 
     <!-- Flash Message -->
-    <x-alert.flash />
 
     @if ($isLoading)
         <!-- LOADING PREMIUM - Design sofisticado -->

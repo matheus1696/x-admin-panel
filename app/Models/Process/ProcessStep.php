@@ -20,6 +20,7 @@ class ProcessStep extends Model
         'deadline_days',
         'required',
         'is_current',
+        'status',
         'started_at',
         'completed_at',
     ];

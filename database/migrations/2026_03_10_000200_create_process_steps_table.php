@@ -20,12 +20,14 @@ return new class extends Migration
             $table->unsignedInteger('deadline_days')->nullable();
             $table->boolean('required')->default(true);
             $table->boolean('is_current')->default(false);
+            $table->string('status')->default('PENDING');
             $table->timestamp('started_at')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->timestamps();
 
             $table->unique(['process_id', 'step_order']);
             $table->index(['process_id', 'is_current']);
+            $table->index(['process_id', 'status']);
             $table->index(['process_id', 'started_at']);
         });
 
@@ -71,6 +73,9 @@ return new class extends Migration
                     'deadline_days' => $step->deadline_days,
                     'required' => (bool) $step->required,
                     'is_current' => (int) $step->step_order === (int) $currentStepOrder,
+                    'status' => (int) $step->step_order < (int) $currentStepOrder
+                        ? 'COMPLETED'
+                        : ((int) $step->step_order === (int) $currentStepOrder ? 'IN_PROGRESS' : 'PENDING'),
                     'started_at' => (int) $step->step_order === (int) $currentStepOrder ? $now : null,
                     'completed_at' => (int) $step->step_order < (int) $currentStepOrder ? $now : null,
                     'created_at' => $now,

@@ -32,7 +32,6 @@ class ProcessIndexPage extends Component
         'perPage' => 10,
     ];
 
-    public ?int $processId = null;
     public string $title = '';
     public ?string $description = null;
     public ?int $workflow_id = null;
@@ -82,7 +81,6 @@ class ProcessIndexPage extends Component
     private function resetForm(): void
     {
         $this->reset([
-            'processId',
             'title',
             'description',
             'workflow_id',

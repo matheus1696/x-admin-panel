@@ -1,5 +1,4 @@
 <div class="mx-auto max-w-2xl">
-    <x-alert.flash />
 
     <x-page.header
         :title="'Auditoria individual'"

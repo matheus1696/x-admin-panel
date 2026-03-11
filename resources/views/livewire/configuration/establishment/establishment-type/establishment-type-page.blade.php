@@ -1,7 +1,6 @@
 <div>
     
     <!-- Flash Message -->
-    <x-alert.flash />
 
     <!-- Header -->
     <x-page.header  title="Tipos de Estabelecimento" subtitle="Tipos de Estabelecimento" icon="fa-solid fa-sitemap" />

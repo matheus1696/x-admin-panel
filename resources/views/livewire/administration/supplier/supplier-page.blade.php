@@ -1,5 +1,4 @@
 <div>
-    <x-alert.flash />
 
     <x-page.header title="Fornecedores" subtitle="Gerencie o cadastro de fornecedores" icon="fa-solid fa-truck-field">
         <x-slot name="button">

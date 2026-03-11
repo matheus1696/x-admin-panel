@@ -1,7 +1,6 @@
 <div>
 
     <!-- Flash Message -->
-    <x-alert.flash />
 
     <!-- Header -->
     <x-page.header title="Fluxo de Trabalho" subtitle="Gerencie os fluxos de trabalho do sistema" icon="fa-solid fa-diagram-project">

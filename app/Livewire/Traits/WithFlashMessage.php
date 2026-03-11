@@ -4,14 +4,12 @@ namespace App\Livewire\Traits;
 
 trait WithFlashMessage
 {
-    protected function flash(
-        string $type,
-        string $message
-    ): void {
+    protected function flash(string $type, string $message): void
+    {
         session()->flash($type, $message);
 
-        // Evento para Alpine/JS reanimar
-        $this->dispatch('flash-show');
+        // Evento global para toasts em ações Livewire
+        $this->dispatch('app-flash', type: $type, message: $message);
     }
 
     protected function flashSuccess(string $message): void

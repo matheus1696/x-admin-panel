@@ -1,5 +1,4 @@
 <div>
-    <x-alert.flash />
 
     <x-page.header title="Gestao de Processos" subtitle="Acompanhe o ciclo de vida e a rastreabilidade dos processos" icon="fa-solid fa-folder-tree">
         <x-slot name="button">

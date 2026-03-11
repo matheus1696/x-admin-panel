@@ -1,10 +1,9 @@
-ï»¿<div>
+<div>
 
     <!-- Flash Message -->
-    <x-alert.flash />
 
     <!-- Header -->
-    <x-page.header title="GestÃ£o de Status" subtitle="Gerencie os status de execuÃ§Ã£o dos fluxos e etapas" icon="fa-solid fa-diagram-project" />
+    <x-page.header title="Gestão de Status" subtitle="Gerencie os status de execução dos fluxos e etapas" icon="fa-solid fa-diagram-project" />
 
     <div class="mb-4 rounded-2xl border border-gray-200 bg-white p-4">
         <x-form.label value="Ambiente de Tarefas" />
@@ -30,9 +29,9 @@
         <x-page.table>
             <x-slot name="thead">
                 <tr>
-                    <x-page.table-th class="text-center w-24" value="ApresentaÃ§Ã£o" />
-                    <x-page.table-th value="TÃ­tulo" />
-                    <x-page.table-th class="text-center w-28" value="AÃ§Ãµes" />
+                    <x-page.table-th class="text-center w-24" value="Apresentação" />
+                    <x-page.table-th value="Título" />
+                    <x-page.table-th class="text-center w-28" value="Ações" />
                 </tr>
             </x-slot>
 
@@ -71,9 +70,9 @@
         <x-page.table>
             <x-slot name="thead">
                 <tr>
-                    <x-page.table-th class="text-center w-24" value="ApresentaÃ§Ã£o" />
-                    <x-page.table-th value="TÃ­tulo" />
-                    <x-page.table-th class="text-center w-28" value="AÃ§Ãµes" />
+                    <x-page.table-th class="text-center w-24" value="Apresentação" />
+                    <x-page.table-th value="Título" />
+                    <x-page.table-th class="text-center w-28" value="Ações" />
                 </tr>
             </x-slot>
 
