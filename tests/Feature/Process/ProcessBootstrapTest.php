@@ -26,6 +26,8 @@ test('process enums contain required values', function () {
         'PROCESS_STARTED',
         'PROCESS_FORWARDED',
         'PROCESS_RETURNED',
+        'PROCESS_COMMENTED',
+        'PROCESS_OWNER_ASSIGNED',
         'PROCESS_CLOSED',
         'PROCESS_CANCELLED',
     );

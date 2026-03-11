@@ -57,7 +57,7 @@ class Process extends Model
 
     public function events(): HasMany
     {
-        return $this->hasMany(ProcessEvent::class)->orderByDesc('created_at');
+        return $this->hasMany(ProcessEvent::class)->orderBy('event_number');
     }
 
     public function steps(): HasMany

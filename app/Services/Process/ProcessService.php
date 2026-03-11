@@ -4,6 +4,7 @@ namespace App\Services\Process;
 
 use App\Enums\Process\ProcessEventType;
 use App\Enums\Process\ProcessStatus;
+use App\Models\Administration\User\User;
 use App\Models\Organization\Workflow\Workflow;
 use App\Models\Process\Process;
 use App\Models\Process\ProcessStep;
@@ -49,6 +50,7 @@ class ProcessService
                 'owner',
                 'organization',
                 'workflow.workflowSteps.organization',
+                'events.user',
                 'steps.organization',
             ])
             ->where('uuid', $uuid)
@@ -92,23 +94,16 @@ class ProcessService
                 $process,
                 ProcessEventType::CREATED->value,
                 $actorId,
-                [
-                    'title' => $process->title,
-                    'workflow_id' => $process->workflow_id,
-                    'organization_id' => $process->organization_id,
-                    'auto_started' => $autoStart,
-                ],
+                'Processo criado: '.$process->title,
             );
 
             if ($autoStart) {
                 $this->eventService->log(
                     $process,
-                ProcessEventType::STARTED->value,
-                $actorId,
-                [
-                    'auto_started' => true,
-                ],
-            );
+                    ProcessEventType::STARTED->value,
+                    $actorId,
+                    'Processo iniciado automaticamente pela primeira etapa do fluxo.',
+                );
             }
 
             return $process->refresh();
@@ -147,13 +142,19 @@ class ProcessService
         }
     }
 
-    public function advanceStep(Process $process): Process
+    public function advanceStep(Process $process, int $actorId, string $comment): Process
     {
         if (in_array($process->status, [ProcessStatus::CLOSED->value, ProcessStatus::CANCELLED->value], true)) {
             throw new InvalidArgumentException('Processo ja finalizado.');
         }
+        $this->assertActorBelongsToCurrentStepOrganization($process, $actorId);
 
-        return DB::transaction(function () use ($process): Process {
+        $comment = trim($comment);
+        if ($comment === '') {
+            throw new InvalidArgumentException('Informe o motivo no despacho.');
+        }
+
+        return DB::transaction(function () use ($process, $actorId, $comment): Process {
             $steps = ProcessStep::query()
                 ->where('process_id', $process->id)
                 ->orderBy('step_order')
@@ -203,7 +204,208 @@ class ProcessService
                 'started_at' => $process->started_at ?? now(),
             ]);
 
+            $this->eventService->log(
+                $process,
+                ProcessEventType::FORWARDED->value,
+                $actorId,
+                sprintf(
+                    'Despacho: %s | Avanco de "%s" para "%s".',
+                    $comment,
+                    (string) $currentStep->title,
+                    (string) $nextStep->title
+                ),
+            );
+
             return $process->refresh();
         });
+    }
+
+    public function retreatStep(Process $process, int $actorId, string $comment): Process
+    {
+        if (in_array($process->status, [ProcessStatus::CLOSED->value, ProcessStatus::CANCELLED->value], true)) {
+            throw new InvalidArgumentException('Processo ja finalizado.');
+        }
+        $this->assertActorBelongsToCurrentStepOrganization($process, $actorId);
+
+        $comment = trim($comment);
+        if ($comment === '') {
+            throw new InvalidArgumentException('Informe o motivo no despacho.');
+        }
+
+        return DB::transaction(function () use ($process, $actorId, $comment): Process {
+            $steps = ProcessStep::query()
+                ->where('process_id', $process->id)
+                ->orderBy('step_order')
+                ->orderBy('id')
+                ->get();
+
+            if ($steps->count() < 2) {
+                throw new InvalidArgumentException('Fluxo precisa ter pelo menos duas etapas.');
+            }
+
+            $currentStep = $steps->firstWhere('is_current', true)
+                ?? $steps->firstWhere('status', 'IN_PROGRESS')
+                ?? $steps->firstWhere('completed_at', null)
+                ?? $steps->first();
+
+            $currentIndex = (int) $steps->search(
+                fn (ProcessStep $step): bool => (int) $step->id === (int) $currentStep->id
+            );
+            $previousStep = $steps->values()->get($currentIndex - 1);
+
+            if (! $previousStep) {
+                throw new InvalidArgumentException('Processo ja esta na primeira etapa.');
+            }
+
+            $currentStep->update([
+                'is_current' => false,
+                'status' => 'PENDING',
+                'completed_at' => null,
+            ]);
+
+            $previousStep->update([
+                'is_current' => true,
+                'status' => 'IN_PROGRESS',
+                'started_at' => $previousStep->started_at ?? now(),
+                'completed_at' => null,
+            ]);
+
+            ProcessStep::query()
+                ->where('process_id', $process->id)
+                ->whereNotIn('id', [$currentStep->id, $previousStep->id])
+                ->where('is_current', true)
+                ->update(['is_current' => false]);
+
+            $process->update([
+                'organization_id' => $previousStep->organization_id ?? $process->organization_id,
+                'status' => ProcessStatus::IN_PROGRESS->value,
+                'started_at' => $process->started_at ?? now(),
+            ]);
+
+            $this->eventService->log(
+                $process,
+                ProcessEventType::RETURNED->value,
+                $actorId,
+                sprintf(
+                    'Despacho: %s | Retorno de "%s" para "%s".',
+                    $comment,
+                    (string) $currentStep->title,
+                    (string) $previousStep->title
+                ),
+            );
+
+            return $process->refresh();
+        });
+    }
+
+    public function comment(Process $process, int $actorId, string $comment): Process
+    {
+        $comment = trim($comment);
+        if ($comment === '') {
+            throw new InvalidArgumentException('Informe o comentario do despacho.');
+        }
+
+        return DB::transaction(function () use ($process, $actorId, $comment): Process {
+            $this->eventService->log(
+                $process,
+                ProcessEventType::COMMENTED->value,
+                $actorId,
+                'Despacho de comentario: '.$comment,
+            );
+
+            return $process->refresh();
+        });
+    }
+
+    public function assignOwner(Process $process, int $actorId, int $ownerId, string $comment): Process
+    {
+        $this->assertActorBelongsToCurrentStepOrganization($process, $actorId);
+
+        $comment = trim($comment);
+        if ($comment === '') {
+            throw new InvalidArgumentException('Informe o motivo da atribuicao.');
+        }
+
+        $currentStepOrganizationId = $this->resolveCurrentStepOrganizationId($process);
+        if ($currentStepOrganizationId === null) {
+            throw new InvalidArgumentException('A etapa atual nao possui setor definido para atribuicao.');
+        }
+
+        $owner = User::query()->find($ownerId);
+        if (! $owner) {
+            throw new InvalidArgumentException('Responsavel selecionado e invalido.');
+        }
+
+        $belongsToCurrentStepOrganization = $owner->organizations()
+            ->where('organization_charts.id', $currentStepOrganizationId)
+            ->exists();
+
+        if (! $belongsToCurrentStepOrganization) {
+            throw new InvalidArgumentException('Responsavel deve pertencer ao setor da etapa atual.');
+        }
+
+        return DB::transaction(function () use ($process, $actorId, $owner, $comment, $currentStepOrganizationId): Process {
+            $previousOwnerId = $process->owner_id;
+
+            $process->update([
+                'owner_id' => $owner->id,
+            ]);
+
+            $this->eventService->log(
+                $process,
+                ProcessEventType::OWNER_ASSIGNED->value,
+                $actorId,
+                sprintf(
+                    'Despacho: %s | Responsavel alterado de #%s para %s (#%s) no setor da etapa atual (#%s).',
+                    $comment,
+                    (string) ($previousOwnerId ?? '-'),
+                    (string) $owner->name,
+                    (string) $owner->id,
+                    (string) $currentStepOrganizationId
+                ),
+            );
+
+            return $process->refresh();
+        });
+    }
+
+    public function resolveCurrentStepOrganizationId(Process $process): ?int
+    {
+        $steps = ProcessStep::query()
+            ->where('process_id', $process->id)
+            ->orderBy('step_order')
+            ->orderBy('id')
+            ->get();
+
+        if ($steps->isEmpty()) {
+            return null;
+        }
+
+        $currentStep = $steps->firstWhere('is_current', true)
+            ?? $steps->firstWhere('status', 'IN_PROGRESS')
+            ?? $steps->firstWhere('completed_at', null)
+            ?? $steps->first();
+
+        return $currentStep?->organization_id !== null ? (int) $currentStep->organization_id : null;
+    }
+
+    public function userCanManageCurrentStepActions(Process $process, int $userId): bool
+    {
+        $currentStepOrganizationId = $this->resolveCurrentStepOrganizationId($process);
+        if ($currentStepOrganizationId === null) {
+            return false;
+        }
+
+        return User::query()
+            ->whereKey($userId)
+            ->whereHas('organizations', fn ($query) => $query->where('organization_charts.id', $currentStepOrganizationId))
+            ->exists();
+    }
+
+    private function assertActorBelongsToCurrentStepOrganization(Process $process, int $actorId): void
+    {
+        if (! $this->userCanManageCurrentStepActions($process, $actorId)) {
+            throw new InvalidArgumentException('Somente usuario do setor da etapa atual pode executar esta acao.');
+        }
     }
 }

@@ -16,14 +16,15 @@ class ProcessEvent extends Model
     protected $fillable = [
         'uuid',
         'process_id',
+        'event_number',
         'event_type',
-        'actor_id',
-        'payload',
+        'description',
+        'user_id',
         'created_at',
     ];
 
     protected $casts = [
-        'payload' => 'array',
+        'event_number' => 'integer',
         'created_at' => 'datetime',
     ];
 
@@ -32,9 +33,8 @@ class ProcessEvent extends Model
         return $this->belongsTo(Process::class, 'process_id');
     }
 
-    public function actor(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'actor_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
-

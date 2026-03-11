@@ -1,10 +1,12 @@
 <?php
 
+use App\Enums\Process\ProcessEventType;
 use App\Enums\Process\ProcessStatus;
 use App\Models\Administration\User\User;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Organization\Workflow\Workflow;
 use App\Models\Organization\Workflow\WorkflowStep;
+use App\Models\Process\ProcessEvent;
 use App\Services\Process\ProcessService;
 
 test('process service opens process and logs creation event', function () {
@@ -102,6 +104,7 @@ test('process service advances current step and starts next step', function () {
         'number_hierarchy' => 11,
         'order' => '011',
     ]);
+    $user->organizations()->attach($firstOrganization->id);
 
     $workflow = Workflow::query()->create([
         'title' => 'Fluxo Avanco',
@@ -137,15 +140,251 @@ test('process service advances current step and starts next step', function () {
         'workflow_id' => $workflow->id,
     ], $user->id);
 
-    $process = $service->advanceStep($process);
+    $process = $service->advanceStep($process, $user->id, 'Encaminhado para setor seguinte');
     $process->load('steps');
 
     $firstStep = $process->steps->firstWhere('step_order', 1);
     $secondStep = $process->steps->firstWhere('step_order', 2);
 
+    $event = $process->events()
+        ->where('event_type', ProcessEventType::FORWARDED->value)
+        ->latest('created_at')
+        ->first();
+
     expect($firstStep?->status)->toBe('COMPLETED')
         ->and($firstStep?->is_current)->toBeFalse()
         ->and($secondStep?->status)->toBe('IN_PROGRESS')
         ->and($secondStep?->is_current)->toBeTrue()
-        ->and($process->organization_id)->toBe($secondOrganization->id);
+        ->and($process->organization_id)->toBe($secondOrganization->id)
+        ->and($event)->not->toBeNull()
+        ->and($event->description)->toContain('Encaminhado para setor seguinte');
+});
+
+test('process service retreats current step and reopens previous step', function () {
+    $user = User::factory()->create();
+    $service = app(ProcessService::class);
+
+    $firstOrganization = OrganizationChart::query()->create([
+        'title' => 'Setor Tres',
+        'filter' => 'setor tres',
+        'hierarchy' => 0,
+        'number_hierarchy' => 12,
+        'order' => '012',
+    ]);
+
+    $secondOrganization = OrganizationChart::query()->create([
+        'title' => 'Setor Quatro',
+        'filter' => 'setor quatro',
+        'hierarchy' => 0,
+        'number_hierarchy' => 13,
+        'order' => '013',
+    ]);
+    $user->organizations()->attach($firstOrganization->id);
+    $user->organizations()->attach($secondOrganization->id);
+
+    $workflow = Workflow::query()->create([
+        'title' => 'Fluxo Retrocesso',
+        'filter' => 'fluxo retrocesso',
+        'description' => 'Fluxo para validar retrocesso',
+        'is_active' => true,
+    ]);
+
+    WorkflowStep::query()->create([
+        'workflow_id' => $workflow->id,
+        'title' => 'Etapa A',
+        'filter' => 'etapa a',
+        'step_order' => 1,
+        'deadline_days' => 2,
+        'required' => true,
+        'allow_parallel' => false,
+        'organization_id' => $firstOrganization->id,
+    ]);
+
+    WorkflowStep::query()->create([
+        'workflow_id' => $workflow->id,
+        'title' => 'Etapa B',
+        'filter' => 'etapa b',
+        'step_order' => 2,
+        'deadline_days' => 3,
+        'required' => true,
+        'allow_parallel' => false,
+        'organization_id' => $secondOrganization->id,
+    ]);
+
+    $process = $service->open([
+        'title' => 'Processo para retroceder',
+        'workflow_id' => $workflow->id,
+    ], $user->id);
+
+    $process = $service->advanceStep($process, $user->id, 'Avanco para etapa B');
+    $process = $service->retreatStep($process, $user->id, 'Retorno para etapa anterior');
+    $process->load('steps');
+
+    $firstStep = $process->steps->firstWhere('step_order', 1);
+    $secondStep = $process->steps->firstWhere('step_order', 2);
+
+    $event = $process->events()
+        ->where('event_type', ProcessEventType::RETURNED->value)
+        ->latest('created_at')
+        ->first();
+
+    expect($firstStep?->status)->toBe('IN_PROGRESS')
+        ->and($firstStep?->is_current)->toBeTrue()
+        ->and($secondStep?->status)->toBe('PENDING')
+        ->and($secondStep?->is_current)->toBeFalse()
+        ->and($process->organization_id)->toBe($firstOrganization->id)
+        ->and($event)->not->toBeNull()
+        ->and($event->description)->toContain('Retorno para etapa anterior');
+});
+
+test('process service records standalone comment as dispatch event', function () {
+    $user = User::factory()->create();
+    $service = app(ProcessService::class);
+
+    $process = $service->open([
+        'title' => 'Processo com comentario',
+        'description' => 'Teste de comentario',
+    ], $user->id);
+
+    $process = $service->comment($process, $user->id, 'Comentario de despacho');
+
+    $event = $process->events()
+        ->where('event_type', ProcessEventType::COMMENTED->value)
+        ->latest('created_at')
+        ->first();
+
+    expect($event)->not->toBeNull()
+        ->and($event->description)->toContain('Comentario de despacho');
+});
+
+test('process service assigns owner and logs assignment dispatch event', function () {
+    $actor = User::factory()->create();
+    $newOwner = User::factory()->create();
+    $service = app(ProcessService::class);
+
+    $organization = OrganizationChart::query()->create([
+        'title' => 'Setor Responsavel',
+        'filter' => 'setor responsavel',
+        'hierarchy' => 0,
+        'number_hierarchy' => 20,
+        'order' => '020',
+    ]);
+
+    $newOwner->organizations()->attach($organization->id);
+    $actor->organizations()->attach($organization->id);
+
+    $workflow = Workflow::query()->create([
+        'title' => 'Fluxo Atribuicao',
+        'filter' => 'fluxo atribuicao',
+        'description' => 'Fluxo para atribuicao',
+        'is_active' => true,
+    ]);
+
+    WorkflowStep::query()->create([
+        'workflow_id' => $workflow->id,
+        'title' => 'Etapa unica',
+        'filter' => 'etapa unica',
+        'step_order' => 1,
+        'deadline_days' => 2,
+        'required' => true,
+        'allow_parallel' => false,
+        'organization_id' => $organization->id,
+    ]);
+
+    $process = $service->open([
+        'title' => 'Processo para atribuicao',
+        'description' => 'Teste de atribuicao',
+        'workflow_id' => $workflow->id,
+    ], $actor->id);
+
+    $process = $service->assignOwner($process, $actor->id, $newOwner->id, 'Redistribuicao de responsabilidade');
+
+    $event = $process->events()
+        ->where('event_type', ProcessEventType::OWNER_ASSIGNED->value)
+        ->latest('created_at')
+        ->first();
+
+    expect($process->owner_id)->toBe($newOwner->id)
+        ->and($event)->not->toBeNull()
+        ->and($event->description)->toContain('Redistribuicao de responsabilidade')
+        ->and($event->description)->toContain((string) $newOwner->id);
+});
+
+test('process events use sequential event_number per process', function () {
+    $user = User::factory()->create();
+    $service = app(ProcessService::class);
+
+    $process = $service->open([
+        'title' => 'Processo com numeracao',
+        'description' => 'Teste sequencial',
+    ], $user->id);
+
+    $service->comment($process, $user->id, 'Primeiro despacho');
+    $service->comment($process, $user->id, 'Segundo despacho');
+
+    $numbers = ProcessEvent::query()
+        ->where('process_id', $process->id)
+        ->orderBy('event_number')
+        ->pluck('event_number')
+        ->all();
+
+    expect($numbers)->toBe([1, 2, 3]);
+});
+
+test('process service blocks step transition when actor is outside current step organization', function () {
+    $user = User::factory()->create();
+    $service = app(ProcessService::class);
+
+    $currentOrganization = OrganizationChart::query()->create([
+        'title' => 'Setor Atual',
+        'filter' => 'setor atual',
+        'hierarchy' => 0,
+        'number_hierarchy' => 30,
+        'order' => '030',
+    ]);
+
+    $nextOrganization = OrganizationChart::query()->create([
+        'title' => 'Setor Seguinte',
+        'filter' => 'setor seguinte',
+        'hierarchy' => 0,
+        'number_hierarchy' => 31,
+        'order' => '031',
+    ]);
+
+    $workflow = Workflow::query()->create([
+        'title' => 'Fluxo Bloqueio',
+        'filter' => 'fluxo bloqueio',
+        'description' => 'Fluxo para validar bloqueio por setor',
+        'is_active' => true,
+    ]);
+
+    WorkflowStep::query()->create([
+        'workflow_id' => $workflow->id,
+        'title' => 'Etapa atual',
+        'filter' => 'etapa atual',
+        'step_order' => 1,
+        'deadline_days' => 2,
+        'required' => true,
+        'allow_parallel' => false,
+        'organization_id' => $currentOrganization->id,
+    ]);
+
+    WorkflowStep::query()->create([
+        'workflow_id' => $workflow->id,
+        'title' => 'Etapa seguinte',
+        'filter' => 'etapa seguinte',
+        'step_order' => 2,
+        'deadline_days' => 2,
+        'required' => true,
+        'allow_parallel' => false,
+        'organization_id' => $nextOrganization->id,
+    ]);
+
+    $process = $service->open([
+        'title' => 'Processo bloqueado por setor',
+        'workflow_id' => $workflow->id,
+    ], $user->id);
+
+    expect(fn () => $service->advanceStep($process, $user->id, 'Tentativa sem vinculo'))
+        ->toThrow(\InvalidArgumentException::class, 'Somente usuario do setor da etapa atual pode executar esta acao.');
 });

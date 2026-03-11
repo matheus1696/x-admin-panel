@@ -122,15 +122,192 @@
             </div>
         </div>
 
-        <div class="flex justify-end">
-            <form method="POST" action="{{ route('process.advance', $process->uuid) }}">
-                @csrf
-                <x-button
-                    type="submit"
-                    text="Avancar etapa"
-                    icon="fa-solid fa-arrow-right"
-                />
-            </form>
+        <!-- Eventos do Processo -->
+        <section class="rounded-xl border border-gray-200 bg-white shadow-sm p-4">
+            <div class="flex items-center justify-between gap-2 pb-2 border-b border-gray-200">
+                <h3 class="text-sm font-semibold text-gray-800 uppercase">Eventos do processo</h3>
+                <span class="text-[11px] text-gray-500">{{ $process->events->count() }} evento(s)</span>
+            </div>
+
+            <div class="mt-3 space-y-2">
+                @forelse ($process->events->sortBy('event_number') as $event)
+                    @php
+                        $eventType = (string) ($event->event_type ?? '');
+                        $eventBadgeClass = match ($eventType) {
+                            'PROCESS_FORWARDED' => 'bg-emerald-100 text-emerald-700',
+                            'PROCESS_RETURNED' => 'bg-amber-100 text-amber-700',
+                            'PROCESS_OWNER_ASSIGNED' => 'bg-indigo-100 text-indigo-700',
+                            'PROCESS_COMMENTED' => 'bg-sky-100 text-sky-700',
+                            default => 'bg-slate-100 text-slate-700',
+                        };
+                    @endphp
+
+                    <article class="rounded-lg border border-gray-200 bg-gray-50/70 px-3 py-2">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="rounded-full px-2 py-0.5 text-[10px] font-semibold {{ $eventBadgeClass }}">
+                                    #{{ $event->event_number }}
+                                </span>
+                                <span class="text-[10px] font-semibold uppercase text-gray-500">
+                                    {{ str($eventType)->replace('PROCESS_', '')->replace('_', ' ') }}
+                                </span>
+                            </div>
+                            <span class="text-[11px] text-gray-500">{{ $event->created_at?->format('d/m/Y H:i') }}</span>
+                        </div>
+
+                        <p class="mt-1 text-xs text-gray-800">{{ $event->description ?: 'Sem descricao.' }}</p>
+                        <p class="mt-1 text-[11px] text-gray-500">Usuario: {{ $event->user?->name ?? 'Sistema' }}</p>
+                    </article>
+                @empty
+                    <p class="text-xs text-gray-500">Nenhum evento registrado para este processo.</p>
+                @endforelse
+            </div>
+        </section>
+        
+        <!-- Acoes disponiveis -->
+        <div class="flex justify-end gap-2">
+            <x-button
+                type="button"
+                text="Comentar"
+                icon="fa-solid fa-comment"
+                variant="gray_text"
+                wire:click="openCommentModal"
+                wire:loading.attr="disabled"
+                wire:target="openCommentModal"
+            />
+            <x-button
+                type="button"
+                text="Atribuir responsavel"
+                icon="fa-solid fa-user-pen"
+                variant="gray_text"
+                wire:click="openAssignOwnerModal"
+                wire:loading.attr="disabled"
+                wire:target="openAssignOwnerModal"
+                :disabled="! $canManageStepActions"
+            />
+            <x-button
+                type="button"
+                text="Retroceder etapa"
+                icon="fa-solid fa-arrow-left"
+                variant="gray_text"
+                wire:click="openDispatchModal('retreat')"
+                wire:loading.attr="disabled"
+                wire:target="openDispatchModal"
+                :disabled="! $canManageStepActions"
+            />
+            <x-button
+                type="button"
+                text="Avancar etapa"
+                icon="fa-solid fa-arrow-right"
+                variant="gray_text"
+                wire:click="openDispatchModal('advance')"
+                wire:loading.attr="disabled"
+                wire:target="openDispatchModal"
+                :disabled="! $canManageStepActions"
+            />
         </div>
+        @if (! $canManageStepActions)
+            <p class="text-xs text-amber-600">
+                Somente usuario vinculado ao setor da etapa atual pode atribuir, avancar ou retroceder.
+            </p>
+        @endif
     </div>
+
+    <x-modal :show="$showModal" maxWidth="max-w-2xl">
+        @if ($modalKey === 'modal-process-dispatch')
+            <x-slot name="header">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase">
+                    {{ $pendingTransition === 'advance' ? 'Avancar Etapa' : 'Retroceder Etapa' }}
+                </h2>
+            </x-slot>
+
+            <form wire:submit.prevent="confirmStepTransition" class="space-y-4">
+                <div class="space-y-1">
+                    <x-form.label value="Justificativa (despacho)" />
+                    <x-form.textarea
+                        wire:model.defer="dispatchComment"
+                        name="dispatchComment"
+                        rows="4"
+                        placeholder="Informe o motivo desta movimentacao de etapa..."
+                    />
+                    <x-form.error for="dispatchComment" />
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2">
+                    <x-button text="Cancelar" variant="gray_outline" wire:click="closeModal" />
+                    <x-button
+                        type="submit"
+                        :text="$pendingTransition === 'advance' ? 'Confirmar e Avancar' : 'Confirmar e Retroceder'"
+                        :icon="$pendingTransition === 'advance' ? 'fa-solid fa-arrow-right' : 'fa-solid fa-arrow-left'"
+                    />
+                </div>
+            </form>
+        @endif
+
+        @if ($modalKey === 'modal-process-comment')
+            <x-slot name="header">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase">Novo Comentario</h2>
+            </x-slot>
+
+            <form wire:submit.prevent="saveComment" class="space-y-4">
+                <div class="space-y-1">
+                    <x-form.label value="Comentario (despacho)" />
+                    <x-form.textarea
+                        wire:model.defer="commentText"
+                        name="commentText"
+                        rows="4"
+                        placeholder="Informe o comentario do despacho..."
+                    />
+                    <x-form.error for="commentText" />
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2">
+                    <x-button text="Cancelar" variant="gray_outline" wire:click="closeModal" />
+                    <x-button type="submit" text="Salvar comentario" icon="fa-solid fa-save" />
+                </div>
+            </form>
+        @endif
+
+        @if ($modalKey === 'modal-process-assign-owner')
+            <x-slot name="header">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase">Atribuir Responsavel</h2>
+            </x-slot>
+
+            <form wire:submit.prevent="assignOwner" class="space-y-4">
+                <div class="space-y-1">
+                    <x-form.label value="Responsavel" />
+                    <x-form.select-livewire
+                        wire:model.defer="assignedOwnerId"
+                        name="assignedOwnerId"
+                        :options="$owners->map(fn ($owner) => ['value' => $owner->id, 'label' => $owner->name])->values()->all()"
+                    />
+                    <x-form.error for="assignedOwnerId" />
+                    @if ($owners->isEmpty())
+                        <p class="text-xs text-amber-600">Nao ha usuarios vinculados ao setor da etapa atual.</p>
+                    @endif
+                </div>
+
+                <div class="space-y-1">
+                    <x-form.label value="Motivo da atribuicao (despacho)" />
+                    <x-form.textarea
+                        wire:model.defer="assignmentComment"
+                        name="assignmentComment"
+                        rows="4"
+                        placeholder="Informe o motivo da mudanca de responsavel..."
+                    />
+                    <x-form.error for="assignmentComment" />
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2">
+                    <x-button text="Cancelar" variant="gray_outline" wire:click="closeModal" />
+                    <x-button
+                        type="submit"
+                        text="Confirmar atribuicao"
+                        icon="fa-solid fa-user-check"
+                        :disabled="$owners->isEmpty()"
+                    />
+                </div>
+            </form>
+        @endif
+    </x-modal>
 </div>

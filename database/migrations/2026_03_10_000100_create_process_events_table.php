@@ -12,11 +12,13 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->foreignId('process_id')->constrained('processes')->cascadeOnDelete();
+            $table->unsignedBigInteger('event_number');
             $table->string('event_type');
-            $table->foreignId('actor_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->json('payload')->nullable();
+            $table->text('description')->nullable();
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('created_at')->useCurrent();
 
+            $table->unique(['process_id', 'event_number']);
             $table->index(['process_id', 'created_at']);
             $table->index(['event_type', 'created_at']);
         });
