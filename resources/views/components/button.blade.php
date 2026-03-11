@@ -18,7 +18,7 @@
 
 @php
     // Classes base com efeitos modernos
-    $baseClasses = 'inline-flex items-center justify-center font-medium transition-all duration-300 transform focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none focus:ring-transparent';
+    $baseClasses = 'inline-flex items-center justify-center gap-2 font-medium transition-all duration-300 transform focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none focus:ring-transparent';
     
     // Tamanhos
     $sizes = [
@@ -68,22 +68,24 @@
         
         'purple_outline' => 'bg-gradient-to-r from-purple-50 to-purple-100/80 text-purple-700 border-purple-200/50 hover:from-purple-100 hover:to-purple-200/80 shadow-md transition-all duration-300 border border-purple-600/20 rounded-lg active:scale-[0.98]',
         
-        // TEXT VARIANTS (dentro do texto)
-        'gray_text' => 'text-gray-700 hover:text-gray-900 bg-transparent hover:bg-gray-100/50 border-0 shadow-none px-1 py-0.5 rounded-md',
+        // TEXT VARIANTS (dentro do texto)        
+        'white_text' => 'text-white hover:text-gray-300 px-1 py-0.5',
+
+        'gray_text' => 'text-gray-700 hover:text-gray-900 px-1 py-0.5',
         
-        'green_text' => 'text-green-700 hover:text-green-800 bg-transparent hover:bg-green-50/50 border-0 shadow-none px-1 py-0.5 rounded-md',
+        'green_text' => 'text-green-700 hover:text-green-800 px-1 py-0.5',
         
-        'blue_text' => 'text-blue-700 hover:text-blue-800 bg-transparent hover:bg-blue-50/50 border-0 shadow-none px-1 py-0.5 rounded-md',
+        'blue_text' => 'text-blue-700 hover:text-blue-800 px-1 py-0.5',
         
-        'red_text' => 'text-red-700 hover:text-red-800 bg-transparent hover:bg-red-50/50 border-0 shadow-none px-1 py-0.5 rounded-md',
+        'red_text' => 'text-red-700 hover:text-red-800 px-1 py-0.5',
         
-        'yellow_text' => 'text-yellow-700 hover:text-yellow-800 bg-transparent hover:bg-yellow-50/50 border-0 shadow-none px-1 py-0.5 rounded-md',
+        'yellow_text' => 'text-yellow-700 hover:text-yellow-800 px-1 py-0.5',
         
-        'purple_text' => 'text-purple-700 hover:text-purple-800 bg-transparent hover:bg-purple-50/50 border-0 shadow-none px-1 py-0.5 rounded-md',
+        'purple_text' => 'text-purple-700 hover:text-purple-800 px-1 py-0.5',
         
-        'sky_text' => 'text-sky-700 hover:text-sky-800 bg-transparent hover:bg-sky-50/50 border-0 shadow-none px-1 py-0.5 rounded-md',
+        'sky_text' => 'text-sky-700 hover:text-sky-800 px-1 py-0.5',
         
-        'indigo_text' => 'text-indigo-700 hover:text-indigo-800 bg-transparent hover:bg-indigo-50/50 border-0 shadow-none px-1 py-0.5 rounded-md',
+        'indigo_text' => 'text-indigo-700 hover:text-indigo-800 px-1 py-0.5',
         
         // LIGHT VARIANTS (fundos claros)
         'gray_light' => 'text-gray-700 bg-gray-100/80 hover:bg-gray-200/90 border border-gray-200/80 hover:border-gray-300 focus:ring-gray-400/20 shadow-sm hover:shadow backdrop-blur-sm rounded-lg active:scale-[0.98]',

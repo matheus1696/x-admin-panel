@@ -2,9 +2,14 @@
 
     <x-page.header title="Gestao de Processos" subtitle="Acompanhe o ciclo de vida e a rastreabilidade dos processos" icon="fa-solid fa-folder-tree">
         <x-slot name="button">
-            @can('process.create')
-                <x-button text="Novo Processo" icon="fa-solid fa-plus" wire:click="create" />
-            @endcan
+            <div class="flex items-center gap-2">
+                @can('process.dashboard.view')
+                    <x-button href="{{ route('process.dashboard') }}" text="Dashboard" icon="fa-solid fa-chart-column" variant="gray_outline" />
+                @endcan
+                @can('process.create')
+                    <x-button text="Novo Processo" icon="fa-solid fa-plus" wire:click="create" />
+                @endcan
+            </div>
         </x-slot>
     </x-page.header>
 
@@ -20,7 +25,7 @@
                 wire:model.live="filters.status"
                 name="filters.status"
                 :options="collect($statuses)
-                    ->map(fn($status) => ['value' => $status->value, 'label' => str($status->value)->replace('_', ' ')->title()->value()])
+                    ->map(fn($status) => ['value' => $status->value, 'label' => $status->label()])
                     ->prepend(['value' => 'all', 'label' => 'Todos'])
                     ->values()
                     ->all()"
@@ -71,8 +76,12 @@
                     </x-page.table-td>
                     <x-page.table-td class="hidden lg:table-cell" :value="$process->organization?->title ?? '-'" />
                     <x-page.table-td class="text-center">
-                        <span class="rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] bg-emerald-50 text-emerald-700">
-                            {{ str($process->status)->replace('_', ' ') }}
+                        @php
+                            $processStatus = \App\Enums\Process\ProcessStatus::tryFrom((string) $process->status);
+                            $processStatusClass = $processStatus?->badgeClass() ?? 'bg-gray-100 text-gray-700';
+                        @endphp
+                        <span class="rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] {{ $processStatusClass }}">
+                            {{ $processStatus?->label() ?? $process->status }}
                         </span>
                     </x-page.table-td>
                     <x-page.table-td>

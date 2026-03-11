@@ -9,6 +9,7 @@ use App\Models\Traits\HasUuid;
 use App\Models\Traits\HasUuidRouteKey;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Process extends Model
@@ -43,6 +44,16 @@ class Process extends Model
     public function workflow(): BelongsTo
     {
         return $this->belongsTo(Workflow::class, 'workflow_id');
+    }
+
+    public function organizations(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            OrganizationChart::class,
+            'process_organization_chart',
+            'process_id',
+            'organization_chart_id'
+        )->withTimestamps();
     }
 
     public function openedBy(): BelongsTo

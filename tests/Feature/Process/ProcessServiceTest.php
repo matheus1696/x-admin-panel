@@ -7,6 +7,7 @@ use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Organization\Workflow\Workflow;
 use App\Models\Organization\Workflow\WorkflowStep;
 use App\Models\Process\ProcessEvent;
+use App\Models\Process\ProcessStep;
 use App\Services\Process\ProcessService;
 
 test('process service opens process and logs creation event', function () {
@@ -82,7 +83,152 @@ test('process service auto assigns first workflow step organization and starts p
     expect($process->status)->toBe(ProcessStatus::IN_PROGRESS->value)
         ->and($process->started_at)->not->toBeNull()
         ->and($process->organization_id)->toBe($firstOrganization->id)
+        ->and($process->organizations()->pluck('organization_charts.id')->all())->toBe([$firstOrganization->id, $secondOrganization->id])
         ->and($process->events()->count())->toBe(2);
+});
+
+test('process visibility uses owner and linked process sectors', function () {
+    $owner = User::factory()->create();
+    $sectorUser = User::factory()->create();
+    $outsider = User::factory()->create();
+    $service = app(ProcessService::class);
+
+    $organization = OrganizationChart::query()->create([
+        'title' => 'Setor de Visibilidade',
+        'filter' => 'setor de visibilidade',
+        'hierarchy' => 0,
+        'number_hierarchy' => 9,
+        'order' => '009',
+    ]);
+
+    $sectorUser->organizations()->attach($organization->id);
+
+    $process = \App\Models\Process\Process::query()->create([
+        'title' => 'Processo com setores vinculados',
+        'description' => 'Descricao',
+        'opened_by' => $owner->id,
+        'owner_id' => $owner->id,
+        'priority' => 'normal',
+        'status' => ProcessStatus::IN_PROGRESS->value,
+        'started_at' => now(),
+    ]);
+
+    ProcessStep::query()->create([
+        'process_id' => $process->id,
+        'step_order' => 1,
+        'title' => 'Etapa setor',
+        'organization_id' => $organization->id,
+        'deadline_days' => 1,
+        'required' => true,
+        'is_current' => true,
+        'status' => 'IN_PROGRESS',
+        'started_at' => now(),
+    ]);
+
+    $process->organizations()->sync([$organization->id]);
+
+    expect($service->userCanView($process->fresh('organizations'), $owner->id))->toBeTrue()
+        ->and($service->userCanView($process->fresh('organizations'), $sectorUser->id))->toBeTrue()
+        ->and($service->userCanView($process->fresh('organizations'), $outsider->id))->toBeFalse();
+});
+
+test('process dashboard aggregates process progress indicators', function () {
+    $service = app(ProcessService::class);
+
+    $organizationA = OrganizationChart::query()->create([
+        'title' => 'Setor Dashboard A',
+        'filter' => 'setor dashboard a',
+        'hierarchy' => 0,
+        'number_hierarchy' => 40,
+        'order' => '040',
+    ]);
+
+    $organizationB = OrganizationChart::query()->create([
+        'title' => 'Setor Dashboard B',
+        'filter' => 'setor dashboard b',
+        'hierarchy' => 0,
+        'number_hierarchy' => 41,
+        'order' => '041',
+    ]);
+
+    $owner = User::factory()->create();
+
+    $overdueProcess = \App\Models\Process\Process::query()->create([
+        'title' => 'Processo atrasado',
+        'description' => 'Descricao',
+        'organization_id' => $organizationA->id,
+        'opened_by' => $owner->id,
+        'owner_id' => $owner->id,
+        'priority' => 'normal',
+        'status' => ProcessStatus::IN_PROGRESS->value,
+        'started_at' => now()->subDays(5),
+        'created_at' => now()->subDays(5),
+        'updated_at' => now()->subDays(1),
+    ]);
+
+    \App\Models\Process\ProcessStep::query()->create([
+        'process_id' => $overdueProcess->id,
+        'step_order' => 1,
+        'title' => 'Etapa atrasada',
+        'organization_id' => $organizationA->id,
+        'deadline_days' => 2,
+        'required' => true,
+        'is_current' => true,
+        'status' => 'IN_PROGRESS',
+        'started_at' => now()->subDays(4),
+    ]);
+
+    $healthyProcess = \App\Models\Process\Process::query()->create([
+        'title' => 'Processo no prazo',
+        'description' => 'Descricao',
+        'organization_id' => $organizationB->id,
+        'opened_by' => $owner->id,
+        'owner_id' => $owner->id,
+        'priority' => 'normal',
+        'status' => ProcessStatus::OPEN->value,
+        'created_at' => now()->subDays(2),
+        'updated_at' => now()->subDay(),
+    ]);
+
+    \App\Models\Process\ProcessStep::query()->create([
+        'process_id' => $healthyProcess->id,
+        'step_order' => 1,
+        'title' => 'Etapa em dia',
+        'organization_id' => $organizationB->id,
+        'deadline_days' => 5,
+        'required' => true,
+        'is_current' => true,
+        'status' => 'IN_PROGRESS',
+        'started_at' => now()->subDay(),
+    ]);
+
+    \App\Models\Process\ProcessStep::query()->create([
+        'process_id' => $healthyProcess->id,
+        'step_order' => 2,
+        'title' => 'Etapa concluida',
+        'organization_id' => $organizationB->id,
+        'deadline_days' => 2,
+        'required' => true,
+        'is_current' => false,
+        'status' => 'COMPLETED',
+        'started_at' => now()->subDays(6),
+        'completed_at' => now()->subDays(4),
+    ]);
+
+    $dashboard = $service->dashboard([
+        'window' => '90d',
+        'organization_id' => 'all',
+    ]);
+
+    expect($dashboard['total'])->toBe(2)
+        ->and($dashboard['in_progress_total'])->toBe(1)
+        ->and($dashboard['open_total'])->toBe(1)
+        ->and($dashboard['deadline_summary']['overdue'])->toBe(1)
+        ->and($dashboard['deadline_summary']['on_time'])->toBe(1)
+        ->and(collect($dashboard['current_sectors'])->pluck('label')->all())->toContain('Setor Dashboard A', 'Setor Dashboard B')
+        ->and(collect($dashboard['average_sector_times'])->pluck('label')->all())->toContain('Setor Dashboard B')
+        ->and(collect($dashboard['overdue_processes'])->pluck('title')->all())->toContain('Processo atrasado')
+        ->and(collect($dashboard['healthy_processes'])->pluck('title')->all())->toContain('Processo no prazo');
 });
 
 test('process service advances current step and starts next step', function () {

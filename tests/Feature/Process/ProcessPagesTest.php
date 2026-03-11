@@ -3,10 +3,10 @@
 use App\Enums\Process\ProcessStatus;
 use App\Livewire\Process\ProcessIndexPage;
 use App\Livewire\Process\ProcessShowPage;
+use App\Models\Administration\User\User;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Organization\Workflow\Workflow;
 use App\Models\Organization\Workflow\WorkflowStep;
-use App\Models\Administration\User\User;
 use App\Models\Process\Process;
 use App\Models\Process\ProcessStep;
 use Livewire\Livewire;
@@ -163,6 +163,7 @@ test('process show page renders workflow timeline and detail sections', function
         'priority' => 'normal',
         'status' => 'open',
     ]);
+    $process->organizations()->sync([$organization->id]);
 
     ProcessStep::query()->create([
         'process_id' => $process->id,
@@ -182,6 +183,112 @@ test('process show page renders workflow timeline and detail sections', function
         ->assertSee('Fluxo vinculado')
         ->assertSee('Setor')
         ->assertSee('Analise inicial');
+});
+
+test('process show page allows access for user linked to any process step sector', function () {
+    $creator = createProcessUser(['process.view']);
+    $sectorUser = createProcessUser(['process.view']);
+
+    $organizationA = OrganizationChart::query()->create([
+        'title' => 'Setor Inicial',
+        'filter' => 'setor inicial',
+        'hierarchy' => 0,
+        'number_hierarchy' => 6,
+        'order' => '006',
+    ]);
+
+    $organizationB = OrganizationChart::query()->create([
+        'title' => 'Setor Atual',
+        'filter' => 'setor atual',
+        'hierarchy' => 0,
+        'number_hierarchy' => 8,
+        'order' => '008',
+    ]);
+
+    $sectorUser->organizations()->attach($organizationA->id);
+
+    $process = Process::query()->create([
+        'title' => 'Processo com acesso por setor',
+        'description' => 'Descricao',
+        'organization_id' => $organizationB->id,
+        'opened_by' => $creator->id,
+        'owner_id' => $creator->id,
+        'priority' => 'normal',
+        'status' => ProcessStatus::IN_PROGRESS->value,
+        'started_at' => now(),
+    ]);
+    $process->organizations()->sync([$organizationA->id, $organizationB->id]);
+
+    ProcessStep::query()->create([
+        'process_id' => $process->id,
+        'step_order' => 1,
+        'title' => 'Etapa inicial',
+        'organization_id' => $organizationA->id,
+        'deadline_days' => 2,
+        'required' => true,
+        'is_current' => false,
+        'status' => 'COMPLETED',
+        'started_at' => now()->subDay(),
+        'completed_at' => now()->subHour(),
+    ]);
+
+    ProcessStep::query()->create([
+        'process_id' => $process->id,
+        'step_order' => 2,
+        'title' => 'Etapa atual',
+        'organization_id' => $organizationB->id,
+        'deadline_days' => 2,
+        'required' => true,
+        'is_current' => true,
+        'status' => 'IN_PROGRESS',
+        'started_at' => now(),
+    ]);
+
+    $this->actingAs($sectorUser)
+        ->get(route('process.show', $process->uuid))
+        ->assertOk()
+        ->assertSee('Processo com acesso por setor');
+});
+
+test('process show page blocks user without owner or process step sector access', function () {
+    $owner = createProcessUser(['process.view']);
+    $outsider = createProcessUser(['process.view']);
+
+    $organization = OrganizationChart::query()->create([
+        'title' => 'Setor Restrito',
+        'filter' => 'setor restrito',
+        'hierarchy' => 0,
+        'number_hierarchy' => 7,
+        'order' => '007',
+    ]);
+
+    $process = Process::query()->create([
+        'title' => 'Processo restrito',
+        'description' => 'Descricao',
+        'organization_id' => $organization->id,
+        'opened_by' => $owner->id,
+        'owner_id' => $owner->id,
+        'priority' => 'normal',
+        'status' => ProcessStatus::IN_PROGRESS->value,
+        'started_at' => now(),
+    ]);
+    $process->organizations()->sync([$organization->id]);
+
+    ProcessStep::query()->create([
+        'process_id' => $process->id,
+        'step_order' => 1,
+        'title' => 'Etapa atual',
+        'organization_id' => $organization->id,
+        'deadline_days' => 2,
+        'required' => true,
+        'is_current' => true,
+        'status' => 'IN_PROGRESS',
+        'started_at' => now(),
+    ]);
+
+    $this->actingAs($outsider)
+        ->get(route('process.show', $process->uuid))
+        ->assertRedirect(route('dashboard'));
 });
 
 test('process show page advances to next step via livewire action', function () {
@@ -223,6 +330,7 @@ test('process show page advances to next step via livewire action', function () 
         'status' => ProcessStatus::IN_PROGRESS->value,
         'started_at' => now(),
     ]);
+    $process->organizations()->sync([$organizationA->id, $organizationB->id]);
 
     ProcessStep::query()->create([
         'process_id' => $process->id,
@@ -302,6 +410,7 @@ test('process show page retreats to previous step via livewire action', function
         'status' => ProcessStatus::IN_PROGRESS->value,
         'started_at' => now(),
     ]);
+    $process->organizations()->sync([$organizationA->id, $organizationB->id]);
 
     ProcessStep::query()->create([
         'process_id' => $process->id,
@@ -373,6 +482,54 @@ test('process show page saves comment dispatch via modal action', function () {
         ->and($event->description)->toContain('Despacho de comentario no processo');
 });
 
+test('process show page displays translated event labels for the user', function () {
+    $user = createProcessUser(['process.view']);
+    $this->actingAs($user);
+
+    $process = Process::query()->create([
+        'title' => 'Processo com labels traduzidas',
+        'description' => 'Descricao',
+        'opened_by' => $user->id,
+        'owner_id' => $user->id,
+        'priority' => 'normal',
+        'status' => ProcessStatus::IN_PROGRESS->value,
+        'started_at' => now(),
+    ]);
+
+    $process->events()->create([
+        'event_number' => 1,
+        'event_type' => \App\Enums\Process\ProcessEventType::COMMENTED->value,
+        'description' => 'Comentario de teste',
+        'user_id' => $user->id,
+        'created_at' => now(),
+    ]);
+
+    $this->get(route('process.show', $process->uuid))
+        ->assertOk()
+        ->assertSee('Comentario')
+        ->assertDontSee('COMMENTED');
+});
+
+test('process index page displays translated status labels for the user', function () {
+    $user = createProcessUser(['process.view']);
+    $this->actingAs($user);
+
+    Process::query()->create([
+        'title' => 'Processo com status traduzido',
+        'description' => 'Descricao',
+        'opened_by' => $user->id,
+        'owner_id' => $user->id,
+        'priority' => 'normal',
+        'status' => ProcessStatus::IN_PROGRESS->value,
+        'started_at' => now(),
+    ]);
+
+    $this->get(route('process.index'))
+        ->assertOk()
+        ->assertSeeText('Em andamento')
+        ->assertDontSeeText('IN_PROGRESS');
+});
+
 test('process show page assigns owner via modal action', function () {
     $user = createProcessUser(['process.view']);
     $newOwner = User::factory()->create();
@@ -399,6 +556,7 @@ test('process show page assigns owner via modal action', function () {
         'status' => ProcessStatus::IN_PROGRESS->value,
         'started_at' => now(),
     ]);
+    $process->organizations()->sync([$organization->id]);
 
     ProcessStep::query()->create([
         'process_id' => $process->id,

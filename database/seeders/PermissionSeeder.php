@@ -3,10 +3,10 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\PermissionRegistrar;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class PermissionSeeder extends Seeder
 {
@@ -43,6 +43,11 @@ class PermissionSeeder extends Seeder
                 'name' => 'process.create',
                 'description' => 'Criar processos',
                 'translation' => 'Criar processos',
+            ],
+            [
+                'name' => 'process.dashboard.view',
+                'description' => 'Visualizar dashboard de processos',
+                'translation' => 'Dashboard de processos',
             ],
 
             // Configuração do Sistema (Cadastros Mestres)
@@ -233,6 +238,7 @@ class PermissionSeeder extends Seeder
             'organization.manage.workflow',
             'process.view',
             'process.create',
+            'process.dashboard.view',
         ]);
 
         // Auditoria

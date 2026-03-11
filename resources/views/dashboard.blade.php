@@ -10,6 +10,7 @@
             'unread_count' => 0,
             'recent' => collect(),
         ];
+        $processEntries = $processEntries ?? collect();
 
         $statusTotal = collect($taskOverview['statuses'])->sum('total');
         $statusOffset = 0;
@@ -172,7 +173,7 @@
                     </div>
                 </div>
 
-                <div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl shadow-lg overflow-hidden">
                         <div class="px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
                             <div class="flex items-center gap-3">
@@ -230,8 +231,63 @@
                         </div>
                     </div>
 
-                </div>
+                    <div class="bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl shadow-lg overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200/80 bg-gradient-to-r from-gray-50/50 via-white to-gray-50/50">
+                            <div class="flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-1 h-5 bg-gradient-to-b from-emerald-700 to-emerald-900 rounded-full"></div>
+                                    <h4 class="text-sm font-semibold text-gray-700">Processos que voce faz parte</h4>
+                                </div>
+                                <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-700">
+                                    {{ $processEntries->count() }} itens
+                                </span>
+                            </div>
+                        </div>
 
+                        <div class="flex flex-col">
+                            <div class="flex-1 p-4 space-y-3">
+                                @forelse($processEntries as $process)
+                                @php
+                                    $processStatus = \App\Enums\Process\ProcessStatus::tryFrom((string) $process->status);
+                                    $processStatusLabel = $processStatus?->label() ?? $process->status;
+                                    $processStatusClass = $processStatus?->badgeClass() ?? 'bg-gray-100 text-gray-700';
+                                @endphp
+
+                                    <a href="{{ route('process.show', $process->uuid) }}" class="block rounded-xl border border-gray-200 bg-white px-4 py-3 transition-all duration-200 hover:border-emerald-300 hover:shadow-md">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="min-w-0 flex-1">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">{{ $process->code }}</span>
+                                                    <span class="rounded-full px-2 py-0.5 text-[10px] font-semibold {{ $processStatusClass }}">{{ $processStatusLabel }}</span>
+                                                </div>
+                                                <p class="mt-2 truncate text-sm font-semibold text-gray-900">{{ $process->title }}</p>
+                                                <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500">
+                                                    <span>Setor atual: {{ $process->organization?->title ?? 'Nao definido' }}</span>
+                                                    <span>Responsavel: {{ $process->owner?->name ?? 'Nao atribuido' }}</span>
+                                                </div>
+                                            </div>
+                                            <i class="fa-solid fa-chevron-right mt-1 text-xs text-gray-300"></i>
+                                        </div>
+                                    </a>
+                                @empty
+                                    <div class="rounded-xl bg-gray-50 px-4 py-4 text-sm text-gray-500">
+                                        Nenhum processo com acesso disponivel no momento.
+                                    </div>
+                                @endforelse
+                            </div>
+
+                            @if(Auth::user()->can('process.view'))
+                                <div class="px-6 py-3 border-t border-gray-200/80 bg-gradient-to-r from-gray-50/50 to-white/50">
+                                    <x-button href="{{ route('process.index') }}" variant="gray_text" class="w-full !text-gray-500 hover:!text-emerald-700 !text-xs flex items-center justify-center gap-1">
+                                        <i class="fa-solid fa-folder-tree text-[10px]"></i>
+                                        Ver todos os processos
+                                        <i class="fas fa-chevron-right text-[8px]"></i>
+                                    </x-button>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="space-y-6">

@@ -8,8 +8,8 @@ use App\Livewire\Traits\WithFlashMessage;
 use App\Models\Administration\User\User;
 use App\Models\Process\Process;
 use App\Services\Process\ProcessService;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use InvalidArgumentException;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -24,10 +24,15 @@ class ProcessShowPage extends Component
     protected ProcessService $processService;
 
     public string $uuid;
+
     public string $dispatchComment = '';
+
     public string $commentText = '';
+
     public ?int $assignedOwnerId = null;
+
     public string $assignmentComment = '';
+
     public ?string $pendingTransition = null;
 
     public function boot(ProcessService $processService): void
@@ -38,21 +43,32 @@ class ProcessShowPage extends Component
     public function mount(string $uuid): void
     {
         $this->uuid = $uuid;
-        $this->authorize('process.view');
+
+        if (! Auth::check()) {
+            $this->redirectRoute('dashboard', navigate: true);
+
+            return;
+        }
+
+        $process = $this->processService->findByUuid($uuid);
+        if (! $this->processService->userCanView($process, (int) Auth::id())) {
+            $this->redirectRoute('dashboard', navigate: true);
+        }
     }
 
     public function openDispatchModal(string $direction): void
     {
-        $this->authorize('process.view');
-        $process = $this->processService->findByUuid($this->uuid);
+        $process = $this->processService->findVisibleByUuid($this->uuid, (int) Auth::id());
 
         if (! $this->processService->userCanManageCurrentStepActions($process, (int) Auth::id())) {
             $this->flashWarning('Somente usuario do setor da etapa atual pode executar esta acao.');
+
             return;
         }
 
         if (! in_array($direction, ['advance', 'retreat'], true)) {
             $this->flashWarning('Acao de transicao invalida.');
+
             return;
         }
 
@@ -63,11 +79,12 @@ class ProcessShowPage extends Component
 
     public function confirmStepTransition(): void
     {
-        $this->authorize('process.view');
+        $process = $this->processService->findVisibleByUuid($this->uuid, (int) Auth::id());
 
         if (! in_array($this->pendingTransition, ['advance', 'retreat'], true)) {
             $this->flashWarning('Acao de transicao invalida.');
             $this->closeModal();
+
             return;
         }
 
@@ -76,7 +93,6 @@ class ProcessShowPage extends Component
         ]);
 
         try {
-            $process = $this->processService->findByUuid($this->uuid);
             if ($this->pendingTransition === 'advance') {
                 $this->processService->advanceStep($process, (int) Auth::id(), $this->dispatchComment);
             } else {
@@ -100,20 +116,18 @@ class ProcessShowPage extends Component
 
     public function openCommentModal(): void
     {
-        $this->authorize('process.view');
         $this->commentText = '';
         $this->openModal('modal-process-comment');
     }
 
     public function saveComment(): void
     {
-        $this->authorize('process.view');
+        $process = $this->processService->findVisibleByUuid($this->uuid, (int) Auth::id());
         $this->validate([
             'commentText' => ['required', 'string', 'max:2000'],
         ]);
 
         try {
-            $process = $this->processService->findByUuid($this->uuid);
             $this->processService->comment($process, (int) Auth::id(), $this->commentText);
             $this->commentText = '';
             $this->closeModal();
@@ -127,11 +141,11 @@ class ProcessShowPage extends Component
 
     public function openAssignOwnerModal(): void
     {
-        $this->authorize('process.view');
-        $process = $this->processService->findByUuid($this->uuid);
+        $process = $this->processService->findVisibleByUuid($this->uuid, (int) Auth::id());
 
         if (! $this->processService->userCanManageCurrentStepActions($process, (int) Auth::id())) {
             $this->flashWarning('Somente usuario do setor da etapa atual pode executar esta acao.');
+
             return;
         }
 
@@ -153,14 +167,13 @@ class ProcessShowPage extends Component
 
     public function assignOwner(): void
     {
-        $this->authorize('process.view');
+        $process = $this->processService->findVisibleByUuid($this->uuid, (int) Auth::id());
         $this->validate([
             'assignedOwnerId' => ['required', 'integer', 'exists:users,id'],
             'assignmentComment' => ['required', 'string', 'max:2000'],
         ]);
 
         try {
-            $process = $this->processService->findByUuid($this->uuid);
             $this->processService->assignOwner(
                 $process,
                 (int) Auth::id(),
@@ -179,7 +192,7 @@ class ProcessShowPage extends Component
 
     public function render()
     {
-        $process = $this->processService->findByUuid($this->uuid);
+        $process = $this->processService->findVisibleByUuid($this->uuid, (int) Auth::id());
         $canManageStepActions = $this->processService
             ->userCanManageCurrentStepActions($process, (int) Auth::id());
         $currentStepOrganizationId = $this->processService->resolveCurrentStepOrganizationId($process);

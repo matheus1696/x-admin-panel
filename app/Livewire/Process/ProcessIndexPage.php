@@ -33,7 +33,9 @@ class ProcessIndexPage extends Component
     ];
 
     public string $title = '';
+
     public ?string $description = null;
+
     public ?int $workflow_id = null;
 
     public function boot(ProcessService $processService): void
@@ -90,7 +92,7 @@ class ProcessIndexPage extends Component
 
     public function render()
     {
-        $processes = $this->processService->index($this->filters);
+        $processes = $this->processService->index($this->filters, (int) Auth::id());
 
         return view('livewire.process.process-index-page', [
             'processes' => $processes,

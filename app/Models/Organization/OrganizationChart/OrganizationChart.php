@@ -3,6 +3,7 @@
 namespace App\Models\Organization\OrganizationChart;
 
 use App\Models\Administration\User\User;
+use App\Models\Process\Process;
 use App\Models\Traits\HasActive;
 use App\Models\Traits\HasTitleFilter;
 use App\Models\Traits\HasUuid;
@@ -42,5 +43,15 @@ class OrganizationChart extends Model
     {
         return $this->belongsToMany(User::class, 'organization_chart_user', 'organization_chart_id', 'user_id')
             ->withTimestamps();
+    }
+
+    public function processes(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Process::class,
+            'process_organization_chart',
+            'organization_chart_id',
+            'process_id'
+        )->withTimestamps();
     }
 }

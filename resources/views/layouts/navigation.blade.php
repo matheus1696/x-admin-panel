@@ -23,14 +23,31 @@
             :active="request()->routeIs('tasks.index')"
         />
 
-        @can('process.view')
-            <x-sidebar.main-link
-                href="{{ route('process.index') }}"
-                icon="fa-solid fa-folder-tree"
+        @canany(['process.view', 'process.dashboard.view'])
+            <x-sidebar.main-dropdown
                 title="Gestão de Processos"
+                icon="fa-solid fa-folder-tree"
                 :active="request()->routeIs('process.*')"
-            />
-        @endcan
+            >
+                @can('process.view')
+                    <x-sidebar.dropdown-link
+                        href="{{ route('process.index') }}"
+                        title="Lista de Processos"
+                        icon="fa-solid fa-list"
+                        :active="request()->routeIs('process.index') || request()->routeIs('process.show')"
+                    />
+                @endcan
+
+                @can('process.dashboard.view')
+                    <x-sidebar.dropdown-link
+                        href="{{ route('process.dashboard') }}"
+                        title="Dashboard"
+                        icon="fa-solid fa-chart-column"
+                        :active="request()->routeIs('process.dashboard')"
+                    />
+                @endcan
+            </x-sidebar.main-dropdown>
+        @endcanany
 
         @canany(['time_clock.register', 'time_clock.view_own', 'time_clock.view_any', 'time_clock.reports.view', 'time_clock.locations.manage'])
             <x-sidebar.main-dropdown

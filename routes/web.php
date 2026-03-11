@@ -1,35 +1,35 @@
 <?php
 
-use App\Http\Controllers\Audit\LogController;
 use App\Http\Controllers\Assets\AuditCampaignPdfController;
 use App\Http\Controllers\Assets\ReleaseOrderPdfController;
+use App\Http\Controllers\Audit\LogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
-use App\Livewire\Assets\InvoiceIndex;
-use App\Livewire\Assets\AssetShow;
-use App\Livewire\Assets\AssetsIndex;
-use App\Livewire\Assets\AssetsStockIndex;
-use App\Livewire\Assets\ReleaseOrderCreate;
-use App\Livewire\Assets\ReleaseOrderIndex;
-use App\Livewire\Assets\ReleaseOrderShow;
-use App\Livewire\Assets\GlobalItemAssetsIndex;
-use App\Livewire\Assets\AssetsByState;
-use App\Livewire\Assets\AssetsByUnit;
-use App\Livewire\Assets\AuditsByPeriod;
-use App\Livewire\Assets\AuditMobile;
-use App\Livewire\Assets\AuditCampaignCreate;
-use App\Livewire\Assets\AuditCampaignIndex;
-use App\Livewire\Assets\AuditCampaignShow;
-use App\Livewire\Assets\PurchasesByPeriod;
-use App\Livewire\Assets\TransfersByPeriod;
-use App\Livewire\Administration\Task\TaskStatusPage;
 use App\Livewire\Administration\Product\ProductMeasureUnitPage;
 use App\Livewire\Administration\Product\ProductPage;
 use App\Livewire\Administration\Product\ProductTypePage;
 use App\Livewire\Administration\Supplier\SupplierPage;
+use App\Livewire\Administration\Task\TaskStatusPage;
 use App\Livewire\Administration\User\UserPage;
 use App\Livewire\Administration\User\UserPermissionPage;
+use App\Livewire\Assets\AssetsByState;
+use App\Livewire\Assets\AssetsByUnit;
+use App\Livewire\Assets\AssetShow;
+use App\Livewire\Assets\AssetsIndex;
+use App\Livewire\Assets\AssetsStockIndex;
+use App\Livewire\Assets\AuditCampaignCreate;
+use App\Livewire\Assets\AuditCampaignIndex;
+use App\Livewire\Assets\AuditCampaignShow;
+use App\Livewire\Assets\AuditMobile;
+use App\Livewire\Assets\AuditsByPeriod;
+use App\Livewire\Assets\GlobalItemAssetsIndex;
+use App\Livewire\Assets\InvoiceIndex;
+use App\Livewire\Assets\PurchasesByPeriod;
+use App\Livewire\Assets\ReleaseOrderCreate;
+use App\Livewire\Assets\ReleaseOrderIndex;
+use App\Livewire\Assets\ReleaseOrderShow;
+use App\Livewire\Assets\TransfersByPeriod;
 use App\Livewire\Configuration\Establishment\Establishment\EstablishmentList;
 use App\Livewire\Configuration\Establishment\Establishment\EstablishmentShow;
 use App\Livewire\Configuration\Establishment\EstablishmentType\EstablishmentTypePage;
@@ -42,9 +42,10 @@ use App\Livewire\Organization\OrganizationChart\OrganizationChartConfigPage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartDashboardFullPage;
 use App\Livewire\Organization\OrganizationChart\OrganizationChartDashboardPage;
 use App\Livewire\Organization\Workflow\WorkflowProcessesPage;
-use App\Livewire\Public\Contact\ContactPage;
+use App\Livewire\Process\ProcessDashboardPage;
 use App\Livewire\Process\ProcessIndexPage;
 use App\Livewire\Process\ProcessShowPage;
+use App\Livewire\Public\Contact\ContactPage;
 use App\Livewire\Task\TaskHubPage;
 use App\Livewire\Task\TaskPage;
 use App\Livewire\TimeClock\EntriesIndex;
@@ -111,6 +112,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     */
     Route::prefix('processos')->name('process.')->group(function () {
         Route::get('/', ProcessIndexPage::class)->middleware('can:process.view')->name('index');
+        Route::get('/dashboard', ProcessDashboardPage::class)->middleware('can:process.dashboard.view')->name('dashboard');
         Route::get('/{uuid}', ProcessShowPage::class)->middleware('can:process.view')->name('show');
     });
 

@@ -7,7 +7,7 @@
 
     <div class="space-y-4">
         <!-- Timeline -->
-        <div class="mt-5 overflow-x-auto pb-2">
+        <div class="mt-5 overflow-x-auto pb-2 border border-gray-200 rounded-xl p-2 bg-gray-100/50 shadow-sm">
             @if ($timelineSteps->isNotEmpty())
                 <div class="flex min-w-max items-start">
                     @foreach ($timelineSteps as $timelineStep)
@@ -53,12 +53,12 @@
         </div>        
 
         <!-- Informacao de Abertura -->
-        <div class="grid grid-cols-1 gap-4 xl:grid-cols-12 rounded-xl border border-gray-200 bg-gray-50 shadow-sm overflow-hidden">
+        <div class="grid grid-cols-1 xl:grid-cols-12 rounded-xl border border-gray-200 bg-gray-100 shadow-sm overflow-hidden">
             <!-- Aside com informacoes do processo -->
-            <aside class="space-y-4 xl:col-span-3 p-4">
+            <aside class="space-y-4 xl:col-span-3 p-4 md:border-r border-gray-400">
                 <section>
-                    <div class="flex items-start gap-2 pb-3 border-b border-gray-200/50">
-                        <div class="size-10 rounded-full bg-gray-200 overflow-hidden">
+                    <div class="flex items-start gap-2 pb-3 border-b border-gray-300">
+                        <div class="size-10 rounded-full bg-stone-300 overflow-hidden">
                             <img
                                 src="{{ $process->owner?->avatar ? asset('storage/'.$process->owner->avatar) : asset('asset/img/favicon-infosaude-150-150.png') }}"
                                 alt="Avatar do usuario"
@@ -71,7 +71,7 @@
                         </div>
                     </div>
                     
-                    <div class="flex items-center gap-1 py-3 border-b border-gray-200/50">
+                    <div class="flex items-center gap-1 py-3 border-b border-gray-300">
                         <p class="text-xs text-gray-500">Fluxo vinculado</p>
                         <p class="text-xs font-semibold text-gray-900">{{ $process->workflow?->title ?? 'Nao definido' }}</p>
                     </div>
@@ -113,9 +113,9 @@
             <div class="xl:col-span-9 bg-white">
 
                 <section class="bg-white p-4">              
-                    <h2 class="pb-1 mt-1 text-xl font-semibold text-gray-900 border-b border-gray-200">{{ $process->title }}</h2>
+                    <h2 class="mt-1 text-xl text-gray-900 border-b border-gray-200"><span class="font-semibold">Assunto: </span>{{ $process->title }}</h2>
 
-                    <div class="pt-1 text-xs leading-6 text-gray-700 whitespace-pre-line min-h-24">
+                    <div class="text-sm leading-6 text-gray-700 whitespace-pre-line min-h-24">
                         {{ $process->description ?: 'Sem descricao cadastrada.' }} 
                     </div>
                 </section>
@@ -132,14 +132,9 @@
             <div class="mt-3 space-y-2">
                 @forelse ($process->events->sortBy('event_number') as $event)
                     @php
-                        $eventType = (string) ($event->event_type ?? '');
-                        $eventBadgeClass = match ($eventType) {
-                            'PROCESS_FORWARDED' => 'bg-emerald-100 text-emerald-700',
-                            'PROCESS_RETURNED' => 'bg-amber-100 text-amber-700',
-                            'PROCESS_OWNER_ASSIGNED' => 'bg-indigo-100 text-indigo-700',
-                            'PROCESS_COMMENTED' => 'bg-sky-100 text-sky-700',
-                            default => 'bg-slate-100 text-slate-700',
-                        };
+                        $eventType = \App\Enums\Process\ProcessEventType::tryFrom((string) ($event->event_type ?? ''));
+                        $eventBadgeClass = $eventType?->badgeClass() ?? 'bg-slate-100 text-slate-700';
+                        $eventLabel = $eventType?->label() ?? 'Evento';
                     @endphp
 
                     <article class="rounded-lg border border-gray-200 bg-gray-50/70 px-3 py-2">
@@ -149,68 +144,77 @@
                                     #{{ $event->event_number }}
                                 </span>
                                 <span class="text-[10px] font-semibold uppercase text-gray-500">
-                                    {{ str($eventType)->replace('PROCESS_', '')->replace('_', ' ') }}
+                                    {{ $eventLabel }}
                                 </span>
                             </div>
                             <span class="text-[11px] text-gray-500">{{ $event->created_at?->format('d/m/Y H:i') }}</span>
                         </div>
 
-                        <p class="mt-1 text-xs text-gray-800">{{ $event->description ?: 'Sem descricao.' }}</p>
+                        <p class="mt-1 text-sm text-gray-800">{{ $event->description ?: 'Sem descricao.' }}</p>
                         <p class="mt-1 text-[11px] text-gray-500">Usuario: {{ $event->user?->name ?? 'Sistema' }}</p>
                     </article>
                 @empty
-                    <p class="text-xs text-gray-500">Nenhum evento registrado para este processo.</p>
+                    <p class="text-sm text-gray-500">Nenhum evento registrado para este processo.</p>
                 @endforelse
             </div>
         </section>
         
         <!-- Acoes disponiveis -->
-        <div class="flex justify-end gap-2">
-            <x-button
-                type="button"
-                text="Comentar"
-                icon="fa-solid fa-comment"
-                variant="gray_text"
-                wire:click="openCommentModal"
-                wire:loading.attr="disabled"
-                wire:target="openCommentModal"
-            />
-            <x-button
-                type="button"
-                text="Atribuir responsavel"
-                icon="fa-solid fa-user-pen"
-                variant="gray_text"
-                wire:click="openAssignOwnerModal"
-                wire:loading.attr="disabled"
-                wire:target="openAssignOwnerModal"
-                :disabled="! $canManageStepActions"
-            />
-            <x-button
-                type="button"
-                text="Retroceder etapa"
-                icon="fa-solid fa-arrow-left"
-                variant="gray_text"
-                wire:click="openDispatchModal('retreat')"
-                wire:loading.attr="disabled"
-                wire:target="openDispatchModal"
-                :disabled="! $canManageStepActions"
-            />
-            <x-button
-                type="button"
-                text="Avancar etapa"
-                icon="fa-solid fa-arrow-right"
-                variant="gray_text"
-                wire:click="openDispatchModal('advance')"
-                wire:loading.attr="disabled"
-                wire:target="openDispatchModal"
-                :disabled="! $canManageStepActions"
-            />
+        <div class="flex justify-end">
+            <div class="inline-flex justify-center items-center gap-2 bg-emerald-800 py-2 px-4 rounded-lg divide-x divide-emerald-100/20">
+                <div>
+                    <x-button
+                        type="button"
+                        text="Comentar"
+                        icon="fa-solid fa-comment"
+                        variant="white_text"
+                        fullWidth="true"
+                        wire:click="openCommentModal"
+                        wire:loading.attr="disabled"
+                        wire:target="openCommentModal"
+                    />
+                </div>
+                <div class="pl-2">
+                    <x-button
+                        type="button"
+                        text="Atribuir responsavel"
+                        icon="fa-solid fa-user-pen"
+                        variant="white_text"
+                        fullWidth="true"
+                        wire:click="openAssignOwnerModal"
+                        wire:loading.attr="disabled"
+                        wire:target="openAssignOwnerModal"
+                        :disabled="! $canManageStepActions"
+                    />
+                </div>
+                <div class="pl-2">                    
+                    <x-button
+                        type="button"
+                        text="Retroceder etapa"
+                        icon="fa-solid fa-arrow-left"
+                        variant="white_text"
+                        fullWidth="true"
+                        wire:click="openDispatchModal('retreat')"
+                        wire:loading.attr="disabled"
+                        wire:target="openDispatchModal"
+                        :disabled="! $canManageStepActions"
+                    />
+                </div>
+                <div class="pl-2">
+                    <x-button
+                        type="button"
+                        text="Avancar etapa"
+                        icon="fa-solid fa-arrow-right"
+                        variant="white_text"
+                        fullWidth="true"
+                        wire:click="openDispatchModal('advance')"
+                        wire:loading.attr="disabled"
+                        wire:target="openDispatchModal"
+                        :disabled="! $canManageStepActions"
+                    />
+                </div>
+            </div>
         </div>
-        @if (! $canManageStepActions)
-            <p class="text-xs text-amber-600">
-                Somente usuario vinculado ao setor da etapa atual pode atribuir, avancar ou retroceder.
-            </p>
-        @endif
     </div>
 
     <x-modal :show="$showModal" maxWidth="max-w-2xl">
