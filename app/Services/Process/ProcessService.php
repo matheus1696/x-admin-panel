@@ -41,6 +41,22 @@ class ProcessService
             $query->where('organization_id', (int) $filters['organization_id']);
         }
 
+        if ((bool) ($filters['my_sectors_only'] ?? false)) {
+            $query->whereHas('organization.users', function (Builder $organizationQuery) use ($userId): void {
+                $organizationQuery->where('users.id', $userId);
+            });
+        }
+
+        if ((bool) ($filters['overdue_only'] ?? false)) {
+            $overdueProcessIds = $this->overdueCurrentStepProcessIdsForUser($userId);
+
+            if ($overdueProcessIds->isEmpty()) {
+                $query->whereRaw('1 = 0');
+            } else {
+                $query->whereIn('id', $overdueProcessIds->all());
+            }
+        }
+
         return $query
             ->orderByDesc('updated_at')
             ->orderByDesc('created_at')
@@ -648,6 +664,41 @@ class ProcessService
             ->values();
     }
 
+    /**
+     * @param  \Illuminate\Support\Collection<int, \App\Models\Process\Process>  $processes
+     * @return \Illuminate\Support\Collection<int, int>
+     */
+    public function processIdsWithOverdueCurrentStep(Collection $processes): Collection
+    {
+        $processes = $processes->filter(fn ($process): bool => $process instanceof Process)->values();
+        if ($processes->isEmpty()) {
+            return collect();
+        }
+
+        $processIds = $processes->pluck('id')->map(fn ($id): int => (int) $id)->values();
+
+        return ProcessStep::query()
+            ->whereIn('process_id', $processIds->all())
+            ->where('is_current', true)
+            ->whereHas('process', function (Builder $processQuery): void {
+                $processQuery->whereIn('status', [
+                    ProcessStatus::IN_PROGRESS,
+                ]);
+            })
+            ->whereNotNull('started_at')
+            ->whereNotNull('deadline_days')
+            ->get(['process_id', 'started_at', 'deadline_days'])
+            ->filter(function (ProcessStep $step): bool {
+                $dueAt = $this->resolveStepDueAt($step);
+
+                return $dueAt !== null && $dueAt->lt(now());
+            })
+            ->pluck('process_id')
+            ->map(fn ($id): int => (int) $id)
+            ->unique()
+            ->values();
+    }
+
     private function assertActorBelongsToCurrentStepOrganization(Process $process, int $actorId): void
     {
         if (! $this->userCanManageCurrentStepActions($process, $actorId)) {
@@ -681,6 +732,40 @@ class ProcessService
                     });
             })
             ->distinct();
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection<int, int>
+     */
+    private function overdueCurrentStepProcessIdsForUser(int $userId): Collection
+    {
+        $accessibleProcessIds = $this->accessibleProcessesQuery($userId)
+            ->pluck('processes.id')
+            ->map(fn ($id): int => (int) $id)
+            ->values();
+
+        if ($accessibleProcessIds->isEmpty()) {
+            return collect();
+        }
+
+        return ProcessStep::query()
+            ->whereIn('process_id', $accessibleProcessIds->all())
+            ->where('is_current', true)
+            ->whereNotNull('started_at')
+            ->whereNotNull('deadline_days')
+            ->whereHas('process', function (Builder $query): void {
+                $query->where('status', ProcessStatus::IN_PROGRESS);
+            })
+            ->get(['process_id', 'started_at', 'deadline_days'])
+            ->filter(function (ProcessStep $step): bool {
+                $dueAt = $this->resolveStepDueAt($step);
+
+                return $dueAt !== null && $dueAt->lt(now());
+            })
+            ->pluck('process_id')
+            ->map(fn ($id): int => (int) $id)
+            ->unique()
+            ->values();
     }
 
     private function dashboardProcessesQuery(array $filters): Builder

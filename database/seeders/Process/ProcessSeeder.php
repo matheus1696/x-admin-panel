@@ -18,7 +18,11 @@ use Illuminate\Support\Str;
 
 class ProcessSeeder extends Seeder
 {
-    private const BULK_PROCESS_TOTAL = 1200;
+    private const MONTHS_BACK = 12;
+
+    private const MIN_PROCESSES_PER_MONTH = 1;
+
+    private const MAX_PROCESSES_PER_MONTH = 5;
 
     public function run(): void
     {
@@ -472,20 +476,29 @@ class ProcessSeeder extends Seeder
             'Aquisição de mobiliário administrativo',
         ];
 
-        $baseDate = now()->subMonths(15)->startOfDay();
         $scenarios = [];
+        $globalIndex = 1;
 
-        for ($i = 1; $i <= self::BULK_PROCESS_TOTAL; $i++) {
-            $status = $this->resolveStatusForIndex($i);
-            $createdAt = $baseDate->copy()->addHours($i * 8);
-            $startedAt = $createdAt->copy()->addHours(($i % 5) + 1);
+        for ($monthOffset = self::MONTHS_BACK - 1; $monthOffset >= 0; $monthOffset--) {
+            $monthStart = now()->subMonths($monthOffset)->startOfMonth();
+            $monthlyCount = $this->resolveMonthlyVolume($monthStart, $monthOffset);
+
+            for ($monthItem = 1; $monthItem <= $monthlyCount; $monthItem++) {
+                $status = $this->resolveStatusForIndex($globalIndex);
+                $createdAt = $this->resolveCreatedAtWithinMonth($monthStart, $monthlyCount, $monthItem);
+                $startedAt = $createdAt->copy()->addHours(($globalIndex % 5) + 1);
 
             $scenario = [
-                'title' => sprintf('%s #%04d', $titles[$i % count($titles)], $i),
+                'title' => sprintf(
+                    '%s %s #%04d',
+                    $titles[$globalIndex % count($titles)],
+                    $monthStart->format('m/Y'),
+                    $globalIndex
+                ),
                 'description' => 'Processo gerado para massa de dados com rastreabilidade completa de etapas e eventos.',
-                'opened_by' => $openedByPool[$i % count($openedByPool)],
-                'owner' => $ownerPool[$i % count($ownerPool)],
-                'priority' => $priorities[$i % count($priorities)],
+                'opened_by' => $openedByPool[$globalIndex % count($openedByPool)],
+                'owner' => $ownerPool[$globalIndex % count($ownerPool)],
+                'priority' => $priorities[$globalIndex % count($priorities)],
                 'status' => $status,
                 'created_at' => $createdAt->toDateTimeString(),
                 'started_at' => $startedAt->toDateTimeString(),
@@ -494,7 +507,7 @@ class ProcessSeeder extends Seeder
             ];
 
             if ($status === ProcessStatus::CLOSED) {
-                $finishedAt = $startedAt->copy()->addDays(($i % 30) + 3);
+                $finishedAt = $startedAt->copy()->addDays(($globalIndex % 30) + 3);
 
                 $scenario['finished_at'] = $finishedAt->toDateTimeString();
                 $scenario['completed_steps'] = $maxStepOrder;
@@ -502,7 +515,7 @@ class ProcessSeeder extends Seeder
             }
 
             if ($status === ProcessStatus::IN_PROGRESS) {
-                $completedSteps = $maxCompletedInProgress > 0 ? ($i % ($maxCompletedInProgress + 1)) : 0;
+                $completedSteps = $maxCompletedInProgress > 0 ? ($globalIndex % ($maxCompletedInProgress + 1)) : 0;
                 $currentStepOrder = min($completedSteps + 1, $maxStepOrder);
                 $currentStepStartedAt = $startedAt->copy()->addDays(max(0, $completedSteps));
 
@@ -516,7 +529,7 @@ class ProcessSeeder extends Seeder
             }
 
             if ($status === ProcessStatus::CANCELLED) {
-                $completedSteps = min(max(1, $i % max(2, $maxCompletedInProgress + 1)), $maxCompletedInProgress);
+                $completedSteps = min(max(1, $globalIndex % max(2, $maxCompletedInProgress + 1)), $maxCompletedInProgress);
                 $finishedAt = $startedAt->copy()->addDays(max(2, $completedSteps + 1));
 
                 $scenario['completed_steps'] = $completedSteps;
@@ -525,9 +538,29 @@ class ProcessSeeder extends Seeder
             }
 
             $scenarios[] = $scenario;
+                $globalIndex++;
+            }
         }
 
         return $scenarios;
+    }
+
+    private function resolveMonthlyVolume(Carbon $monthStart, int $monthOffset): int
+    {
+        $range = self::MAX_PROCESSES_PER_MONTH - self::MIN_PROCESSES_PER_MONTH;
+        $seed = (($monthOffset + 1) * 37) + ((int) $monthStart->month * 11) + ((int) $monthStart->year % 100);
+
+        return self::MIN_PROCESSES_PER_MONTH + ($seed % ($range + 1));
+    }
+
+    private function resolveCreatedAtWithinMonth(Carbon $monthStart, int $monthlyCount, int $position): Carbon
+    {
+        $monthEnd = $monthStart->copy()->endOfMonth()->endOfDay();
+        $windowEnd = $monthEnd->lt(now()) ? $monthEnd : now()->subMinutes(5);
+        $windowSeconds = max(1, $monthStart->diffInSeconds($windowEnd));
+        $slotSeconds = (int) floor(($position * $windowSeconds) / ($monthlyCount + 1));
+
+        return $monthStart->copy()->addSeconds($slotSeconds);
     }
 
     private function resolveStatusForIndex(int $index): string

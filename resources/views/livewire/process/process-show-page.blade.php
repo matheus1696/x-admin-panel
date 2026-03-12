@@ -16,14 +16,19 @@
                                 $stepState = (string) ($timelineStep['state'] ?? '');
                                 $isCompleted = $stepState === 'Concluida';
                                 $isInProgress = $stepState === 'Em andamento';
+                                $isOverdue = (bool) ($timelineStep['is_overdue'] ?? false);
 
                                 $stateClass = $isCompleted
                                     ? 'bg-emerald-100 text-emerald-700'
-                                    : ($isInProgress ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-700');
+                                    : ($isInProgress
+                                        ? ($isOverdue ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700')
+                                        : 'bg-slate-100 text-slate-700');
 
                                 $cardClass = $isCompleted
                                     ? 'border-emerald-200 bg-emerald-50/60'
-                                    : ($isInProgress ? 'border-amber-200 bg-amber-50/60' : 'border-slate-200 bg-slate-50/60');
+                                    : ($isInProgress
+                                        ? ($isOverdue ? 'border-red-200 bg-red-50/60' : 'border-amber-200 bg-amber-50/60')
+                                        : 'border-slate-200 bg-slate-50/60');
                             @endphp
                             <article class="w-72 shrink-0 rounded-2xl border shadow-sm overflow-hidden {{ $cardClass }}">
                                 <header class="flex items-center justify-between gap-2 border-b border-gray-200/60 px-4 py-2 {{ $stateClass }}">                                   
@@ -38,6 +43,9 @@
                                 <div class="px-4 py-2">
                                     <h3 class="text-xs font-semibold text-gray-900 truncate">{{ $timelineStep['title'] }}</h3>
                                     <p class="mt-0.5 text-xs text-gray-500">Setor: {{ $timelineStep['organization_title'] ?? 'Nao definido' }}</p>
+                                    <p class="mt-0.5 text-xs text-gray-500">
+                                        Inicio: {{ data_get($timelineStep, 'started_at')?->format('d/m/Y H:i') ?? '-' }}
+                                    </p>
                                 </div>
                             </article>
 

@@ -6,6 +6,7 @@ use App\Livewire\Traits\Modal;
 use App\Livewire\Traits\WithFlashMessage;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Organization\Workflow\Workflow;
+use App\Models\Process\ProcessStatus;
 use App\Services\Process\ProcessService;
 use App\Validation\Process\ProcessRules;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -26,8 +27,10 @@ class ProcessIndexPage extends Component
 
     public array $filters = [
         'title' => '',
-        'status' => 'all',
+        'status' => ProcessStatus::IN_PROGRESS,
         'organization_id' => '',
+        'overdue_only' => false,
+        'my_sectors_only' => false,
         'perPage' => 10,
     ];
 
@@ -52,6 +55,17 @@ class ProcessIndexPage extends Component
         $this->resetPage();
     }
 
+    public function toggleQuickFilter(string $filter): void
+    {
+        if (! in_array($filter, ['overdue_only', 'my_sectors_only'], true)) {
+            return;
+        }
+
+        $current = (bool) ($this->filters[$filter] ?? false);
+        $this->filters[$filter] = ! $current;
+        $this->resetPage();
+    }
+
     public function create(): void
     {
         $this->authorize('process.create');
@@ -71,7 +85,7 @@ class ProcessIndexPage extends Component
                 ? 'Processo criado, setor atual definido pela primeira etapa e iniciado com sucesso.'
                 : 'Processo criado com sucesso.'
         );
-        $this->closeModal();
+        $this->redirectRoute('process.show', $process->uuid, navigate: true);
     }
 
     public function openProcess(string $uuid): void
@@ -95,10 +109,13 @@ class ProcessIndexPage extends Component
         $processes = $this->processService->index($this->filters, $userId);
         $processIdsWithUnseenUpdates = $this->processService
             ->processIdsWithUnseenUpdates($processes->getCollection(), $userId);
+        $processIdsWithOverdueCurrentStep = $this->processService
+            ->processIdsWithOverdueCurrentStep($processes->getCollection());
 
         return view('livewire.process.process-index-page', [
             'processes' => $processes,
             'processIdsWithUnseenUpdates' => $processIdsWithUnseenUpdates,
+            'processIdsWithOverdueCurrentStep' => $processIdsWithOverdueCurrentStep,
             'organizations' => OrganizationChart::query()->orderBy('title')->get(['id', 'title']),
             'workflows' => Workflow::query()->where('is_active', true)->orderBy('title')->get(['id', 'title']),
             'statuses' => $this->processService->availableStatuses(),

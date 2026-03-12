@@ -48,7 +48,7 @@ test('process page creates new process via livewire', function () {
         'is_active' => true,
     ]);
 
-    Livewire::test(ProcessIndexPage::class)
+    $component = Livewire::test(ProcessIndexPage::class)
         ->call('create')
         ->set('title', 'Processo Livewire')
         ->set('description', 'Criado em teste')
@@ -56,7 +56,11 @@ test('process page creates new process via livewire', function () {
         ->call('store')
         ->assertHasNoErrors();
 
-    expect(Process::query()->where('title', 'Processo Livewire')->exists())->toBeTrue();
+    $process = Process::query()->where('title', 'Processo Livewire')->first();
+
+    expect($process)->not->toBeNull();
+
+    $component->assertRedirect(route('process.show', $process->uuid));
 });
 
 test('process page validates required fields on create', function () {
@@ -510,7 +514,7 @@ test('process show page displays translated event labels for the user', function
         ->assertDontSee('COMMENTED');
 });
 
-test('process index page displays translated status labels for the user', function () {
+test('process index page renders process card without exposing raw status code', function () {
     $user = createProcessUser(['process.view']);
     $this->actingAs($user);
 
@@ -526,7 +530,7 @@ test('process index page displays translated status labels for the user', functi
 
     $this->get(route('process.index'))
         ->assertOk()
-        ->assertSeeText('Em andamento')
+        ->assertSeeText('Processo com status traduzido')
         ->assertDontSeeText('IN_PROGRESS');
 });
 

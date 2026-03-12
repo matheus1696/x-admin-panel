@@ -19,11 +19,11 @@ class DashboardController extends Controller
 
         return view('dashboard', [
             'processEntries' => $user->can('process.view')
-                ? $processService->dashboardEntries((int) $user->id)
+                ? $processService->dashboardEntries((int) $user->id, 3)
                 : collect(),
             'processStatuses' => $processService->availableStatuses(),
             'taskOverview' => $taskService->userOverview((int) $user->id),
-            'notificationSummary' => $notificationService->summaryForUser($user),
+            'notificationSummary' => $notificationService->summaryForUser($user, 3),
         ]);
     }
 }

@@ -221,6 +221,7 @@ class ProcessShowPage extends Component
 
         return $steps->map(function ($step) use ($process) {
             $state = $this->resolveStepStateLabel($process, $step);
+            $isOverdue = $state === 'Em andamento' && $this->isStepOverdue($step);
 
             return [
                 'id' => (int) $step->id,
@@ -228,9 +229,22 @@ class ProcessShowPage extends Component
                 'required' => (bool) $step->required,
                 'deadline_days' => $step->deadline_days,
                 'organization_title' => $step->organization?->title,
+                'started_at' => $step->started_at,
                 'state' => $state,
+                'is_overdue' => $isOverdue,
             ];
         });
+    }
+
+    private function isStepOverdue(object $step): bool
+    {
+        if ($step->started_at === null || $step->deadline_days === null) {
+            return false;
+        }
+
+        $dueAt = $step->started_at->copy()->addDays((int) $step->deadline_days);
+
+        return $dueAt->lt(now());
     }
 
     private function resolveStepStateLabel(Process $process, object $step): string
