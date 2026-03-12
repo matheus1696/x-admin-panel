@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Process;
 
-use App\Enums\Process\ProcessStatus;
 use App\Livewire\Traits\Modal;
 use App\Livewire\Traits\WithFlashMessage;
 use App\Models\Administration\User\User;
 use App\Models\Process\Process;
+use App\Models\Process\ProcessStatus;
 use App\Services\Process\ProcessService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -249,7 +249,7 @@ class ProcessShowPage extends Component
             return 'Pendente';
         }
 
-        if ($process->status === ProcessStatus::CLOSED->value) {
+        if ($process->status === ProcessStatus::CLOSED) {
             return 'Concluida';
         }
 

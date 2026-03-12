@@ -21,6 +21,7 @@ class DashboardController extends Controller
             'processEntries' => $user->can('process.view')
                 ? $processService->dashboardEntries((int) $user->id)
                 : collect(),
+            'processStatuses' => $processService->availableStatuses(),
             'taskOverview' => $taskService->userOverview((int) $user->id),
             'notificationSummary' => $notificationService->summaryForUser($user),
         ]);

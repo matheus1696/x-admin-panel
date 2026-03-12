@@ -11,6 +11,7 @@
             'recent' => collect(),
         ];
         $processEntries = $processEntries ?? collect();
+        $processStatuses = $processStatuses ?? collect();
 
         $statusTotal = collect($taskOverview['statuses'])->sum('total');
         $statusOffset = 0;
@@ -248,9 +249,9 @@
                             <div class="flex-1 p-4 space-y-3">
                                 @forelse($processEntries as $process)
                                 @php
-                                    $processStatus = \App\Enums\Process\ProcessStatus::tryFrom((string) $process->status);
-                                    $processStatusLabel = $processStatus?->label() ?? $process->status;
-                                    $processStatusClass = $processStatus?->badgeClass() ?? 'bg-gray-100 text-gray-700';
+                                    $processStatus = collect($processStatuses)->firstWhere('code', (string) $process->status);
+                                    $processStatusLabel = data_get($processStatus, 'label', $process->status);
+                                    $processStatusClass = data_get($processStatus, 'badge_class', 'bg-gray-100 text-gray-700');
                                 @endphp
 
                                     <a href="{{ route('process.show', $process->uuid) }}" class="block rounded-xl border border-gray-200 bg-white px-4 py-3 transition-all duration-200 hover:border-emerald-300 hover:shadow-md">

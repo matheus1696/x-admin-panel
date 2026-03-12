@@ -25,7 +25,7 @@
                 wire:model.live="filters.status"
                 name="filters.status"
                 :options="collect($statuses)
-                    ->map(fn($status) => ['value' => $status->value, 'label' => $status->label()])
+                    ->map(fn($status) => ['value' => $status['code'], 'label' => $status['label']])
                     ->prepend(['value' => 'all', 'label' => 'Todos'])
                     ->values()
                     ->all()"
@@ -80,11 +80,11 @@
                     <x-page.table-td class="hidden lg:table-cell" :value="$process->organization?->title ?? '-'" />
                     <x-page.table-td class="text-center">
                         @php
-                            $processStatus = \App\Enums\Process\ProcessStatus::tryFrom((string) $process->status);
-                            $processStatusClass = $processStatus?->badgeClass() ?? 'bg-gray-100 text-gray-700';
+                            $processStatus = collect($statuses)->firstWhere('code', (string) $process->status);
+                            $processStatusClass = data_get($processStatus, 'badge_class', 'bg-gray-100 text-gray-700');
                         @endphp
                         <span class="rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] {{ $processStatusClass }}">
-                            {{ $processStatus?->label() ?? $process->status }}
+                            {{ data_get($processStatus, 'label', $process->status) }}
                         </span>
                     </x-page.table-td>
                     <x-page.table-td>

@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\Process\ProcessStatus;
+use App\Models\Process\ProcessStatus;
 use App\Livewire\Process\ProcessIndexPage;
 use App\Livewire\Process\ProcessShowPage;
 use App\Models\Administration\User\User;
@@ -119,7 +119,7 @@ test('process page auto starts process and sets current organization from first 
         ->first();
 
     expect($process)->not->toBeNull()
-        ->and($process->status)->toBe(ProcessStatus::IN_PROGRESS->value)
+        ->and($process->status)->toBe(ProcessStatus::IN_PROGRESS)
         ->and($process->started_at)->not->toBeNull()
         ->and($process->organization_id)->toBe($organization->id);
 });
@@ -161,7 +161,7 @@ test('process show page renders workflow timeline and detail sections', function
         'opened_by' => $user->id,
         'owner_id' => $user->id,
         'priority' => 'normal',
-        'status' => 'open',
+        'status' => ProcessStatus::IN_PROGRESS,
     ]);
     $process->organizations()->sync([$organization->id]);
 
@@ -214,7 +214,7 @@ test('process show page allows access for user linked to any process step sector
         'opened_by' => $creator->id,
         'owner_id' => $creator->id,
         'priority' => 'normal',
-        'status' => ProcessStatus::IN_PROGRESS->value,
+        'status' => ProcessStatus::IN_PROGRESS,
         'started_at' => now(),
     ]);
     $process->organizations()->sync([$organizationA->id, $organizationB->id]);
@@ -269,7 +269,7 @@ test('process show page blocks user without owner or process step sector access'
         'opened_by' => $owner->id,
         'owner_id' => $owner->id,
         'priority' => 'normal',
-        'status' => ProcessStatus::IN_PROGRESS->value,
+        'status' => ProcessStatus::IN_PROGRESS,
         'started_at' => now(),
     ]);
     $process->organizations()->sync([$organization->id]);
@@ -327,7 +327,7 @@ test('process show page advances to next step via livewire action', function () 
         'opened_by' => $user->id,
         'owner_id' => $user->id,
         'priority' => 'normal',
-        'status' => ProcessStatus::IN_PROGRESS->value,
+        'status' => ProcessStatus::IN_PROGRESS,
         'started_at' => now(),
     ]);
     $process->organizations()->sync([$organizationA->id, $organizationB->id]);
@@ -407,7 +407,7 @@ test('process show page retreats to previous step via livewire action', function
         'opened_by' => $user->id,
         'owner_id' => $user->id,
         'priority' => 'normal',
-        'status' => ProcessStatus::IN_PROGRESS->value,
+        'status' => ProcessStatus::IN_PROGRESS,
         'started_at' => now(),
     ]);
     $process->organizations()->sync([$organizationA->id, $organizationB->id]);
@@ -463,7 +463,7 @@ test('process show page saves comment dispatch via modal action', function () {
         'opened_by' => $user->id,
         'owner_id' => $user->id,
         'priority' => 'normal',
-        'status' => ProcessStatus::IN_PROGRESS->value,
+        'status' => ProcessStatus::IN_PROGRESS,
         'started_at' => now(),
     ]);
 
@@ -492,7 +492,7 @@ test('process show page displays translated event labels for the user', function
         'opened_by' => $user->id,
         'owner_id' => $user->id,
         'priority' => 'normal',
-        'status' => ProcessStatus::IN_PROGRESS->value,
+        'status' => ProcessStatus::IN_PROGRESS,
         'started_at' => now(),
     ]);
 
@@ -520,7 +520,7 @@ test('process index page displays translated status labels for the user', functi
         'opened_by' => $user->id,
         'owner_id' => $user->id,
         'priority' => 'normal',
-        'status' => ProcessStatus::IN_PROGRESS->value,
+        'status' => ProcessStatus::IN_PROGRESS,
         'started_at' => now(),
     ]);
 
@@ -553,7 +553,7 @@ test('process show page assigns owner via modal action', function () {
         'opened_by' => $user->id,
         'owner_id' => $user->id,
         'priority' => 'normal',
-        'status' => ProcessStatus::IN_PROGRESS->value,
+        'status' => ProcessStatus::IN_PROGRESS,
         'started_at' => now(),
     ]);
     $process->organizations()->sync([$organization->id]);
@@ -598,7 +598,7 @@ test('process index highlights process row with unseen updates and clears after 
         'opened_by' => $user->id,
         'owner_id' => $user->id,
         'priority' => 'normal',
-        'status' => ProcessStatus::IN_PROGRESS->value,
+        'status' => ProcessStatus::IN_PROGRESS,
         'started_at' => now(),
     ]);
 

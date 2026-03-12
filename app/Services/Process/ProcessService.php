@@ -3,10 +3,10 @@
 namespace App\Services\Process;
 
 use App\Enums\Process\ProcessEventType;
-use App\Enums\Process\ProcessStatus;
 use App\Models\Administration\User\User;
 use App\Models\Organization\Workflow\Workflow;
 use App\Models\Process\Process;
+use App\Models\Process\ProcessStatus;
 use App\Models\Process\ProcessStep;
 use App\Models\Process\ProcessUserView;
 use App\Support\Notifications\InteractsWithSystemNotifications;
@@ -102,24 +102,22 @@ class ProcessService
             ->with('organization')
             ->get();
 
-        $statusRows = collect(ProcessStatus::cases())
-            ->map(function (ProcessStatus $status) use ($processes): array {
-                $total = $processes->where('status', $status->value)->count();
+        $statusRows = $this->availableStatuses()
+            ->map(function (array $status) use ($processes): array {
+                $code = (string) ($status['code'] ?? '');
 
                 return [
-                    'value' => $status->value,
-                    'label' => $status->label(),
-                    'total' => $total,
-                    'color' => $status->chartColor(),
-                    'badge_class' => $status->badgeClass(),
+                    'value' => $code,
+                    'label' => (string) ($status['label'] ?? $code),
+                    'total' => $processes->where('status', $code)->count(),
+                    'color' => (string) ($status['chart_color'] ?? '#6b7280'),
+                    'badge_class' => (string) ($status['badge_class'] ?? 'bg-gray-100 text-gray-700'),
                 ];
             })
             ->values();
 
         $activeStatuses = [
-            ProcessStatus::OPEN->value,
-            ProcessStatus::IN_PROGRESS->value,
-            ProcessStatus::ON_HOLD->value,
+            ProcessStatus::IN_PROGRESS,
         ];
 
         $activeProcesses = $processes
@@ -136,11 +134,9 @@ class ProcessService
         return [
             'total' => $processes->count(),
             'active_total' => $activeProcesses->count(),
-            'open_total' => $processes->where('status', ProcessStatus::OPEN->value)->count(),
-            'in_progress_total' => $processes->where('status', ProcessStatus::IN_PROGRESS->value)->count(),
-            'on_hold_total' => $processes->where('status', ProcessStatus::ON_HOLD->value)->count(),
-            'closed_total' => $processes->where('status', ProcessStatus::CLOSED->value)->count(),
-            'cancelled_total' => $processes->where('status', ProcessStatus::CANCELLED->value)->count(),
+            'in_progress_total' => $processes->where('status', ProcessStatus::IN_PROGRESS)->count(),
+            'closed_total' => $processes->where('status', ProcessStatus::CLOSED)->count(),
+            'cancelled_total' => $processes->where('status', ProcessStatus::CANCELLED)->count(),
             'statuses' => $statusRows,
             'deadline_summary' => $deadlineSummary,
             'current_sectors' => $sectorsCurrent,
@@ -171,8 +167,6 @@ class ProcessService
                 }
             }
 
-            $autoStart = $firstWorkflowStep !== null;
-
             $process = Process::query()->create([
                 'title' => $data['title'],
                 'description' => $data['description'] ?? null,
@@ -181,8 +175,8 @@ class ProcessService
                 'opened_by' => $actorId,
                 'owner_id' => $data['owner_id'] ?? $actorId,
                 'priority' => $data['priority'] ?? config('process.default_priority', 'normal'),
-                'status' => $autoStart ? ProcessStatus::IN_PROGRESS->value : ProcessStatus::OPEN->value,
-                'started_at' => $autoStart ? now() : null,
+                'status' => ProcessStatus::IN_PROGRESS,
+                'started_at' => now(),
             ]);
 
             $this->createProcessSteps($process, $workflowSteps, (int) ($firstWorkflowStep?->step_order ?? 0));
@@ -195,17 +189,17 @@ class ProcessService
                 'Processo criado: '.$process->title,
             );
 
-            if ($autoStart) {
-                $this->eventService->log(
-                    $process,
-                    ProcessEventType::STARTED->value,
-                    $actorId,
-                    'Processo iniciado automaticamente pela primeira etapa do fluxo.',
-                );
-            }
+            $this->eventService->log(
+                $process,
+                ProcessEventType::STARTED->value,
+                $actorId,
+                $firstWorkflowStep !== null
+                    ? 'Processo iniciado automaticamente pela primeira etapa do fluxo.'
+                    : 'Processo iniciado.',
+            );
 
             $process = $process->refresh();
-            $statusLabel = ProcessStatus::tryFrom((string) $process->status)?->label() ?? 'Em andamento';
+            $statusLabel = $this->statusLabel((string) $process->status);
 
             $this->notifyProcessInteraction(
                 $process,
@@ -261,7 +255,7 @@ class ProcessService
 
     public function advanceStep(Process $process, int $actorId, string $comment): Process
     {
-        if (in_array($process->status, [ProcessStatus::CLOSED->value, ProcessStatus::CANCELLED->value], true)) {
+        if (in_array($process->status, [ProcessStatus::CLOSED, ProcessStatus::CANCELLED], true)) {
             throw new InvalidArgumentException('Processo ja finalizado.');
         }
         $this->assertActorBelongsToCurrentStepOrganization($process, $actorId);
@@ -317,7 +311,7 @@ class ProcessService
 
             $process->update([
                 'organization_id' => $nextStep->organization_id ?? $process->organization_id,
-                'status' => ProcessStatus::IN_PROGRESS->value,
+                'status' => ProcessStatus::IN_PROGRESS,
                 'started_at' => $process->started_at ?? now(),
             ]);
 
@@ -358,7 +352,7 @@ class ProcessService
 
     public function retreatStep(Process $process, int $actorId, string $comment): Process
     {
-        if (in_array($process->status, [ProcessStatus::CLOSED->value, ProcessStatus::CANCELLED->value], true)) {
+        if (in_array($process->status, [ProcessStatus::CLOSED, ProcessStatus::CANCELLED], true)) {
             throw new InvalidArgumentException('Processo ja finalizado.');
         }
         $this->assertActorBelongsToCurrentStepOrganization($process, $actorId);
@@ -414,7 +408,7 @@ class ProcessService
 
             $process->update([
                 'organization_id' => $previousStep->organization_id ?? $process->organization_id,
-                'status' => ProcessStatus::IN_PROGRESS->value,
+                'status' => ProcessStatus::IN_PROGRESS,
                 'started_at' => $process->started_at ?? now(),
             ]);
 
@@ -712,9 +706,7 @@ class ProcessService
             ->whereHas('process', function (Builder $processQuery) use ($filters): void {
                 $this->applyDashboardFiltersToProcessQuery($processQuery, $filters);
                 $processQuery->whereIn('status', [
-                    ProcessStatus::OPEN->value,
-                    ProcessStatus::IN_PROGRESS->value,
-                    ProcessStatus::ON_HOLD->value,
+                    ProcessStatus::IN_PROGRESS,
                 ]);
             });
 
@@ -991,5 +983,48 @@ class ProcessService
     private function processCode(Process $process): string
     {
         return (string) ($process->code ?: ('PRC#'.$process->id));
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection<int, array{
+     *   code:string,
+     *   label:string,
+     *   badge_class:string,
+     *   chart_color:string
+     * }>
+     */
+    public function availableStatuses(): Collection
+    {
+        $rows = ProcessStatus::query()
+            ->active()
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get(['code', 'label', 'badge_class', 'chart_color']);
+
+        if ($rows->isEmpty()) {
+            return collect(ProcessStatus::defaults())
+                ->map(fn (array $item): array => [
+                    'code' => (string) $item['code'],
+                    'label' => (string) $item['label'],
+                    'badge_class' => (string) $item['badge_class'],
+                    'chart_color' => (string) $item['chart_color'],
+                ])
+                ->values();
+        }
+
+        return $rows
+            ->map(fn (ProcessStatus $status): array => [
+                'code' => (string) $status->code,
+                'label' => (string) $status->label,
+                'badge_class' => (string) $status->badge_class,
+                'chart_color' => (string) $status->chart_color,
+            ])
+            ->values();
+    }
+
+    public function statusLabel(string $code): string
+    {
+        return (string) ($this->availableStatuses()
+            ->firstWhere('code', $code)['label'] ?? $code);
     }
 }

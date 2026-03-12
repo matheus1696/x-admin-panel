@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\Process\ProcessStatus;
+use App\Models\Process\ProcessStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('opened_by')->constrained('users');
             $table->foreignId('owner_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('priority')->default(config('process.default_priority', 'normal'));
-            $table->string('status')->default(ProcessStatus::OPEN->value);
+            $table->string('status')->default(ProcessStatus::IN_PROGRESS);
             $table->timestamp('started_at')->nullable();
             $table->timestamp('closed_at')->nullable();
             $table->timestamps();

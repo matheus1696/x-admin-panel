@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Process;
 
-use App\Enums\Process\ProcessStatus;
 use App\Livewire\Traits\Modal;
 use App\Livewire\Traits\WithFlashMessage;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
@@ -102,7 +101,7 @@ class ProcessIndexPage extends Component
             'processIdsWithUnseenUpdates' => $processIdsWithUnseenUpdates,
             'organizations' => OrganizationChart::query()->orderBy('title')->get(['id', 'title']),
             'workflows' => Workflow::query()->where('is_active', true)->orderBy('title')->get(['id', 'title']),
-            'statuses' => ProcessStatus::cases(),
+            'statuses' => $this->processService->availableStatuses(),
         ]);
     }
 }

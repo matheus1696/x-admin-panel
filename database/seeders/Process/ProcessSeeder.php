@@ -3,7 +3,7 @@
 namespace Database\Seeders\Process;
 
 use App\Enums\Process\ProcessEventType;
-use App\Enums\Process\ProcessStatus;
+use App\Models\Process\ProcessStatus;
 use App\Models\Administration\User\User;
 use App\Models\Organization\Workflow\Workflow;
 use App\Models\Organization\Workflow\WorkflowStep;
@@ -18,6 +18,8 @@ use Illuminate\Support\Str;
 
 class ProcessSeeder extends Seeder
 {
+    private const BULK_PROCESS_TOTAL = 1200;
+
     public function run(): void
     {
         $workflow = Workflow::query()
@@ -29,8 +31,9 @@ class ProcessSeeder extends Seeder
         }
 
         $actors = $this->ensureActors($workflow->workflowSteps);
+        $scenarios = $this->scenarios($workflow->workflowSteps->count());
 
-        foreach ($this->scenarios() as $scenario) {
+        foreach ($scenarios as $scenario) {
             $this->seedScenario($workflow, $workflow->workflowSteps, $actors, $scenario);
         }
     }
@@ -154,7 +157,7 @@ class ProcessSeeder extends Seeder
                 'priority' => $scenario['priority'],
                 'status' => $status,
                 'started_at' => $startedAt,
-                'closed_at' => $status === ProcessStatus::CLOSED->value ? $finishedAt : null,
+                'closed_at' => $status === ProcessStatus::CLOSED ? $finishedAt : null,
             ]);
 
             if ((bool) ($scenario['with_workflow'] ?? true)) {
@@ -214,13 +217,13 @@ class ProcessSeeder extends Seeder
             return (int) $fallbackOrganizationId;
         }
 
-        if (in_array($status, [ProcessStatus::IN_PROGRESS->value, ProcessStatus::ON_HOLD->value], true) && $currentStepOrder !== null) {
+        if ($status === ProcessStatus::IN_PROGRESS && $currentStepOrder !== null) {
             return $workflowSteps
                 ->firstWhere('step_order', (int) $currentStepOrder)
                 ?->organization_id;
         }
 
-        if ($status === ProcessStatus::CLOSED->value) {
+        if ($status === ProcessStatus::CLOSED) {
             return $workflowSteps
                 ->reverse()
                 ->first(fn (WorkflowStep $step): bool => $step->organization_id !== null)
@@ -388,7 +391,7 @@ class ProcessSeeder extends Seeder
             }
         }
 
-        if (($scenario['status'] ?? null) === ProcessStatus::CLOSED->value && $finishedAt !== null) {
+        if (($scenario['status'] ?? null) === ProcessStatus::CLOSED && $finishedAt !== null) {
             $lastEventAt = $this->createEvent(
                 $process,
                 $eventNumber++,
@@ -399,7 +402,7 @@ class ProcessSeeder extends Seeder
             );
         }
 
-        if (($scenario['status'] ?? null) === ProcessStatus::CANCELLED->value && $finishedAt !== null) {
+        if (($scenario['status'] ?? null) === ProcessStatus::CANCELLED && $finishedAt !== null) {
             $lastEventAt = $this->createEvent(
                 $process,
                 $eventNumber++,
@@ -437,190 +440,108 @@ class ProcessSeeder extends Seeder
     /**
      * @return array<int, array<string, mixed>>
      */
-    private function scenarios(): array
+    private function scenarios(int $workflowStepsCount): array
     {
-        return [
-            [
-                'title' => 'Aquisição de medicamentos da atenção básica 2025',
-                'description' => 'Processo para recomposição de estoque da assistência farmacêutica com tramitação integral concluída.',
-                'opened_by' => 'admin@example.com',
-                'owner' => 'gestao.contratos@example.com',
-                'priority' => 'high',
-                'status' => ProcessStatus::CLOSED->value,
-                'created_at' => '2025-10-03 08:30:00',
-                'started_at' => '2025-10-03 10:00:00',
-                'finished_at' => '2026-01-08 16:00:00',
-                'completed_steps' => 16,
-                'current_step_order' => null,
-            ],
-            [
-                'title' => 'Contratação de manutenção preventiva dos consultórios odontológicos',
-                'description' => 'Fluxo de contratação encerrado após publicação e emissão das ordens de serviço.',
-                'opened_by' => 'analista.processos@example.com',
-                'owner' => 'compras@example.com',
-                'priority' => 'normal',
-                'status' => ProcessStatus::CLOSED->value,
-                'created_at' => '2025-10-21 09:00:00',
-                'started_at' => '2025-10-21 11:00:00',
-                'finished_at' => '2026-01-15 15:30:00',
-                'completed_steps' => 16,
-                'current_step_order' => null,
-            ],
-            [
-                'title' => 'Registro de preços para materiais de limpeza hospitalar',
-                'description' => 'Processo licitatório concluído para atendimento da rede especializada.',
-                'opened_by' => 'test@example.com',
-                'owner' => 'gestao.contratos@example.com',
-                'priority' => 'high',
-                'status' => ProcessStatus::CLOSED->value,
-                'created_at' => '2025-11-11 14:20:00',
-                'started_at' => '2025-11-12 08:00:00',
-                'finished_at' => '2026-02-10 17:40:00',
-                'completed_steps' => 16,
-                'current_step_order' => null,
-            ],
-            [
-                'title' => 'Aquisição de equipamentos de informática para unidades administrativas',
-                'description' => 'Contratação encerrada com assinatura de atas e ordens de fornecimento emitidas.',
-                'opened_by' => 'planejamento@example.com',
-                'owner' => 'gestao.contratos@example.com',
-                'priority' => 'normal',
-                'status' => ProcessStatus::CLOSED->value,
-                'created_at' => '2025-11-28 08:10:00',
-                'started_at' => '2025-11-28 09:00:00',
-                'finished_at' => '2026-02-25 18:00:00',
-                'completed_steps' => 16,
-                'current_step_order' => null,
-            ],
-            [
-                'title' => 'Locação de veículos para apoio logístico da vigilância em saúde',
-                'description' => 'Processo finalizado após homologação e publicação da fase externa.',
-                'opened_by' => 'admin@example.com',
-                'owner' => 'compras@example.com',
-                'priority' => 'high',
-                'status' => ProcessStatus::CLOSED->value,
-                'created_at' => '2025-12-09 10:00:00',
-                'started_at' => '2025-12-09 14:00:00',
-                'finished_at' => '2026-03-05 12:30:00',
-                'completed_steps' => 16,
-                'current_step_order' => null,
-            ],
-            [
-                'title' => 'Aquisição de insumos laboratoriais para a rede municipal',
-                'description' => 'Processo em julgamento, aguardando parecer jurídico da fase externa.',
-                'opened_by' => 'analista.processos@example.com',
-                'owner' => 'gestao.contratos@example.com',
-                'priority' => 'high',
-                'status' => ProcessStatus::IN_PROGRESS->value,
-                'created_at' => '2025-12-17 08:45:00',
-                'started_at' => '2025-12-17 10:00:00',
-                'current_step_order' => 11,
-                'current_step_started_at' => '2026-03-08 09:00:00',
-                'completed_steps' => 10,
-            ],
-            [
-                'title' => 'Contratação de empresa para esterilização e manutenção de instrumental',
-                'description' => 'Processo em execução com edital já publicado e sessão externa em andamento.',
-                'opened_by' => 'test@example.com',
-                'owner' => 'compras@example.com',
-                'priority' => 'normal',
-                'status' => ProcessStatus::IN_PROGRESS->value,
-                'created_at' => '2026-01-06 08:10:00',
-                'started_at' => '2026-01-06 09:00:00',
-                'current_step_order' => 10,
-                'current_step_started_at' => '2026-02-20 08:30:00',
-                'completed_steps' => 9,
-            ],
-            [
-                'title' => 'Registro de preços para aquisição de material de expediente',
-                'description' => 'Processo em análise técnica após cotação consolidada.',
-                'opened_by' => 'admin@example.com',
-                'owner' => 'analista.processos@example.com',
-                'priority' => 'normal',
-                'status' => ProcessStatus::IN_PROGRESS->value,
-                'created_at' => '2026-01-19 09:15:00',
-                'started_at' => '2026-01-19 11:00:00',
-                'current_step_order' => 3,
-                'current_step_started_at' => '2026-03-10 09:00:00',
-                'completed_steps' => 2,
-            ],
-            [
-                'title' => 'Aquisição de mobiliário ergonômico para a sede administrativa',
-                'description' => 'Fluxo aguardando autorização do ordenador de despesa.',
-                'opened_by' => 'planejamento@example.com',
-                'owner' => 'planejamento@example.com',
-                'priority' => 'high',
-                'status' => ProcessStatus::IN_PROGRESS->value,
-                'created_at' => '2026-02-03 07:50:00',
-                'started_at' => '2026-02-03 08:30:00',
-                'current_step_order' => 5,
-                'current_step_started_at' => '2026-03-11 08:00:00',
-                'completed_steps' => 4,
-            ],
-            [
-                'title' => 'Contratação de licenças de software para gestão ambulatorial',
-                'description' => 'Processo em cadastro no sistema financeiro antes da elaboração do edital.',
-                'opened_by' => 'admin@example.com',
-                'owner' => 'gestao.contratos@example.com',
-                'priority' => 'urgent',
-                'status' => ProcessStatus::IN_PROGRESS->value,
-                'created_at' => '2026-02-14 13:30:00',
-                'started_at' => '2026-02-14 14:30:00',
-                'current_step_order' => 6,
-                'current_step_started_at' => '2026-03-11 14:00:00',
-                'completed_steps' => 5,
-            ],
-            [
-                'title' => 'Aquisição de impressoras térmicas para farmácias da rede',
-                'description' => 'Processo em elaboração do estudo técnico com atraso frente ao prazo previsto.',
-                'opened_by' => 'test@example.com',
-                'owner' => 'analista.processos@example.com',
-                'priority' => 'normal',
-                'status' => ProcessStatus::ON_HOLD->value,
-                'created_at' => '2026-02-27 09:40:00',
-                'started_at' => '2026-02-27 10:15:00',
-                'current_step_order' => 3,
-                'current_step_started_at' => '2026-03-06 08:00:00',
-                'completed_steps' => 2,
-            ],
-            [
-                'title' => 'Registro de preços para gêneros alimentícios de apoio hospitalar',
-                'description' => 'Processo em espera após parecer interno, aguardando reprogramação orçamentária.',
-                'opened_by' => 'admin@example.com',
-                'owner' => 'planejamento@example.com',
-                'priority' => 'high',
-                'status' => ProcessStatus::ON_HOLD->value,
-                'created_at' => '2026-03-02 08:00:00',
-                'started_at' => '2026-03-02 08:40:00',
-                'current_step_order' => 9,
-                'current_step_started_at' => '2026-03-05 09:00:00',
-                'completed_steps' => 8,
-            ],
-            [
-                'title' => 'Aquisição emergencial de nobreaks para unidades críticas',
-                'description' => 'Processo aberto e aguardando definição do fluxo inicial de tramitação.',
-                'opened_by' => 'admin@example.com',
-                'owner' => 'analista.processos@example.com',
-                'priority' => 'urgent',
-                'status' => ProcessStatus::OPEN->value,
-                'created_at' => '2026-03-07 07:30:00',
-                'started_at' => null,
-                'current_step_order' => null,
-                'completed_steps' => 0,
-            ],
-            [
-                'title' => 'Contratação de consultoria para revisão dos contratos assistenciais',
-                'description' => 'Processo cancelado após redefinição do escopo e absorção interna da demanda.',
-                'opened_by' => 'planejamento@example.com',
-                'owner' => 'gestao.contratos@example.com',
-                'priority' => 'normal',
-                'status' => ProcessStatus::CANCELLED->value,
-                'created_at' => '2026-01-28 10:20:00',
-                'started_at' => '2026-01-28 11:00:00',
-                'finished_at' => '2026-02-18 15:00:00',
-                'current_step_order' => null,
-                'completed_steps' => 4,
-            ],
+        $maxStepOrder = max(1, $workflowStepsCount);
+        $maxCompletedInProgress = max(0, $maxStepOrder - 1);
+
+        $openedByPool = [
+            'admin@example.com',
+            'analista.processos@example.com',
+            'test@example.com',
+            'planejamento@example.com',
         ];
+
+        $ownerPool = [
+            'gestao.contratos@example.com',
+            'compras@example.com',
+            'analista.processos@example.com',
+            'planejamento@example.com',
+        ];
+
+        $priorities = ['normal', 'high', 'urgent'];
+
+        $titles = [
+            'Aquisição de insumos laboratoriais',
+            'Contratação de manutenção predial',
+            'Registro de preços de medicamentos',
+            'Aquisição de equipamentos de informática',
+            'Contratação de software de gestão',
+            'Aquisição de material de expediente',
+            'Contratação de serviços terceirizados',
+            'Aquisição de mobiliário administrativo',
+        ];
+
+        $baseDate = now()->subMonths(15)->startOfDay();
+        $scenarios = [];
+
+        for ($i = 1; $i <= self::BULK_PROCESS_TOTAL; $i++) {
+            $status = $this->resolveStatusForIndex($i);
+            $createdAt = $baseDate->copy()->addHours($i * 8);
+            $startedAt = $createdAt->copy()->addHours(($i % 5) + 1);
+
+            $scenario = [
+                'title' => sprintf('%s #%04d', $titles[$i % count($titles)], $i),
+                'description' => 'Processo gerado para massa de dados com rastreabilidade completa de etapas e eventos.',
+                'opened_by' => $openedByPool[$i % count($openedByPool)],
+                'owner' => $ownerPool[$i % count($ownerPool)],
+                'priority' => $priorities[$i % count($priorities)],
+                'status' => $status,
+                'created_at' => $createdAt->toDateTimeString(),
+                'started_at' => $startedAt->toDateTimeString(),
+                'completed_steps' => 0,
+                'current_step_order' => 1,
+            ];
+
+            if ($status === ProcessStatus::CLOSED) {
+                $finishedAt = $startedAt->copy()->addDays(($i % 30) + 3);
+
+                $scenario['finished_at'] = $finishedAt->toDateTimeString();
+                $scenario['completed_steps'] = $maxStepOrder;
+                $scenario['current_step_order'] = null;
+            }
+
+            if ($status === ProcessStatus::IN_PROGRESS) {
+                $completedSteps = $maxCompletedInProgress > 0 ? ($i % ($maxCompletedInProgress + 1)) : 0;
+                $currentStepOrder = min($completedSteps + 1, $maxStepOrder);
+                $currentStepStartedAt = $startedAt->copy()->addDays(max(0, $completedSteps));
+
+                if ($currentStepStartedAt->gt(now()->subHour())) {
+                    $currentStepStartedAt = now()->subHour();
+                }
+
+                $scenario['completed_steps'] = $completedSteps;
+                $scenario['current_step_order'] = $currentStepOrder;
+                $scenario['current_step_started_at'] = $currentStepStartedAt->toDateTimeString();
+            }
+
+            if ($status === ProcessStatus::CANCELLED) {
+                $completedSteps = min(max(1, $i % max(2, $maxCompletedInProgress + 1)), $maxCompletedInProgress);
+                $finishedAt = $startedAt->copy()->addDays(max(2, $completedSteps + 1));
+
+                $scenario['completed_steps'] = $completedSteps;
+                $scenario['current_step_order'] = null;
+                $scenario['finished_at'] = $finishedAt->toDateTimeString();
+            }
+
+            $scenarios[] = $scenario;
+        }
+
+        return $scenarios;
+    }
+
+    private function resolveStatusForIndex(int $index): string
+    {
+        $distribution = $index % 100;
+
+        if ($distribution < 62) {
+            return ProcessStatus::CLOSED;
+        }
+
+        if ($distribution < 92) {
+            return ProcessStatus::IN_PROGRESS;
+        }
+
+        return ProcessStatus::CANCELLED;
     }
 }

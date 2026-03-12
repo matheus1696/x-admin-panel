@@ -1,7 +1,7 @@
 <?php
 
 use App\Enums\Process\ProcessEventType;
-use App\Enums\Process\ProcessStatus;
+use App\Models\Process\ProcessStatus;
 use Database\Seeders\PermissionSeeder;
 use Spatie\Permission\Models\Permission;
 
@@ -12,13 +12,16 @@ test('process config loads', function () {
         ->and(config('process.default_priority'))->toBe('normal');
 });
 
-test('process enums contain required values', function () {
-    expect(collect(ProcessStatus::cases())->pluck('value')->all())->toBe([
-        'OPEN',
-        'IN_PROGRESS',
-        'ON_HOLD',
-        'CLOSED',
-        'CANCELLED',
+test('process statuses are persisted in catalog table', function () {
+    $codes = ProcessStatus::query()
+        ->orderBy('sort_order')
+        ->pluck('code')
+        ->all();
+
+    expect($codes)->toBe([
+        ProcessStatus::IN_PROGRESS,
+        ProcessStatus::CLOSED,
+        ProcessStatus::CANCELLED,
     ]);
 
     expect(collect(ProcessEventType::cases())->pluck('value')->all())->toContain(

@@ -1,7 +1,7 @@
 <?php
 
 use App\Enums\Process\ProcessEventType;
-use App\Enums\Process\ProcessStatus;
+use App\Models\Process\ProcessStatus;
 use App\Models\Administration\User\User;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Organization\Workflow\Workflow;
@@ -21,9 +21,10 @@ test('process service opens process and logs creation event', function () {
     ], $user->id);
 
     expect($process->title)->toBe('Processo de Contratacao')
-        ->and($process->status)->toBe(ProcessStatus::OPEN->value)
+        ->and($process->status)->toBe(ProcessStatus::IN_PROGRESS)
+        ->and($process->started_at)->not->toBeNull()
         ->and($process->code)->toStartWith('PRC')
-        ->and($process->events()->count())->toBe(1);
+        ->and($process->events()->count())->toBe(2);
 });
 
 test('process service auto assigns first workflow step organization and starts process', function () {
@@ -84,7 +85,7 @@ test('process service auto assigns first workflow step organization and starts p
         'workflow_id' => $workflow->id,
     ], $user->id);
 
-    expect($process->status)->toBe(ProcessStatus::IN_PROGRESS->value)
+    expect($process->status)->toBe(ProcessStatus::IN_PROGRESS)
         ->and($process->started_at)->not->toBeNull()
         ->and($process->organization_id)->toBe($firstOrganization->id)
         ->and($process->organizations()->pluck('organization_charts.id')->all())->toBe([$firstOrganization->id, $secondOrganization->id])
@@ -116,7 +117,7 @@ test('process visibility uses owner and linked process sectors', function () {
         'opened_by' => $owner->id,
         'owner_id' => $owner->id,
         'priority' => 'normal',
-        'status' => ProcessStatus::IN_PROGRESS->value,
+        'status' => ProcessStatus::IN_PROGRESS,
         'started_at' => now(),
     ]);
 
@@ -149,7 +150,7 @@ test('process service index orders by latest updates first', function () {
         'opened_by' => $user->id,
         'owner_id' => $user->id,
         'priority' => 'normal',
-        'status' => ProcessStatus::OPEN->value,
+        'status' => ProcessStatus::IN_PROGRESS,
         'created_at' => now()->subDays(3),
         'updated_at' => now()->subDays(2),
     ]);
@@ -160,7 +161,7 @@ test('process service index orders by latest updates first', function () {
         'opened_by' => $user->id,
         'owner_id' => $user->id,
         'priority' => 'normal',
-        'status' => ProcessStatus::OPEN->value,
+        'status' => ProcessStatus::IN_PROGRESS,
         'created_at' => now()->subDays(5),
         'updated_at' => now()->subHour(),
     ]);
@@ -196,7 +197,7 @@ test('process service resolves unseen updates by user last view timestamp', func
         'opened_by' => $user->id,
         'owner_id' => $user->id,
         'priority' => 'normal',
-        'status' => ProcessStatus::OPEN->value,
+        'status' => ProcessStatus::IN_PROGRESS,
     ]);
 
     $collection = collect([$process->fresh()]);
@@ -245,7 +246,7 @@ test('process dashboard aggregates process progress indicators', function () {
         'opened_by' => $owner->id,
         'owner_id' => $owner->id,
         'priority' => 'normal',
-        'status' => ProcessStatus::IN_PROGRESS->value,
+        'status' => ProcessStatus::IN_PROGRESS,
         'started_at' => now()->subDays(5),
         'created_at' => now()->subDays(5),
         'updated_at' => now()->subDays(1),
@@ -270,7 +271,7 @@ test('process dashboard aggregates process progress indicators', function () {
         'opened_by' => $owner->id,
         'owner_id' => $owner->id,
         'priority' => 'normal',
-        'status' => ProcessStatus::OPEN->value,
+        'status' => ProcessStatus::IN_PROGRESS,
         'created_at' => now()->subDays(2),
         'updated_at' => now()->subDay(),
     ]);
@@ -306,8 +307,7 @@ test('process dashboard aggregates process progress indicators', function () {
     ]);
 
     expect($dashboard['total'])->toBe(2)
-        ->and($dashboard['in_progress_total'])->toBe(1)
-        ->and($dashboard['open_total'])->toBe(1)
+        ->and($dashboard['in_progress_total'])->toBe(2)
         ->and($dashboard['deadline_summary']['overdue'])->toBe(1)
         ->and($dashboard['deadline_summary']['on_time'])->toBe(1)
         ->and(collect($dashboard['current_sectors'])->pluck('label')->all())->toContain('Setor Dashboard A', 'Setor Dashboard B')
@@ -585,7 +585,7 @@ test('process events use sequential event_number per process', function () {
         ->pluck('event_number')
         ->all();
 
-    expect($numbers)->toBe([1, 2, 3]);
+    expect($numbers)->toBe([1, 2, 3, 4]);
 });
 
 test('process service blocks step transition when actor is outside current step organization', function () {

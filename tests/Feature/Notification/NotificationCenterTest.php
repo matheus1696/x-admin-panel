@@ -107,7 +107,8 @@ test('dashboard shows process card with accessible processes for the user', func
         'opened_by' => $creator->id,
         'owner_id' => $creator->id,
         'priority' => 'normal',
-        'status' => 'OPEN',
+        'status' => 'IN_PROGRESS',
+        'started_at' => now(),
     ]);
 
     $response = $this->actingAs($user)->get(route('dashboard'));
