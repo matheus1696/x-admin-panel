@@ -573,7 +573,6 @@ test('process show page assigns owner via modal action', function () {
     Livewire::test(ProcessShowPage::class, ['uuid' => $process->uuid])
         ->call('openAssignOwnerModal')
         ->set('assignedOwnerId', $newOwner->id)
-        ->set('assignmentComment', 'Redistribuicao por carga de trabalho')
         ->call('assignOwner')
         ->assertHasNoErrors();
 
@@ -585,5 +584,34 @@ test('process show page assigns owner via modal action', function () {
 
     expect($process->owner_id)->toBe($newOwner->id)
         ->and($event)->not->toBeNull()
-        ->and($event->description)->toContain('Redistribuicao por carga de trabalho');
+        ->and($event->description)->toContain('Etapa atribuida a')
+        ->and($event->description)->toContain($newOwner->name);
+});
+
+test('process index highlights process row with unseen updates and clears after opening process', function () {
+    $user = createProcessUser(['process.view']);
+    $this->actingAs($user);
+
+    $process = Process::query()->create([
+        'title' => 'Processo com atualizacao pendente de leitura',
+        'description' => 'Descricao',
+        'opened_by' => $user->id,
+        'owner_id' => $user->id,
+        'priority' => 'normal',
+        'status' => ProcessStatus::IN_PROGRESS->value,
+        'started_at' => now(),
+    ]);
+
+    $indexResponseBeforeView = $this->get(route('process.index'));
+    $indexResponseBeforeView
+        ->assertOk()
+        ->assertSee('bg-gray-300/70', false);
+
+    $this->get(route('process.show', $process->uuid))
+        ->assertOk();
+
+    $indexResponseAfterView = $this->get(route('process.index'));
+    $indexResponseAfterView
+        ->assertOk()
+        ->assertDontSee('bg-gray-300/70', false);
 });

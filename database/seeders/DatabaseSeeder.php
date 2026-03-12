@@ -20,6 +20,7 @@ use Database\Seeders\Configuration\Region\RegionStateSeeder;
 use Database\Seeders\Organization\OrganizationChart\OrganizationChartSeeder;
 use Database\Seeders\Organization\Workflow\WorkflowProcessSeeder;
 use Database\Seeders\Organization\Workflow\WorkflowStepSeeder;
+use Database\Seeders\Process\ProcessSeeder;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -63,6 +64,10 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => Hash::make('password'),
+        ]);
+
+        $this->call([
+            ProcessSeeder::class,
         ]);
 
         if (config('app.debug')) {

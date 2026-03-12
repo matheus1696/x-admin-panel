@@ -92,10 +92,14 @@ class ProcessIndexPage extends Component
 
     public function render()
     {
-        $processes = $this->processService->index($this->filters, (int) Auth::id());
+        $userId = (int) Auth::id();
+        $processes = $this->processService->index($this->filters, $userId);
+        $processIdsWithUnseenUpdates = $this->processService
+            ->processIdsWithUnseenUpdates($processes->getCollection(), $userId);
 
         return view('livewire.process.process-index-page', [
             'processes' => $processes,
+            'processIdsWithUnseenUpdates' => $processIdsWithUnseenUpdates,
             'organizations' => OrganizationChart::query()->orderBy('title')->get(['id', 'title']),
             'workflows' => Workflow::query()->where('is_active', true)->orderBy('title')->get(['id', 'title']),
             'statuses' => ProcessStatus::cases(),

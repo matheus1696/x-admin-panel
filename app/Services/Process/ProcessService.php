@@ -8,6 +8,8 @@ use App\Models\Administration\User\User;
 use App\Models\Organization\Workflow\Workflow;
 use App\Models\Process\Process;
 use App\Models\Process\ProcessStep;
+use App\Models\Process\ProcessUserView;
+use App\Support\Notifications\InteractsWithSystemNotifications;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -16,6 +18,8 @@ use InvalidArgumentException;
 
 class ProcessService
 {
+    use InteractsWithSystemNotifications;
+
     public function __construct(
         private readonly ProcessEventService $eventService,
     ) {}
@@ -38,6 +42,7 @@ class ProcessService
         }
 
         return $query
+            ->orderByDesc('updated_at')
             ->orderByDesc('created_at')
             ->paginate((int) ($filters['perPage'] ?? 10));
     }
@@ -199,7 +204,26 @@ class ProcessService
                 );
             }
 
-            return $process->refresh();
+            $process = $process->refresh();
+            $statusLabel = ProcessStatus::tryFrom((string) $process->status)?->label() ?? 'Em andamento';
+
+            $this->notifyProcessInteraction(
+                $process,
+                'Novo processo registrado',
+                sprintf(
+                    'O processo %s - %s foi criado e esta com status "%s".',
+                    $this->processCode($process),
+                    (string) $process->title,
+                    $statusLabel
+                ),
+                [
+                    'event_type' => ProcessEventType::CREATED->value,
+                    'actor_id' => $actorId,
+                ],
+                $firstWorkflowStep?->organization_id !== null ? (int) $firstWorkflowStep->organization_id : null,
+            );
+
+            return $process;
         });
     }
 
@@ -309,7 +333,26 @@ class ProcessService
                 ),
             );
 
-            return $process->refresh();
+            $process = $process->refresh();
+
+            $this->notifyProcessInteraction(
+                $process,
+                'Processo encaminhado',
+                sprintf(
+                    'O processo %s - %s avancou de "%s" para "%s".',
+                    $this->processCode($process),
+                    (string) $process->title,
+                    (string) $currentStep->title,
+                    (string) $nextStep->title
+                ),
+                [
+                    'event_type' => ProcessEventType::FORWARDED->value,
+                    'actor_id' => $actorId,
+                ],
+                $nextStep->organization_id !== null ? (int) $nextStep->organization_id : null,
+            );
+
+            return $process;
         });
     }
 
@@ -387,7 +430,26 @@ class ProcessService
                 ),
             );
 
-            return $process->refresh();
+            $process = $process->refresh();
+
+            $this->notifyProcessInteraction(
+                $process,
+                'Processo retornado',
+                sprintf(
+                    'O processo %s - %s retornou de "%s" para "%s".',
+                    $this->processCode($process),
+                    (string) $process->title,
+                    (string) $currentStep->title,
+                    (string) $previousStep->title
+                ),
+                [
+                    'event_type' => ProcessEventType::RETURNED->value,
+                    'actor_id' => $actorId,
+                ],
+                $previousStep->organization_id !== null ? (int) $previousStep->organization_id : null,
+            );
+
+            return $process;
         });
     }
 
@@ -406,18 +468,30 @@ class ProcessService
                 'Despacho de comentario: '.$comment,
             );
 
-            return $process->refresh();
+            $process = $process->refresh();
+
+            $this->notifyProcessInteraction(
+                $process,
+                'Novo despacho no processo',
+                sprintf(
+                    'Foi registrado um novo despacho no processo %s - %s.',
+                    $this->processCode($process),
+                    (string) $process->title
+                ),
+                [
+                    'event_type' => ProcessEventType::COMMENTED->value,
+                    'actor_id' => $actorId,
+                ],
+                $this->resolveCurrentStepOrganizationId($process),
+            );
+
+            return $process;
         });
     }
 
-    public function assignOwner(Process $process, int $actorId, int $ownerId, string $comment): Process
+    public function assignOwner(Process $process, int $actorId, int $ownerId): Process
     {
         $this->assertActorBelongsToCurrentStepOrganization($process, $actorId);
-
-        $comment = trim($comment);
-        if ($comment === '') {
-            throw new InvalidArgumentException('Informe o motivo da atribuicao.');
-        }
 
         $currentStepOrganizationId = $this->resolveCurrentStepOrganizationId($process);
         if ($currentStepOrganizationId === null) {
@@ -437,7 +511,7 @@ class ProcessService
             throw new InvalidArgumentException('Responsavel deve pertencer ao setor da etapa atual.');
         }
 
-        return DB::transaction(function () use ($process, $actorId, $owner, $comment, $currentStepOrganizationId): Process {
+        return DB::transaction(function () use ($process, $actorId, $owner, $currentStepOrganizationId): Process {
             $previousOwnerId = $process->owner_id;
 
             $process->update([
@@ -449,16 +523,34 @@ class ProcessService
                 ProcessEventType::OWNER_ASSIGNED->value,
                 $actorId,
                 sprintf(
-                    'Despacho: %s | Responsavel alterado de #%s para %s (#%s) no setor da etapa atual (#%s).',
-                    $comment,
-                    (string) ($previousOwnerId ?? '-'),
+                    'Etapa atribuida a %s (#%s) no setor atual (#%s). Responsavel anterior: #%s.',
                     (string) $owner->name,
                     (string) $owner->id,
-                    (string) $currentStepOrganizationId
+                    (string) $currentStepOrganizationId,
+                    (string) ($previousOwnerId ?? '-')
                 ),
             );
 
-            return $process->refresh();
+            $process = $process->refresh();
+
+            $this->notifyProcessInteraction(
+                $process,
+                'Responsavel atribuido no processo',
+                sprintf(
+                    'A etapa do processo %s - %s foi atribuida para %s.',
+                    $this->processCode($process),
+                    (string) $process->title,
+                    (string) $owner->name
+                ),
+                [
+                    'event_type' => ProcessEventType::OWNER_ASSIGNED->value,
+                    'actor_id' => $actorId,
+                    'owner_id' => $owner->id,
+                ],
+                $currentStepOrganizationId,
+            );
+
+            return $process;
         });
     }
 
@@ -513,6 +605,53 @@ class ProcessService
             ->whereKey($userId)
             ->whereHas('organizations', fn ($query) => $query->whereIn('organization_charts.id', $organizationIds))
             ->exists();
+    }
+
+    public function markAsViewed(Process $process, int $userId): void
+    {
+        ProcessUserView::query()->updateOrCreate(
+            [
+                'process_id' => $process->id,
+                'user_id' => $userId,
+            ],
+            [
+                'last_viewed_at' => now(),
+            ]
+        );
+    }
+
+    /**
+     * @param  \Illuminate\Support\Collection<int, \App\Models\Process\Process>  $processes
+     * @return \Illuminate\Support\Collection<int, int>
+     */
+    public function processIdsWithUnseenUpdates(Collection $processes, int $userId): Collection
+    {
+        $processes = $processes->filter(fn ($process): bool => $process instanceof Process)->values();
+        if ($processes->isEmpty()) {
+            return collect();
+        }
+
+        $processIds = $processes->pluck('id')->map(fn ($id): int => (int) $id)->values();
+
+        $views = ProcessUserView::query()
+            ->where('user_id', $userId)
+            ->whereIn('process_id', $processIds->all())
+            ->get()
+            ->keyBy('process_id');
+
+        return $processes
+            ->filter(function (Process $process) use ($views): bool {
+                /** @var ProcessUserView|null $view */
+                $view = $views->get($process->id);
+                if (! $view) {
+                    return true;
+                }
+
+                return $process->updated_at !== null && $process->updated_at->gt($view->last_viewed_at);
+            })
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->values();
     }
 
     private function assertActorBelongsToCurrentStepOrganization(Process $process, int $actorId): void
@@ -771,5 +910,86 @@ class ProcessService
         }
 
         return $step->started_at->copy()->addDays((int) $step->deadline_days);
+    }
+
+    /**
+     * @param  array<string, mixed>  $meta
+     */
+    private function notifyProcessInteraction(
+        Process $process,
+        string $title,
+        string $message,
+        array $meta = [],
+        ?int $currentStepOrganizationId = null,
+    ): void {
+        $recipients = $this->notificationRecipientsForProcess($process, $currentStepOrganizationId);
+
+        if ($recipients->isEmpty()) {
+            return;
+        }
+
+        $this->notifyUsers(
+            $recipients,
+            $title,
+            $message,
+            [
+                'url' => route('process.show', $process->uuid),
+                'icon' => 'fa-solid fa-folder-open',
+                'level' => 'info',
+                'meta' => array_merge([
+                    'process_id' => $process->id,
+                    'process_uuid' => $process->uuid,
+                ], $meta),
+            ]
+        );
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection<int, \App\Models\Administration\User\User>
+     */
+    private function notificationRecipientsForProcess(Process $process, ?int $currentStepOrganizationId = null): Collection
+    {
+        $linkedOrganizationIds = $process->organizations()
+            ->pluck('organization_charts.id')
+            ->map(fn ($id): int => (int) $id)
+            ->unique()
+            ->values();
+
+        if ($currentStepOrganizationId !== null && ! $linkedOrganizationIds->contains($currentStepOrganizationId)) {
+            $linkedOrganizationIds->push($currentStepOrganizationId);
+        }
+
+        if ($process->owner_id === null && $linkedOrganizationIds->isEmpty()) {
+            return collect();
+        }
+
+        $query = User::query();
+
+        if ($process->owner_id !== null) {
+            $query->where('id', (int) $process->owner_id);
+        }
+
+        if ($linkedOrganizationIds->isNotEmpty()) {
+            if ($process->owner_id !== null) {
+                $query->orWhereHas('organizations', function (Builder $organizationQuery) use ($linkedOrganizationIds): void {
+                    $organizationQuery->whereIn('organization_charts.id', $linkedOrganizationIds->all());
+                });
+            } else {
+                $query->whereHas('organizations', function (Builder $organizationQuery) use ($linkedOrganizationIds): void {
+                    $organizationQuery->whereIn('organization_charts.id', $linkedOrganizationIds->all());
+                });
+            }
+        }
+
+        $users = $query
+            ->orderBy('name')
+            ->get();
+
+        return $users->unique('id')->values();
+    }
+
+    private function processCode(Process $process): string
+    {
+        return (string) ($process->code ?: ('PRC#'.$process->id));
     }
 }

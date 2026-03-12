@@ -7,7 +7,7 @@
 
     <div class="space-y-4">
         <!-- Timeline -->
-        <div class="mt-5 overflow-x-auto pb-2 border border-gray-200 rounded-xl p-2 bg-gray-100/50 shadow-sm">
+        <div class="mt-5 overflow-x-auto pb-2 border border-gray-200 rounded-xl p-2 bg-gray-100/50 shadow">
             @if ($timelineSteps->isNotEmpty())
                 <div class="flex min-w-max items-start">
                     @foreach ($timelineSteps as $timelineStep)
@@ -53,7 +53,7 @@
         </div>        
 
         <!-- Informacao de Abertura -->
-        <div class="grid grid-cols-1 xl:grid-cols-12 rounded-xl border border-gray-200 bg-gray-100 shadow-sm overflow-hidden">
+        <div class="grid grid-cols-1 xl:grid-cols-12 rounded-xl border border-gray-200shadow overflow-hidden">
             <!-- Aside com informacoes do processo -->
             <aside class="space-y-4 xl:col-span-3 p-4 md:border-r border-gray-400">
                 <section>
@@ -123,7 +123,7 @@
         </div>
 
         <!-- Eventos do Processo -->
-        <section class="rounded-xl border border-gray-200 bg-white shadow-sm p-4">
+        <section class="rounded-xl border border-gray-300 bg-white shadow p-4">
             <div class="flex items-center justify-between gap-2 pb-2 border-b border-gray-200">
                 <h3 class="text-sm font-semibold text-gray-800 uppercase">Eventos do processo</h3>
                 <span class="text-[11px] text-gray-500">{{ $process->events->count() }} evento(s)</span>
@@ -289,17 +289,6 @@
                     @if ($owners->isEmpty())
                         <p class="text-xs text-amber-600">Nao ha usuarios vinculados ao setor da etapa atual.</p>
                     @endif
-                </div>
-
-                <div class="space-y-1">
-                    <x-form.label value="Motivo da atribuicao (despacho)" />
-                    <x-form.textarea
-                        wire:model.defer="assignmentComment"
-                        name="assignmentComment"
-                        rows="4"
-                        placeholder="Informe o motivo da mudanca de responsavel..."
-                    />
-                    <x-form.error for="assignmentComment" />
                 </div>
 
                 <div class="flex justify-end gap-2 pt-2">

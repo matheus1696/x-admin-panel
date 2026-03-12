@@ -31,8 +31,6 @@ class ProcessShowPage extends Component
 
     public ?int $assignedOwnerId = null;
 
-    public string $assignmentComment = '';
-
     public ?string $pendingTransition = null;
 
     public function boot(ProcessService $processService): void
@@ -53,7 +51,11 @@ class ProcessShowPage extends Component
         $process = $this->processService->findByUuid($uuid);
         if (! $this->processService->userCanView($process, (int) Auth::id())) {
             $this->redirectRoute('dashboard', navigate: true);
+
+            return;
         }
+
+        $this->processService->markAsViewed($process, (int) Auth::id());
     }
 
     public function openDispatchModal(string $direction): void
@@ -161,7 +163,6 @@ class ProcessShowPage extends Component
             ? (int) $process->owner_id
             : ($eligibleOwnerIds->first() ? (int) $eligibleOwnerIds->first() : null);
 
-        $this->assignmentComment = '';
         $this->openModal('modal-process-assign-owner');
     }
 
@@ -170,17 +171,14 @@ class ProcessShowPage extends Component
         $process = $this->processService->findVisibleByUuid($this->uuid, (int) Auth::id());
         $this->validate([
             'assignedOwnerId' => ['required', 'integer', 'exists:users,id'],
-            'assignmentComment' => ['required', 'string', 'max:2000'],
         ]);
 
         try {
             $this->processService->assignOwner(
                 $process,
                 (int) Auth::id(),
-                (int) $this->assignedOwnerId,
-                $this->assignmentComment
+                (int) $this->assignedOwnerId
             );
-            $this->assignmentComment = '';
             $this->closeModal();
             $this->flashSuccess('Responsavel atribuido com sucesso.');
         } catch (InvalidArgumentException $e) {

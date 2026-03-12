@@ -68,7 +68,10 @@
 
         <x-slot name="tbody">
             @forelse ($processes as $process)
-                <tr>
+                @php
+                    $hasUnseenUpdate = $processIdsWithUnseenUpdates->contains((int) $process->id);
+                @endphp
+                <tr class="{{ $hasUnseenUpdate ? 'bg-gray-300/70' : '' }}">
                     <x-page.table-td class="text-center font-mono text-xs" :value="$process->code ?? '-'" />
                     <x-page.table-td class="whitespace-normal">
                         <div class="font-medium text-gray-900">{{ $process->title }}</div>

@@ -28,6 +28,8 @@ test('process service opens process and logs creation event', function () {
 
 test('process service auto assigns first workflow step organization and starts process', function () {
     $user = User::factory()->create();
+    $firstSectorUser = User::factory()->create();
+    $secondSectorUser = User::factory()->create();
     $service = app(ProcessService::class);
 
     $firstOrganization = OrganizationChart::query()->create([
@@ -45,6 +47,8 @@ test('process service auto assigns first workflow step organization and starts p
         'number_hierarchy' => 2,
         'order' => '002',
     ]);
+    $firstSectorUser->organizations()->attach($firstOrganization->id);
+    $secondSectorUser->organizations()->attach($secondOrganization->id);
 
     $workflow = Workflow::query()->create([
         'title' => 'Fluxo de Processamento',
@@ -84,7 +88,10 @@ test('process service auto assigns first workflow step organization and starts p
         ->and($process->started_at)->not->toBeNull()
         ->and($process->organization_id)->toBe($firstOrganization->id)
         ->and($process->organizations()->pluck('organization_charts.id')->all())->toBe([$firstOrganization->id, $secondOrganization->id])
-        ->and($process->events()->count())->toBe(2);
+        ->and($process->events()->count())->toBe(2)
+        ->and($user->notifications()->count())->toBe(1)
+        ->and($firstSectorUser->notifications()->count())->toBe(1)
+        ->and($secondSectorUser->notifications()->count())->toBe(1);
 });
 
 test('process visibility uses owner and linked process sectors', function () {
@@ -130,6 +137,84 @@ test('process visibility uses owner and linked process sectors', function () {
     expect($service->userCanView($process->fresh('organizations'), $owner->id))->toBeTrue()
         ->and($service->userCanView($process->fresh('organizations'), $sectorUser->id))->toBeTrue()
         ->and($service->userCanView($process->fresh('organizations'), $outsider->id))->toBeFalse();
+});
+
+test('process service index orders by latest updates first', function () {
+    $user = User::factory()->create();
+    $service = app(ProcessService::class);
+
+    $olderUpdated = \App\Models\Process\Process::query()->create([
+        'title' => 'Processo atualizado antes',
+        'description' => 'Descricao',
+        'opened_by' => $user->id,
+        'owner_id' => $user->id,
+        'priority' => 'normal',
+        'status' => ProcessStatus::OPEN->value,
+        'created_at' => now()->subDays(3),
+        'updated_at' => now()->subDays(2),
+    ]);
+
+    $latestUpdated = \App\Models\Process\Process::query()->create([
+        'title' => 'Processo atualizado por ultimo',
+        'description' => 'Descricao',
+        'opened_by' => $user->id,
+        'owner_id' => $user->id,
+        'priority' => 'normal',
+        'status' => ProcessStatus::OPEN->value,
+        'created_at' => now()->subDays(5),
+        'updated_at' => now()->subHour(),
+    ]);
+
+    \Illuminate\Support\Facades\DB::table('processes')
+        ->where('id', $olderUpdated->id)
+        ->update(['updated_at' => now()->subDays(2)]);
+
+    \Illuminate\Support\Facades\DB::table('processes')
+        ->where('id', $latestUpdated->id)
+        ->update(['updated_at' => now()->subMinutes(5)]);
+
+    $results = $service->index([
+        'title' => '',
+        'status' => 'all',
+        'organization_id' => '',
+        'perPage' => 10,
+    ], $user->id);
+
+    $ids = $results->getCollection()->pluck('id')->values()->all();
+
+    expect($ids)->toContain($olderUpdated->id, $latestUpdated->id)
+        ->and($ids[0])->toBe($latestUpdated->id);
+});
+
+test('process service resolves unseen updates by user last view timestamp', function () {
+    $user = User::factory()->create();
+    $service = app(ProcessService::class);
+
+    $process = \App\Models\Process\Process::query()->create([
+        'title' => 'Processo com rastreio de visualizacao',
+        'description' => 'Descricao',
+        'opened_by' => $user->id,
+        'owner_id' => $user->id,
+        'priority' => 'normal',
+        'status' => ProcessStatus::OPEN->value,
+    ]);
+
+    $collection = collect([$process->fresh()]);
+    $unseenBeforeView = $service->processIdsWithUnseenUpdates($collection, $user->id);
+
+    expect($unseenBeforeView->contains($process->id))->toBeTrue();
+
+    $service->markAsViewed($process, $user->id);
+    $unseenAfterView = $service->processIdsWithUnseenUpdates(collect([$process->fresh()]), $user->id);
+
+    expect($unseenAfterView->contains($process->id))->toBeFalse();
+
+    \Illuminate\Support\Facades\DB::table('processes')
+        ->where('id', $process->id)
+        ->update(['updated_at' => now()->addSecond()]);
+
+    $unseenAfterUpdate = $service->processIdsWithUnseenUpdates(collect([$process->fresh()]), $user->id);
+    expect($unseenAfterUpdate->contains($process->id))->toBeTrue();
 });
 
 test('process dashboard aggregates process progress indicators', function () {
@@ -233,6 +318,7 @@ test('process dashboard aggregates process progress indicators', function () {
 
 test('process service advances current step and starts next step', function () {
     $user = User::factory()->create();
+    $nextSectorUser = User::factory()->create();
     $service = app(ProcessService::class);
 
     $firstOrganization = OrganizationChart::query()->create([
@@ -251,6 +337,7 @@ test('process service advances current step and starts next step', function () {
         'order' => '011',
     ]);
     $user->organizations()->attach($firstOrganization->id);
+    $nextSectorUser->organizations()->attach($secondOrganization->id);
 
     $workflow = Workflow::query()->create([
         'title' => 'Fluxo Avanco',
@@ -303,7 +390,14 @@ test('process service advances current step and starts next step', function () {
         ->and($secondStep?->is_current)->toBeTrue()
         ->and($process->organization_id)->toBe($secondOrganization->id)
         ->and($event)->not->toBeNull()
-        ->and($event->description)->toContain('Encaminhado para setor seguinte');
+        ->and($event->description)->toContain('Encaminhado para setor seguinte')
+        ->and($nextSectorUser->notifications()->count())->toBe(2)
+        ->and(
+            $nextSectorUser->notifications()
+                ->get()
+                ->map(fn ($notification): string => (string) data_get($notification->data, 'title'))
+                ->contains('Processo encaminhado')
+        )->toBeTrue();
 });
 
 test('process service retreats current step and reopens previous step', function () {
@@ -400,10 +494,17 @@ test('process service records standalone comment as dispatch event', function ()
         ->first();
 
     expect($event)->not->toBeNull()
-        ->and($event->description)->toContain('Comentario de despacho');
+        ->and($event->description)->toContain('Comentario de despacho')
+        ->and($user->notifications()->count())->toBe(2)
+        ->and(
+            $user->notifications()
+                ->get()
+                ->map(fn ($notification): string => (string) data_get($notification->data, 'title'))
+                ->contains('Novo despacho no processo')
+        )->toBeTrue();
 });
 
-test('process service assigns owner and logs assignment dispatch event', function () {
+test('process service assigns owner and logs standardized owner assignment event', function () {
     $actor = User::factory()->create();
     $newOwner = User::factory()->create();
     $service = app(ProcessService::class);
@@ -443,7 +544,9 @@ test('process service assigns owner and logs assignment dispatch event', functio
         'workflow_id' => $workflow->id,
     ], $actor->id);
 
-    $process = $service->assignOwner($process, $actor->id, $newOwner->id, 'Redistribuicao de responsabilidade');
+    $notificationsBeforeAssign = $newOwner->notifications()->count();
+
+    $process = $service->assignOwner($process, $actor->id, $newOwner->id);
 
     $event = $process->events()
         ->where('event_type', ProcessEventType::OWNER_ASSIGNED->value)
@@ -452,8 +555,16 @@ test('process service assigns owner and logs assignment dispatch event', functio
 
     expect($process->owner_id)->toBe($newOwner->id)
         ->and($event)->not->toBeNull()
-        ->and($event->description)->toContain('Redistribuicao de responsabilidade')
-        ->and($event->description)->toContain((string) $newOwner->id);
+        ->and($event->description)->toContain('Etapa atribuida a')
+        ->and($event->description)->toContain($newOwner->name)
+        ->and($event->description)->toContain((string) $newOwner->id)
+        ->and($newOwner->notifications()->count())->toBe($notificationsBeforeAssign + 1)
+        ->and(
+            $newOwner->notifications()
+                ->get()
+                ->map(fn ($notification): string => (string) data_get($notification->data, 'title'))
+                ->contains('Responsavel atribuido no processo')
+        )->toBeTrue();
 });
 
 test('process events use sequential event_number per process', function () {
