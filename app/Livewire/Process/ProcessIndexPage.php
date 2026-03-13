@@ -13,7 +13,6 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 #[Layout('layouts.app')]
 class ProcessIndexPage extends Component
@@ -21,7 +20,6 @@ class ProcessIndexPage extends Component
     use AuthorizesRequests;
     use Modal;
     use WithFlashMessage;
-    use WithPagination;
 
     protected ProcessService $processService;
 
@@ -31,7 +29,6 @@ class ProcessIndexPage extends Component
         'organization_id' => '',
         'overdue_only' => false,
         'my_sectors_only' => false,
-        'perPage' => 10,
     ];
 
     public string $title = '';
@@ -50,11 +47,6 @@ class ProcessIndexPage extends Component
         $this->authorize('process.view');
     }
 
-    public function updatedFilters(): void
-    {
-        $this->resetPage();
-    }
-
     public function toggleQuickFilter(string $filter): void
     {
         if (! in_array($filter, ['overdue_only', 'my_sectors_only'], true)) {
@@ -63,7 +55,17 @@ class ProcessIndexPage extends Component
 
         $current = (bool) ($this->filters[$filter] ?? false);
         $this->filters[$filter] = ! $current;
-        $this->resetPage();
+    }
+
+    public function resetFilters(): void
+    {
+        $this->filters = [
+            'title' => '',
+            'status' => ProcessStatus::IN_PROGRESS,
+            'organization_id' => '',
+            'overdue_only' => false,
+            'my_sectors_only' => false,
+        ];
     }
 
     public function create(): void
@@ -108,15 +110,15 @@ class ProcessIndexPage extends Component
         $userId = (int) Auth::id();
         $processes = $this->processService->index($this->filters, $userId);
         $processIdsWithUnseenUpdates = $this->processService
-            ->processIdsWithUnseenUpdates($processes->getCollection(), $userId);
+            ->processIdsWithUnseenUpdates($processes, $userId);
         $processIdsWithOverdueCurrentStep = $this->processService
-            ->processIdsWithOverdueCurrentStep($processes->getCollection());
+            ->processIdsWithOverdueCurrentStep($processes);
 
         return view('livewire.process.process-index-page', [
             'processes' => $processes,
             'processIdsWithUnseenUpdates' => $processIdsWithUnseenUpdates,
             'processIdsWithOverdueCurrentStep' => $processIdsWithOverdueCurrentStep,
-            'organizations' => OrganizationChart::query()->orderBy('title')->get(['id', 'title']),
+            'organizations' => OrganizationChart::query()->orderBy('title')->get(['id', 'title', 'acronym']),
             'workflows' => Workflow::query()->where('is_active', true)->orderBy('title')->get(['id', 'title']),
             'statuses' => $this->processService->availableStatuses(),
         ]);

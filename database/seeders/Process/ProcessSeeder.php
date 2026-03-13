@@ -18,11 +18,11 @@ use Illuminate\Support\Str;
 
 class ProcessSeeder extends Seeder
 {
-    private const MONTHS_BACK = 12;
+    private const MONTHS_BACK = 24;
 
-    private const MIN_PROCESSES_PER_MONTH = 1;
+    private const MIN_PROCESSES_PER_MONTH = 50;
 
-    private const MAX_PROCESSES_PER_MONTH = 5;
+    private const MAX_PROCESSES_PER_MONTH = 250;
 
     public function run(): void
     {

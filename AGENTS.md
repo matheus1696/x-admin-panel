@@ -204,32 +204,32 @@ Use the docs before changing code.
 
 Read in this order:
 
-1. `docs-ai/README.md`
-2. `docs-ai/DOMAINS.md`
-3. `docs-ai/ARCHITECTURE.md`
-4. `docs-ai/SYSTEM_GUIDE.md`
-5. `docs-ai/CONVENTIONS.md`
-6. `docs-ai/domains/<MODULO>.md`
-7. `docs-ai/SYSTEM_MAP.md` for cross-document navigation
+1. `docs-ia/README.md`
+2. `docs-ia/DOMAINS.md`
+3. `docs-ia/ARCHITECTURE.md`
+4. `docs-ia/SYSTEM_GUIDE.md`
+5. `docs-ia/CONVENTIONS.md`
+6. `docs-ia/domains/<MODULO>.md`
+7. `docs-ia/SYSTEM_MAP.md` for cross-document navigation
 
 What each file is for:
 
-- `docs-ai/README.md`: entry index
-- `docs-ai/DOMAINS.md`: quick module selection
-- `docs-ai/ARCHITECTURE.md`: system-wide relationships and flow
-- `docs-ai/SYSTEM_GUIDE.md`: invariants, module limits, review checklist
-- `docs-ai/CONVENTIONS.md`: how this codebase writes code
-- `docs-ai/SYSTEM_MAP.md`: document precedence, reading flow, module dependency, risk map
-- `docs-ai/domains/ORGANIZATION.md`: hierarchy and workflow scope
-- `docs-ai/domains/TASK.md`: execution, hubs, kanban, steps
-- `docs-ai/domains/ASSETS.md`: patrimony, stock, release, asset audits and reports
-- `docs-ai/domains/ADMINISTRATION.md`: users, permissions, task catalogs
-- `docs-ai/domains/CONFIGURATION.md`: base reference data
-- `docs-ai/domains/AUDIT.md`: system-wide logging
-- `docs-ai/domains/AUTH.md`: login and access lifecycle
-- `docs-ai/domains/PROFILE.md`: authenticated user self-service
-- `docs-ai/domains/PUBLIC.md`: public contact surface
-- `docs-ai/domains/DASHBOARD.md`: authenticated entry page
+- `docs-ia/README.md`: entry index
+- `docs-ia/DOMAINS.md`: quick module selection
+- `docs-ia/ARCHITECTURE.md`: system-wide relationships and flow
+- `docs-ia/SYSTEM_GUIDE.md`: invariants, module limits, review checklist
+- `docs-ia/CONVENTIONS.md`: how this codebase writes code
+- `docs-ia/SYSTEM_MAP.md`: document precedence, reading flow, module dependency, risk map
+- `docs-ia/domains/ORGANIZATION.md`: hierarchy and workflow scope
+- `docs-ia/domains/TASK.md`: execution, hubs, kanban, steps
+- `docs-ia/domains/ASSETS.md`: patrimony, stock, release, asset audits and reports
+- `docs-ia/domains/ADMINISTRATION.md`: users, permissions, task catalogs
+- `docs-ia/domains/CONFIGURATION.md`: base reference data
+- `docs-ia/domains/AUDIT.md`: system-wide logging
+- `docs-ia/domains/AUTH.md`: login and access lifecycle
+- `docs-ia/domains/PROFILE.md`: authenticated user self-service
+- `docs-ia/domains/PUBLIC.md`: public contact surface
+- `docs-ia/domains/DASHBOARD.md`: authenticated entry page
 
 Lookup by task:
 

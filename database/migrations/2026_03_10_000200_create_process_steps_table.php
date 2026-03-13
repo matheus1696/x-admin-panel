@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedInteger('step_order');
             $table->string('title');
             $table->foreignId('organization_id')->nullable()->constrained('organization_charts')->nullOnDelete();
+            $table->foreignId('owner_id')->nullable()->constrained('users')->nullOnDelete();
             $table->unsignedInteger('deadline_days')->nullable();
             $table->boolean('required')->default(true);
             $table->boolean('is_current')->default(false);
@@ -27,6 +28,7 @@ return new class extends Migration
 
             $table->unique(['process_id', 'step_order']);
             $table->index(['process_id', 'is_current']);
+            $table->index(['process_id', 'owner_id']);
             $table->index(['process_id', 'status']);
             $table->index(['process_id', 'started_at']);
         });
@@ -43,7 +45,7 @@ return new class extends Migration
     {
         $processes = DB::table('processes')
             ->whereNotNull('workflow_id')
-            ->get(['id', 'workflow_id', 'organization_id']);
+            ->get(['id', 'workflow_id', 'organization_id', 'owner_id']);
 
         foreach ($processes as $process) {
             $workflowSteps = DB::table('workflow_steps')
@@ -70,6 +72,7 @@ return new class extends Migration
                     'step_order' => (int) $step->step_order,
                     'title' => $step->title,
                     'organization_id' => $step->organization_id,
+                    'owner_id' => (int) $step->step_order === (int) $currentStepOrder ? $process->owner_id : null,
                     'deadline_days' => $step->deadline_days,
                     'required' => (bool) $step->required,
                     'is_current' => (int) $step->step_order === (int) $currentStepOrder,

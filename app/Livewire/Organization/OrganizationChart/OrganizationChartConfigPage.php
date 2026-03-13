@@ -11,11 +11,10 @@ use App\Validation\Organization\OrganizationChart\OrganizationChartRules;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class OrganizationChartConfigPage extends Component
 {
-    use Modal, WithFlashMessage, WithPagination;
+    use Modal, WithFlashMessage;
 
     protected OrganizationChartService $organizationChartService;
 
@@ -119,6 +118,16 @@ class OrganizationChartConfigPage extends Component
     {
         $this->organizationChartService->status($id);
         $this->flashSuccess('Setor foi atualizada com sucesso.');
+    }
+
+    public function resetFilters(): void
+    {
+        $this->filters = [
+            'acronym' => '',
+            'filter' => '',
+            'status' => 'all',
+            'responsible_user_id' => 'all',
+        ];
     }
 
     public function openUsers(int $organizationId): void

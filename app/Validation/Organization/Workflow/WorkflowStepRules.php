@@ -9,7 +9,7 @@ class WorkflowStepRules
         return [
             'title' => ['required', 'string', 'max:255'],
             'deadline_days' => ['required', 'integer', 'min:1'],
-            'organization_id' => ['nullable', 'integer', 'exists:organization_charts,id'],
+            'organization_id' => ['required', 'integer', 'exists:organization_charts,id'],
             'required' => ['nullable', 'boolean'],
             'allow_parallel' => ['nullable', 'boolean'],
         ];
@@ -20,7 +20,7 @@ class WorkflowStepRules
         return [
             'title' => ['required', 'string', 'max:255'],
             'deadline_days' => ['required', 'integer', 'min:1'],
-            'organization_id' => ['nullable', 'integer', 'exists:organization_charts,id'],
+            'organization_id' => ['required', 'integer', 'exists:organization_charts,id'],
             'required' => ['nullable', 'boolean'],
             'allow_parallel' => ['nullable', 'boolean'],
         ];

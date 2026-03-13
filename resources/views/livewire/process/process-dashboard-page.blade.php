@@ -19,32 +19,32 @@
             ? 'background: conic-gradient('.implode(', ', $statusSegments).');'
             : 'background: #e5e7eb;';
 
-        $deadlineRows = [
-            ['label' => 'No prazo', 'total' => (int) ($dashboard['deadline_summary']['on_time'] ?? 0), 'color' => '#059669'],
-            ['label' => 'Atrasados', 'total' => (int) ($dashboard['deadline_summary']['overdue'] ?? 0), 'color' => '#dc2626'],
-            ['label' => 'Sem prazo', 'total' => (int) ($dashboard['deadline_summary']['without_deadline'] ?? 0), 'color' => '#64748b'],
+        $stepStatusRows = [
+            ['label' => 'Pendentes', 'total' => (int) ($dashboard['step_status_summary']['pending'] ?? 0), 'color' => '#94a3b8'],
+            ['label' => 'Em andamento', 'total' => (int) ($dashboard['step_status_summary']['in_progress'] ?? 0), 'color' => '#2563eb'],
+            ['label' => 'Concluidas', 'total' => (int) ($dashboard['step_status_summary']['completed'] ?? 0), 'color' => '#059669'],
         ];
 
-        $deadlineTotal = collect($deadlineRows)->sum('total');
-        $deadlineOffset = 0;
-        $deadlineSegments = [];
+        $stepStatusTotal = collect($stepStatusRows)->sum('total');
+        $stepStatusOffset = 0;
+        $stepStatusSegments = [];
 
-        foreach ($deadlineRows as $item) {
-            if ($deadlineTotal === 0 || $item['total'] === 0) {
+        foreach ($stepStatusRows as $item) {
+            if ($stepStatusTotal === 0 || $item['total'] === 0) {
                 continue;
             }
 
-            $slice = round(($item['total'] / $deadlineTotal) * 100, 2);
-            $end = min(100, $deadlineOffset + $slice);
-            $deadlineSegments[] = "{$item['color']} {$deadlineOffset}% {$end}%";
-            $deadlineOffset = $end;
+            $slice = round(($item['total'] / $stepStatusTotal) * 100, 2);
+            $end = min(100, $stepStatusOffset + $slice);
+            $stepStatusSegments[] = "{$item['color']} {$stepStatusOffset}% {$end}%";
+            $stepStatusOffset = $end;
         }
 
-        $deadlineChartStyle = $deadlineSegments !== []
-            ? 'background: conic-gradient('.implode(', ', $deadlineSegments).');'
+        $stepStatusChartStyle = $stepStatusSegments !== []
+            ? 'background: conic-gradient('.implode(', ', $stepStatusSegments).');'
             : 'background: #e5e7eb;';
 
-        $sectorMax = max(1, (int) (collect($dashboard['current_sectors'] ?? [])->max('total') ?? 0));
+        $averageOwnerMax = max(1, (float) (collect($dashboard['average_owner_times'] ?? [])->max('average_hours') ?? 0));
         $averageSectorMax = max(1, (float) (collect($dashboard['average_sector_times'] ?? [])->max('average_hours') ?? 0));
         $monthlyMax = max(1, (int) (collect($dashboard['openings_by_month'] ?? [])->max('total') ?? 0));
     @endphp
@@ -159,23 +159,23 @@
 
         <section class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
             <div class="border-b border-slate-100 bg-gradient-to-r from-slate-800 via-slate-900 to-slate-700 px-6 py-5 text-white">
-                <p class="text-xs font-semibold uppercase tracking-[0.25em]">Cumprimento de Prazo</p>
-                <p class="mt-1 text-xs text-white/80">Situacao das etapas atuais</p>
+                <p class="text-xs font-semibold uppercase tracking-[0.25em]">Status das Etapas</p>
+                <p class="mt-1 text-xs text-white/80">Distribuicao operacional do fluxo</p>
             </div>
 
             <div class="grid grid-cols-1 gap-6 p-6 md:grid-cols-[220px_1fr]">
                 <div class="flex items-center justify-center">
-                    <div class="relative h-44 w-44 rounded-full" style="{{ $deadlineChartStyle }}">
+                    <div class="relative h-44 w-44 rounded-full" style="{{ $stepStatusChartStyle }}">
                         <div class="absolute inset-6 rounded-full bg-white shadow-inner"></div>
                         <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                            <span class="text-3xl font-bold text-gray-900">{{ collect($deadlineRows)->sum('total') }}</span>
+                            <span class="text-3xl font-bold text-gray-900">{{ $stepStatusTotal }}</span>
                             <span class="text-[11px] font-semibold uppercase tracking-[0.25em] text-gray-500">Etapas</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="space-y-4">
-                    @foreach ($deadlineRows as $item)
+                    @foreach ($stepStatusRows as $item)
                         <div class="rounded-2xl border border-gray-100 bg-gray-50/70 px-4 py-3">
                             <div class="flex items-center justify-between gap-3">
                                 <span class="text-xs font-medium text-gray-600">{{ $item['label'] }}</span>
@@ -192,26 +192,27 @@
         <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between gap-3">
                 <div>
-                    <p class="text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500">Setores</p>
-                    <h3 class="mt-2 text-sm font-semibold text-gray-900">Processos por setor atual</h3>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500">Responsaveis</p>
+                    <h3 class="mt-2 text-sm font-semibold text-gray-900">Tempo medio de retorno por usuario</h3>
                 </div>
-                <span class="text-[11px] text-gray-400">Fila atual</span>
+                <span class="text-[11px] text-gray-400">Etapas concluidas</span>
             </div>
 
             <div class="mt-5 space-y-3">
-                @forelse (($dashboard['current_sectors'] ?? []) as $item)
+                @forelse (($dashboard['average_owner_times'] ?? []) as $item)
                     <div class="space-y-1.5">
                         <div class="flex items-center justify-between gap-3 text-xs">
                             <span class="truncate text-gray-600">{{ $item['label'] }}</span>
-                            <span class="font-semibold text-gray-900">{{ $item['total'] }}</span>
+                            <span class="font-semibold text-gray-900">{{ $item['formatted'] }}</span>
                         </div>
                         <div class="h-2 overflow-hidden rounded-full bg-gray-100">
-                            <div class="h-full rounded-full bg-gradient-to-r from-slate-600 to-slate-800" style="width: {{ max(10, (int) round(($item['total'] / $sectorMax) * 100)) }}%"></div>
+                            <div class="h-full rounded-full bg-gradient-to-r from-slate-600 to-slate-800" style="width: {{ max(10, (int) round(($item['average_hours'] / $averageOwnerMax) * 100)) }}%"></div>
                         </div>
+                        <p class="text-[11px] text-gray-400">{{ $item['total_steps'] }} etapa(s) concluida(s)</p>
                     </div>
                 @empty
                     <div class="rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-4 py-4 text-center text-xs text-gray-400">
-                        Nenhum setor com processos no recorte selecionado.
+                        Ainda nao ha etapas concluidas com usuario atribuido para calcular medias.
                     </div>
                 @endforelse
             </div>

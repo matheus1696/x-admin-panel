@@ -22,10 +22,12 @@ return new class extends Migration
             $table->string('priority')->default(config('process.default_priority', 'normal'));
             $table->string('status')->default(ProcessStatus::IN_PROGRESS);
             $table->timestamp('started_at')->nullable();
+            $table->timestamp('estimated_completion_at')->nullable();
             $table->timestamp('closed_at')->nullable();
             $table->timestamps();
 
             $table->index(['status', 'created_at']);
+            $table->index(['status', 'estimated_completion_at']);
             $table->index(['organization_id', 'created_at']);
             $table->index(['opened_by', 'created_at']);
         });

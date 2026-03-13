@@ -10,7 +10,7 @@ use App\Models\Process\ProcessStatus;
 use App\Models\Process\ProcessStep;
 use App\Models\Process\ProcessUserView;
 use App\Support\Notifications\InteractsWithSystemNotifications;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +24,7 @@ class ProcessService
         private readonly ProcessEventService $eventService,
     ) {}
 
-    public function index(array $filters, int $userId): LengthAwarePaginator
+    public function index(array $filters, int $userId): Collection
     {
         $query = $this->accessibleProcessesQuery($userId)
             ->with(['openedBy', 'owner', 'organization', 'workflow']);
@@ -60,7 +60,7 @@ class ProcessService
         return $query
             ->orderByDesc('updated_at')
             ->orderByDesc('created_at')
-            ->paginate((int) ($filters['perPage'] ?? 10));
+            ->get();
     }
 
     public function findByUuid(string $uuid): Process
@@ -73,6 +73,7 @@ class ProcessService
                 'workflow.workflowSteps.organization',
                 'events.user',
                 'steps.organization',
+                'steps.owner',
             ])
             ->where('uuid', $uuid)
             ->firstOrFail();
@@ -89,6 +90,7 @@ class ProcessService
                 'workflow.workflowSteps.organization',
                 'events.user',
                 'steps.organization',
+                'steps.owner',
             ])
             ->where('uuid', $uuid)
             ->firstOrFail();
@@ -115,8 +117,10 @@ class ProcessService
             ->get();
 
         $completedSteps = $this->dashboardCompletedStepsQuery($filters)
-            ->with('organization')
+            ->with(['organization', 'owner'])
             ->get();
+
+        $steps = $this->dashboardStepsQuery($filters)->get();
 
         $statusRows = $this->availableStatuses()
             ->map(function (array $status) use ($processes): array {
@@ -141,8 +145,10 @@ class ProcessService
             ->values();
 
         $deadlineSummary = $this->buildDeadlineSummary($currentSteps);
+        $stepStatusSummary = $this->buildStepStatusSummary($steps);
         $sectorsCurrent = $this->buildCurrentSectorSummary($currentSteps);
         $averageSectorTimes = $this->buildAverageSectorTimes($completedSteps);
+        $averageOwnerTimes = $this->buildAverageOwnerTimes($completedSteps);
         $openingsByMonth = $this->buildMonthlyOpenings($filters);
         $overdueProcesses = $this->buildOverdueProcesses($currentSteps);
         $healthyProcesses = $this->buildHealthyProcesses($currentSteps);
@@ -155,8 +161,10 @@ class ProcessService
             'cancelled_total' => $processes->where('status', ProcessStatus::CANCELLED)->count(),
             'statuses' => $statusRows,
             'deadline_summary' => $deadlineSummary,
+            'step_status_summary' => $stepStatusSummary,
             'current_sectors' => $sectorsCurrent,
             'average_sector_times' => $averageSectorTimes,
+            'average_owner_times' => $averageOwnerTimes,
             'openings_by_month' => $openingsByMonth,
             'overdue_processes' => $overdueProcesses,
             'healthy_processes' => $healthyProcesses,
@@ -183,6 +191,9 @@ class ProcessService
                 }
             }
 
+            $openedAt = now();
+            $estimatedCompletionAt = $this->calculateEstimatedCompletionAt($openedAt, $workflowSteps);
+
             $process = Process::query()->create([
                 'title' => $data['title'],
                 'description' => $data['description'] ?? null,
@@ -192,7 +203,8 @@ class ProcessService
                 'owner_id' => $data['owner_id'] ?? $actorId,
                 'priority' => $data['priority'] ?? config('process.default_priority', 'normal'),
                 'status' => ProcessStatus::IN_PROGRESS,
-                'started_at' => now(),
+                'started_at' => $openedAt,
+                'estimated_completion_at' => $estimatedCompletionAt,
             ]);
 
             $this->createProcessSteps($process, $workflowSteps, (int) ($firstWorkflowStep?->step_order ?? 0));
@@ -247,6 +259,39 @@ class ProcessService
             ->get() ?? collect();
     }
 
+    public function calculateEstimatedCompletionAt(Carbon $openedAt, Collection $workflowSteps): ?Carbon
+    {
+        if ($workflowSteps->isEmpty()) {
+            return null;
+        }
+
+        $businessDays = (int) $workflowSteps
+            ->sum(fn ($step): int => max(0, (int) ($step->deadline_days ?? 0)));
+
+        return $this->addBusinessDays($openedAt, $businessDays);
+    }
+
+    private function addBusinessDays(Carbon $baseDate, int $businessDays): Carbon
+    {
+        $date = $baseDate->copy();
+
+        if ($businessDays <= 0) {
+            return $date;
+        }
+
+        $addedDays = 0;
+
+        while ($addedDays < $businessDays) {
+            $date->addDay();
+
+            if ($date->isWeekday()) {
+                $addedDays++;
+            }
+        }
+
+        return $date;
+    }
+
     private function createProcessSteps(Process $process, Collection $workflowSteps, int $currentStepOrder): void
     {
         if ($workflowSteps->isEmpty()) {
@@ -259,6 +304,7 @@ class ProcessService
                 'step_order' => (int) $step->step_order,
                 'title' => (string) $step->title,
                 'organization_id' => $step->organization_id,
+                'owner_id' => null,
                 'deadline_days' => $step->deadline_days,
                 'required' => (bool) $step->required,
                 'is_current' => (int) $step->step_order === $currentStepOrder,
@@ -274,6 +320,11 @@ class ProcessService
         if (in_array($process->status, [ProcessStatus::CLOSED, ProcessStatus::CANCELLED], true)) {
             throw new InvalidArgumentException('Processo ja finalizado.');
         }
+
+        if ($process->owner_id === null) {
+            throw new InvalidArgumentException('Atribua o usuario responsavel antes de avancar a etapa.');
+        }
+
         $this->assertActorBelongsToCurrentStepOrganization($process, $actorId);
 
         $comment = trim($comment);
@@ -307,12 +358,14 @@ class ProcessService
             }
 
             $currentStep->update([
+                'owner_id' => $process->owner_id,
                 'is_current' => false,
                 'status' => 'COMPLETED',
                 'completed_at' => $currentStep->completed_at ?? now(),
             ]);
 
             $nextStep->update([
+                'owner_id' => null,
                 'is_current' => true,
                 'status' => 'IN_PROGRESS',
                 'started_at' => $nextStep->started_at ?? now(),
@@ -327,6 +380,7 @@ class ProcessService
 
             $process->update([
                 'organization_id' => $nextStep->organization_id ?? $process->organization_id,
+                'owner_id' => null,
                 'status' => ProcessStatus::IN_PROGRESS,
                 'started_at' => $process->started_at ?? now(),
             ]);
@@ -404,15 +458,18 @@ class ProcessService
             }
 
             $currentStep->update([
+                'owner_id' => null,
                 'is_current' => false,
                 'status' => 'PENDING',
+                'started_at' => null,
                 'completed_at' => null,
             ]);
 
             $previousStep->update([
+                'owner_id' => null,
                 'is_current' => true,
                 'status' => 'IN_PROGRESS',
-                'started_at' => $previousStep->started_at ?? now(),
+                'started_at' => now(),
                 'completed_at' => null,
             ]);
 
@@ -424,6 +481,7 @@ class ProcessService
 
             $process->update([
                 'organization_id' => $previousStep->organization_id ?? $process->organization_id,
+                'owner_id' => null,
                 'status' => ProcessStatus::IN_PROGRESS,
                 'started_at' => $process->started_at ?? now(),
             ]);
@@ -523,10 +581,26 @@ class ProcessService
 
         return DB::transaction(function () use ($process, $actorId, $owner, $currentStepOrganizationId): Process {
             $previousOwnerId = $process->owner_id;
+            $currentStep = ProcessStep::query()
+                ->where('process_id', $process->id)
+                ->where(function (Builder $query): void {
+                    $query->where('is_current', true)
+                        ->orWhere('status', 'IN_PROGRESS');
+                })
+                ->orderByDesc('is_current')
+                ->orderBy('step_order')
+                ->orderBy('id')
+                ->first();
 
             $process->update([
                 'owner_id' => $owner->id,
             ]);
+
+            if ($currentStep) {
+                $currentStep->update([
+                    'owner_id' => $owner->id,
+                ]);
+            }
 
             $this->eventService->log(
                 $process,
@@ -819,6 +893,20 @@ class ProcessService
         return $query;
     }
 
+    private function dashboardStepsQuery(array $filters): Builder
+    {
+        $query = ProcessStep::query()
+            ->whereHas('process', function (Builder $processQuery) use ($filters): void {
+                $this->applyDashboardFiltersToProcessQuery($processQuery, $filters);
+            });
+
+        if (($filters['organization_id'] ?? 'all') !== 'all') {
+            $query->where('organization_id', (int) $filters['organization_id']);
+        }
+
+        return $query;
+    }
+
     private function applyDashboardFiltersToProcessQuery(Builder $query, array $filters): void
     {
         $windowStart = $this->resolveDashboardWindowStart($filters['window'] ?? '90d');
@@ -872,6 +960,15 @@ class ProcessService
         ];
     }
 
+    private function buildStepStatusSummary(Collection $steps): array
+    {
+        return [
+            'pending' => $steps->where('status', 'PENDING')->count(),
+            'in_progress' => $steps->where('status', 'IN_PROGRESS')->count(),
+            'completed' => $steps->where('status', 'COMPLETED')->count(),
+        ];
+    }
+
     private function buildCurrentSectorSummary(Collection $currentSteps): array
     {
         return $currentSteps
@@ -889,6 +986,31 @@ class ProcessService
     {
         return $completedSteps
             ->groupBy(fn (ProcessStep $step): string => $step->organization?->title ?? 'Nao definido')
+            ->map(function (Collection $steps, string $label): array {
+                $averageHours = round($steps->avg(
+                    fn (ProcessStep $step): float => (float) $step->started_at->diffInHours($step->completed_at)
+                ), 1);
+
+                return [
+                    'label' => $label,
+                    'average_hours' => $averageHours,
+                    'average_days' => round($averageHours / 24, 1),
+                    'formatted' => $averageHours >= 24
+                        ? round($averageHours / 24, 1).' dia(s)'
+                        : $averageHours.' h',
+                    'total_steps' => $steps->count(),
+                ];
+            })
+            ->sortByDesc('average_hours')
+            ->values()
+            ->all();
+    }
+
+    private function buildAverageOwnerTimes(Collection $completedSteps): array
+    {
+        return $completedSteps
+            ->filter(fn (ProcessStep $step): bool => $step->owner !== null)
+            ->groupBy(fn (ProcessStep $step): string => $step->owner?->name ?? 'Nao atribuido')
             ->map(function (Collection $steps, string $label): array {
                 $averageHours = round($steps->avg(
                     fn (ProcessStep $step): float => (float) $step->started_at->diffInHours($step->completed_at)
@@ -945,7 +1067,7 @@ class ProcessService
                     'sector' => $step->organization?->title ?? 'Nao definido',
                     'owner' => $step->process?->owner?->name ?? 'Nao atribuido',
                     'due_at' => $dueAt,
-                    'delay_days' => $dueAt->diffInDays(now()),
+                    'delay_days' => (int) floor($dueAt->diffInDays(now())),
                 ];
             })
             ->filter()

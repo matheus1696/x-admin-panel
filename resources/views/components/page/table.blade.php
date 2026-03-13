@@ -8,7 +8,7 @@
     'emptyMessage' => 'Nenhum registro encontrado',
 ])
 
-<!-- 📊 Data Table Component Premium -->
+<!-- ðŸ“Š Data Table Component Premium -->
 <div class="relative">
     
     <!-- Tabela Container com Scroll Suave -->
@@ -16,7 +16,7 @@
         
         <table class="w-full text-[13px] table-auto relative">
             
-            <!-- Cabeçalho Sticky com Design Premium -->
+            <!-- CabeÃ§alho Sticky com Design Premium -->
             <thead class="bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-800 text-[12px] text-white uppercase tracking-wider shadow-lg text-left">
                 <tr>
                     {{ $thead ?? '' }}
@@ -50,7 +50,7 @@
                 @endif
             </tbody>
             
-            <!-- Rodapé da Tabela (para totais, etc) -->
+            <!-- RodapÃ© da Tabela (para totais, etc) -->
             @if(isset($tfoot))
                 <tfoot class="bg-gray-50 border-t-2 border-gray-200">
                     {{ $tfoot }}
@@ -59,21 +59,21 @@
         </table>
     </div>
     
-    <!-- Paginação Premium -->
+    <!-- PaginaÃ§Ã£o Premium -->
     @if ($pagination && $pagination->total() > 0)
         <div class="flex flex-col sm:flex-row items-center justify-between gap-2 mt-4 px-2">
             
-            <!-- Informação de registros -->
+            <!-- InformaÃ§Ã£o de registros -->
             <div class="flex items-center gap-2 text-xs text-gray-500 bg-gray-50 px-4 lg:pb-4">
                 <i class="fas fa-database text-emerald-500 text-[10px]"></i>
                 <span>
                     Mostrando <span class="font-semibold text-gray-700">{{ $pagination->firstItem() ?? 0 }}</span>
-                    até <span class="font-semibold text-gray-700">{{ $pagination->lastItem() ?? 0 }}</span>
+                    atÃ© <span class="font-semibold text-gray-700">{{ $pagination->lastItem() ?? 0 }}</span>
                     de <span class="font-semibold text-gray-700">{{ $pagination->total() }}</span> registros
                 </span>
             </div>
             
-            <!-- Links de paginação customizados -->
+            <!-- Links de paginaÃ§Ã£o customizados -->
             <div class="flex items-center gap-2">
                 {{ $pagination->links('components.pagination') }}
             </div>

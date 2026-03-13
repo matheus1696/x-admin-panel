@@ -67,6 +67,7 @@ class WorkflowStepSeeder extends Seeder
 
         WorkflowStep::create([
             'workflow_id' => 1,
+            'organization_id' => 42,
             'title' => 'Emissão de parecer jurídico - fase interna',
             'step_order' => 8,
             'deadline_days' => 3,
@@ -82,6 +83,7 @@ class WorkflowStepSeeder extends Seeder
 
         WorkflowStep::create([
             'workflow_id' => 1,
+            'organization_id' => 42,
             'title' => 'Fase de jugamento do processo: Habilitação jurídica e técnica',
             'step_order' => 10,
             'deadline_days' => 30,
@@ -89,6 +91,7 @@ class WorkflowStepSeeder extends Seeder
 
         WorkflowStep::create([
             'workflow_id' => 1,
+            'organization_id' => 42,
             'title' => 'Emissão de parecer jurídico - fase externa',
             'step_order' => 11,
             'deadline_days' => 3,
@@ -96,6 +99,7 @@ class WorkflowStepSeeder extends Seeder
 
         WorkflowStep::create([
             'workflow_id' => 1,
+            'organization_id' => 42,
             'title' => 'Homologação da fase externa do processo',
             'step_order' => 12,
             'deadline_days' => 3,
@@ -103,6 +107,7 @@ class WorkflowStepSeeder extends Seeder
 
         WorkflowStep::create([
             'workflow_id' => 1,
+            'organization_id' => 42,
             'title' => 'Publicação da homologação - fase externa do processo',
             'step_order' => 13,
             'deadline_days' => 3,
@@ -118,6 +123,7 @@ class WorkflowStepSeeder extends Seeder
 
         WorkflowStep::create([
             'workflow_id' => 1,
+            'organization_id' => 42,
             'title' => 'Emissão de ordens de fornecimento / serviço',
             'step_order' => 15,
             'deadline_days' => 2,
@@ -125,9 +131,27 @@ class WorkflowStepSeeder extends Seeder
 
         WorkflowStep::create([
             'workflow_id' => 1,
+            'organization_id' => 42,
             'title' => 'Etapa Final',
             'step_order' => 16,
             'deadline_days' => 1,
+        ]);
+
+        
+        WorkflowStep::create([
+            'workflow_id' => 2,
+            'organization_id' => 42,
+            'title' => 'Elaboração do documento de formalização da demanda - DFD',
+            'step_order' => 1,
+            'deadline_days' => 2,
+        ]);
+
+        WorkflowStep::create([
+            'workflow_id' => 2,
+            'organization_id' => 37,
+            'title' => 'Elaboração de cotação',
+            'step_order' => 2,
+            'deadline_days' => 30,
         ]);
     }
 }

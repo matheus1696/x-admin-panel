@@ -19,10 +19,11 @@
                 </div>
 
                 <div class="col-span-6 md:col-span-6">
-                    <x-form.label value="Setor" />
+                    <x-form.label value="Setor *" />
                     <x-form.select-livewire
                         wire:model.defer="organization_id"
                         name="organization_id"
+                        placeholder="Selecione o setor"
                         :collection="$organizations"
                         value-field="id"
                         label-acronym="acronym"

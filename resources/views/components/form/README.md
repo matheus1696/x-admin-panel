@@ -1,43 +1,78 @@
-# Estrutura Componentização do Formulário
+# Form Components
 
-resources/views/components/form/
-├── error.blade.php
-├── input.blade.php
-├── label.blade.php
-├── select-livewire.blade.php
-├── select.blade.php
-└── textarea.blade.php
+Guia rapido da familia `x-form.*`.
 
-## Componente Select Search
+## Componentes
 
-Componente de select customizado utilizando Alpine.js, compatível com Blade puro e Livewire.
+- `x-form.label`
+- `x-form.error`
+- `x-form.input`
+- `x-form.textarea`
+- `x-form.select`
+- `x-form.select-livewire`
 
-### Recursos
+## Matriz Padrao
 
-- Busca integrada
-- Navegação por teclado
-- Acessibilidade básica (ARIA)
-- Variantes visuais
-- Compatível com formulários tradicionais e Livewire
-- Sem dependências externas de JavaScript
+Variantes compartilhadas:
+- `default`
+- `outline`
+- `filled`
+- `minimal`
+- `glass`
+- `pills`
 
-##  Atributos
+Tamanhos compartilhados:
+- `xs`
+- `sm`
+- `md`
+- `lg`
 
-| Propriedade   | Tipo             | Descrição                    |
-|---------------|------------------|------------------------------|
-| `name`        | `string`         | Nome do campo (obrigatório)  |
-| `wire:model`  | `string`         | Model Livewire (obrigatório) |
-| `collection`  | `Collection`     | Coleção Eloquent             |
-| `options`     | `array`          | Array manual de opções       |
-| `labelField`  | `string`         | Campo usado como label       |
-| `labelAcronym`| `string \| null` | Campo adicional para prefixo |
-| `valueField`  | `string`         | Campo usado como value       |
-| `placeholder` | `string`         | Texto padrão                 |
-| `variant`     | `string`         | `default` ou `inline`        |
-| `disabled`    | `boolean`        | Desativa o select            |
+Cores compartilhadas:
+- `green`
+- `blue`
+- `purple`
+- `red`
+- `yellow`
+- `gray`
+- `sky`
+- `indigo`
 
+## Regras De Uso
 
-### Uso Básico (Blade)
+- `x-form.label` deve ficar acima do campo.
+- `x-form.error` deve ficar imediatamente abaixo do campo.
+- `x-form.select` deve ser usado em Blade puro.
+- `x-form.select-livewire` deve ser usado quando houver `wire:model`.
+- `variant="default"` e `borderColor="green"` sao o baseline do sistema.
+- `variant="minimal"` deve ficar restrito a filtros compactos e toolbars.
+- `glass` e `pills` devem ser usados com criterio, nao como padrao geral.
+
+## Exemplos
+
+### Input
+
+```blade
+<x-form.label for="title" value="Titulo" required />
+<x-form.input
+    name="title"
+    placeholder="Informe o titulo"
+/>
+<x-form.error for="title" />
+```
+
+### Textarea
+
+```blade
+<x-form.label for="description" value="Descricao" />
+<x-form.textarea
+    name="description"
+    rows="4"
+    variant="filled"
+/>
+<x-form.error for="description" />
+```
+
+### Select Blade
 
 ```blade
 <x-form.select
@@ -46,68 +81,25 @@ Componente de select customizado utilizando Alpine.js, compatível com Blade pur
         ['value' => 'open', 'label' => 'Aberto'],
         ['value' => 'closed', 'label' => 'Fechado'],
     ]"
+    placeholder="Selecione um status"
 />
 ```
 
-### Uso Básico (Livewire)
+### Select Livewire
 
 ```blade
 <x-form.select-livewire
     name="user_id"
-    wire:model.live="user_id"
+    wire:model.live="userId"
     :collection="$users"
     label-field="name"
-    placeholder="Selecione um usuário"
+    placeholder="Selecione um usuario"
 />
 ```
 
-### Uso com Collection (Blade)
+## Observacoes
 
-```blade
-<x-form.select
-    name="user_id"
-    :collection="$users"
-    label-field="name"
-    value-field="id"
-    placeholder="Selecione um usuário"
-/>
-```
-
-### Valor Selecionado (Blade)
-
-```blade
-<x-form.select
-    name="status"
-    :options="$statusOptions"
-    :selected="$db->is_active"
-/>
-```
-
-### Uso de Laytous Variantes (Blade)
-
-```blade
-<x-form.select
-    name="priority"
-    :options="$priorities"
-    variant="inline"
-/>
-```
-
-### Navegação por Teclado
-
-| Tecla | Ação                 |
-|-------|----------------------|
-| Tab   | Foca e abre o select |
-| ↑ / ↓ | Navega entre opções  |
-| Enter | Seleciona a opção    |
-| Esc   | Fecha o dropdown     |
-
-- Enter **não** submete o formulário
-- Foco automático no campo de busca ao abrir
-- Fecha ao perder o foco ou ao clicar fora
-
-### Boas Práticas
-
-- Utilize `collection` sempre que possível
-- Não misture `select` com `select-livewire`
-- Indicado para formulários administrativos
+- `x-form.select-livewire` exige `wire:model`.
+- `x-form.input` e `x-form.textarea` aceitam `loading` para bloquear interacao.
+- `x-form.label` aceita `required` e `size`.
+- `x-form.error` aceita `icon` para customizacao leve.

@@ -2,6 +2,7 @@
 
 namespace App\Models\Process;
 
+use App\Models\Administration\User\User;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
 use App\Models\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,7 @@ class ProcessStep extends Model
         'step_order',
         'title',
         'organization_id',
+        'owner_id',
         'deadline_days',
         'required',
         'is_current',
@@ -42,5 +44,10 @@ class ProcessStep extends Model
     public function organization(): BelongsTo
     {
         return $this->belongsTo(OrganizationChart::class, 'organization_id');
+    }
+
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner_id');
     }
 }

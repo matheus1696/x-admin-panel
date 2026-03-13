@@ -1,8 +1,8 @@
 @props([
     'icon' => 'fas fa-tasks',
     'color' => 'green',
-    'title' => 'Título da Página',
-    'subtitle' => 'Subtítulo da Página',
+    'title' => 'TÃ­tulo da PÃ¡gina',
+    'subtitle' => 'SubtÃ­tulo da PÃ¡gina',
     'button' => null,
     'badge' => null,
     'accordionOpen' => false,
@@ -71,20 +71,20 @@
 
 <div class="group relative transition-all duration-500 mb-2">
             
-    <!-- Conteúdo principal -->
+    <!-- ConteÃºdo principal -->
     <div class="relative grid grid-cols-1 md:grid-cols-12 items-center justify-between gap-4 px-1 pb-5 pt-2 transition-all duration-300">
         <div class="col-span-1 md:col-span-9 flex items-center gap-4">
-            <!-- Ícone com glow e animação -->
+            <!-- Ãcone com glow e animaÃ§Ã£o -->
             <div class="relative">
                 <!-- Glow effect -->
                 <div class="absolute inset-0 {{ $config['iconBg'] }} rounded-xl blur-lg opacity-40 group-hover:opacity-60 transition-opacity duration-500"></div>
                 
-                <!-- Ícone principal -->
+                <!-- Ãcone principal -->
                 <div class="relative {{ $config['iconBg'] }} {{ $config['iconGlow'] }} size-12 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:-rotate-3 transition-all duration-500 ring-4 {{ $config['ring'] }} ring-offset-2 ring-offset-white/50">
                     <i class="{{ $icon }} text-xl text-white"></i>
                 </div>
                 
-                <!-- Badge de notificação com animação -->
+                <!-- Badge de notificaÃ§Ã£o com animaÃ§Ã£o -->
                 @if($badge)
                     <span class="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-amber-500 to-red-500 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold text-white shadow-lg animate-pulse">
                         {{ $badge }}
@@ -92,14 +92,14 @@
                 @endif
             </div>
             
-            <!-- Título e subtítulo -->
+            <!-- TÃ­tulo e subtÃ­tulo -->
             <div class="space-y-1">
                 <div class="flex items-center gap-2">
                     <h1 class="text-xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent line-clamp-1">
                         {{ $title }}
                     </h1>
                     
-                    <!-- Indicador de página ativa -->
+                    <!-- Indicador de pÃ¡gina ativa -->
                     <span class="w-1.5 h-1.5 rounded-full {{ $config['iconBg'] }} animate-pulse"></span>
                 </div>
                 
@@ -112,7 +112,7 @@
             </div>
         </div>
         
-        <!-- Botão de ação com animação -->
+        <!-- BotÃ£o de aÃ§Ã£o com animaÃ§Ã£o -->
         @if($button)
             <div class="col-span-1 md:col-span-3 flex items-center justify-end gap-1.5">
                 {{ $button }}

@@ -286,6 +286,7 @@
                         <!-- Right Section -->
                         <div class="flex items-center gap-2 sm:gap-4">
                             <!-- Notificações (placeholder) -->
+                            {{--
                             <div class="relative" @click.outside="openNotifications = false">
                                 <button @click="openNotifications = !openNotifications" class="relative p-2 rounded-lg transition-all duration-200 hover:bg-emerald-800 active:scale-95">
                                     <i class="fa-regular fa-bell text-white text-lg"></i>
@@ -352,7 +353,10 @@
                                     </div>
                                 </div>
                             </div>
+                            --}}
                             
+                            <livewire:layout.notifications-dropdown />
+
                             <!-- User Avatar -->
                             <div class="relative">
                                 <button @click="openProfile = !openProfile" 

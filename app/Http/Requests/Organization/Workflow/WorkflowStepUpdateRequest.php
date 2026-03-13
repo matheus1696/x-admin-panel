@@ -22,9 +22,9 @@ class WorkflowStepUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
             'title' => 'required|string|max:255',
             'deadline_days'  => 'required|integer|min:1',
+            'organization_id' => 'required|integer|exists:organization_charts,id',
         ];
     }
 }

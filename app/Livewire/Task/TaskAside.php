@@ -37,8 +37,6 @@ class TaskAside extends Component
 
     public Collection $taskPriorities;
 
-    public Collection $workflows;
-
     public $description = '';
 
     public $responsable_id;
@@ -52,8 +50,6 @@ class TaskAside extends Component
     public $deadline_at = null;
 
     public $comment;
-
-    public $workflow_id = null;
 
     public $isEditingDescription = false;
 
@@ -93,9 +89,6 @@ class TaskAside extends Component
         $this->taskPriorities = TaskPriority::orderBy('level')->get();
         $this->taskCategories = collect();
         $this->taskStatuses = collect();
-        $this->workflows = $this->taskService->availableWorkflows();
-        $this->workflow_id = $this->workflows->first()?->id;
-
         $this->loadTask();
     }
 
@@ -348,30 +341,6 @@ class TaskAside extends Component
 
         $this->comment = '';
         $this->task->refresh();
-    }
-
-    public function copyWorkflowToTask(): void
-    {
-        $workflowIds = $this->workflows
-            ->pluck('id')
-            ->map(fn ($id): int => (int) $id)
-            ->all();
-
-        $data = $this->validate([
-            'workflow_id' => ['required', Rule::in($workflowIds)],
-        ]);
-
-        $copied = $this->taskService->copyWorkflowToTask($this->task->id, (int) $data['workflow_id']);
-
-        if (! $copied) {
-            $this->loadTask();
-            $this->flashError('Nao foi possivel copiar o fluxo. Esta tarefa ja possui etapas ou o fluxo selecionado esta invalido.');
-
-            return;
-        }
-
-        $this->loadTask();
-        $this->flashSuccess('Fluxo de trabalho copiado para a tarefa com sucesso.');
     }
 
     public function taskFinished()

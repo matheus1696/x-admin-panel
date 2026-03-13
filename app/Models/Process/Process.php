@@ -28,11 +28,13 @@ class Process extends Model
         'priority',
         'status',
         'started_at',
+        'estimated_completion_at',
         'closed_at',
     ];
 
     protected $casts = [
         'started_at' => 'datetime',
+        'estimated_completion_at' => 'datetime',
         'closed_at' => 'datetime',
     ];
 

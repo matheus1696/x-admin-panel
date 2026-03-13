@@ -19,6 +19,7 @@
     'borderColor' => 'green', // green, blue, purple, red, etc
     'searchable' => true,
     'rounded' => null, // null, 'sm', 'md', 'lg', 'full', 'none'
+    'shadow' => true,
 ])
 
 @php
@@ -281,12 +282,13 @@
     ];
     
     $variantConfig = $variants[$variant] ?? $variants['default'];
+    $shadowClass = $shadow ? '' : 'shadow-none hover:shadow-none';
     
     // Aplica o rounded à classe do trigger
     $triggerClasses = [
-        'base' => $variantConfig['trigger']['base'] . ' ' . $roundedClass,
-        'error' => $variantConfig['trigger']['error'] . ' ' . $roundedClass,
-        'selected' => $variantConfig['trigger']['selected'] . ' ' . $roundedClass,
+        'base' => $variantConfig['trigger']['base'] . ' ' . $roundedClass . ' ' . $shadowClass,
+        'error' => $variantConfig['trigger']['error'] . ' ' . $roundedClass . ' ' . $shadowClass,
+        'selected' => $variantConfig['trigger']['selected'] . ' ' . $roundedClass . ' ' . $shadowClass,
     ];
 @endphp
 

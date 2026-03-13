@@ -1,7 +1,7 @@
 ﻿# Layout Guide (Playbook Operacional)
 
 Guia de execucao para evolucao visual do X-AdminPanel.
-Este documento complementa `docs-ai/LAYOUT.md` (inventario e diagnostico completo) com regras praticas para implementacao.
+Este documento reune as regras praticas de implementacao visual e deve ser usado em conjunto com `docs-ia/COMPONENTS.md`, `docs-ia/CONVENTIONS.md` e `docs-ia/SYSTEM_GUIDE.md`.
 
 ## 1. Objetivo
 
@@ -476,12 +476,12 @@ Diretrizes:
 
 ## 11. Fluxo de trabalho para mudancas de layout
 
-1. Registrar ideia no `docs-ai/LAYOUT.md`.
+1. Registrar ideia em `docs-ia/LAYOUT_GUIDE.md` e, se afetar API de componente, tambem em `docs-ia/COMPONENTS.md`.
 2. Definir escopo e criterio de aceite.
 3. Implementar em componentes base primeiro (quando aplicavel).
 4. Propagar para telas do modulo.
 5. Validar responsividade + acessibilidade + performance.
-6. Atualizar documentacao final (`LAYOUT.md` e este arquivo).
+6. Atualizar documentacao final (`COMPONENTS.md` e este arquivo, quando aplicavel).
 
 ## 12. Checklist de PR (obrigatorio)
 
@@ -510,10 +510,27 @@ Diretrizes:
 
 ## 13. Referencias rapidas
 
-- Diagnostico completo: `docs-ai/LAYOUT.md`
-- Conventions: `docs-ai/CONVENTIONS.md`
-- Architecture: `docs-ai/ARCHITECTURE.md`
-- Domain map: `docs-ai/DOMAINS.md`
+- Catalogo de componentes: `docs-ia/COMPONENTS.md`
+- Conventions: `docs-ia/CONVENTIONS.md`
+- Architecture: `docs-ia/ARCHITECTURE.md`
+- Domain map: `docs-ia/DOMAINS.md`
+
+## 13.1 Relacao com o catalogo de componentes
+
+Este guia define:
+- principios de interface;
+- semantica visual;
+- estrutura de pagina;
+- regras de interacao e acessibilidade.
+
+O arquivo `docs-ia/COMPONENTS.md` define:
+- inventario real dos componentes Blade compartilhados;
+- props e variacoes suportadas hoje;
+- inconsistencias atuais da API;
+- padronizacao alvo para alinhamento gradual.
+
+Regra:
+- ao evoluir um componente base, atualizar os dois arquivos quando a mudanca impactar layout e API.
 
 ## 14. Guia de microcopy
 
@@ -608,4 +625,3 @@ Diretrizes:
   - aviso gerado por interacoes relevantes do sistema.
 - `Dashboard`:
   - tela de consolidacao com indicadores e atalhos de acao.
-

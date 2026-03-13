@@ -6,7 +6,6 @@ use App\Models\Administration\Task\TaskStatus;
 use App\Models\Administration\Task\TaskStepStatus;
 use App\Models\Administration\User\User;
 use App\Models\Organization\OrganizationChart\OrganizationChart;
-use App\Models\Organization\Workflow\Workflow;
 use App\Models\Task\Task;
 use App\Models\Task\TaskActivity;
 use App\Models\Task\TaskHub;
@@ -43,15 +42,6 @@ class TaskService
 
             return $taskHub;
         });
-    }
-
-    public function availableWorkflows(): Collection
-    {
-        return Workflow::query()
-            ->where('is_active', true)
-            ->with('workflowSteps.organization')
-            ->orderBy('title')
-            ->get();
     }
 
     public function members(string $hubUuid): Collection
@@ -337,78 +327,6 @@ class TaskService
             'taskSteps',
             'taskStepsFinished',
         ])->findOrFail($id);
-    }
-
-    public function copyWorkflowToTask(int $taskId, int $workflowId): bool
-    {
-        return DB::transaction(function () use ($taskId, $workflowId): bool {
-            $task = Task::query()
-                ->with('taskSteps')
-                ->lockForUpdate()
-                ->findOrFail($taskId);
-
-            if ($task->taskSteps->isNotEmpty()) {
-                return false;
-            }
-
-            $workflow = Workflow::query()
-                ->where('is_active', true)
-                ->with('workflowSteps')
-                ->findOrFail($workflowId);
-
-            if ($workflow->workflowSteps->isEmpty()) {
-                return false;
-            }
-
-            $defaultStepStatusId = TaskStepStatus::query()
-                ->where('task_hub_id', $task->task_hub_id)
-                ->where('is_default', true)
-                ->value('id');
-
-            $baseDate = ($task->started_at ?? $task->created_at ?? now())->copy()->startOfDay();
-            $accumulatedDays = 0;
-            $finalDeadline = null;
-
-            foreach ($workflow->workflowSteps->sortBy('step_order') as $workflowStep) {
-                $accumulatedDays += max(0, (int) ($workflowStep->deadline_days ?? 0));
-                $stepDeadline = $baseDate->copy()->addDays($accumulatedDays);
-                $finalDeadline = $stepDeadline->copy();
-
-                TaskStep::create([
-                    'task_hub_id' => $task->task_hub_id,
-                    'task_id' => $task->id,
-                    'title' => $workflowStep->title,
-                    'organization_id' => $workflowStep->organization_id,
-                    'task_status_id' => $defaultStepStatusId,
-                    'workflow_step_order' => (int) $workflowStep->step_order,
-                    'is_required' => (bool) $workflowStep->required,
-                    'allow_parallel' => (bool) $workflowStep->allow_parallel,
-                    'deadline_at' => $stepDeadline,
-                    'kanban_order' => $this->nextStepKanbanOrder($task->task_hub_id, $defaultStepStatusId),
-                    'created_user_id' => Auth::id(),
-                ]);
-            }
-
-            if ($finalDeadline !== null) {
-                $task->update([
-                    'deadline_at' => $finalDeadline,
-                ]);
-            }
-
-            TaskActivity::create([
-                'task_id' => $task->id,
-                'user_id' => Auth::id(),
-                'type' => 'workflow_copy',
-                'description' => $this->actorName().' copiou o fluxo de trabalho '.$workflow->title.' para a tarefa',
-                'meta' => [
-                    'workflow_id' => $workflow->id,
-                    'workflow_title' => $workflow->title,
-                    'total_steps' => $workflow->workflowSteps->count(),
-                ],
-            ]);
-
-            return true;
-        });
     }
 
     public function index(string $id, array $filters): LengthAwarePaginator

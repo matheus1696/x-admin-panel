@@ -19,6 +19,7 @@
     'borderColor' => 'green', // green, blue, purple, red, etc
     'searchable' => true,
     'rounded' => null, // null, 'sm', 'md', 'lg', 'full', 'none'
+    'shadow' => true,
 ])
 
 @php
@@ -98,7 +99,9 @@
             'text' => 'text-gray-800',
             'icon' => 'text-emerald-600',
             'pill' => 'bg-emerald-100 text-emerald-800 border-emerald-300',
-            'search' => 'focus:ring-transparent border border-gray-200 focus:border-emerald-600'
+            'search' => 'focus:ring-transparent border border-gray-200 focus:border-emerald-600',
+            'ring' => 'ring-emerald-500/20',
+            'glassSelected' => 'bg-emerald-50/30 border border-emerald-300/50',
         ],
         'blue' => [
             'base' => 'border-gray-200 focus:border-blue-600 focus:ring-blue-600/20',
@@ -109,6 +112,9 @@
             'text' => 'text-blue-700',
             'icon' => 'text-blue-600',
             'pill' => 'bg-blue-100 text-blue-800 border-blue-300',
+            'search' => 'focus:ring-transparent border border-gray-200 focus:border-blue-600',
+            'ring' => 'ring-blue-500/20',
+            'glassSelected' => 'bg-blue-50/30 border border-blue-300/50',
         ],
         'purple' => [
             'base' => 'border-gray-200 focus:border-purple-600 focus:ring-purple-600/20',
@@ -119,6 +125,9 @@
             'text' => 'text-purple-700',
             'icon' => 'text-purple-600',
             'pill' => 'bg-purple-100 text-purple-800 border-purple-300',
+            'search' => 'focus:ring-transparent border border-gray-200 focus:border-purple-600',
+            'ring' => 'ring-purple-500/20',
+            'glassSelected' => 'bg-purple-50/30 border border-purple-300/50',
         ],
         'red' => [
             'base' => 'border-gray-200 focus:border-red-600 focus:ring-red-600/20',
@@ -129,6 +138,9 @@
             'text' => 'text-red-700',
             'icon' => 'text-red-600',
             'pill' => 'bg-red-100 text-red-800 border-red-300',
+            'search' => 'focus:ring-transparent border border-gray-200 focus:border-red-600',
+            'ring' => 'ring-red-500/20',
+            'glassSelected' => 'bg-red-50/30 border border-red-300/50',
         ],
         'yellow' => [
             'base' => 'border-gray-200 focus:border-yellow-600 focus:ring-yellow-600/20',
@@ -139,6 +151,9 @@
             'text' => 'text-yellow-700',
             'icon' => 'text-yellow-600',
             'pill' => 'bg-yellow-100 text-yellow-800 border-yellow-300',
+            'search' => 'focus:ring-transparent border border-gray-200 focus:border-yellow-600',
+            'ring' => 'ring-yellow-500/20',
+            'glassSelected' => 'bg-yellow-50/30 border border-yellow-300/50',
         ],
         'gray' => [
             'base' => 'border-gray-200 focus:border-gray-600 focus:ring-gray-600/20',
@@ -149,6 +164,35 @@
             'text' => 'text-gray-700',
             'icon' => 'text-gray-600',
             'pill' => 'bg-gray-100 text-gray-800 border-gray-300',
+            'search' => 'focus:ring-transparent border border-gray-200 focus:border-gray-600',
+            'ring' => 'ring-gray-500/20',
+            'glassSelected' => 'bg-gray-50/30 border border-gray-300/50',
+        ],
+        'sky' => [
+            'base' => 'border-gray-200 focus:border-sky-600 focus:ring-sky-600/20',
+            'error' => 'border-red-400 focus:border-red-600 focus:ring-red-600/20',
+            'selected' => 'bg-sky-50 border-sky-200',
+            'hover' => 'hover:bg-sky-50 hover:border-sky-300',
+            'highlight' => 'bg-gradient-to-r from-sky-50 to-cyan-50 border-sky-300',
+            'text' => 'text-sky-700',
+            'icon' => 'text-sky-600',
+            'pill' => 'bg-sky-100 text-sky-800 border-sky-300',
+            'search' => 'focus:ring-transparent border border-gray-200 focus:border-sky-600',
+            'ring' => 'ring-sky-500/20',
+            'glassSelected' => 'bg-sky-50/30 border border-sky-300/50',
+        ],
+        'indigo' => [
+            'base' => 'border-gray-200 focus:border-indigo-600 focus:ring-indigo-600/20',
+            'error' => 'border-red-400 focus:border-red-600 focus:ring-red-600/20',
+            'selected' => 'bg-indigo-50 border-indigo-200',
+            'hover' => 'hover:bg-indigo-50 hover:border-indigo-300',
+            'highlight' => 'bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-300',
+            'text' => 'text-indigo-700',
+            'icon' => 'text-indigo-600',
+            'pill' => 'bg-indigo-100 text-indigo-800 border-indigo-300',
+            'search' => 'focus:ring-transparent border border-gray-200 focus:border-indigo-600',
+            'ring' => 'ring-indigo-500/20',
+            'glassSelected' => 'bg-indigo-50/30 border border-indigo-300/50',
         ],
     ];
     
@@ -210,14 +254,24 @@
             'dropdown' => 'rounded-lg border border-gray-200 shadow-lg',
             'option' => 'rounded-lg',
         ],
+        'glass' => [
+            'trigger' => [
+                'base' => "bg-white/20 backdrop-blur-lg border border-white/30 {$currentColor['base']} hover:bg-white/30 hover:backdrop-blur-xl transition-all duration-300",
+                'error' => "bg-red-50/20 backdrop-blur-lg border border-red-300/30",
+                'selected' => $currentColor['glassSelected'],
+            ],
+            'dropdown' => 'rounded-lg border border-white/20 bg-white/30 backdrop-blur-xl',
+            'option' => 'rounded-lg',
+        ],
     ];
-    
+
     $variantConfig = $variants[$variant] ?? $variants['default'];
-    
+    $shadowClass = $shadow ? '' : 'shadow-none hover:shadow-none';
+
     $triggerClasses = [
-        'base' => $variantConfig['trigger']['base'] . ' ' . $roundedClass,
-        'error' => $variantConfig['trigger']['error'] . ' ' . $roundedClass,
-        'selected' => $variantConfig['trigger']['selected'] . ' ' . $roundedClass,
+        'base' => $variantConfig['trigger']['base'] . ' ' . $roundedClass . ' ' . $shadowClass,
+        'error' => $variantConfig['trigger']['error'] . ' ' . $roundedClass . ' ' . $shadowClass,
+        'selected' => $variantConfig['trigger']['selected'] . ' ' . $roundedClass . ' ' . $shadowClass,
     ];
 @endphp
 
@@ -329,7 +383,7 @@
         :class="{
             'opacity-50 cursor-not-allowed': disabled,
             'cursor-pointer': !disabled,
-            'ring-2 ' + ($errors->has($name) ? 'ring-red-500/20' : 'ring-emerald-500/20'): open,
+            'ring-2 {{ $errors->has($name) ? 'ring-red-500/20' : $currentColor['ring'] }}': open,
             '{{ $triggerClasses['selected'] }}': selectedOption
         }"
     >
@@ -378,7 +432,7 @@
                     x-model="search"
                     type="text"
                     placeholder="Buscar..."
-                    class="w-full {{ $currentSize['search'] }} border border-gray-200 rounded-lg bg-gray-50 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600/20 outline-none transition-all duration-200"
+                    class="w-full {{ $currentSize['search'] }} {{ $currentColor['search'] }} rounded-lg bg-gray-50 outline-none transition-all duration-200"
                     @keydown.arrow-down.prevent="moveNext()"
                     @keydown.arrow-up.prevent="movePrev()"
                     @keydown.enter.prevent.stop="selectHighlighted()"

@@ -2,62 +2,78 @@
     'accordionOpen' => false,
     'title' => 'Filtros',
     'icon' => 'fas fa-sliders',
+    'description' => null,
     'showClear' => null,
     'clearAction' => null,
+    'gridClass' => 'grid grid-cols-1 gap-4 md:grid-cols-12',
+    'panelClass' => '',
+    'headerClass' => '',
 ])
 
-<div x-data="{ openAccordion: {{ $accordionOpen ? 'true' : 'false' }} }" class="mb-4">
-    
-    <!-- Cabeçalho com título e botões -->
-    <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2">
-            <div class="w-1 h-5 bg-gradient-to-b from-emerald-700 to-emerald-800 rounded-full"></div>
-            <h3 class="text-xs font-semibold text-gray-700 uppercase tracking-wider">{{ $title }}</h3>
-        </div>
-        
-        <div class="flex items-center gap-2">
-            @if($showClear && $clearAction)
-                <button 
+@php
+    $normalizeBoolean = static fn (mixed $value): bool => filter_var($value, FILTER_VALIDATE_BOOLEAN) || $value === true || $value === 1 || $value === '1';
+
+    $accordionOpen = $normalizeBoolean($accordionOpen);
+    $showClear = $normalizeBoolean($showClear);
+    $filterContent = isset($showBasic) ? $showBasic : $slot;
+@endphp
+
+<section x-data="{ open: {{ $accordionOpen ? 'true' : 'false' }} }" class="mb-4">
+    <div class="flex flex-col gap-3 px-1 border-b border-gray-200 pb-2 {{ $headerClass }}">
+        <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                    <div class="h-5 w-1 rounded-full bg-gradient-to-b from-emerald-700 to-emerald-800"></div>
+                    <h3 class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-700">{{ $title }}</h3>
+                </div>
+
+                @if ($description)
+                    <p class="mt-2 text-sm text-slate-500">{{ $description }}</p>
+                @endif
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+                @isset($actions)
+                    {{ $actions }}
+                @endisset
+
+                @if ($showClear && $clearAction)
+                    <x-button
+                        type="button"
+                        variant="ghost"
+                        icon="fas fa-times"
+                        text="Limpar"
+                        wire:click="{{ $clearAction }}"
+                    />
+                @endif
+
+                <x-button
                     type="button"
-                    wire:click="{{ $clearAction }}"
-                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-medium
-                           bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-600
-                           transition-all duration-200"
+                    variant="ghost"
+                    :icon="$icon"
+                    x-on:click="open = !open"
                 >
-                    <i class="fas fa-times text-xs transition-all duration-300 group-hover:text-emerald-700"></i>
-                    <span>Limpar</span>
-                </button>
-            @endif
-
-            <button 
-                type="button" 
-                @click="openAccordion = !openAccordion" 
-                class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-medium
-                       bg-gray-100 text-gray-700 hover:bg-emerald-100 hover:text-emerald-700 
-                       transition-all duration-200 group"
-            >
-                <i class="{{ $icon }} text-xs transition-all duration-300 group-hover:text-emerald-700" 
-                   :class="{ 'rotate-90': openAccordion }"></i>
-                <span x-text="openAccordion ? 'Ocultar' : 'Abrir'"></span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Painel de Filtros -->
-    <div x-show="openAccordion" 
-         x-collapse 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 -translate-y-2"
-         x-transition:enter-end="opacity-100 translate-y-0"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100 translate-y-0"
-         x-transition:leave-end="opacity-0 -translate-y-2"
-         class="mt-3">
-        
-        <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-                {{ $slot }}
+                    <span x-text="open ? 'Ocultar' : 'Abrir'"></span>
+                </x-button>
             </div>
         </div>
     </div>
-</div>
+
+    <div
+        x-show="open"
+        x-collapse
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 -translate-y-2"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 -translate-y-2"
+        class="mt-3"
+    >
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm {{ $panelClass }}">
+            <div class="{{ $gridClass }}">
+                {{ $filterContent }}
+            </div>
+        </div>
+    </div>
+</section>

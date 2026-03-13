@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('task_hub_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
+
+            $table->unique(['task_hub_id', 'user_id'], 'task_hub_members_hub_user_unique');
         });
     }
 

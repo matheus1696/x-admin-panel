@@ -13,5 +13,10 @@ class WorkflowProcessSeeder extends Seeder
             'title' => 'Processo Licitatório',
             'total_estimated_days' => 98,
         ]);
+
+        Workflow::create([
+            'title' => 'Compra Direta',
+            'total_estimated_days' => 14,
+        ]); 
     }
 }

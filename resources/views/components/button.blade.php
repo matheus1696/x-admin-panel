@@ -1,185 +1,178 @@
 @props([
     'href' => null,
     'type' => 'button',
-    'variant' => 'green_solid',
+    'variant' => 'primary',
     'icon' => null,
     'text' => null,
-    'loading' => false, // Agora controlado pelo próprio componente
+    'loading' => false,
     'disabled' => false,
     'fullWidth' => false,
     'size' => 'xs',
     'pill' => false,
     'shadow' => true,
     'withIconRight' => false,
-    'loadingText' => 'Enviando ...',
+    'loadingText' => 'Enviando...',
     'spinner' => 'ri-loader-4-line animate-spin',
-    'preventSubmit' => false, // Nova prop para controlar o comportamento
+    'preventSubmit' => false,
 ])
 
 @php
-    // Classes base com efeitos modernos
-    $baseClasses = 'inline-flex items-center justify-center gap-2 font-medium transition-all duration-300 transform focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none focus:ring-transparent';
-    
-    // Tamanhos
+    $normalizeBoolean = static fn (mixed $value): bool => filter_var($value, FILTER_VALIDATE_BOOLEAN) || $value === true || $value === 1 || $value === '1';
+
+    $loading = $normalizeBoolean($loading);
+    $disabled = $normalizeBoolean($disabled);
+    $fullWidth = $normalizeBoolean($fullWidth);
+    $pill = $normalizeBoolean($pill);
+    $shadow = $normalizeBoolean($shadow);
+    $preventSubmit = $normalizeBoolean($preventSubmit);
+
+    $baseClasses = 'inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 focus:outline-none focus:ring-transparent disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none';
+
     $sizes = [
-        'xs' => 'text-[12px] px-3 py-1.5 gap-1.5',
-        'sm' => 'text-[13px] px-3.5 py-1.5 gap-2',
-        'md' => 'text-sm px-4 py-2 gap-2',
-        'lg' => 'text-base px-5 py-2.5 gap-2.5',
+        'xs' => 'min-h-8 px-3 py-1.5 text-[12px]',
+        'sm' => 'min-h-9 px-3.5 py-2 text-[13px]',
+        'md' => 'min-h-10 px-4 py-2 text-sm',
+        'lg' => 'min-h-11 px-5 py-2.5 text-base',
     ];
-    
-    // Tamanhos para text variants (menor padding)
+
     $textSizes = [
-        'xs' => 'text-xs px-0.5 py-1',
-        'sm' => 'text-sm px-0.5 py-0.5',
-        'md' => 'text-sm px-0.5 py-1',
-        'lg' => 'text-base px-1.5 py-1',
+        'xs' => 'px-1 py-0.5 text-xs',
+        'sm' => 'px-1 py-0.5 text-sm',
+        'md' => 'px-1 py-1 text-sm',
+        'lg' => 'px-1.5 py-1 text-base',
     ];
-    
-    // Variantes seguindo padrão [cor]_[tipo]
+
+    $variantAliases = [
+        'primary' => 'green_solid',
+        'secondary' => 'gray_outline',
+        'destructive' => 'red_solid',
+        'ghost' => 'gray_text',
+        'link' => 'gray_text',
+        'success' => 'green_solid',
+        'warning' => 'yellow_solid',
+        'info' => 'blue_solid',
+        'green' => 'green_solid',
+        'gray' => 'gray_solid',
+        'blue' => 'blue_solid',
+        'red' => 'red_solid',
+        'yellow' => 'yellow_solid',
+        'sky' => 'sky_solid',
+        'default' => 'green_solid',
+        'filled' => 'green_solid',
+        'inline' => 'gray_text',
+        'minimal' => 'gray_text',
+        'pills' => 'gray_outline',
+    ];
+
+    $resolvedVariant = $variantAliases[$variant] ?? $variant;
+
     $variants = [
-        // SOLID VARIANTS (com gradiente)
-        'green_solid' => 'text-white bg-gradient-to-r from-emerald-700 via-emerald-800 to-teal-800 hover:from-emerald-800 hover:to-emerald-900 shadow-md transition-all duration-300 -translate-y-0.5 border border-emerald-600/20 rounded-lg active:scale-[0.98]',
-        
-        'gray_solid' => 'text-white bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 shadow-md transition-all duration-300 -translate-y-0.5 border border-gray-600/20 rounded-lg active:scale-[0.98]',
-        
-        'yellow_solid' => 'text-white bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-500 shadow-md transition-all duration-300 -translate-y-0.5 border border-yellow-600/20 rounded-lg active:scale-[0.98]',
-        
-        'red_solid' => 'text-white bg-gradient-to-r from-red-600 via-rose-600 to-red-700 hover:from-red-700 hover:via-rose-700 hover:to-red-700 focus:ring-red-600/30 shadow-md border border-red-700/20 rounded-lg active:scale-[0.98]',
-        
-        'blue_solid' => 'text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-700 hover:via-indigo-700 hover:to-blue-700 focus:ring-blue-600/30 shadow-md border border-blue-700/20 rounded-lg active:scale-[0.98]',
-        
-        'sky_solid' => 'text-white bg-gradient-to-r from-sky-600 via-cyan-600 to-sky-700 hover:from-sky-700 hover:via-cyan-700 hover:to-sky-700 focus:ring-sky-600/30 shadow-md border border-sky-700/20 rounded-lg active:scale-[0.98]',
-        
-        'indigo_solid' => 'text-white bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 hover:from-indigo-700 hover:via-purple-700 hover:to-indigo-700 focus:ring-indigo-600/30 shadow-md border border-indigo-700/20 rounded-lg active:scale-[0.98]',
-        
-        'purple_solid' => 'text-white bg-gradient-to-r from-purple-600 via-fuchsia-600 to-purple-700 hover:from-purple-700 hover:via-fuchsia-700 hover:to-purple-700 focus:ring-purple-600/30 shadow-md border border-purple-700/20 rounded-lg active:scale-[0.98]',
-        
-        // OUTLINE VARIANTS (bordas)
-        'gray_outline' => 'bg-gradient-to-r from-gray-50 to-gray-100/80 text-gray-700 border-gray-200/50 hover:from-gray-100 hover:to-gray-200/80 shadow-md transition-all duration-300 border border-gray-600/20 rounded-lg active:scale-[0.98]',
-        
-        'green_outline' => 'bg-gradient-to-r from-green-50 to-green-100/80 text-green-700 border-green-200/50 hover:from-green-100 hover:to-green-200/80 shadow-md transition-all duration-300 border border-green-600/20 rounded-lg active:scale-[0.98]',
-        
-        'blue_outline' => 'bg-gradient-to-r from-blue-50 to-blue-100/80 text-blue-700 border-blue-200/50 hover:from-blue-100 hover:to-blue-200/80 shadow-md transition-all duration-300 border border-blue-600/20 rounded-lg active:scale-[0.98]',
-        
-        'red_outline' => 'bg-gradient-to-r from-red-50 to-red-100/80 text-red-700 border-red-200/50 hover:from-red-100 hover:to-red-200/80 shadow-md transition-all duration-300 border border-red-600/20 rounded-lg active:scale-[0.98]',
-        
-        'yellow_outline' => 'bg-gradient-to-r from-amber-50 to-amber-100/80 text-amber-700 border-amber-200/50 hover:from-amber-100 hover:to-amber-200/80 shadow-md transition-all duration-300 border border-amber-600/20 rounded-lg active:scale-[0.98]',
-        
-        'purple_outline' => 'bg-gradient-to-r from-purple-50 to-purple-100/80 text-purple-700 border-purple-200/50 hover:from-purple-100 hover:to-purple-200/80 shadow-md transition-all duration-300 border border-purple-600/20 rounded-lg active:scale-[0.98]',
-        
-        // TEXT VARIANTS (dentro do texto)        
-        'white_text' => 'text-white hover:text-gray-300 px-1 py-0.5',
-
-        'gray_text' => 'text-gray-700 hover:text-gray-900 px-1 py-0.5',
-        
-        'green_text' => 'text-green-700 hover:text-green-800 px-1 py-0.5',
-        
-        'blue_text' => 'text-blue-700 hover:text-blue-800 px-1 py-0.5',
-        
-        'red_text' => 'text-red-700 hover:text-red-800 px-1 py-0.5',
-        
-        'yellow_text' => 'text-yellow-700 hover:text-yellow-800 px-1 py-0.5',
-        
-        'purple_text' => 'text-purple-700 hover:text-purple-800 px-1 py-0.5',
-        
-        'sky_text' => 'text-sky-700 hover:text-sky-800 px-1 py-0.5',
-        
-        'indigo_text' => 'text-indigo-700 hover:text-indigo-800 px-1 py-0.5',
-        
-        // LIGHT VARIANTS (fundos claros)
-        'gray_light' => 'text-gray-700 bg-gray-100/80 hover:bg-gray-200/90 border border-gray-200/80 hover:border-gray-300 focus:ring-gray-400/20 shadow-sm hover:shadow backdrop-blur-sm rounded-lg active:scale-[0.98]',
-        
-        'green_light' => 'text-green-700 bg-green-100/80 hover:bg-green-200/90 border border-green-200/80 hover:border-green-300 focus:ring-green-400/20 shadow-sm hover:shadow backdrop-blur-sm rounded-lg active:scale-[0.98]',
-        
-        'blue_light' => 'text-blue-700 bg-blue-100/80 hover:bg-blue-200/90 border border-blue-200/80 hover:border-blue-300 focus:ring-blue-400/20 shadow-sm hover:shadow backdrop-blur-sm rounded-lg active:scale-[0.98]',
-        
-        // PREMIUM VARIANTS (efeitos especiais)
-        'purple_premium' => 'text-white bg-gradient-to-r from-purple-700 via-pink-700 to-purple-700 hover:from-purple-700 hover:via-pink-700 hover:to-purple-800 focus:ring-purple-600/30 shadow-lg hover:shadow-xl border border-purple-700/20 rounded-lg active:scale-[0.98]',
-        
-        'blue_gradient' => 'text-white bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-700 hover:from-blue-700 hover:via-cyan-700 hover:to-blue-700 focus:ring-cyan-600/30 shadow-lg hover:shadow-xl border border-blue-700/20 rounded-lg active:scale-[0.98]',
-        
-        'green_gradient' => 'text-white bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-700 hover:from-emerald-700 hover:via-green-700 hover:to-emerald-700 focus:ring-emerald-600/30 shadow-lg hover:shadow-xl border border-emerald-700/20 rounded-lg active:scale-[0.98]',
-        
-        // DARK VARIANTS
-        'gray_dark' => 'text-white bg-gradient-to-r from-gray-800 via-gray-900 to-black hover:from-gray-900 hover:via-black hover:to-gray-900 focus:ring-gray-700/30 shadow-lg hover:shadow-xl border border-gray-800/30 rounded-lg active:scale-[0.98]',
-        
-        'white_dark' => 'text-gray-800 bg-white/95 backdrop-blur-sm border border-gray-300 hover:border-gray-400 hover:bg-white focus:ring-gray-400/20 shadow-md hover:shadow-lg rounded-lg active:scale-[0.98]',
+        'green_solid' => 'rounded-lg border border-emerald-900/10 bg-gradient-to-r from-emerald-700 via-emerald-800 to-teal-800 text-white hover:from-emerald-800 hover:via-emerald-900 hover:to-teal-900 active:scale-[0.99]',
+        'gray_solid' => 'rounded-lg border border-slate-900/10 bg-gradient-to-r from-slate-500 to-slate-600 text-white hover:from-slate-600 hover:to-slate-700 active:scale-[0.99]',
+        'yellow_solid' => 'rounded-lg border border-amber-900/10 bg-gradient-to-r from-amber-400 to-amber-500 text-white hover:from-amber-500 hover:to-amber-600 active:scale-[0.99]',
+        'red_solid' => 'rounded-lg border border-red-900/10 bg-gradient-to-r from-red-600 via-rose-600 to-red-700 text-white hover:from-red-700 hover:via-rose-700 hover:to-red-800 active:scale-[0.99]',
+        'blue_solid' => 'rounded-lg border border-blue-900/10 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white hover:from-blue-700 hover:via-indigo-700 hover:to-blue-800 active:scale-[0.99]',
+        'sky_solid' => 'rounded-lg border border-sky-900/10 bg-gradient-to-r from-sky-600 via-cyan-600 to-sky-700 text-white hover:from-sky-700 hover:via-cyan-700 hover:to-sky-800 active:scale-[0.99]',
+        'indigo_solid' => 'rounded-lg border border-indigo-900/10 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 text-white hover:from-indigo-700 hover:via-violet-700 hover:to-indigo-800 active:scale-[0.99]',
+        'purple_solid' => 'rounded-lg border border-purple-900/10 bg-gradient-to-r from-purple-600 via-fuchsia-600 to-purple-700 text-white hover:from-purple-700 hover:via-fuchsia-700 hover:to-purple-800 active:scale-[0.99]',
+        'gray_outline' => 'rounded-lg border border-slate-300 bg-gradient-to-r from-slate-50 to-white text-slate-700 hover:from-slate-100 hover:to-slate-50 active:scale-[0.99]',
+        'green_outline' => 'rounded-lg border border-emerald-300 bg-gradient-to-r from-emerald-50 to-white text-emerald-700 hover:from-emerald-100 hover:to-emerald-50 active:scale-[0.99]',
+        'blue_outline' => 'rounded-lg border border-blue-300 bg-gradient-to-r from-blue-50 to-white text-blue-700 hover:from-blue-100 hover:to-blue-50 active:scale-[0.99]',
+        'red_outline' => 'rounded-lg border border-red-300 bg-gradient-to-r from-red-50 to-white text-red-700 hover:from-red-100 hover:to-red-50 active:scale-[0.99]',
+        'yellow_outline' => 'rounded-lg border border-amber-300 bg-gradient-to-r from-amber-50 to-white text-amber-700 hover:from-amber-100 hover:to-amber-50 active:scale-[0.99]',
+        'purple_outline' => 'rounded-lg border border-purple-300 bg-gradient-to-r from-purple-50 to-white text-purple-700 hover:from-purple-100 hover:to-purple-50 active:scale-[0.99]',
+        'white_text' => 'text-white hover:text-slate-200',
+        'gray_text' => 'text-slate-700 hover:text-slate-900',
+        'green_text' => 'text-emerald-700 hover:text-emerald-900',
+        'blue_text' => 'text-blue-700 hover:text-blue-900',
+        'red_text' => 'text-red-700 hover:text-red-900',
+        'yellow_text' => 'text-amber-700 hover:text-amber-900',
+        'purple_text' => 'text-purple-700 hover:text-purple-900',
+        'sky_text' => 'text-sky-700 hover:text-sky-900',
+        'indigo_text' => 'text-indigo-700 hover:text-indigo-900',
+        'gray_light' => 'rounded-lg border border-slate-200 bg-slate-100/80 text-slate-700 hover:bg-slate-200/90',
+        'green_light' => 'rounded-lg border border-emerald-200 bg-emerald-100/80 text-emerald-700 hover:bg-emerald-200/90',
+        'blue_light' => 'rounded-lg border border-blue-200 bg-blue-100/80 text-blue-700 hover:bg-blue-200/90',
+        'purple_premium' => 'rounded-lg border border-purple-900/10 bg-gradient-to-r from-purple-700 via-pink-700 to-purple-700 text-white hover:from-purple-800 hover:via-pink-800 hover:to-purple-800 active:scale-[0.99]',
+        'blue_gradient' => 'rounded-lg border border-blue-900/10 bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-700 text-white hover:from-blue-700 hover:via-cyan-700 hover:to-blue-800 active:scale-[0.99]',
+        'green_gradient' => 'rounded-lg border border-emerald-900/10 bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-700 text-white hover:from-emerald-700 hover:via-green-700 hover:to-emerald-800 active:scale-[0.99]',
+        'gray_dark' => 'rounded-lg border border-slate-800/30 bg-gradient-to-r from-slate-800 via-slate-900 to-black text-white hover:from-slate-900 hover:via-black hover:to-slate-900 active:scale-[0.99]',
+        'white_dark' => 'rounded-lg border border-slate-300 bg-white/95 text-slate-800 hover:border-slate-400 hover:bg-white active:scale-[0.99]',
     ];
 
-    // Classes dinâmicas
-    $isTextVariant = str_ends_with($variant, '_text');
+    $isTextVariant = str_ends_with($resolvedVariant, '_text');
     $sizeClass = $isTextVariant ? ($textSizes[$size] ?? $textSizes['md']) : ($sizes[$size] ?? $sizes['md']);
-    $variantClass = $variants[$variant] ?? $variants['green_solid'];
+    $variantClass = $variants[$resolvedVariant] ?? $variants['green_solid'];
     $widthClass = $fullWidth ? 'w-full' : '';
-    $pillClass = $pill ? 'rounded-full' : '';
-    $shadowClass = !$shadow ? 'shadow-none hover:shadow-none' : '';
-    
-    // Classes finais
-    $classes = $baseClasses . ' ' . $sizeClass . ' ' . $variantClass . ' ' . $widthClass . ' ' . $pillClass . ' ' . $shadowClass;
+    $shapeClass = $pill || $variant === 'pills' ? 'rounded-full' : '';
+    $shadowClass = $shadow && ! $isTextVariant ? 'shadow-sm hover:shadow-md' : 'shadow-none hover:shadow-none';
+    $classes = trim(implode(' ', [$baseClasses, $sizeClass, $variantClass, $widthClass, $shapeClass, $shadowClass]));
 
-    $isLink = !is_null($href);
+    $isLink = filled($href);
+    $hasTextProp = filled($text);
+    $hasSlotContent = $slot->isNotEmpty();
 @endphp
 
 @if ($isLink)
-    {{-- Link mode (sem comportamento de loading) --}}
-    <a 
-        href="{{ $href }}" 
-        {{ $attributes->merge(['class' => $classes]) }}
-        @if($disabled) aria-disabled="true" tabindex="-1" @endif
+    <a
+        href="{{ $disabled ? '#' : $href }}"
+        {{ $attributes->class([$classes])->merge($disabled ? ['aria-disabled' => 'true', 'tabindex' => '-1'] : []) }}
     >
-        @if ($icon && !$withIconRight)
+        @if ($icon && ! $withIconRight)
             <i class="{{ $icon }}"></i>
         @endif
-        <span>{{ $text ?? $slot }}</span>
+
+        @if ($hasTextProp)
+            <span>{{ $text }}</span>
+        @elseif ($hasSlotContent)
+            {{ $slot }}
+        @endif
+
         @if ($icon && $withIconRight)
             <i class="{{ $icon }}"></i>
         @endif
     </a>
-@elseif($preventSubmit)
-    {{-- Button mode com Alpine autocontido --}}
-    <div x-data="{ 
+@elseif ($preventSubmit)
+    <div
+        x-data="{
             loading: {{ $loading ? 'true' : 'false' }},
-            preventSubmit: {{ $preventSubmit ? 'true' : 'false' }},
             submit() {
-                if (this.preventSubmit && this.loading) return;
-                
-                if (this.preventSubmit) {
-                    this.loading = true;
-                }
-                
-                // Encontra o formulário mais próximo
+                if (this.loading) return;
+                this.loading = true;
                 const form = this.$el.closest('form');
                 if (form) {
                     form.submit();
+                } else {
+                    this.loading = false;
                 }
             }
         }"
-        x-init="
-            // Captura Enter se estiver dentro de um form
-            if ($el.closest('form')) {
-                $el.closest('form').addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey) {
-                        e.preventDefault();
-                        submit();
-                    }
-                });
-            }
-        ">
-        <button type="{{ $type }}" x-bind:disabled="loading || {{ $disabled ? 'true' : 'false' }}" x-on:click="submit()" {{ $attributes->merge(['class' => $classes]) }} @if($disabled && !$loading) disabled @endif >
-            {{-- Conteúdo dinâmico com Alpine --}}
+    >
+        <button
+            type="{{ $type }}"
+            x-bind:disabled="loading || {{ $disabled ? 'true' : 'false' }}"
+            x-on:click="submit()"
+            {{ $attributes->class([$classes]) }}
+            @disabled($disabled && ! $loading)
+        >
             <template x-if="!loading">
                 <span class="inline-flex items-center gap-2">
-                    @if ($icon && !$withIconRight)
+                    @if ($icon && ! $withIconRight)
                         <i class="{{ $icon }}"></i>
                     @endif
-                    <span>{{ $text ?? $slot }}</span>
+
+                    @if ($hasTextProp)
+                        <span>{{ $text }}</span>
+                    @elseif ($hasSlotContent)
+                        {{ $slot }}
+                    @endif
+
                     @if ($icon && $withIconRight)
                         <i class="{{ $icon }}"></i>
                     @endif
                 </span>
             </template>
-            
+
             <template x-if="loading">
                 <span class="inline-flex items-center gap-2">
                     <i class="{{ $spinner }}"></i>
@@ -189,16 +182,22 @@
         </button>
     </div>
 @else
-    {{-- Button mode (sem comportamento de loading) --}}
-    <button type="{{ $type }}" {{ $attributes->merge(['class' => $classes]) }} @disabled($disabled || $loading)>
-        @if ($icon && !$withIconRight)
+    <button
+        {{ $attributes->class([$classes])->merge(['type' => $type]) }}
+        @disabled($disabled || $loading)
+    >
+        @if ($icon && ! $withIconRight)
             <i class="{{ $icon }}"></i>
         @endif
-        @if ($text || $slot->isNotEmpty())
-            <span @if ($icon) @endif>{{ $text ?? $slot }}</span>
+
+        @if ($hasTextProp)
+            <span>{{ $text }}</span>
+        @elseif ($hasSlotContent)
+            {{ $slot }}
         @endif
+
         @if ($icon && $withIconRight)
             <i class="{{ $icon }}"></i>
         @endif
     </button>
-@endif 
+@endif

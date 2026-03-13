@@ -76,12 +76,16 @@ class ProcessShowPage extends Component
 
         $this->pendingTransition = $direction;
         $this->dispatchComment = '';
+
+        $this->assignedOwnerId = null;
+
         $this->openModal('modal-process-dispatch');
     }
 
     public function confirmStepTransition(): void
     {
         $process = $this->processService->findVisibleByUuid($this->uuid, (int) Auth::id());
+        $requiresOwnerBeforeAdvance = $this->pendingTransition === 'advance' && $process->owner_id === null;
 
         if (! in_array($this->pendingTransition, ['advance', 'retreat'], true)) {
             $this->flashWarning('Acao de transicao invalida.');
@@ -92,9 +96,20 @@ class ProcessShowPage extends Component
 
         $this->validate([
             'dispatchComment' => ['required', 'string', 'max:2000'],
+            'assignedOwnerId' => $requiresOwnerBeforeAdvance ? ['required', 'integer', 'exists:users,id'] : ['nullable'],
         ]);
 
         try {
+            if ($requiresOwnerBeforeAdvance) {
+                $this->processService->assignOwner(
+                    $process,
+                    (int) Auth::id(),
+                    (int) $this->assignedOwnerId
+                );
+
+                $process = $process->refresh();
+            }
+
             if ($this->pendingTransition === 'advance') {
                 $this->processService->advanceStep($process, (int) Auth::id(), $this->dispatchComment);
             } else {
@@ -106,6 +121,7 @@ class ProcessShowPage extends Component
                 : 'Etapa retrocedida com sucesso.';
 
             $this->dispatchComment = '';
+            $this->assignedOwnerId = null;
             $this->pendingTransition = null;
             $this->closeModal();
             $this->flashSuccess($successMessage);
@@ -151,13 +167,8 @@ class ProcessShowPage extends Component
             return;
         }
 
-        $currentStepOrganizationId = $this->processService->resolveCurrentStepOrganizationId($process);
-
-        $eligibleOwnerIds = $currentStepOrganizationId === null
-            ? collect()
-            : User::query()
-                ->whereHas('organizations', fn ($query) => $query->where('organization_charts.id', $currentStepOrganizationId))
-                ->pluck('id');
+        $eligibleOwners = $this->eligibleOwnersForCurrentStep($process);
+        $eligibleOwnerIds = $eligibleOwners->pluck('id');
 
         $this->assignedOwnerId = $eligibleOwnerIds->contains((int) $process->owner_id)
             ? (int) $process->owner_id
@@ -193,22 +204,30 @@ class ProcessShowPage extends Component
         $process = $this->processService->findVisibleByUuid($this->uuid, (int) Auth::id());
         $canManageStepActions = $this->processService
             ->userCanManageCurrentStepActions($process, (int) Auth::id());
-        $currentStepOrganizationId = $this->processService->resolveCurrentStepOrganizationId($process);
         $timelineSteps = $this->buildTimelineSteps($process);
-
-        $owners = $currentStepOrganizationId === null
-            ? collect()
-            : User::query()
-                ->whereHas('organizations', fn ($query) => $query->where('organization_charts.id', $currentStepOrganizationId))
-                ->orderBy('name')
-                ->get(['id', 'name']);
+        $owners = $this->eligibleOwnersForCurrentStep($process);
 
         return view('livewire.process.process-show-page', [
             'process' => $process,
             'timelineSteps' => $timelineSteps,
             'owners' => $owners,
             'canManageStepActions' => $canManageStepActions,
+            'requiresOwnerBeforeAdvance' => $process->owner_id === null,
         ]);
+    }
+
+    private function eligibleOwnersForCurrentStep(Process $process): Collection
+    {
+        $currentStepOrganizationId = $this->processService->resolveCurrentStepOrganizationId($process);
+
+        if ($currentStepOrganizationId === null) {
+            return collect();
+        }
+
+        return User::query()
+            ->whereHas('organizations', fn ($query) => $query->where('organization_charts.id', $currentStepOrganizationId))
+            ->orderBy('name')
+            ->get(['id', 'name']);
     }
 
     private function buildTimelineSteps(Process $process): Collection
@@ -222,6 +241,7 @@ class ProcessShowPage extends Component
         return $steps->map(function ($step) use ($process) {
             $state = $this->resolveStepStateLabel($process, $step);
             $isOverdue = $state === 'Em andamento' && $this->isStepOverdue($step);
+            $completedDelayDays = $this->resolveCompletedDelayDays($step, $state);
 
             return [
                 'id' => (int) $step->id,
@@ -229,9 +249,15 @@ class ProcessShowPage extends Component
                 'required' => (bool) $step->required,
                 'deadline_days' => $step->deadline_days,
                 'organization_title' => $step->organization?->title,
+                'owner_name' => match ($state) {
+                    'Pendente' => '-',
+                    default => $step->owner?->name ?? 'Nao atribuido',
+                },
                 'started_at' => $step->started_at,
                 'state' => $state,
                 'is_overdue' => $isOverdue,
+                'completed_with_delay' => $completedDelayDays > 0,
+                'completed_delay_days' => $completedDelayDays,
             ];
         });
     }
@@ -245,6 +271,21 @@ class ProcessShowPage extends Component
         $dueAt = $step->started_at->copy()->addDays((int) $step->deadline_days);
 
         return $dueAt->lt(now());
+    }
+
+    private function resolveCompletedDelayDays(object $step, string $state): int
+    {
+        if ($state !== 'Concluida' || $step->started_at === null || $step->completed_at === null || $step->deadline_days === null) {
+            return 0;
+        }
+
+        $dueAt = $step->started_at->copy()->addDays((int) $step->deadline_days);
+
+        if (! $step->completed_at->gt($dueAt)) {
+            return 0;
+        }
+
+        return (int) ceil($dueAt->diffInDays($step->completed_at, true));
     }
 
     private function resolveStepStateLabel(Process $process, object $step): string
