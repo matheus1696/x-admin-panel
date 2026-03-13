@@ -13,6 +13,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.app')]
 class ProcessIndexPage extends Component
@@ -20,6 +21,7 @@ class ProcessIndexPage extends Component
     use AuthorizesRequests;
     use Modal;
     use WithFlashMessage;
+    use WithPagination;
 
     protected ProcessService $processService;
 
@@ -29,6 +31,7 @@ class ProcessIndexPage extends Component
         'organization_id' => '',
         'overdue_only' => false,
         'my_sectors_only' => false,
+        'perPage' => 25,
     ];
 
     public string $title = '';
@@ -55,6 +58,12 @@ class ProcessIndexPage extends Component
 
         $current = (bool) ($this->filters[$filter] ?? false);
         $this->filters[$filter] = ! $current;
+        $this->resetPage();
+    }
+
+    public function updatedFilters(): void
+    {
+        $this->resetPage();
     }
 
     public function resetFilters(): void
@@ -65,7 +74,9 @@ class ProcessIndexPage extends Component
             'organization_id' => '',
             'overdue_only' => false,
             'my_sectors_only' => false,
+            'perPage' => 25,
         ];
+        $this->resetPage();
     }
 
     public function create(): void
@@ -110,9 +121,9 @@ class ProcessIndexPage extends Component
         $userId = (int) Auth::id();
         $processes = $this->processService->index($this->filters, $userId);
         $processIdsWithUnseenUpdates = $this->processService
-            ->processIdsWithUnseenUpdates($processes, $userId);
+            ->processIdsWithUnseenUpdates($processes->getCollection(), $userId);
         $processIdsWithOverdueCurrentStep = $this->processService
-            ->processIdsWithOverdueCurrentStep($processes);
+            ->processIdsWithOverdueCurrentStep($processes->getCollection());
 
         return view('livewire.process.process-index-page', [
             'processes' => $processes,

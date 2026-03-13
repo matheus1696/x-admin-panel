@@ -4,6 +4,7 @@ namespace App\Livewire\TimeClock;
 
 use App\Livewire\Traits\Modal;
 use App\Livewire\Traits\WithFlashMessage;
+use App\Models\Configuration\Establishment\Establishment\Establishment;
 use App\Models\TimeClock\TimeClockLocation;
 use App\Services\TimeClock\TimeClockLocationService;
 use App\Validation\TimeClock\TimeClockLocationRules;
@@ -24,6 +25,8 @@ class LocationsIndex extends Component
     public ?int $locationId = null;
 
     public string $name = '';
+
+    public ?int $establishment_id = null;
 
     public ?float $latitude = null;
 
@@ -49,6 +52,7 @@ class LocationsIndex extends Component
 
         $this->locationId = $location->id;
         $this->name = $location->name;
+        $this->establishment_id = $location->establishment_id;
         $this->latitude = (float) $location->latitude;
         $this->longitude = (float) $location->longitude;
         $this->radius_meters = (int) $location->radius_meters;
@@ -82,15 +86,62 @@ class LocationsIndex extends Component
 
     public function resetForm(): void
     {
-        $this->reset(['locationId', 'name', 'latitude', 'longitude']);
+        $this->reset(['locationId', 'name', 'establishment_id', 'latitude', 'longitude']);
         $this->radius_meters = (int) config('time_clock.default_location_radius_meters', 150);
         $this->active = true;
         $this->resetValidation();
     }
 
+    public function updatedEstablishmentId($value): void
+    {
+        if (! $value) {
+            return;
+        }
+
+        $establishment = Establishment::query()->find($value);
+
+        if (! $establishment) {
+            return;
+        }
+
+        $this->name = $establishment->title;
+
+        if (is_numeric($establishment->latitude) && is_numeric($establishment->longitude)) {
+            $this->latitude = $this->normalizeCoordinate((string) $establishment->latitude, false);
+            $this->longitude = $this->normalizeCoordinate((string) $establishment->longitude, true);
+        }
+    }
+
+    private function normalizeCoordinate(string $value, bool $isLongitude): ?float
+    {
+        $normalized = trim($value);
+
+        if ($normalized === '') {
+            return null;
+        }
+
+        if (str_contains($normalized, '.')) {
+            return (float) $normalized;
+        }
+
+        $sign = str_starts_with($normalized, '-') ? -1 : 1;
+        $digits = ltrim($normalized, '+-');
+        $scale = $isLongitude ? 7 : 6;
+
+        if (! ctype_digit($digits) || strlen($digits) <= $scale) {
+            return (float) $normalized;
+        }
+
+        return $sign * ((int) $digits / (10 ** $scale));
+    }
+
     public function render(): View
     {
         return view('livewire.time-clock.locations-index', [
+            'establishments' => Establishment::query()
+                ->where('is_active', true)
+                ->orderBy('title')
+                ->get(['id', 'title', 'latitude', 'longitude']),
             'locations' => $this->locationService->list(),
         ]);
     }

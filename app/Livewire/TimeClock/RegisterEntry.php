@@ -33,6 +33,8 @@ class RegisterEntry extends Component
 
     public ?int $locationId = null;
 
+    public string $locationCaptureState = 'idle';
+
     public function boot(TimeClockEntryService $entryService): void
     {
         $this->entryService = $entryService;
@@ -69,6 +71,7 @@ class RegisterEntry extends Component
         ));
 
         $this->reset(['photo', 'latitude', 'longitude', 'accuracy', 'locationId']);
+        $this->locationCaptureState = 'idle';
 
         if ($entry->status === TimeClockEntryStatus::OK->value) {
             $this->flashSuccess('Registro de ponto realizado com sucesso.');
@@ -81,8 +84,14 @@ class RegisterEntry extends Component
 
     public function render(): View
     {
+        $locations = TimeClockLocation::query()
+            ->with('establishment')
+            ->where('active', true)
+            ->orderBy('name')
+            ->get();
+
         return view('livewire.time-clock.register-entry', [
-            'locations' => TimeClockLocation::query()->where('active', true)->orderBy('name')->get(),
+            'locations' => $locations,
             'recentEntries' => $this->entryService->paginateOwn((int) auth()->id(), ['perPage' => 5]),
         ]);
     }

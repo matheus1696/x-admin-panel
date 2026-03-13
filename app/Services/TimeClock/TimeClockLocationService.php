@@ -11,6 +11,7 @@ class TimeClockLocationService
     public function list(): Collection
     {
         return TimeClockLocation::query()
+            ->with('establishment')
             ->orderByDesc('active')
             ->orderBy('name')
             ->get();

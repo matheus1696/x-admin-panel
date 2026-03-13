@@ -592,6 +592,49 @@ test('process show page assigns owner via modal action', function () {
         ->and($event->description)->toContain($newOwner->name);
 });
 
+test('process show page keeps transition buttons disabled when current step is concluded', function () {
+    $user = createProcessUser(['process.view']);
+    $this->actingAs($user);
+
+    $organization = OrganizationChart::query()->create([
+        'title' => 'Setor concluido',
+        'filter' => 'setor concluido',
+        'hierarchy' => 0,
+        'number_hierarchy' => 9,
+        'order' => '009',
+    ]);
+
+    $process = Process::query()->create([
+        'title' => 'Processo concluido para bloqueio de botoes',
+        'description' => 'Descricao',
+        'organization_id' => $organization->id,
+        'opened_by' => $user->id,
+        'owner_id' => $user->id,
+        'priority' => 'normal',
+        'status' => ProcessStatus::CLOSED,
+        'started_at' => now()->subDays(2),
+        'closed_at' => now()->subDay(),
+    ]);
+    $process->organizations()->sync([$organization->id]);
+
+    ProcessStep::query()->create([
+        'process_id' => $process->id,
+        'step_order' => 1,
+        'title' => 'Etapa final',
+        'organization_id' => $organization->id,
+        'deadline_days' => 2,
+        'required' => true,
+        'is_current' => false,
+        'status' => 'COMPLETED',
+        'started_at' => now()->subDays(2),
+        'completed_at' => now()->subDay(),
+    ]);
+
+    Livewire::test(ProcessShowPage::class, ['uuid' => $process->uuid])
+        ->call('openDispatchModal', 'conclude')
+        ->assertSet('showModal', false);
+});
+
 test('process index highlights process row with unseen updates and clears after opening process', function () {
     $user = createProcessUser(['process.view']);
     $this->actingAs($user);
@@ -609,7 +652,7 @@ test('process index highlights process row with unseen updates and clears after 
     $indexResponseBeforeView = $this->get(route('process.index'));
     $indexResponseBeforeView
         ->assertOk()
-        ->assertSee('bg-gray-300/70', false);
+        ->assertSeeText('Nova atualizacao');
 
     $this->get(route('process.show', $process->uuid))
         ->assertOk();
@@ -617,5 +660,5 @@ test('process index highlights process row with unseen updates and clears after 
     $indexResponseAfterView = $this->get(route('process.index'));
     $indexResponseAfterView
         ->assertOk()
-        ->assertDontSee('bg-gray-300/70', false);
+        ->assertDontSeeText('Nova atualizacao');
 });

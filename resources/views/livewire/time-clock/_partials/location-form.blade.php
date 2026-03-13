@@ -1,7 +1,18 @@
 <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
     <div class="md:col-span-12">
+        <x-form.label value="Estabelecimento" />
+        <x-form.select-livewire
+            wire:model.live="establishment_id"
+            name="establishment_id"
+            :options="$establishments->map(fn ($establishment) => ['value' => $establishment->id, 'label' => $establishment->title])->prepend(['value' => '', 'label' => 'Local avulso'])->values()->all()"
+        />
+        <x-form.error for="establishment_id" />
+    </div>
+
+    <div class="md:col-span-12">
         <x-form.label value="Nome" />
         <x-form.input wire:model.defer="name" />
+        <p class="mt-1 text-xs text-gray-500">Se houver estabelecimento vinculado, o nome pode seguir a unidade para facilitar a selecao do usuario.</p>
         <x-form.error for="name" />
     </div>
 

@@ -61,6 +61,11 @@ class ProcessShowPage extends Component
     public function openDispatchModal(string $direction): void
     {
         $process = $this->processService->findVisibleByUuid($this->uuid, (int) Auth::id());
+        if ($this->shouldDisableStepActionButtons($process)) {
+            $this->flashWarning('A etapa atual ja foi concluida.');
+
+            return;
+        }
 
         if (! $this->processService->userCanManageCurrentStepActions($process, (int) Auth::id())) {
             $this->flashWarning('Somente usuario do setor da etapa atual pode executar esta acao.');
@@ -68,7 +73,7 @@ class ProcessShowPage extends Component
             return;
         }
 
-        if (! in_array($direction, ['advance', 'retreat'], true)) {
+        if (! in_array($direction, ['advance', 'retreat', 'conclude'], true)) {
             $this->flashWarning('Acao de transicao invalida.');
 
             return;
@@ -85,9 +90,16 @@ class ProcessShowPage extends Component
     public function confirmStepTransition(): void
     {
         $process = $this->processService->findVisibleByUuid($this->uuid, (int) Auth::id());
+        if ($this->shouldDisableStepActionButtons($process)) {
+            $this->flashWarning('A etapa atual ja foi concluida.');
+            $this->closeModal();
+
+            return;
+        }
+
         $requiresOwnerBeforeAdvance = $this->pendingTransition === 'advance' && $process->owner_id === null;
 
-        if (! in_array($this->pendingTransition, ['advance', 'retreat'], true)) {
+        if (! in_array($this->pendingTransition, ['advance', 'retreat', 'conclude'], true)) {
             $this->flashWarning('Acao de transicao invalida.');
             $this->closeModal();
 
@@ -112,13 +124,17 @@ class ProcessShowPage extends Component
 
             if ($this->pendingTransition === 'advance') {
                 $this->processService->advanceStep($process, (int) Auth::id(), $this->dispatchComment);
-            } else {
+            } elseif ($this->pendingTransition === 'retreat') {
                 $this->processService->retreatStep($process, (int) Auth::id(), $this->dispatchComment);
+            } else {
+                $this->processService->concludeProcess($process, (int) Auth::id(), $this->dispatchComment);
             }
 
-            $successMessage = $this->pendingTransition === 'advance'
-                ? 'Etapa avancada com sucesso.'
-                : 'Etapa retrocedida com sucesso.';
+            $successMessage = match ($this->pendingTransition) {
+                'advance' => 'Etapa avancada com sucesso.',
+                'retreat' => 'Etapa retrocedida com sucesso.',
+                default => 'Processo concluido com sucesso.',
+            };
 
             $this->dispatchComment = '';
             $this->assignedOwnerId = null;
@@ -160,6 +176,11 @@ class ProcessShowPage extends Component
     public function openAssignOwnerModal(): void
     {
         $process = $this->processService->findVisibleByUuid($this->uuid, (int) Auth::id());
+        if ($this->shouldDisableStepActionButtons($process)) {
+            $this->flashWarning('A etapa atual ja foi concluida.');
+
+            return;
+        }
 
         if (! $this->processService->userCanManageCurrentStepActions($process, (int) Auth::id())) {
             $this->flashWarning('Somente usuario do setor da etapa atual pode executar esta acao.');
@@ -213,6 +234,8 @@ class ProcessShowPage extends Component
             'owners' => $owners,
             'canManageStepActions' => $canManageStepActions,
             'requiresOwnerBeforeAdvance' => $process->owner_id === null,
+            'isCurrentStepLast' => $this->isCurrentStepLast($process),
+            'areStepActionButtonsDisabled' => $this->shouldDisableStepActionButtons($process),
         ]);
     }
 
@@ -313,5 +336,51 @@ class ProcessShowPage extends Component
         }
 
         return 'Pendente';
+    }
+
+    private function isCurrentStepLast(Process $process): bool
+    {
+        $steps = ($process->steps ?? collect())
+            ->sortBy('step_order')
+            ->values();
+
+        if ($steps->isEmpty()) {
+            return false;
+        }
+
+        $currentStep = $steps->firstWhere('is_current', true)
+            ?? $steps->firstWhere('status', 'IN_PROGRESS')
+            ?? $steps->firstWhere('completed_at', null)
+            ?? $steps->last();
+
+        $currentIndex = (int) $steps->search(
+            fn ($step): bool => (int) $step->id === (int) $currentStep->id
+        );
+
+        return $steps->get($currentIndex + 1) === null;
+    }
+
+    private function shouldDisableStepActionButtons(Process $process): bool
+    {
+        if (in_array($process->status, [ProcessStatus::CLOSED, ProcessStatus::CANCELLED], true)) {
+            return true;
+        }
+
+        $steps = ($process->steps ?? collect())
+            ->sortBy('step_order')
+            ->values();
+
+        if ($steps->isEmpty()) {
+            return true;
+        }
+
+        $currentStep = $steps->firstWhere('is_current', true)
+            ?? $steps->firstWhere('status', 'IN_PROGRESS');
+
+        if (! $currentStep) {
+            return true;
+        }
+
+        return strtoupper((string) ($currentStep->status ?? '')) !== 'IN_PROGRESS';
     }
 }

@@ -588,6 +588,62 @@ test('process events use sequential event_number per process', function () {
     expect($numbers)->toBe([1, 2, 3, 4]);
 });
 
+test('process service concludes process when current step is the last one', function () {
+    $user = User::factory()->create();
+    $service = app(ProcessService::class);
+
+    $organization = OrganizationChart::query()->create([
+        'title' => 'Setor Final',
+        'filter' => 'setor final',
+        'hierarchy' => 0,
+        'number_hierarchy' => 50,
+        'order' => '050',
+    ]);
+
+    $user->organizations()->attach($organization->id);
+
+    $workflow = Workflow::query()->create([
+        'title' => 'Fluxo de conclusao',
+        'filter' => 'fluxo de conclusao',
+        'description' => 'Fluxo com etapa final',
+        'is_active' => true,
+    ]);
+
+    WorkflowStep::query()->create([
+        'workflow_id' => $workflow->id,
+        'title' => 'Etapa final',
+        'filter' => 'etapa final',
+        'step_order' => 1,
+        'deadline_days' => 2,
+        'required' => true,
+        'allow_parallel' => false,
+        'organization_id' => $organization->id,
+    ]);
+
+    $process = $service->open([
+        'title' => 'Processo para conclusao',
+        'description' => 'Descricao',
+        'workflow_id' => $workflow->id,
+        'owner_id' => $user->id,
+    ], $user->id);
+
+    $process = $service->concludeProcess($process, $user->id, 'Conclusao na etapa final');
+    $process->load('steps');
+
+    $finalStep = $process->steps->firstWhere('step_order', 1);
+    $event = $process->events()
+        ->where('event_type', ProcessEventType::CLOSED->value)
+        ->latest('created_at')
+        ->first();
+
+    expect($process->status)->toBe(ProcessStatus::CLOSED)
+        ->and($process->closed_at)->not->toBeNull()
+        ->and($finalStep?->status)->toBe('COMPLETED')
+        ->and($finalStep?->is_current)->toBeFalse()
+        ->and($finalStep?->completed_at)->not->toBeNull()
+        ->and($event)->not->toBeNull();
+});
+
 test('process service blocks step transition when actor is outside current step organization', function () {
     $user = User::factory()->create();
     $service = app(ProcessService::class);

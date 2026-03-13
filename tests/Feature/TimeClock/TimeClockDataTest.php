@@ -8,6 +8,14 @@ use Illuminate\Support\Facades\Schema;
 test('time clock migrations create required tables', function () {
     expect(Schema::hasTable('time_clock_entries'))->toBeTrue()
         ->and(Schema::hasTable('time_clock_locations'))->toBeTrue()
+        ->and(Schema::hasColumns('time_clock_locations', [
+            'name',
+            'establishment_id',
+            'latitude',
+            'longitude',
+            'radius_meters',
+            'active',
+        ]))->toBeTrue()
         ->and(Schema::hasColumns('time_clock_entries', [
             'user_id',
             'occurred_at',
@@ -41,6 +49,7 @@ test('time clock models expose relations', function () {
 
     expect($entry->user->is($user))->toBeTrue()
         ->and($entry->location->is($location))->toBeTrue()
+        ->and($location->establishment()->getRelated()::class)->toBe(\App\Models\Configuration\Establishment\Establishment\Establishment::class)
         ->and($location->entries()->count())->toBe(1)
         ->and($user->timeClockEntries()->count())->toBe(1);
 });

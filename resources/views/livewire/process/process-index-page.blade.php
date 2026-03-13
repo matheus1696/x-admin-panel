@@ -2,7 +2,7 @@
     @php
         $statusCollection = collect($statuses);
         $selectedStatus = (string) ($filters['status'] ?? \App\Models\Process\ProcessStatus::IN_PROGRESS);
-        $totalProcesses = (int) $processes->count();
+        $totalProcesses = (int) $processes->total();
         $visibleProcesses = (int) $processes->count();
         $overdueVisible = $processes->filter(fn ($process) => $processIdsWithOverdueCurrentStep->contains((int) $process->id))->count();
         $withUpdatesVisible = $processes->filter(fn ($process) => $processIdsWithUnseenUpdates->contains((int) $process->id))->count();
@@ -23,7 +23,7 @@
     </x-page.header>
 
     <x-page.filter title="Filtros" showClear="true" clearAction="resetFilters">
-        <div class="col-span-12 md:col-span-8">
+        <div class="col-span-12 md:col-span-6">
             <x-form.label value="Titulo" />
             <x-form.input wire:model.live.debounce.400ms="filters.title" placeholder="Buscar por titulo..." />
         </div>
@@ -34,6 +34,20 @@
                 wire:model.live="filters.organization_id"
                 name="filters.organization_id"
                 :options="$organizations->map(fn($organization) => ['value' => $organization->id, 'label' => $organization->acronym ? $organization->acronym.' - '.$organization->title : $organization->title])->prepend(['value' => '', 'label' => 'Todos'])->values()->all()"
+            />
+        </div>
+
+        <div class="col-span-12 md:col-span-2">
+            <x-form.label value="Itens por pagina" />
+            <x-form.select-livewire
+                wire:model.live="filters.perPage"
+                name="filters.perPage"
+                :searchable="false"
+                :options="[
+                    ['value' => 10, 'label' => '10'],
+                    ['value' => 25, 'label' => '25'],
+                    ['value' => 50, 'label' => '50'],
+                ]"
             />
         </div>
 
@@ -230,6 +244,12 @@
             </div>
         @endforelse
     </section>
+
+    @if ($processes->hasPages())
+        <div class="mt-4">
+            {{ $processes->links('components.pagination') }}
+        </div>
+    @endif
 
     <x-modal :show="$showModal" size="lg">
         @if ($modalKey === 'modal-process-create')

@@ -19,9 +19,9 @@
         $progressPercentage = $totalSteps > 0 ? (int) round(($completedSteps / $totalSteps) * 100) : 0;
     @endphp
 
-    <div class="space-y-6">
+    <div class="space-y-4">
         <div class="mt-5">
-            <div class="overflow-x-auto bg-gray-100/50 pb-2 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+            <div class="bg-gray-100/50 pb-2 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
                 <div class="mb-4 border-b border-gray-200 pb-4">
                     <div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
                         <div>
@@ -47,67 +47,69 @@
                     </div>
                 </div>
 
-                @if ($timelineSteps->isNotEmpty())
-                    <div class="flex min-w-max items-start">
-                        @foreach ($timelineSteps as $timelineStep)
-                            <div class="flex items-start">
-                                @php
-                                    $stepState = (string) ($timelineStep['state'] ?? '');
-                                    $isCompleted = $stepState === 'Concluida';
-                                    $isInProgress = $stepState === 'Em andamento';
-                                    $isOverdue = (bool) ($timelineStep['is_overdue'] ?? false);
-                                    $stateClass = $isCompleted
-                                        ? 'bg-emerald-100 text-emerald-700'
-                                        : ($isInProgress
-                                            ? ($isOverdue ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700')
-                                            : 'bg-slate-100 text-slate-700');
+                <div class="overflow-x-auto">
+                    @if ($timelineSteps->isNotEmpty())
+                        <div class="flex min-w-max items-start">
+                            @foreach ($timelineSteps as $timelineStep)
+                                <div class="flex items-start">
+                                    @php
+                                        $stepState = (string) ($timelineStep['state'] ?? '');
+                                        $isCompleted = $stepState === 'Concluida';
+                                        $isInProgress = $stepState === 'Em andamento';
+                                        $isOverdue = (bool) ($timelineStep['is_overdue'] ?? false);
+                                        $stateClass = $isCompleted
+                                            ? 'bg-emerald-100 text-emerald-700'
+                                            : ($isInProgress
+                                                ? ($isOverdue ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700')
+                                                : 'bg-slate-100 text-slate-700');
 
-                                    $cardClass = $isCompleted
-                                        ? 'border-emerald-200 bg-emerald-50/60'
-                                        : ($isInProgress
-                                            ? ($isOverdue ? 'border-red-200 bg-red-50/60' : 'border-amber-200 bg-amber-50/60')
-                                            : 'border-slate-200 bg-slate-50/60');
-                                @endphp
+                                        $cardClass = $isCompleted
+                                            ? 'border-emerald-200 bg-emerald-50/60'
+                                            : ($isInProgress
+                                                ? ($isOverdue ? 'border-red-200 bg-red-50/60' : 'border-amber-200 bg-amber-50/60')
+                                                : 'border-slate-200 bg-slate-50/60');
+                                    @endphp
 
-                                <article class="w-72 shrink-0 overflow-hidden rounded-2xl border shadow-sm {{ $cardClass }}">
-                                    <header class="flex items-center justify-between gap-2 border-b border-gray-200/60 px-4 py-2 {{ $stateClass }}">
-                                        <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase">
-                                            {{ $timelineStep['state'] }}
-                                            @if ($timelineStep['completed_with_delay'] ?? false)
-                                                <span
-                                                    class="inline-flex size-4 items-center justify-center rounded-full bg-red-600 text-[9px] font-bold text-white"
-                                                    title="Etapa concluida com atraso de {{ $timelineStep['completed_delay_days'] }} dia(s)."
-                                                >
-                                                    A
-                                                </span>
-                                            @endif
-                                        </span>
-                                        <p class="text-[11px] font-medium text-gray-500">
-                                            {{ $timelineStep['deadline_days'] ? $timelineStep['deadline_days'].' dia(s)' : 'Prazo n/a' }}
-                                        </p>
-                                    </header>
+                                    <article class="w-72 shrink-0 overflow-hidden rounded-2xl border shadow-sm {{ $cardClass }}">
+                                        <header class="flex items-center justify-between gap-2 border-b border-gray-200/60 px-4 py-2 {{ $stateClass }}">
+                                            <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase">
+                                                {{ $timelineStep['state'] }}
+                                                @if ($timelineStep['completed_with_delay'] ?? false)
+                                                    <span
+                                                        class="inline-flex size-4 items-center justify-center rounded-full bg-red-600 text-[9px] font-bold text-white"
+                                                        title="Etapa concluida com atraso de {{ $timelineStep['completed_delay_days'] }} dia(s)."
+                                                    >
+                                                        A
+                                                    </span>
+                                                @endif
+                                            </span>
+                                            <p class="text-[11px] font-medium text-gray-500">
+                                                {{ $timelineStep['deadline_days'] ? $timelineStep['deadline_days'].' dia(s)' : 'Prazo n/a' }}
+                                            </p>
+                                        </header>
 
-                                    <div class="px-4 py-2">
-                                        <h3 class="truncate text-xs font-semibold text-gray-900">{{ $timelineStep['title'] }}</h3>
-                                        <p class="mt-0.5 text-xs text-gray-500">Setor: {{ $timelineStep['organization_title'] ?? 'Nao definido' }}</p>
-                                        <p class="mt-0.5 text-xs text-gray-500">Usuario: {{ $timelineStep['owner_name'] }}</p>
-                                        <p class="mt-0.5 text-xs text-gray-500">
-                                            Inicio: {{ data_get($timelineStep, 'started_at')?->format('d/m/Y H:i') ?? '-' }}
-                                        </p>
-                                    </div>
-                                </article>
+                                        <div class="px-4 py-2">
+                                            <h3 class="truncate text-xs font-semibold text-gray-900">{{ $timelineStep['title'] }}</h3>
+                                            <p class="mt-0.5 text-xs text-gray-500">Setor: {{ $timelineStep['organization_title'] ?? 'Nao definido' }}</p>
+                                            <p class="mt-0.5 text-xs text-gray-500">Usuario: {{ $timelineStep['owner_name'] }}</p>
+                                            <p class="mt-0.5 text-xs text-gray-500">
+                                                Inicio: {{ data_get($timelineStep, 'started_at')?->format('d/m/Y H:i') ?? '-' }}
+                                            </p>
+                                        </div>
+                                    </article>
 
-                                @if (! $loop->last)
-                                    <div class="flex h-20 w-4 shrink-0 items-center justify-center">
-                                        <div class="h-[2px] w-full bg-gradient-to-r from-emerald-200 via-emerald-400 to-emerald-200"></div>
-                                    </div>
-                                @endif
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <p class="py-6 text-sm text-gray-500">Nenhuma etapa vinculada ao processo.</p>
-                @endif
+                                    @if (! $loop->last)
+                                        <div class="flex h-20 w-4 shrink-0 items-center justify-center">
+                                            <div class="h-[2px] w-full bg-gradient-to-r from-emerald-200 via-emerald-400 to-emerald-200"></div>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="py-6 text-sm text-gray-500">Nenhuma etapa vinculada ao processo.</p>
+                    @endif
+                </div>
             </div>
             
             <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-end pt-4">
@@ -121,6 +123,7 @@
                         wire:click="openCommentModal"
                         wire:loading.attr="disabled"
                         wire:target="openCommentModal"
+                        :disabled="$areStepActionButtonsDisabled"
                     />
                     <x-button
                         type="button"
@@ -130,7 +133,7 @@
                         wire:click="openAssignOwnerModal"
                         wire:loading.attr="disabled"
                         wire:target="openAssignOwnerModal"
-                        :disabled="! $canManageStepActions"
+                        :disabled="$areStepActionButtonsDisabled || ! $canManageStepActions"
                     />
                     <x-button
                         type="button"
@@ -140,17 +143,17 @@
                         wire:click="openDispatchModal('retreat')"
                         wire:loading.attr="disabled"
                         wire:target="openDispatchModal"
-                        :disabled="! $canManageStepActions"
+                        :disabled="$areStepActionButtonsDisabled || ! $canManageStepActions"
                     />
                     <x-button
                         type="button"
-                        text="Avancar etapa"
-                        icon="fa-solid fa-arrow-right"
+                        :text="$isCurrentStepLast ? 'Concluir processo' : 'Avancar etapa'"
+                        :icon="$isCurrentStepLast ? 'fa-solid fa-check' : 'fa-solid fa-arrow-right'"
                         variant="green_solid"
-                        wire:click="openDispatchModal('advance')"
+                        wire:click="openDispatchModal('{{ $isCurrentStepLast ? 'conclude' : 'advance' }}')"
                         wire:loading.attr="disabled"
                         wire:target="openDispatchModal"
-                        :disabled="! $canManageStepActions"
+                        :disabled="$areStepActionButtonsDisabled || ! $canManageStepActions"
                     />
                 </div>
             </div>
@@ -213,7 +216,7 @@
             </div>
 
             <aside class="xl:col-span-4 space-y-6">
-                <article class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm mt-4 space-y-4">
+                <article class="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
                     <div>
                         <dt class="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">Abertura</dt>
                         <dd class="mt-1 text-sm text-gray-900">{{ $process->created_at->format('d/m/Y H:i') }}</dd>
@@ -243,7 +246,7 @@
         @if ($modalKey === 'modal-process-dispatch')
             <x-slot name="header">
                 <h2 class="text-sm font-semibold text-gray-700 uppercase">
-                    {{ $pendingTransition === 'advance' ? 'Avancar Etapa' : 'Retroceder Etapa' }}
+                    {{ $pendingTransition === 'advance' ? 'Avancar Etapa' : ($pendingTransition === 'retreat' ? 'Retroceder Etapa' : 'Concluir Processo') }}
                 </h2>
             </x-slot>
 
@@ -281,8 +284,12 @@
                     <x-button text="Cancelar" variant="gray_outline" wire:click="closeModal" />
                     <x-button
                         type="submit"
-                        :text="$pendingTransition === 'advance' ? 'Confirmar e Avancar' : 'Confirmar e Retroceder'"
-                        :icon="$pendingTransition === 'advance' ? 'fa-solid fa-arrow-right' : 'fa-solid fa-arrow-left'"
+                        :text="$pendingTransition === 'advance'
+                            ? 'Confirmar e Avancar'
+                            : ($pendingTransition === 'retreat' ? 'Confirmar e Retroceder' : 'Confirmar e Concluir')"
+                        :icon="$pendingTransition === 'advance'
+                            ? 'fa-solid fa-arrow-right'
+                            : ($pendingTransition === 'retreat' ? 'fa-solid fa-arrow-left' : 'fa-solid fa-check')"
                         :disabled="$pendingTransition === 'advance' && $requiresOwnerBeforeAdvance && $owners->isEmpty()"
                     />
                 </div>

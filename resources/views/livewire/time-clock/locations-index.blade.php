@@ -10,6 +10,7 @@
         <x-slot name="thead">
             <tr>
                 <x-page.table-th value="Nome" />
+                <x-page.table-th value="Estabelecimento" />
                 <x-page.table-th value="Latitude / Longitude" />
                 <x-page.table-th class="w-28 text-center" value="Raio" />
                 <x-page.table-th class="w-24 text-center" value="Status" />
@@ -21,6 +22,7 @@
             @forelse ($locations as $location)
                 <tr>
                     <x-page.table-td :value="$location->name" />
+                    <x-page.table-td :value="$location->establishment?->title ?? '-'" />
                     <x-page.table-td :value="$location->latitude.', '.$location->longitude" />
                     <x-page.table-td class="text-center" :value="$location->radius_meters.' m'" />
                     <x-page.table-td class="text-center">
@@ -34,7 +36,7 @@
                 </tr>
             @empty
                 <tr>
-                    <x-page.table-td colspan="5" class="text-center text-sm text-gray-500 py-10">
+                    <x-page.table-td colspan="6" class="text-center text-sm text-gray-500 py-10">
                         Nenhum local cadastrado.
                     </x-page.table-td>
                 </tr>

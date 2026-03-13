@@ -10,6 +10,7 @@ use App\Models\Process\ProcessStatus;
 use App\Models\Process\ProcessStep;
 use App\Models\Process\ProcessUserView;
 use App\Support\Notifications\InteractsWithSystemNotifications;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -24,7 +25,7 @@ class ProcessService
         private readonly ProcessEventService $eventService,
     ) {}
 
-    public function index(array $filters, int $userId): Collection
+    public function index(array $filters, int $userId): LengthAwarePaginator
     {
         $query = $this->accessibleProcessesQuery($userId)
             ->with(['openedBy', 'owner', 'organization', 'workflow']);
@@ -60,7 +61,7 @@ class ProcessService
         return $query
             ->orderByDesc('updated_at')
             ->orderByDesc('created_at')
-            ->get();
+            ->paginate((int) ($filters['perPage'] ?? 25));
     }
 
     public function findByUuid(string $uuid): Process
@@ -515,6 +516,89 @@ class ProcessService
                     'actor_id' => $actorId,
                 ],
                 $previousStep->organization_id !== null ? (int) $previousStep->organization_id : null,
+            );
+
+            return $process;
+        });
+    }
+
+    public function concludeProcess(Process $process, int $actorId, string $comment): Process
+    {
+        if (in_array($process->status, [ProcessStatus::CLOSED, ProcessStatus::CANCELLED], true)) {
+            throw new InvalidArgumentException('Processo ja finalizado.');
+        }
+
+        $this->assertActorBelongsToCurrentStepOrganization($process, $actorId);
+
+        $comment = trim($comment);
+        if ($comment === '') {
+            throw new InvalidArgumentException('Informe o motivo no despacho.');
+        }
+
+        return DB::transaction(function () use ($process, $actorId, $comment): Process {
+            $steps = ProcessStep::query()
+                ->where('process_id', $process->id)
+                ->orderBy('step_order')
+                ->orderBy('id')
+                ->get();
+
+            if ($steps->isEmpty()) {
+                throw new InvalidArgumentException('Processo sem etapas para conclusao.');
+            }
+
+            $currentStep = $steps->firstWhere('is_current', true)
+                ?? $steps->firstWhere('status', 'IN_PROGRESS')
+                ?? $steps->firstWhere('completed_at', null)
+                ?? $steps->last();
+
+            $currentIndex = (int) $steps->search(
+                fn (ProcessStep $step): bool => (int) $step->id === (int) $currentStep->id
+            );
+            $nextStep = $steps->values()->get($currentIndex + 1);
+
+            if ($nextStep !== null) {
+                throw new InvalidArgumentException('Processo ainda nao esta na ultima etapa.');
+            }
+
+            $currentStep->update([
+                'owner_id' => $process->owner_id,
+                'is_current' => false,
+                'status' => 'COMPLETED',
+                'completed_at' => $currentStep->completed_at ?? now(),
+            ]);
+
+            $process->update([
+                'status' => ProcessStatus::CLOSED,
+                'closed_at' => now(),
+            ]);
+
+            $this->eventService->log(
+                $process,
+                ProcessEventType::CLOSED->value,
+                $actorId,
+                sprintf(
+                    'Despacho: %s | Processo concluido na etapa "%s".',
+                    $comment,
+                    (string) $currentStep->title
+                ),
+            );
+
+            $process = $process->refresh();
+
+            $this->notifyProcessInteraction(
+                $process,
+                'Processo concluido',
+                sprintf(
+                    'O processo %s - %s foi concluido na etapa "%s".',
+                    $this->processCode($process),
+                    (string) $process->title,
+                    (string) $currentStep->title
+                ),
+                [
+                    'event_type' => ProcessEventType::CLOSED->value,
+                    'actor_id' => $actorId,
+                ],
+                $currentStep->organization_id !== null ? (int) $currentStep->organization_id : null,
             );
 
             return $process;
