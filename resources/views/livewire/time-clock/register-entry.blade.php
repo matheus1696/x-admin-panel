@@ -38,7 +38,7 @@
                     <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                         <div>
                             <p class="text-sm font-semibold text-slate-900">Registro guiado</p>
-                            <p class="mt-1 text-sm text-slate-600">A localizacao e capturada automaticamente. Em desktop sem GPS, o usuario pode repetir a tentativa ou prosseguir conforme a politica do modulo.</p>
+                            <p class="mt-1 text-sm text-slate-600">A foto pode ser feita direto pela camera. A localizacao pode ser ativada pelo navegador quando o usuario permitir.</p>
                         </div>
                         <div class="rounded-2xl border px-3 py-2 text-xs font-medium"
                              :class="locationStatusClass">
@@ -76,7 +76,7 @@
                         <div class="mt-2 space-y-3">
                             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                 <x-button type="button" text="Abrir camera" icon="fa-solid fa-camera" x-on:click="openCamera()" />
-                                <x-button type="button" text="Usar arquivo ou capturar" icon="fa-solid fa-image" variant="blue_outline" x-on:click="$refs.photoInput.click()" />
+                                <x-button type="button" text="Inverter camera" icon="fa-solid fa-rotate" variant="blue_outline" x-on:click="switchCamera()" x-bind:disabled="!canSwitchCamera" />
                             </div>
 
                             <div x-show="cameraOpen" class="space-y-3">
@@ -99,10 +99,14 @@
                         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                             <div>
                                 <p class="text-sm font-semibold text-slate-900">Localizacao do dispositivo</p>
-                                <p class="mt-1 text-sm text-slate-600">A captura usa o navegador e funciona melhor em celular. Em desktop, depende de permissao do sistema e do navegador.</p>
+                                <p class="mt-1 text-sm text-slate-600">Em alguns navegadores a permissao so aparece apos clicar no botao abaixo. Se nada acontecer, verifique se a pagina esta em contexto seguro e se a localizacao nao foi bloqueada antes.</p>
                             </div>
-                            <x-button type="button" text="Atualizar localizacao" icon="fa-solid fa-location-dot" variant="blue_outline" x-on:click="captureLocation()" />
+                            <x-button type="button" text="Ativar localizacao" icon="fa-solid fa-location-dot" variant="blue_outline" x-on:click="captureLocation(true)" />
                         </div>
+
+                        <template x-if="locationHelpText">
+                            <div class="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800" x-text="locationHelpText"></div>
+                        </template>
 
                         <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
                             <div class="rounded-2xl bg-white px-4 py-3">
@@ -126,7 +130,7 @@
                 </div>
 
                 <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                    <x-button type="button" text="Atualizar localizacao" icon="fa-solid fa-location-crosshairs" variant="blue_outline" x-on:click="captureLocation()" />
+                    <x-button type="button" text="Ativar localizacao" icon="fa-solid fa-location-crosshairs" variant="blue_outline" x-on:click="captureLocation(true)" />
                     <x-button type="submit" text="Registrar ponto" icon="fa-solid fa-check" x-bind:disabled="submitting" />
                 </div>
             </form>
@@ -141,8 +145,11 @@
         previewUrl: null,
         stream: null,
         submitting: false,
+        cameraFacingMode: 'environment',
+        canSwitchCamera: false,
         locationStatusLabel: 'Aguardando captura da localizacao',
         locationStatusClass: 'border-slate-200 bg-white text-slate-600',
+        locationHelpText: '',
         locations: @js($locations->map(fn ($location) => [
             'id' => $location->id,
             'name' => $location->establishment?->title ?? $location->name,
@@ -163,12 +170,9 @@
         get selectedLocationSummary() {
             return this.locations.find((location) => Number(location.id) === Number($wire.locationId)) ?? null;
         },
-        init() {
-            this.captureLocation();
-
-            this.$watch(() => $wire.locationId, () => {
-                this.captureLocationIfMissing();
-            });
+        async init() {
+            this.canSwitchCamera = this.isLikelyMobile();
+            await this.inspectLocationPermission();
         },
         async openCamera() {
             if (!navigator.mediaDevices?.getUserMedia) {
@@ -177,11 +181,19 @@
             }
 
             try {
-                this.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+                this.stopCamera();
+                this.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: this.cameraFacingMode }, audio: false });
                 this.$refs.video.srcObject = this.stream;
                 this.cameraOpen = true;
             } catch {
                 this.$refs.photoInput.click();
+            }
+        },
+        async switchCamera() {
+            this.cameraFacingMode = this.cameraFacingMode === 'environment' ? 'user' : 'environment';
+
+            if (this.cameraOpen) {
+                await this.openCamera();
             }
         },
         capturePhoto() {
@@ -213,31 +225,84 @@
             if (!file) return;
             this.previewUrl = URL.createObjectURL(file);
         },
-        captureLocation() {
+        async inspectLocationPermission() {
+            if (!window.isSecureContext) {
+                this.setLocationStatus('Localizacao indisponivel fora de contexto seguro', 'warning');
+                this.locationHelpText = 'Use HTTPS ou acesse por localhost. Em HTTP comum, o navegador pode ocultar a permissao de GPS.';
+                return;
+            }
+
             if (!navigator.geolocation) {
                 this.setLocationStatus('Geolocalizacao indisponivel neste dispositivo', 'warning');
+                this.locationHelpText = 'Este navegador ou dispositivo nao oferece suporte a geolocalizacao.';
+                return;
+            }
+
+            if (!navigator.permissions?.query) {
+                this.setLocationStatus('Clique em ativar localizacao para solicitar permissao', 'loading');
+                this.locationHelpText = 'Alguns navegadores so mostram o pedido de permissao apos interacao direta do usuario.';
+                return;
+            }
+
+            try {
+                const permission = await navigator.permissions.query({ name: 'geolocation' });
+                this.syncPermissionState(permission.state);
+                permission.onchange = () => this.syncPermissionState(permission.state);
+
+                if (permission.state === 'granted') {
+                    this.captureLocation(false);
+                }
+            } catch {
+                this.setLocationStatus('Clique em ativar localizacao para solicitar permissao', 'loading');
+                this.locationHelpText = 'Nao foi possivel consultar o estado da permissao. Tente ativar manualmente.';
+            }
+        },
+        syncPermissionState(state) {
+            if (state === 'granted') {
+                this.setLocationStatus('Permissao de localizacao liberada', 'success');
+                this.locationHelpText = '';
+                return;
+            }
+
+            if (state === 'denied') {
+                this.setLocationStatus('Localizacao bloqueada no navegador', 'warning');
+                this.locationHelpText = 'Abra as permissoes do navegador para esta pagina e permita o acesso a localizacao.';
+                return;
+            }
+
+            this.setLocationStatus('Clique em ativar localizacao para solicitar permissao', 'loading');
+            this.locationHelpText = 'O navegador ainda nao exibiu a permissao. Use o botao para iniciar a solicitacao.';
+        },
+        captureLocation(fromUserAction = false) {
+            if (!navigator.geolocation) {
+                this.setLocationStatus('Geolocalizacao indisponivel neste dispositivo', 'warning');
+                this.locationHelpText = 'Este navegador ou dispositivo nao oferece suporte a geolocalizacao.';
+                return;
+            }
+
+            if (!window.isSecureContext) {
+                this.setLocationStatus('Localizacao indisponivel fora de contexto seguro', 'warning');
+                this.locationHelpText = 'Use HTTPS ou localhost para que o navegador permita GPS.';
                 return;
             }
 
             this.setLocationStatus('Capturando localizacao...', 'loading');
+            this.locationHelpText = fromUserAction ? '' : this.locationHelpText;
 
             navigator.geolocation.getCurrentPosition((position) => {
                 $wire.set('latitude', Number(position.coords.latitude.toFixed(7)));
                 $wire.set('longitude', Number(position.coords.longitude.toFixed(7)));
                 $wire.set('accuracy', Number(position.coords.accuracy.toFixed(2)));
                 this.setLocationStatus('Localizacao capturada com sucesso', 'success');
+                this.locationHelpText = '';
             }, () => {
                 this.setLocationStatus('Nao foi possivel obter a localizacao. Verifique a permissao do navegador.', 'warning');
+                this.locationHelpText = 'Se a permissao nao apareceu, confira se o navegador bloqueou a localizacao, se o sistema liberou GPS para o navegador e se a pagina esta em HTTPS.';
             }, {
                 enableHighAccuracy: true,
                 timeout: 10000,
                 maximumAge: 0,
             });
-        },
-        captureLocationIfMissing() {
-            if ($wire.latitude === null || $wire.longitude === null) {
-                this.captureLocation();
-            }
         },
         formatCoordinate(value) {
             return value !== null && value !== undefined
@@ -257,6 +322,9 @@
             this.stream.getTracks().forEach((track) => track.stop());
             this.stream = null;
             this.cameraOpen = false;
+        },
+        isLikelyMobile() {
+            return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
         },
     }));
 </script>
