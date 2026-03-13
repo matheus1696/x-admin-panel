@@ -71,7 +71,7 @@
 
                     <div class="md:col-span-2">
                         <x-form.label value="Foto" />
-                        <input x-ref="photoInput" type="file" wire:model="photo" accept="image/*" capture="environment" class="hidden" @change="previewFile($event)" />
+                        <input x-ref="photoInput" type="file" wire:model="photo" accept="image/*" capture="user" class="hidden" @change="previewFile($event)" />
 
                         <div class="mt-2 space-y-3">
                             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -96,12 +96,11 @@
                     </div>
 
                     <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 lg:col-span-2">
-                        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div class="flex flex-col gap-3">
                             <div>
                                 <p class="text-sm font-semibold text-slate-900">Localizacao do dispositivo</p>
                                 <p class="mt-1 text-sm text-slate-600">Em alguns navegadores a permissao so aparece apos clicar no botao abaixo. Se nada acontecer, verifique se a pagina esta em contexto seguro e se a localizacao nao foi bloqueada antes.</p>
                             </div>
-                            <x-button type="button" text="Ativar localizacao" icon="fa-solid fa-location-dot" variant="blue_outline" x-on:click="captureLocation(true)" />
                         </div>
 
                         <template x-if="locationHelpText">
@@ -145,7 +144,7 @@
         previewUrl: null,
         stream: null,
         submitting: false,
-        cameraFacingMode: 'environment',
+        cameraFacingMode: 'user',
         canSwitchCamera: false,
         locationStatusLabel: 'Aguardando captura da localizacao',
         locationStatusClass: 'border-slate-200 bg-white text-slate-600',
