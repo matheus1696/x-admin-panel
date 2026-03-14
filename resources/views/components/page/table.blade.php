@@ -1,4 +1,4 @@
-@props([ 
+@props([
     'pagination' => null,
     'striped' => true,
     'hover' => true,
@@ -8,38 +8,54 @@
     'emptyMessage' => 'Nenhum registro encontrado',
 ])
 
-<!-- ðŸ“Š Data Table Component Premium -->
+@php
+    $normalizeBoolean = static fn (mixed $value): bool => filter_var($value, FILTER_VALIDATE_BOOLEAN) || $value === true || $value === 1 || $value === '1';
+
+    $striped = $normalizeBoolean($striped);
+    $hover = $normalizeBoolean($hover);
+    $bordered = $normalizeBoolean($bordered);
+    $compact = $normalizeBoolean($compact);
+    $stickyHeader = $normalizeBoolean($stickyHeader);
+
+    $tableDensityClass = $compact
+        ? '[&_th]:px-4 [&_th]:py-3 [&_td]:px-4 [&_td]:py-2.5'
+        : '[&_th]:px-6 [&_th]:py-4 [&_td]:px-6 [&_td]:py-3.5';
+
+    $theadClass = $stickyHeader ? 'sticky top-0 z-10' : '';
+@endphp
+
 <div class="relative">
-    
-    <!-- Tabela Container com Scroll Suave -->
-    <div class="relative overflow-x-auto rounded-xl border {{ $bordered ? 'border-gray-300' : 'border-gray-200' }} shadow-lg hover:shadow-xl transition-shadow duration-300">
-        
-        <table class="w-full text-[13px] table-auto relative">
-            
-            <!-- CabeÃ§alho Sticky com Design Premium -->
-            <thead class="bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-800 text-[12px] text-white uppercase tracking-wider shadow-lg text-left">
+    <!-- Container da tabela com rolagem horizontal -->
+    <div class="relative overflow-x-auto rounded-xl border {{ $bordered ? 'border-gray-300' : 'border-gray-200' }} shadow-lg transition-shadow duration-300 hover:shadow-xl">
+        <table class="relative w-full table-auto text-[13px] {{ $tableDensityClass }}">
+            <!-- Cabeçalho -->
+            <thead class="{{ $theadClass }} bg-gradient-to-r from-emerald-700 via-emerald-800 to-emerald-800 text-left text-[12px] uppercase tracking-wider text-white shadow-lg">
                 <tr>
                     {{ $thead ?? '' }}
                 </tr>
             </thead>
-            
-            <!-- Corpo da Tabela - COM STRIPED E HOVER -->
-            <tbody class="divide-y divide-gray-100 bg-white 
-                @if($striped) [&>tr:nth-child(even)]:bg-gray-100/75 @endif
-                @if($hover) [&>tr:hover]:bg-emerald-50/75 [&>tr:hover]:transition-colors [&>tr:hover]:duration-200 @endif
-            ">
-                @if(isset($tbody) && $tbody->isNotEmpty())
+
+            <!-- Corpo da tabela -->
+            <tbody
+                class="divide-y divide-gray-100 bg-white
+                    @if ($striped) [&>tr:nth-child(even)]:bg-gray-100/75 @endif
+                    @if ($hover) [&>tr:hover]:bg-emerald-50/75 [&>tr:hover]:transition-colors [&>tr:hover]:duration-200 @endif
+                "
+            >
+                @if (isset($tbody) && $tbody->isNotEmpty())
                     {{ $tbody }}
                 @else
-                    <!-- Mensagem quando vazio -->
+                    <!-- Estado vazio -->
                     <tr>
                         <td colspan="100%" class="px-6 py-12 text-center">
                             <div class="flex flex-col items-center justify-center gap-3">
-                                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                                <div class="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
                                     <i class="fas fa-inbox text-2xl text-gray-400"></i>
                                 </div>
-                                <p class="text-sm text-gray-500 font-medium">{{ $emptyMessage }}</p>
-                                @if(isset($emptyAction))
+
+                                <p class="text-sm font-medium text-gray-500">{{ $emptyMessage }}</p>
+
+                                @if (isset($emptyAction))
                                     <div class="mt-2">
                                         {{ $emptyAction }}
                                     </div>
@@ -49,31 +65,28 @@
                     </tr>
                 @endif
             </tbody>
-            
-            <!-- RodapÃ© da Tabela (para totais, etc) -->
-            @if(isset($tfoot))
-                <tfoot class="bg-gray-50 border-t-2 border-gray-200">
+
+            <!-- Rodapé da tabela -->
+            @if (isset($tfoot))
+                <tfoot class="border-t-2 border-gray-200 bg-gray-50">
                     {{ $tfoot }}
                 </tfoot>
             @endif
         </table>
     </div>
-    
-    <!-- PaginaÃ§Ã£o Premium -->
+
+    <!-- Paginação -->
     @if ($pagination && $pagination->total() > 0)
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-2 mt-4 px-2">
-            
-            <!-- InformaÃ§Ã£o de registros -->
-            <div class="flex items-center gap-2 text-xs text-gray-500 bg-gray-50 px-4 lg:pb-4">
-                <i class="fas fa-database text-emerald-500 text-[10px]"></i>
+        <div class="mt-4 flex flex-col items-center justify-between gap-2 px-2 sm:flex-row">
+            <div class="flex items-center gap-2 bg-gray-50 px-4 text-xs text-gray-500 lg:pb-4">
+                <i class="fas fa-database text-[10px] text-emerald-500"></i>
                 <span>
                     Mostrando <span class="font-semibold text-gray-700">{{ $pagination->firstItem() ?? 0 }}</span>
-                    atÃ© <span class="font-semibold text-gray-700">{{ $pagination->lastItem() ?? 0 }}</span>
+                    até <span class="font-semibold text-gray-700">{{ $pagination->lastItem() ?? 0 }}</span>
                     de <span class="font-semibold text-gray-700">{{ $pagination->total() }}</span> registros
                 </span>
             </div>
-            
-            <!-- Links de paginaÃ§Ã£o customizados -->
+
             <div class="flex items-center gap-2">
                 {{ $pagination->links('components.pagination') }}
             </div>

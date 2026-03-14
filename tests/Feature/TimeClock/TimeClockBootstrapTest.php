@@ -9,6 +9,7 @@ test('time clock config loads', function () {
     expect(config('time_clock'))->toBeArray()
         ->and(config('time_clock.photo_required'))->toBeTrue()
         ->and(config('time_clock.gps_required'))->toBeTrue()
+        ->and(config('time_clock.max_allowed_accuracy_meters'))->toBe(50)
         ->and(config('time_clock.validate_location_enabled'))->toBeFalse()
         ->and(config('time_clock.default_location_radius_meters'))->toBe(150);
 });
@@ -18,6 +19,7 @@ test('time clock enum values exist', function () {
         'OK',
         'MISSING_GPS',
         'MISSING_PHOTO',
+        'LOW_ACCURACY',
     ]);
 });
 

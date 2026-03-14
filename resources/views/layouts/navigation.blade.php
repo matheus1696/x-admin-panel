@@ -49,7 +49,7 @@
             </x-sidebar.main-dropdown>
         @endcanany
 
-        @canany(['time_clock.register', 'time_clock.view_own', 'time_clock.view_any', 'time_clock.reports.view', 'time_clock.locations.manage'])
+        @canany(['time_clock.register', 'time_clock.view_any', 'time_clock.reports.view', 'time_clock.locations.manage'])
             <x-sidebar.main-dropdown
                 title="Controle de Ponto"
                 icon="fa-solid fa-clock"
@@ -61,15 +61,6 @@
                         title="Registrar Ponto"
                         icon="fa-solid fa-camera"
                         :active="request()->routeIs('time-clock.register')"
-                    />
-                @endcan
-
-                @can('time_clock.view_own')
-                    <x-sidebar.dropdown-link
-                        href="{{ route('time-clock.my-entries') }}"
-                        title="Meus Registros"
-                        icon="fa-solid fa-user-clock"
-                        :active="request()->routeIs('time-clock.my-entries')"
                     />
                 @endcan
 

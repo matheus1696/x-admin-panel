@@ -1,11 +1,10 @@
 @props([
     'icon' => 'fas fa-tasks',
     'color' => 'green',
-    'title' => 'TÃ­tulo da PÃ¡gina',
-    'subtitle' => 'SubtÃ­tulo da PÃ¡gina',
+    'title' => 'Título da Página',
+    'subtitle' => 'Subtítulo da Página',
     'button' => null,
     'badge' => null,
-    'accordionOpen' => false,
 ])
 
 @php
@@ -65,56 +64,54 @@
             'ring' => 'ring-gray-500/20',
         ],
     ];
-    
+
     $config = $colorConfig[$color] ?? $colorConfig['green'];
 @endphp
 
-<div class="group relative transition-all duration-500 mb-2">
-            
-    <!-- ConteÃºdo principal -->
-    <div class="relative grid grid-cols-1 md:grid-cols-12 items-center justify-between gap-4 px-1 pb-5 pt-2 transition-all duration-300">
-        <div class="col-span-1 md:col-span-9 flex items-center gap-4">
-            <!-- Ãcone com glow e animaÃ§Ã£o -->
+<div class="group relative mb-2 transition-all duration-500">
+    <!-- Conteúdo principal -->
+    <div class="relative grid grid-cols-1 items-center justify-between gap-4 px-1 pb-5 pt-2 transition-all duration-300 md:grid-cols-12">
+        <div class="col-span-1 flex items-center gap-4 md:col-span-9">
+            <!-- Ícone com glow e animação -->
             <div class="relative">
-                <!-- Glow effect -->
-                <div class="absolute inset-0 {{ $config['iconBg'] }} rounded-xl blur-lg opacity-40 group-hover:opacity-60 transition-opacity duration-500"></div>
-                
-                <!-- Ãcone principal -->
-                <div class="relative {{ $config['iconBg'] }} {{ $config['iconGlow'] }} size-12 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:-rotate-3 transition-all duration-500 ring-4 {{ $config['ring'] }} ring-offset-2 ring-offset-white/50">
+                <div class="absolute inset-0 {{ $config['iconBg'] }} rounded-xl blur-lg opacity-40 transition-opacity duration-500 group-hover:opacity-60"></div>
+
+                <!-- Ícone principal -->
+                <div class="relative {{ $config['iconBg'] }} {{ $config['iconGlow'] }} size-12 rounded-xl ring-4 {{ $config['ring'] }} ring-offset-2 ring-offset-white/50 flex items-center justify-center shadow-lg transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3">
                     <i class="{{ $icon }} text-xl text-white"></i>
                 </div>
-                
-                <!-- Badge de notificaÃ§Ã£o com animaÃ§Ã£o -->
-                @if($badge)
-                    <span class="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-amber-500 to-red-500 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold text-white shadow-lg animate-pulse">
+
+                <!-- Badge contextual -->
+                @if ($badge)
+                    <span class="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-amber-500 to-red-500 text-[10px] font-bold text-white shadow-lg animate-pulse">
                         {{ $badge }}
                     </span>
                 @endif
             </div>
-            
-            <!-- TÃ­tulo e subtÃ­tulo -->
+
+            <!-- Título e subtítulo -->
             <div class="space-y-1">
                 <div class="flex items-center gap-2">
-                    <h1 class="text-xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent line-clamp-1">
+                    <h1 class="line-clamp-1 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-xl font-bold text-transparent">
                         {{ $title }}
                     </h1>
-                    
-                    <!-- Indicador de pÃ¡gina ativa -->
-                    <span class="w-1.5 h-1.5 rounded-full {{ $config['iconBg'] }} animate-pulse"></span>
+
+                    <!-- Indicador de página ativa -->
+                    <span class="h-1.5 w-1.5 rounded-full {{ $config['iconBg'] }} animate-pulse"></span>
                 </div>
-                
-                @if($subtitle)
-                    <p class="text-sm text-gray-500 flex items-center gap-1.5">
+
+                @if ($subtitle)
+                    <p class="flex items-center gap-1.5 text-sm text-gray-500">
                         <i class="fas fa-circle-info {{ $config['text'] }} text-[10px]"></i>
                         <span class="line-clamp-1">{{ $subtitle }}</span>
                     </p>
                 @endif
             </div>
         </div>
-        
-        <!-- BotÃ£o de aÃ§Ã£o com animaÃ§Ã£o -->
-        @if($button)
-            <div class="col-span-1 md:col-span-3 flex items-center justify-end gap-1.5">
+
+        <!-- Ação principal -->
+        @if ($button)
+            <div class="col-span-1 flex items-center justify-end gap-1.5 md:col-span-3">
                 {{ $button }}
             </div>
         @endif

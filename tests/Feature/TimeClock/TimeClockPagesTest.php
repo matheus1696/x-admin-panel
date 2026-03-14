@@ -56,7 +56,7 @@ test('time clock register livewire stores entry', function () {
 
 test('time clock management pages load with proper permissions', function () {
     $user = createTimeClockPageUser([
-        'time_clock.view_own',
+        'time_clock.register',
         'time_clock.view_any',
         'time_clock.reports.view',
         'time_clock.locations.manage',
@@ -64,7 +64,7 @@ test('time clock management pages load with proper permissions', function () {
 
     $this->actingAs($user)
         ->get(route('time-clock.my-entries'))
-        ->assertOk();
+        ->assertRedirect(route('time-clock.register'));
 
     $this->actingAs($user)
         ->get(route('time-clock.entries.index'))

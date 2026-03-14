@@ -35,6 +35,8 @@ class RegisterEntry extends Component
 
     public string $locationCaptureState = 'idle';
 
+    public bool $showRegisterModal = false;
+
     public function boot(TimeClockEntryService $entryService): void
     {
         $this->entryService = $entryService;
@@ -43,6 +45,21 @@ class RegisterEntry extends Component
     public function mount(): void
     {
         Gate::authorize('register', TimeClockEntry::class);
+    }
+
+    public function openRegisterModal(): void
+    {
+        $this->showRegisterModal = true;
+    }
+
+    public function closeRegisterModal(): void
+    {
+        $this->showRegisterModal = false;
+    }
+
+    public function requestAllowance(): void
+    {
+        $this->flashInfo('Fluxo de solicitacao de abono ainda nao foi implementado.');
     }
 
     public function register(): void
@@ -72,6 +89,7 @@ class RegisterEntry extends Component
 
         $this->reset(['photo', 'latitude', 'longitude', 'accuracy', 'locationId']);
         $this->locationCaptureState = 'idle';
+        $this->showRegisterModal = false;
 
         if ($entry->status === TimeClockEntryStatus::OK->value) {
             $this->flashSuccess('Registro de ponto realizado com sucesso.');
@@ -92,7 +110,8 @@ class RegisterEntry extends Component
 
         return view('livewire.time-clock.register-entry', [
             'locations' => $locations,
-            'recentEntries' => $this->entryService->paginateOwn((int) auth()->id(), ['perPage' => 5]),
+            'monthLabel' => now()->translatedFormat('F \\d\\e Y'),
+            'monthlyEntries' => $this->entryService->monthlySummary((int) auth()->id()),
         ]);
     }
 }

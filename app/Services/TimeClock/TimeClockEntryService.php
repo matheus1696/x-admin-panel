@@ -5,13 +5,16 @@ namespace App\Services\TimeClock;
 use App\DTOs\TimeClock\RegisterTimeClockEntryDTO;
 use App\Enums\TimeClock\TimeClockEntryStatus;
 use App\Models\TimeClock\TimeClockEntry;
+use App\Validation\TimeClock\GpsAccuracyValidator;
 use App\Validation\TimeClock\GpsRequiredValidator;
 use App\Validation\TimeClock\LocationWithinRadiusValidator;
 use App\Validation\TimeClock\PhotoRequiredValidator;
 use App\Validation\TimeClock\RegisterRateLimitValidator;
 use App\Validation\TimeClock\TimeClockValidationException;
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class TimeClockEntryService
@@ -19,6 +22,7 @@ class TimeClockEntryService
     public function __construct(
         private readonly PhotoRequiredValidator $photoValidator,
         private readonly GpsRequiredValidator $gpsValidator,
+        private readonly GpsAccuracyValidator $gpsAccuracyValidator,
         private readonly RegisterRateLimitValidator $rateLimitValidator,
         private readonly LocationWithinRadiusValidator $locationWithinRadiusValidator,
     ) {
@@ -43,6 +47,14 @@ class TimeClockEntryService
             } catch (TimeClockValidationException $exception) {
                 if ($status === TimeClockEntryStatus::OK->value) {
                     $status = TimeClockEntryStatus::MISSING_GPS->value;
+                }
+            }
+
+            try {
+                $this->gpsAccuracyValidator->validateOrFail($dto->accuracy);
+            } catch (TimeClockValidationException $exception) {
+                if ($status === TimeClockEntryStatus::OK->value) {
+                    $status = TimeClockEntryStatus::LOW_ACCURACY->value;
                 }
             }
 
@@ -85,6 +97,39 @@ class TimeClockEntryService
             ->paginate((int) ($filters['perPage'] ?? 10));
     }
 
+    public function monthlySummary(int $userId, ?CarbonImmutable $referenceDate = null): Collection
+    {
+        $referenceDate ??= CarbonImmutable::now();
+
+        $startOfMonth = $referenceDate->startOfMonth();
+        $endOfMonth = $referenceDate->endOfMonth();
+
+        $entriesByDay = TimeClockEntry::query()
+            ->where('user_id', $userId)
+            ->whereBetween('occurred_at', [$startOfMonth, $endOfMonth])
+            ->orderBy('occurred_at')
+            ->get()
+            ->groupBy(fn (TimeClockEntry $entry) => $entry->occurred_at?->format('Y-m-d'));
+
+        return collect(range(1, $endOfMonth->day))
+            ->map(function (int $day) use ($startOfMonth, $entriesByDay): array {
+                $date = $startOfMonth->day($day);
+                $entries = $entriesByDay->get($date->format('Y-m-d'), collect())->values();
+
+                return [
+                    'date' => $date,
+                    'day_label' => $date->translatedFormat('d/m'),
+                    'week_day' => ucfirst($date->translatedFormat('D')),
+                    'morning_entry' => $this->formatEntryTime($entries->get(0)),
+                    'morning_exit' => $this->formatEntryTime($entries->get(1)),
+                    'afternoon_entry' => $this->formatEntryTime($entries->get(2)),
+                    'afternoon_exit' => $this->formatEntryTime($entries->get(3)),
+                    'activity_duration' => $this->formatDurationMinutes($this->calculateActivityDurationMinutes($entries)),
+                    'observation' => null,
+                ];
+            });
+    }
+
     public function findByUuid(string $uuid): TimeClockEntry
     {
         return $this->baseQuery()->where('uuid', $uuid)->firstOrFail();
@@ -96,5 +141,38 @@ class TimeClockEntryService
             ->with(['user.organizations', 'location'])
             ->orderByDesc('occurred_at')
             ->orderByDesc('id');
+    }
+
+    private function formatEntryTime(?TimeClockEntry $entry): ?string
+    {
+        return $entry?->occurred_at?->format('H:i');
+    }
+
+    private function calculateActivityDurationMinutes(Collection $entries): int
+    {
+        $pairs = [
+            [$entries->get(0), $entries->get(1)],
+            [$entries->get(2), $entries->get(3)],
+        ];
+
+        return collect($pairs)
+            ->sum(function (array $pair): int {
+                [$start, $end] = $pair;
+
+                if (! $start?->occurred_at || ! $end?->occurred_at) {
+                    return 0;
+                }
+
+                return max(0, $start->occurred_at->diffInMinutes($end->occurred_at, false));
+            });
+    }
+
+    private function formatDurationMinutes(int $minutes): ?string
+    {
+        if ($minutes <= 0) {
+            return null;
+        }
+
+        return sprintf('%02d:%02d', intdiv($minutes, 60), $minutes % 60);
     }
 }

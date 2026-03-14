@@ -1,140 +1,151 @@
 <div class="space-y-4">
-
     <x-page.header title="Registrar Ponto" subtitle="Controle de Ponto" icon="fa-solid fa-clock" />
 
-    <div class="grid grid-cols-1 gap-4 xl:grid-cols-12">
-        <aside class="space-y-4 xl:col-span-4">
-            <section class="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-cyan-50 p-5 shadow-sm">
-                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Resumo do registro</p>
-                <div class="mt-4 space-y-3 text-sm">
-                    <div>
-                        <p class="text-xs text-slate-500">Usuario</p>
-                        <p class="font-semibold text-slate-900">{{ auth()->user()->name }}</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-slate-500">Data / Hora</p>
-                        <p class="font-semibold text-slate-900">{{ now()->format('d/m/Y H:i') }}</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-slate-500">Ultimos registros</p>
-                        <div class="mt-2 space-y-2">
-                            @forelse ($recentEntries as $entry)
-                                <div class="rounded-2xl border border-white/70 bg-white/80 px-3 py-2 text-xs shadow-sm">
-                                    <p class="font-semibold text-slate-800">{{ $entry->occurred_at?->format('d/m/Y H:i') }}</p>
-                                    <p class="text-slate-500">{{ $entry->status }}</p>
+    <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="border-b border-slate-200 px-4 py-4 sm:px-5">
+            <h2 class="text-lg font-semibold text-slate-900">Meus registros do mes atual</h2>
+            <p class="mt-1 text-sm text-slate-500">{{ ucfirst($monthLabel) }}</p>
+        </div>
+
+        <div class="space-y-3 p-4 sm:p-5">
+            @foreach ($monthlyEntries as $row)
+                <div class="rounded-2xl border px-4 py-4 sm:px-5 {{ $row['date']->isToday() ? 'border-cyan-200 bg-cyan-50/50' : 'border-slate-200 bg-slate-50/40' }}">
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                        <div class="min-w-0 flex-1">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <p class="text-base font-semibold text-slate-900">{{ $row['day_label'] }}</p>
+                                <span class="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-500">{{ $row['week_day'] }}</span>
+                                @if ($row['date']->isToday())
+                                    <span class="rounded-full bg-cyan-600 px-2.5 py-1 text-[11px] font-medium text-white">Hoje</span>
+                                @endif
+                            </div>
+
+                            <div class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+                                <div class="rounded-xl border border-slate-200 bg-white px-4 py-3">
+                                    <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Manha</p>
+                                    <div class="mt-2 flex items-center justify-between gap-4 text-sm">
+                                        <div>
+                                            <p class="text-[11px] uppercase tracking-[0.14em] text-slate-400">Entrada</p>
+                                            <p class="mt-1 font-semibold text-slate-900">{{ $row['morning_entry'] ?? '-' }}</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-[11px] uppercase tracking-[0.14em] text-slate-400">Saida</p>
+                                            <p class="mt-1 font-semibold text-slate-900">{{ $row['morning_exit'] ?? '-' }}</p>
+                                        </div>
+                                    </div>
                                 </div>
-                            @empty
-                                <p class="text-xs text-slate-500">Nenhum registro encontrado.</p>
-                            @endforelse
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </aside>
 
-        <main class="xl:col-span-8">
-            <form wire:submit.prevent="register" x-data="timeClockRegister($wire)" x-init="init()" class="space-y-5 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-                <div class="rounded-2xl border border-cyan-100 bg-cyan-50/70 p-4">
-                    <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                        <div>
-                            <p class="text-sm font-semibold text-slate-900">Registro guiado</p>
-                            <p class="mt-1 text-sm text-slate-600">A foto pode ser feita direto pela camera. A localizacao pode ser ativada pelo navegador quando o usuario permitir.</p>
-                        </div>
-                        <div class="rounded-2xl border px-3 py-2 text-xs font-medium"
-                             :class="locationStatusClass">
-                            <span x-text="locationStatusLabel"></span>
-                        </div>
-                    </div>
-                </div>
+                                <div class="rounded-xl border border-slate-200 bg-white px-4 py-3">
+                                    <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Tarde</p>
+                                    <div class="mt-2 flex items-center justify-between gap-4 text-sm">
+                                        <div>
+                                            <p class="text-[11px] uppercase tracking-[0.14em] text-slate-400">Entrada</p>
+                                            <p class="mt-1 font-semibold text-slate-900">{{ $row['afternoon_entry'] ?? '-' }}</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-[11px] uppercase tracking-[0.14em] text-slate-400">Saida</p>
+                                            <p class="mt-1 font-semibold text-slate-900">{{ $row['afternoon_exit'] ?? '-' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
 
-                <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                    <div class="space-y-4 lg:col-span-2">
-                        <div>
-                            <x-form.label value="Local de trabalho" />
-                            <x-form.select-livewire
-                                wire:model.live="locationId"
-                                name="locationId"
-                                :options="$locations->map(fn ($location) => ['value' => $location->id, 'label' => $location->establishment?->title ?? $location->name])->prepend(['value' => '', 'label' => 'Selecionar depois'])->values()->all()"
-                            />
-                            <p class="mt-1 text-xs text-slate-500">Mostramos os estabelecimentos vinculados ao controle de ponto. Se o local ainda nao estiver definido, o registro continua disponivel conforme a configuracao do modulo.</p>
-                            <x-form.error for="locationId" />
-                        </div>
+                                <div class="rounded-xl border border-slate-200 bg-white px-4 py-3">
+                                    <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Tempo de atividade</p>
+                                    <p class="mt-2 text-sm font-semibold text-slate-900">{{ $row['activity_duration'] ?? '-' }}</p>
+                                </div>
 
-                        <template x-if="selectedLocationSummary">
-                            <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
-                                <p class="font-semibold text-slate-900" x-text="selectedLocationSummary.name"></p>
-                                <p class="mt-1" x-text="selectedLocationSummary.address"></p>
-                                <p class="mt-1 text-xs text-slate-500" x-text="selectedLocationSummary.radius"></p>
-                            </div>
-                        </template>
-                    </div>
-
-                    <div class="md:col-span-2">
-                        <x-form.label value="Foto" />
-                        <input x-ref="photoInput" type="file" wire:model="photo" accept="image/*" capture="user" class="hidden" @change="previewFile($event)" />
-
-                        <div class="mt-2 space-y-3">
-                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                <x-button type="button" text="Abrir camera" icon="fa-solid fa-camera" x-on:click="openCamera()" />
-                                <x-button type="button" text="Inverter camera" icon="fa-solid fa-rotate" variant="blue_outline" x-on:click="switchCamera()" x-bind:disabled="!canSwitchCamera" />
-                            </div>
-
-                            <div x-show="cameraOpen" class="space-y-3">
-                                <video x-ref="video" autoplay playsinline class="w-full rounded-2xl border border-slate-200 bg-slate-950"></video>
-                                <div class="flex flex-col gap-3 sm:flex-row">
-                                    <x-button type="button" text="Capturar foto" icon="fa-solid fa-check" variant="blue_outline" x-on:click="capturePhoto()" />
-                                    <x-button type="button" text="Fechar camera" icon="fa-solid fa-xmark" variant="red_outline" x-on:click="stopCamera()" />
+                                <div class="rounded-xl border border-slate-200 bg-white px-4 py-3">
+                                    <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Observacao</p>
+                                    <p class="mt-2 text-sm font-semibold text-slate-900">{{ $row['observation'] ?? '-' }}</p>
                                 </div>
                             </div>
-                            <canvas x-ref="canvas" class="hidden"></canvas>
-
-                            <template x-if="previewUrl">
-                                <img :src="previewUrl" alt="Preview da foto" class="w-full rounded-2xl border border-gray-200 object-cover max-h-80" />
-                            </template>
                         </div>
-                        <x-form.error for="photo" />
+
+                        <div class="flex shrink-0 flex-col gap-2 lg:w-48 lg:pl-4">
+                            @if ($row['date']->isToday())
+                                <x-button type="button" text="Registrar ponto" icon="fa-solid fa-clock" size="sm" wire:click="openRegisterModal" fullWidth="true" />
+                                <x-button type="button" text="Solicitar abono" icon="fa-solid fa-file-circle-plus" size="sm" variant="secondary" wire:click="requestAllowance" fullWidth="true" />
+                            @else
+                                <div class="rounded-xl border border-dashed border-slate-200 bg-white px-4 py-3 text-center text-sm text-slate-400">
+                                    Sem acoes
+                                </div>
+                            @endif
+                        </div>
                     </div>
+                </div>
+            @endforeach
+        </div>
+    </section>
 
-                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 lg:col-span-2">
-                        <div class="flex flex-col gap-3">
-                            <div>
-                                <p class="text-sm font-semibold text-slate-900">Localizacao do dispositivo</p>
-                                <p class="mt-1 text-sm text-slate-600">Em alguns navegadores a permissao so aparece apos clicar no botao abaixo. Se nada acontecer, verifique se a pagina esta em contexto seguro e se a localizacao nao foi bloqueada antes.</p>
-                            </div>
-                        </div>
+    <x-modal :show="$showRegisterModal" size="lg" title="Registrar ponto" description="Registre o ponto do dia atual." closeMethod="closeRegisterModal" wire:key="time-clock-register-modal">
+        <div x-data="timeClockRegister($wire)" x-init="init()" class="space-y-4">
+            <div>
+                <x-form.label value="Foto" />
+                <input x-ref="photoInput" type="file" wire:model="photo" accept="image/*" capture="user" class="hidden" @change="previewFile($event)" />
 
-                        <template x-if="locationHelpText">
-                            <div class="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800" x-text="locationHelpText"></div>
-                        </template>
+                <div class="mt-2 flex flex-wrap gap-3">
+                    <x-button type="button" text="Abrir camera" icon="fa-solid fa-camera" x-on:click="openCamera()" />
+                    <x-button type="button" text="Inverter camera" icon="fa-solid fa-rotate" variant="blue_outline" x-on:click="switchCamera()" x-bind:disabled="!canSwitchCamera" />
+                    <x-button type="button" text="Capturar localizacao" icon="fa-solid fa-location-crosshairs" variant="blue_outline" x-on:click="captureLocation(true)" />
+                </div>
 
-                        <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                            <div class="rounded-2xl bg-white px-4 py-3">
-                                <p class="text-xs uppercase tracking-[0.18em] text-slate-500">Latitude</p>
-                                <p class="mt-1 text-sm font-semibold text-slate-900" x-text="formattedLatitude"></p>
-                            </div>
-                            <div class="rounded-2xl bg-white px-4 py-3">
-                                <p class="text-xs uppercase tracking-[0.18em] text-slate-500">Longitude</p>
-                                <p class="mt-1 text-sm font-semibold text-slate-900" x-text="formattedLongitude"></p>
-                            </div>
-                            <div class="rounded-2xl bg-white px-4 py-3">
-                                <p class="text-xs uppercase tracking-[0.18em] text-slate-500">Precisao</p>
-                                <p class="mt-1 text-sm font-semibold text-slate-900" x-text="formattedAccuracy"></p>
-                            </div>
-                        </div>
-
-                        <x-form.error for="latitude" />
-                        <x-form.error for="longitude" />
-                        <x-form.error for="accuracy" />
+                <div x-show="cameraOpen" class="mt-3 space-y-3">
+                    <video x-ref="video" autoplay playsinline class="w-full rounded-2xl border border-slate-200 bg-slate-950"></video>
+                    <div class="flex flex-wrap gap-3">
+                        <x-button type="button" text="Capturar foto" icon="fa-solid fa-check" variant="blue_outline" x-on:click="capturePhoto()" />
+                        <x-button type="button" text="Fechar camera" icon="fa-solid fa-xmark" variant="red_outline" x-on:click="stopCamera()" />
                     </div>
                 </div>
 
-                <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                    <x-button type="button" text="Ativar localizacao" icon="fa-solid fa-location-crosshairs" variant="blue_outline" x-on:click="captureLocation(true)" />
-                    <x-button type="submit" text="Registrar ponto" icon="fa-solid fa-check" x-bind:disabled="submitting" />
+                <canvas x-ref="canvas" class="hidden"></canvas>
+
+                <template x-if="previewUrl">
+                    <img :src="previewUrl" alt="Preview da foto" class="mt-3 max-h-72 w-full rounded-2xl border border-slate-200 object-cover" />
+                </template>
+
+                <x-form.error for="photo" />
+            </div>
+
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Status da localizacao</p>
+                <div class="mt-3 inline-flex rounded-xl border px-3 py-2 text-xs font-medium" :class="locationStatusClass">
+                    <span x-text="locationStatusLabel"></span>
                 </div>
-            </form>
-        </main>
-    </div>
+
+                <template x-if="locationHelpText">
+                    <div class="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800" x-text="locationHelpText"></div>
+                </template>
+
+                <template x-if="accuracyWarning">
+                    <div class="mt-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800" x-text="accuracyWarning"></div>
+                </template>
+
+                <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                    <div class="rounded-xl bg-white px-4 py-3">
+                        <p class="text-xs uppercase tracking-[0.18em] text-slate-500">Latitude</p>
+                        <p class="mt-1 text-sm font-semibold text-slate-900" x-text="formattedLatitude"></p>
+                    </div>
+                    <div class="rounded-xl bg-white px-4 py-3">
+                        <p class="text-xs uppercase tracking-[0.18em] text-slate-500">Longitude</p>
+                        <p class="mt-1 text-sm font-semibold text-slate-900" x-text="formattedLongitude"></p>
+                    </div>
+                    <div class="rounded-xl bg-white px-4 py-3">
+                        <p class="text-xs uppercase tracking-[0.18em] text-slate-500">Precisao</p>
+                        <p class="mt-1 text-sm font-semibold text-slate-900" x-text="formattedAccuracy"></p>
+                    </div>
+                </div>
+
+                <x-form.error for="latitude" />
+                <x-form.error for="longitude" />
+                <x-form.error for="accuracy" />
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <x-button type="button" text="Cancelar" variant="secondary" wire:click="closeRegisterModal" />
+                <x-button type="button" text="Salvar registro" icon="fa-solid fa-check" x-on:click="$wire.call('register')" x-bind:disabled="submitting" />
+            </div>
+        </div>
+    </x-modal>
 </div>
 
 @script
@@ -149,14 +160,7 @@
         locationStatusLabel: 'Aguardando captura da localizacao',
         locationStatusClass: 'border-slate-200 bg-white text-slate-600',
         locationHelpText: '',
-        locations: @js($locations->map(fn ($location) => [
-            'id' => $location->id,
-            'name' => $location->establishment?->title ?? $location->name,
-            'address' => $location->establishment
-                ? trim(collect([$location->establishment->address, $location->establishment->number, $location->establishment->district])->filter()->implode(', '))
-                : 'Local configurado para registro de ponto',
-            'radius' => 'Raio permitido: '.$location->radius_meters.' m',
-        ])->values()->all()),
+        maxAllowedAccuracy: @js(config('time_clock.max_allowed_accuracy_meters')),
         get formattedLatitude() {
             return this.formatCoordinate($wire.latitude);
         },
@@ -166,8 +170,16 @@
         get formattedAccuracy() {
             return $wire.accuracy ? `${Number($wire.accuracy).toFixed(2)} m` : 'Nao capturada';
         },
-        get selectedLocationSummary() {
-            return this.locations.find((location) => Number(location.id) === Number($wire.locationId)) ?? null;
+        get accuracyWarning() {
+            if (!this.maxAllowedAccuracy || !$wire.accuracy) {
+                return '';
+            }
+
+            if (Number($wire.accuracy) <= Number(this.maxAllowedAccuracy)) {
+                return '';
+            }
+
+            return `Precisao atual em ${Number($wire.accuracy).toFixed(2)} m. Tente recapturar a localizacao ate ficar em ${Number(this.maxAllowedAccuracy).toFixed(0)} m ou menos.`;
         },
         async init() {
             this.canSwitchCamera = this.isLikelyMobile();
@@ -238,7 +250,7 @@
             }
 
             if (!navigator.permissions?.query) {
-                this.setLocationStatus('Clique em ativar localizacao para solicitar permissao', 'loading');
+                this.setLocationStatus('Clique em capturar localizacao para solicitar permissao', 'loading');
                 this.locationHelpText = 'Alguns navegadores so mostram o pedido de permissao apos interacao direta do usuario.';
                 return;
             }
@@ -252,7 +264,7 @@
                     this.captureLocation(false);
                 }
             } catch {
-                this.setLocationStatus('Clique em ativar localizacao para solicitar permissao', 'loading');
+                this.setLocationStatus('Clique em capturar localizacao para solicitar permissao', 'loading');
                 this.locationHelpText = 'Nao foi possivel consultar o estado da permissao. Tente ativar manualmente.';
             }
         },
@@ -269,7 +281,7 @@
                 return;
             }
 
-            this.setLocationStatus('Clique em ativar localizacao para solicitar permissao', 'loading');
+            this.setLocationStatus('Clique em capturar localizacao para solicitar permissao', 'loading');
             this.locationHelpText = 'O navegador ainda nao exibiu a permissao. Use o botao para iniciar a solicitacao.';
         },
         captureLocation(fromUserAction = false) {

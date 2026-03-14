@@ -51,7 +51,6 @@ use App\Livewire\Task\TaskPage;
 use App\Livewire\TimeClock\EntriesIndex;
 use App\Livewire\TimeClock\EntryShow;
 use App\Livewire\TimeClock\LocationsIndex;
-use App\Livewire\TimeClock\MyEntries;
 use App\Livewire\TimeClock\RegisterEntry;
 use App\Livewire\TimeClock\ReportsIndex;
 use App\Models\Assets\Asset;
@@ -123,7 +122,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     */
     Route::prefix('controle-de-ponto')->name('time-clock.')->group(function () {
         Route::get('/registrar', RegisterEntry::class)->middleware('can:register,'.TimeClockEntry::class)->name('register');
-        Route::get('/meus-registros', MyEntries::class)->middleware('can:viewOwn,'.TimeClockEntry::class)->name('my-entries');
+        Route::redirect('/meus-registros', '/controle-de-ponto/registrar')->name('my-entries');
         Route::get('/registros', EntriesIndex::class)->middleware('can:viewAny,'.TimeClockEntry::class)->name('entries.index');
         Route::get('/registros/{uuid}', EntryShow::class)->name('entries.show');
         Route::get('/locais', LocationsIndex::class)->middleware('can:manage,'.TimeClockLocation::class)->name('locations.index');
